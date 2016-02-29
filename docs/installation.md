@@ -31,17 +31,14 @@ as well.
 
 ## Step 2: install flavio
 
-To download and install the most recent development version of flavio, follow
-these steps.
+The latest released version is available via [PyPI](https://pypi.python.org/), so
+you can install it simply by executing
 
-- Download [a ZIP archive with the latest code](https://github.com/flav-io/flavio/archive/master.zip)
-- Unzip it and enter the folder called `flavio`
-- To install the package for your user only, type
 {% highlight bash %}
-pip3 install -e . --user
+pip install flavio
 {% endhighlight %}
-The `-e` switch means that the package is installed in "development mode", so
-you can make modifications to the downloaded code and don't have to reinstall.
+
+(or `pip3` instead of `pip` depending on your system).
 
 ## (Step 3: install optional dependencies)
 
