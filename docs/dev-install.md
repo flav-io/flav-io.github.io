@@ -58,3 +58,8 @@ Ran 41 tests in 5.135s
 
 OK
 {% endhighlight %}
+
+## Upgrading
+
+To upgrade your development installation, you simple have to `git pull`.
+The package is automatically kept up to date thanks to the `-e` flag used above.

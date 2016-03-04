@@ -49,3 +49,13 @@ some additional Python packages:
 - `matplotlib` for plotting
 - `nose` for testing
 - `pypmc` and `emcee` for sampling
+
+
+## Upgrading flavio
+
+If you have installed flavio using `pip`, it is trivial to upgrade it to
+a new version. Simply execute
+
+{% highlight bash %}
+pip install flavio --upgrade
+{% endhighlight %}
