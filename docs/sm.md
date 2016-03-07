@@ -82,6 +82,7 @@ as a pie chart with a simple command:
 
 {% highlight python %}
 errors = flavio.sm_error_budget('BR(Bs->mumu)')
+import flavio.plots
 flavio.plots.error_budget_pie(errors)
 {% endhighlight %}
 
