@@ -16,7 +16,7 @@ instead.
 ## Step 1: install dependencies
 
 flavio depends on the `numpy` and `scipy` packages. If you already have them
-installed, you can skip to step 2. Otherwise, on Ubuntu, you can install them
+installed (you need their Python 3 versions), you can skip to step 2. Otherwise, on Ubuntu, you can install them
 via
 
 {% highlight bash %}
@@ -35,10 +35,11 @@ The latest released version is available via [PyPI](https://pypi.python.org/), s
 you can install it simply by executing
 
 {% highlight bash %}
-pip install flavio
+pip3 install flavio
 {% endhighlight %}
 
-(or `pip3` instead of `pip` depending on your system).
+(depending on your system, the Python 3 version of `pip` could also be called
+`pip-3.3` or just `pip`).
 
 ## (Step 3: install optional dependencies)
 
@@ -57,5 +58,5 @@ If you have installed flavio using `pip`, it is trivial to upgrade it to
 a new version. Simply execute
 
 {% highlight bash %}
-pip install flavio --upgrade
+pip3 install flavio --upgrade
 {% endhighlight %}

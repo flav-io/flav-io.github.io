@@ -35,7 +35,8 @@ and install the package with this command
 pip3 install -e . --user
 {% endhighlight %}
 
-(depending on your system, `pip3` might have to be replaced by `pip`).
+(depending on your system, the Python 3 version of `pip` might also be
+called `pip-3.3` or just `pip`).
 The `-e` switch means that the package is installed in "development mode", so
 you can make modifications to the downloaded code and don't have to reinstall.
 
