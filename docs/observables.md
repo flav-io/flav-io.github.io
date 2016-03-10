@@ -29,6 +29,11 @@ used by LHCb, which differ from the ones used in many theory papers,
 e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 (see e.g. [arXiv:1506.03970](http://www.arxiv.org/abs/1506.03970)).
 - Lepton flavour $\ell$ always refers to an average of electron and muon modes.
+- For the modes with neutrinos in the final state, a sum over all experimentally
+equivalent modes is implied, i.e.
+$\bar\nu_e\nu_e$, $\bar\nu_\mu\nu_\mu$, $\bar\nu_\tau\nu_\tau$,
+but also final states with two different neutrino flavours which can be
+generated beyond the SM.
 
 
 {: class="table"}
