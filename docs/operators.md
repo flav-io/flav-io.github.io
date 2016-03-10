@@ -110,6 +110,23 @@ $O_S^\prime = \frac{e^2}{16\pi^2}m_b(\bar s_R b_L)(\bar e \mu)$                 
 $O_P = \frac{e^2}{16\pi^2}m_b(\bar s_L b_R)(\bar e \gamma_5 \mu)$                              | `CP_bsemu`
 $O_P^\prime = \frac{e^2}{16\pi^2}m_b(\bar s_R b_L)(\bar e \gamma_5 \mu)$                       | `CPp_bsemu`
 
+## Decays with neutrinos in the final state (`bsnuenue`, `bdnuenue`, ..., `sdnuenutau`, ...)
+
+This also includes decays with two differently flavoured neutrinos in the final state,
+which cannot be distinguished experimentally. Note that `bsnuenumu` and `bsnumunue`
+are distinct cases, etc.
+The following lists the operators for the case of $b\to s\nu_e\bar\nu_e$.
+Note that neutrinos are always assumed to be massless and left-handed.
+
+$$\mathcal H_\text{eff} = - \frac{4 G_F}{\sqrt{2}} V_{tb} V_{ts}^* \sum_i C_i O_i$$
+
+{: class="table"}
+Operator                                                                  | Wilson coefficient
+--------------------------------------------------------------------------|-------
+$O_L = \frac{e^2}{16\pi^2}(\bar s_L \gamma^\mu b_L)(\bar \nu_e \gamma_\mu(1-\gamma_5) \nu_e)$         | `CL_bsnuenue`
+$O_R = \frac{e^2}{16\pi^2}(\bar s_R \gamma^\mu b_R)(\bar \nu_e \gamma_\mu(1-\gamma_5) \nu_e)$         | `CR_bsnuenue`
+
+
 ## Charged-current decays (`buenu`, ..., `bctaunu`, ...,)
 
 The following lists the operators for the case of $b\to c\tau^-\bar\nu$.
