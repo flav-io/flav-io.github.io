@@ -6,11 +6,11 @@ title: Parameters
 # List of all parameters
 
 This is an automatically generated list  of all parameters defined in the
-default configuration of flavio. The first column contains the string name
+default configuration of flavio. The first coolumn contains the string name
 of the parameter.
 
 Note that the LaTeX symbol and description has not yet been defined for
-all parameters.
+all parametewrs.
 
 {: class="table"}
 | Name | Symbol |  Description |
@@ -61,7 +61,7 @@ all parameters.
 | `B->K BCL a1_f0` | $a_1^{(0)}$ | BCL $B\to K$ form factor parametrization coefficient $a_1$ of $f_0$ |
 | `B->K BCL a1_fT` | $a_1^{(T)}$ | BCL $B\to K$ form factor parametrization coefficient $a_1$ of $f_T$ |
 | `B->K BCL a2_f+` | $a_2^{(+)}$ | BCL $B\to K$ form factor parametrization coefficient $a_2$ of $f_+$ |
-| `B->K BCL a2_f0` | $a_w^{(0)}$ | BCL $B\to K$ form factor parametrization coefficient $a_2$ of $f_0$ |
+| `B->K BCL a2_f0` | $a_2^{(0)}$ | BCL $B\to K$ form factor parametrization coefficient $a_2$ of $f_0$ |
 | `B->K BCL a2_fT` | $a_2^{(T)}$ | BCL $B\to K$ form factor parametrization coefficient $a_2$ of $f_T$ |
 | `B->K* BSZ a0_A1` | $a_0^{A_1}$ | BSZ form factor parametrization coefficient $a_0$ of $A_1$ |
 | `B->K* BSZ a0_A12` | $a_0^{A_{12}}$ | BSZ form factor parametrization coefficient $a_0$ of $A_{12}$ |
