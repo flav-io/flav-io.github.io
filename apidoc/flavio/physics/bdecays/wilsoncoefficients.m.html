@@ -1058,9 +1058,11 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.CL_SM">CL_SM</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.get_wceff">get_wceff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.get_wceff_fccc">get_wceff_fccc</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.get_wceff_lfv">get_wceff_lfv</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.get_wceff_nunu">get_wceff_nunu</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.wctot_dict">wctot_dict</a></li>
   </ul>
 
@@ -1098,7 +1100,7 @@ as tree-level $B$ decays</p>
 <span class="kn">from</span> <span class="nn">flavio.config</span> <span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span> <span class="nn">flavio.physics.bdecays.common</span> <span class="kn">import</span> <span class="n">meson_quark</span>
 <span class="kn">from</span> <span class="nn">flavio.physics.bdecays</span> <span class="kn">import</span> <span class="n">matrixelements</span>
-
+<span class="kn">import</span> <span class="nn">flavio</span>
 
 <span class="c"># SM Wilson coefficients at 120 GeV in the basis</span>
 <span class="c"># [ C_1, C_2, C_3, C_4, C_5, C_6,</span>
@@ -1115,21 +1117,49 @@ as tree-level $B$ decays</p>
         <span class="o">-</span><span class="mf">4.06926405e+00</span><span class="p">,</span>   <span class="mf">6.15944332e-03</span><span class="p">,</span>   <span class="mf">0.00000000e+00</span><span class="p">,</span>
         <span class="o">-</span><span class="mf">1.12876870e-03</span><span class="p">,</span>   <span class="mf">0.00000000e+00</span><span class="p">,</span>  <span class="o">-</span><span class="mf">3.24099235e-03</span><span class="p">])</span>
 
+<span class="c"># di-&gt;djnunu Wilson coefficient</span>
+<span class="k">def</span> <span class="nf">CL_SM</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;SM Wilson coefficient for $d_i\to d_j\nu\bar\nu$ transitions.</span>
+
+<span class="sd">    This is implemented as an approximate formula as a function of the top</span>
+<span class="sd">    mass.&quot;&quot;&quot;</span>
+    <span class="c"># EW NLO corrections arXiv:1009.0947</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="mf">120.</span> <span class="c"># &lt;- result has very little sensitivity to high matching scale</span>
+    <span class="n">mt</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">s2w</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;s2w&#39;</span><span class="p">]</span>
+    <span class="n">Xt0_165</span> <span class="o">=</span> <span class="mf">1.50546</span> <span class="c"># LO result for mt=165, scale=120</span>
+    <span class="n">Xt0</span> <span class="o">=</span> <span class="n">Xt0_165</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1.14064</span> <span class="o">*</span> <span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mf">165.</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="c"># LO</span>
+    <span class="n">Xt1</span> <span class="o">=</span> <span class="n">Xt0_165</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.031435</span> <span class="o">-</span> <span class="mf">0.139303</span> <span class="o">*</span> <span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mf">165.</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="c"># QCD NLO</span>
+    <span class="c"># (4.3), (4.4) of 1009.0947: NLO EW</span>
+    <span class="n">XtEW</span> <span class="o">=</span> <span class="n">Xt0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">1.11508</span> <span class="o">+</span> <span class="mf">1.12316</span><span class="o">*</span><span class="mf">1.15338</span><span class="o">**</span><span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mf">165.</span><span class="p">)</span><span class="o">-</span><span class="mf">0.179454</span><span class="o">*</span><span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mi">165</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">XtEW</span> <span class="o">=</span> <span class="n">XtEW</span> <span class="o">*</span> <span class="mf">0.00062392534457616328</span> <span class="c"># &lt;- alpha_em/4pi at 120 GeV</span>
+    <span class="n">Xt</span> <span class="o">=</span> <span class="n">Xt0</span> <span class="o">+</span> <span class="n">Xt1</span> <span class="o">+</span> <span class="n">XtEW</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">Xt</span><span class="o">/</span><span class="n">s2w</span>
+
+
 <span class="k">def</span> <span class="nf">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get a dictionary with the total (SM + new physics) values  of the</span>
 <span class="sd">    $\Delta F=1$ Wilson coefficients at a given scale, given a</span>
 <span class="sd">    WilsonCoefficients instance.&quot;&quot;&quot;</span>
     <span class="n">wc_np_dict</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
     <span class="n">wcsm_120</span> <span class="o">=</span> <span class="n">_wcsm_120</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wcsm_120</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">rge_derivative</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span> <span class="mf">120.</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="c"># now here comes an ugly fix. If we have b-&gt;s transitions, we should take</span>
     <span class="c"># into account the fact that C7&#39; = C7*ms/mb, and the same for C8, which is</span>
     <span class="c"># not completely negligible. To find out whether we have b-&gt;s, we look at</span>
     <span class="c"># the &quot;sector&quot; string.</span>
     <span class="k">if</span> <span class="n">sector</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;bs&#39;</span><span class="p">:</span>
+        <span class="c"># go from the effective to the &quot;non-effective&quot; WCs</span>
+        <span class="n">yi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="o">/</span><span class="mf">9.</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="o">-</span><span class="mi">80</span><span class="o">/</span><span class="mf">9.</span><span class="p">])</span>
+        <span class="n">zi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mf">6.</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="o">/</span><span class="mf">3.</span><span class="p">])</span>
+        <span class="n">c7</span> <span class="o">=</span> <span class="n">wc_sm</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">yi</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">[:</span><span class="mi">6</span><span class="p">])</span> <span class="c"># c7 (not effective!)</span>
+        <span class="n">c8</span> <span class="o">=</span> <span class="n">wc_sm</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">zi</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">[:</span><span class="mi">6</span><span class="p">])</span> <span class="c"># c8 (not effective!)</span>
         <span class="n">eps_s</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span><span class="o">/</span><span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-        <span class="n">wcsm_120</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span> <span class="o">=</span> <span class="n">eps_s</span> <span class="o">*</span> <span class="n">wcsm_120</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
-        <span class="n">wcsm_120</span><span class="p">[</span><span class="mi">22</span><span class="p">]</span> <span class="o">=</span> <span class="n">eps_s</span> <span class="o">*</span> <span class="n">wcsm_120</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
-    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wcsm_120</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">rge_derivative</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span> <span class="mf">120.</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+        <span class="n">c7p</span> <span class="o">=</span> <span class="n">eps_s</span> <span class="o">*</span> <span class="n">c7</span>
+        <span class="n">c8p</span> <span class="o">=</span> <span class="n">eps_s</span> <span class="o">*</span> <span class="n">c8</span>
+        <span class="c"># go back to the effective WCs</span>
+        <span class="n">wc_sm</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span> <span class="o">=</span> <span class="n">c7p</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">yi</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">21</span><span class="p">])</span> <span class="c"># c7p_eff</span>
+        <span class="n">wc_sm</span><span class="p">[</span><span class="mi">22</span><span class="p">]</span> <span class="o">=</span> <span class="n">c7p</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">zi</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">21</span><span class="p">])</span> <span class="c"># c8p_eff</span>
     <span class="n">wc_labels</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">]</span>
     <span class="n">wc_sm_dict</span> <span class="o">=</span>  <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">wc_labels</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">add_dict</span><span class="p">((</span><span class="n">wc_np_dict</span><span class="p">,</span> <span class="n">wc_sm_dict</span><span class="p">))</span>
@@ -1180,6 +1210,28 @@ as tree-level $B$ decays</p>
     <span class="n">c</span><span class="p">[</span><span class="s">&#39;sp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mb</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">qiqj</span><span class="o">+</span><span class="n">l1</span><span class="o">+</span><span class="n">l2</span><span class="p">]</span>
     <span class="n">c</span><span class="p">[</span><span class="s">&#39;p&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">mb</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s">&#39;CP_&#39;</span><span class="o">+</span><span class="n">qiqj</span><span class="o">+</span><span class="n">l1</span><span class="o">+</span><span class="n">l2</span><span class="p">]</span>
     <span class="n">c</span><span class="p">[</span><span class="s">&#39;pp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mb</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s">&#39;CPp_&#39;</span><span class="o">+</span><span class="n">qiqj</span><span class="o">+</span><span class="n">l1</span><span class="o">+</span><span class="n">l2</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;tp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">c</span>
+
+
+<span class="k">def</span> <span class="nf">get_wceff_nunu</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">nu1</span><span class="p">,</span> <span class="n">nu2</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Get a dictionary with the effective $\Delta F=1$ Wilson coefficients</span>
+<span class="sd">    with neutrinos in the final state</span>
+<span class="sd">    in the convention appropriate for the generalized angular distributions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">qiqj</span><span class="o">=</span><span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">M</span><span class="p">)]</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;7&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;7p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;v&#39;</span><span class="p">]</span>  <span class="o">=</span>  <span class="n">wc</span><span class="p">[</span><span class="s">&#39;CL_&#39;</span><span class="o">+</span><span class="n">qiqj</span><span class="o">+</span><span class="n">nu1</span><span class="o">+</span><span class="n">nu2</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;vp&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">wc</span><span class="p">[</span><span class="s">&#39;CR_&#39;</span><span class="o">+</span><span class="n">qiqj</span><span class="o">+</span><span class="n">nu1</span><span class="o">+</span><span class="n">nu2</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s">&#39;CL_&#39;</span><span class="o">+</span><span class="n">qiqj</span><span class="o">+</span><span class="n">nu1</span><span class="o">+</span><span class="n">nu2</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;ap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s">&#39;CR_&#39;</span><span class="o">+</span><span class="n">qiqj</span><span class="o">+</span><span class="n">nu1</span><span class="o">+</span><span class="n">nu2</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;s&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;sp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;p&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;pp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">c</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
     <span class="n">c</span><span class="p">[</span><span class="s">&#39;tp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="n">c</span>
@@ -1243,6 +1295,45 @@ as tree-level $B$ decays</p>
       </div>
 
     <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.wilsoncoefficients.CL_SM">
+    <p>def <span class="ident">CL_SM</span>(</p><p>par)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>SM Wilson coefficient for $d_i\to d_j\nu\bar\nu$ transitions.</p>
+<p>This is implemented as an approximate formula as a function of the top
+mass.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.wilsoncoefficients.CL_SM', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.wilsoncoefficients.CL_SM" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">CL_SM</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;SM Wilson coefficient for $d_i\to d_j\nu\bar\nu$ transitions.</span>
+
+<span class="sd">    This is implemented as an approximate formula as a function of the top</span>
+<span class="sd">    mass.&quot;&quot;&quot;</span>
+    <span class="c"># EW NLO corrections arXiv:1009.0947</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="mf">120.</span> <span class="c"># &lt;- result has very little sensitivity to high matching scale</span>
+    <span class="n">mt</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">s2w</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;s2w&#39;</span><span class="p">]</span>
+    <span class="n">Xt0_165</span> <span class="o">=</span> <span class="mf">1.50546</span> <span class="c"># LO result for mt=165, scale=120</span>
+    <span class="n">Xt0</span> <span class="o">=</span> <span class="n">Xt0_165</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1.14064</span> <span class="o">*</span> <span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mf">165.</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="c"># LO</span>
+    <span class="n">Xt1</span> <span class="o">=</span> <span class="n">Xt0_165</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.031435</span> <span class="o">-</span> <span class="mf">0.139303</span> <span class="o">*</span> <span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mf">165.</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="c"># QCD NLO</span>
+    <span class="c"># (4.3), (4.4) of 1009.0947: NLO EW</span>
+    <span class="n">XtEW</span> <span class="o">=</span> <span class="n">Xt0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">1.11508</span> <span class="o">+</span> <span class="mf">1.12316</span><span class="o">*</span><span class="mf">1.15338</span><span class="o">**</span><span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mf">165.</span><span class="p">)</span><span class="o">-</span><span class="mf">0.179454</span><span class="o">*</span><span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mi">165</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">XtEW</span> <span class="o">=</span> <span class="n">XtEW</span> <span class="o">*</span> <span class="mf">0.00062392534457616328</span> <span class="c"># &lt;- alpha_em/4pi at 120 GeV</span>
+    <span class="n">Xt</span> <span class="o">=</span> <span class="n">Xt0</span> <span class="o">+</span> <span class="n">Xt1</span> <span class="o">+</span> <span class="n">XtEW</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">Xt</span><span class="o">/</span><span class="n">s2w</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.wilsoncoefficients.get_wceff">
@@ -1382,6 +1473,48 @@ in the convention appropriate for the generalized angular distributions.</p></di
   
       
   <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.wilsoncoefficients.get_wceff_nunu">
+    <p>def <span class="ident">get_wceff_nunu</span>(</p><p>q2, wc, par, B, M, nu1, nu2, scale)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get a dictionary with the effective $\Delta F=1$ Wilson coefficients
+with neutrinos in the final state
+in the convention appropriate for the generalized angular distributions.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.wilsoncoefficients.get_wceff_nunu', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.wilsoncoefficients.get_wceff_nunu" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_wceff_nunu</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">nu1</span><span class="p">,</span> <span class="n">nu2</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Get a dictionary with the effective $\Delta F=1$ Wilson coefficients</span>
+<span class="sd">    with neutrinos in the final state</span>
+<span class="sd">    in the convention appropriate for the generalized angular distributions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">qiqj</span><span class="o">=</span><span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">M</span><span class="p">)]</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;7&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;7p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;v&#39;</span><span class="p">]</span>  <span class="o">=</span>  <span class="n">wc</span><span class="p">[</span><span class="s">&#39;CL_&#39;</span><span class="o">+</span><span class="n">qiqj</span><span class="o">+</span><span class="n">nu1</span><span class="o">+</span><span class="n">nu2</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;vp&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">wc</span><span class="p">[</span><span class="s">&#39;CR_&#39;</span><span class="o">+</span><span class="n">qiqj</span><span class="o">+</span><span class="n">nu1</span><span class="o">+</span><span class="n">nu2</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s">&#39;CL_&#39;</span><span class="o">+</span><span class="n">qiqj</span><span class="o">+</span><span class="n">nu1</span><span class="o">+</span><span class="n">nu2</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;ap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s">&#39;CR_&#39;</span><span class="o">+</span><span class="n">qiqj</span><span class="o">+</span><span class="n">nu1</span><span class="o">+</span><span class="n">nu2</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;s&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;sp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;p&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;pp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c</span><span class="p">[</span><span class="s">&#39;tp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">c</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.physics.bdecays.wilsoncoefficients.wctot_dict">
     <p>def <span class="ident">wctot_dict</span>(</p><p>wc_obj, sector, scale, par)</p>
     </div>
@@ -1401,15 +1534,23 @@ WilsonCoefficients instance.</p></div>
 <span class="sd">    WilsonCoefficients instance.&quot;&quot;&quot;</span>
     <span class="n">wc_np_dict</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
     <span class="n">wcsm_120</span> <span class="o">=</span> <span class="n">_wcsm_120</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wcsm_120</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">rge_derivative</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span> <span class="mf">120.</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="c"># now here comes an ugly fix. If we have b-&gt;s transitions, we should take</span>
     <span class="c"># into account the fact that C7&#39; = C7*ms/mb, and the same for C8, which is</span>
     <span class="c"># not completely negligible. To find out whether we have b-&gt;s, we look at</span>
     <span class="c"># the &quot;sector&quot; string.</span>
     <span class="k">if</span> <span class="n">sector</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;bs&#39;</span><span class="p">:</span>
+        <span class="c"># go from the effective to the &quot;non-effective&quot; WCs</span>
+        <span class="n">yi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="o">/</span><span class="mf">9.</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="o">-</span><span class="mi">80</span><span class="o">/</span><span class="mf">9.</span><span class="p">])</span>
+        <span class="n">zi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mf">6.</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="o">/</span><span class="mf">3.</span><span class="p">])</span>
+        <span class="n">c7</span> <span class="o">=</span> <span class="n">wc_sm</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">yi</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">[:</span><span class="mi">6</span><span class="p">])</span> <span class="c"># c7 (not effective!)</span>
+        <span class="n">c8</span> <span class="o">=</span> <span class="n">wc_sm</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">zi</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">[:</span><span class="mi">6</span><span class="p">])</span> <span class="c"># c8 (not effective!)</span>
         <span class="n">eps_s</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span><span class="o">/</span><span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-        <span class="n">wcsm_120</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span> <span class="o">=</span> <span class="n">eps_s</span> <span class="o">*</span> <span class="n">wcsm_120</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
-        <span class="n">wcsm_120</span><span class="p">[</span><span class="mi">22</span><span class="p">]</span> <span class="o">=</span> <span class="n">eps_s</span> <span class="o">*</span> <span class="n">wcsm_120</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
-    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wcsm_120</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">rge_derivative</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span> <span class="mf">120.</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+        <span class="n">c7p</span> <span class="o">=</span> <span class="n">eps_s</span> <span class="o">*</span> <span class="n">c7</span>
+        <span class="n">c8p</span> <span class="o">=</span> <span class="n">eps_s</span> <span class="o">*</span> <span class="n">c8</span>
+        <span class="c"># go back to the effective WCs</span>
+        <span class="n">wc_sm</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span> <span class="o">=</span> <span class="n">c7p</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">yi</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">21</span><span class="p">])</span> <span class="c"># c7p_eff</span>
+        <span class="n">wc_sm</span><span class="p">[</span><span class="mi">22</span><span class="p">]</span> <span class="o">=</span> <span class="n">c7p</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">zi</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">21</span><span class="p">])</span> <span class="c"># c8p_eff</span>
     <span class="n">wc_labels</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">]</span>
     <span class="n">wc_sm_dict</span> <span class="o">=</span>  <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">wc_labels</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">add_dict</span><span class="p">((</span><span class="n">wc_np_dict</span><span class="p">,</span> <span class="n">wc_sm_dict</span><span class="p">))</span>

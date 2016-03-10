@@ -1105,16 +1105,22 @@ table {
 <span class="kn">from</span> <span class="nn">flavio.physics.mesonmixing</span> <span class="kn">import</span> <span class="n">rge</span> <span class="k">as</span> <span class="n">rge_df2</span>
 
 
-<span class="c"># Anomalous dimensions for DeltaF=1</span>
+<span class="c"># Anomalous dimensions for DeltaF=2</span>
 <span class="k">def</span> <span class="nf">adm_df2</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">rge_df2</span><span class="o">.</span><span class="n">gamma_df2_array</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">)</span>
 
 <span class="c"># Anomalous dimensions for DeltaB=1</span>
 <span class="k">def</span> <span class="nf">adm_db1</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">):</span>
+    <span class="c"># this is the ADM for the SM basis</span>
     <span class="n">A_L</span> <span class="o">=</span> <span class="n">rge_db1</span><span class="o">.</span><span class="n">gamma_all</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">)</span>
+    <span class="c"># initialize with zeros</span>
     <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">34</span><span class="p">,</span><span class="mi">34</span><span class="p">))</span>
+    <span class="c"># fill in the SM ADM</span>
     <span class="n">A</span><span class="p">[:</span><span class="mi">15</span><span class="p">,:</span><span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_L</span>
+    <span class="c"># the ADM for the primed SM basis is the same as for the SM</span>
     <span class="n">A</span><span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">30</span><span class="p">,</span><span class="mi">15</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_L</span>
+    <span class="c"># note that the enties 30-33 remain zero: these are the scalar and</span>
+    <span class="c"># pseudoscalar operators</span>
     <span class="k">return</span> <span class="n">A</span>
 
 <span class="c"># List of all Wilson coefficients in the Standard basis</span>
@@ -1132,6 +1138,8 @@ table {
 <span class="n">_lilj</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;emu&#39;</span><span class="p">,</span> <span class="s">&#39;mue&#39;</span><span class="p">,</span> <span class="s">&#39;etau&#39;</span><span class="p">,</span> <span class="s">&#39;taue&#39;</span><span class="p">,</span> <span class="s">&#39;mutau&#39;</span><span class="p">,</span> <span class="s">&#39;taumu&#39;</span><span class="p">]</span>
 <span class="n">_lnu</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;enu&#39;</span><span class="p">,</span> <span class="s">&#39;munu&#39;</span><span class="p">,</span> <span class="s">&#39;taunu&#39;</span><span class="p">]</span>
 <span class="n">_fccc</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;bc&#39;</span><span class="p">,</span> <span class="s">&#39;bu&#39;</span><span class="p">]</span>
+<span class="n">_nunu</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nuenue&#39;</span><span class="p">,</span> <span class="s">&#39;numunumu&#39;</span><span class="p">,</span> <span class="s">&#39;nutaunutau&#39;</span><span class="p">]</span>
+<span class="n">_nuinuj</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nuenumu&#39;</span><span class="p">,</span> <span class="s">&#39;numunue&#39;</span><span class="p">,</span> <span class="s">&#39;nuenutau&#39;</span><span class="p">,</span> <span class="s">&#39;nutaunue&#39;</span><span class="p">,</span> <span class="s">&#39;numunutau&#39;</span><span class="p">,</span> <span class="s">&#39;nutaunumu&#39;</span><span class="p">]</span>
 
 <span class="c"># DeltaF=2 operators</span>
 <span class="k">for</span> <span class="n">qq</span> <span class="ow">in</span> <span class="n">_fcnc</span><span class="p">:</span>
@@ -1159,7 +1167,17 @@ table {
                             <span class="s">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s">&#39;CPp_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="p">]</span>
         <span class="n">adm</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">adm_db1</span> <span class="c"># FIXME this is not correct yetfor s-&gt;dll</span>
 
-    <span class="c"># DeltaF=1 LFV devays</span>
+    <span class="c"># DeltaF=1 decays with same-flavour neutrinos in the final state</span>
+    <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">_nunu</span><span class="p">:</span>
+        <span class="n">coefficients</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&#39;CL_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s">&#39;CR_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="p">]</span>
+        <span class="n">adm</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># they don&#39;t run</span>
+
+    <span class="c"># DeltaF=1 decays with differently flavoured neutrinos in the final state</span>
+    <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">_nuinuj</span><span class="p">:</span>
+        <span class="n">coefficients</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&#39;CL_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s">&#39;CR_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="p">]</span>
+        <span class="n">adm</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># they don&#39;t run</span>
+
+    <span class="c"># DeltaF=1 LFV decays</span>
     <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">_lilj</span><span class="p">:</span>
         <span class="n">coefficients</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&#39;C9_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s">&#39;C10_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="c"># semi-leptonic</span>
                             <span class="s">&#39;C9p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s">&#39;C10p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span>
@@ -1279,10 +1297,16 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.adm_db1', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.eft.adm_db1" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">adm_db1</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">):</span>
+    <span class="c"># this is the ADM for the SM basis</span>
     <span class="n">A_L</span> <span class="o">=</span> <span class="n">rge_db1</span><span class="o">.</span><span class="n">gamma_all</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">)</span>
+    <span class="c"># initialize with zeros</span>
     <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">34</span><span class="p">,</span><span class="mi">34</span><span class="p">))</span>
+    <span class="c"># fill in the SM ADM</span>
     <span class="n">A</span><span class="p">[:</span><span class="mi">15</span><span class="p">,:</span><span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_L</span>
+    <span class="c"># the ADM for the primed SM basis is the same as for the SM</span>
     <span class="n">A</span><span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">30</span><span class="p">,</span><span class="mi">15</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_L</span>
+    <span class="c"># note that the enties 30-33 remain zero: these are the scalar and</span>
+    <span class="c"># pseudoscalar operators</span>
     <span class="k">return</span> <span class="n">A</span>
 </pre></div>
 
@@ -1406,7 +1430,6 @@ table {
 
     
   
-    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.eft.WilsonCoefficients.__init__" class="source">

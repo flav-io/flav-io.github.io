@@ -1092,7 +1092,6 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.assertNotIn">assertNotIn</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.assertNotIsInstance">assertNotIsInstance</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.assertNotRegex">assertNotRegex</a></li>
-    <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.assertNotRegexpMatches">assertNotRegexpMatches</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.assertRaises">assertRaises</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.assertRaisesRegex">assertRaisesRegex</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.assertRaisesRegexp">assertRaisesRegexp</a></li>
@@ -1124,6 +1123,7 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.skipTest">skipTest</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.tearDown">tearDown</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.test_clnu">test_clnu</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.test_running">test_running</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.test_wctot">test_wctot</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_wc.TestBWilson.setUpClass">setUpClass</a></li>
@@ -1157,6 +1157,7 @@ table {
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">wilsoncoefficients</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">eft</span>
 <span class="kn">from</span> <span class="nn">..running</span> <span class="kn">import</span> <span class="n">running</span>
+<span class="kn">import</span> <span class="nn">flavio</span>
 
 <span class="n">s</span> <span class="o">=</span> <span class="mf">1.519267515435317e+24</span>
 
@@ -1201,6 +1202,16 @@ table {
         <span class="n">wc_low</span> <span class="o">=</span> <span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="s">&#39;bsmumu&#39;</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
         <span class="n">wc_low_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">wc_low</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="s">&#39;bsmumu&#39;</span><span class="p">]])</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">wc_low_array</span><span class="p">[:</span><span class="mi">15</span><span class="p">],</span> <span class="n">wc_low_correct</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_clnu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">par_dict</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+        <span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1184</span>
+        <span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;alpha_e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mf">127.925</span>
+        <span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;s2w&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mf">0.2315</span>
+        <span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;m_t&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mf">173.3</span>
+        <span class="n">cl</span> <span class="o">=</span> <span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">CL_SM</span><span class="p">(</span><span class="n">par_dict</span><span class="p">)</span>
+        <span class="c"># comparing the central value of X_t to (4.2) of 1009.0947</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="o">-</span><span class="n">cl</span><span class="o">*</span><span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;s2w&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">1.469</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1233,31 +1244,6 @@ table {
       <p id="flavio.physics.bdecays.test_wc.TestBWilson" class="name">class <span class="ident">TestBWilson</span></p>
       
   
-    <div class="desc"><p>A class whose instances are single test cases.</p>
-<p>By default, the test code itself should be placed in a method named
-'runTest'.</p>
-<p>If the fixture may be used for many test cases, create as
-many test methods as are needed. When instantiating such a TestCase
-subclass, specify in the constructor arguments the name of the test method
-that the instance is to execute.</p>
-<p>Test authors should subclass TestCase for their own tests. Construction
-and deconstruction of the test's environment ('fixture') can be
-implemented by overriding the 'setUp' and 'tearDown' methods respectively.</p>
-<p>If it is necessary to override the <strong>init</strong> method, the base class
-<strong>init</strong> method must always be called. It is important that subclasses
-should not change the signature of their <strong>init</strong> method, since instances
-of the classes are instantiated automatically by parts of the framework
-in order to be run.</p>
-<p>When subclassing TestCase, you can set these attributes:
-<em> failureException: determines which exception will be raised when
-    the instance's assertion methods fail; test methods raising this
-    exception will be deemed to have 'failed' rather than 'errored'.
-</em> longMessage: determines whether long messages (including repr of
-    objects used in assert methods) will be printed on failure in <em>addition</em>
-    to any explicit message passed.
-* maxDiff: sets the maximum length of a diff in failure messages
-    by assert methods using difflib. It is looked up as an instance
-    attribute so can be configured by individual tests if required.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_wc.TestBWilson', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.test_wc.TestBWilson" class="source">
@@ -1278,6 +1264,16 @@ in order to be run.</p>
         <span class="n">wc_low</span> <span class="o">=</span> <span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="s">&#39;bsmumu&#39;</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
         <span class="n">wc_low_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">wc_low</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="s">&#39;bsmumu&#39;</span><span class="p">]])</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">wc_low_array</span><span class="p">[:</span><span class="mi">15</span><span class="p">],</span> <span class="n">wc_low_correct</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_clnu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">par_dict</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+        <span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1184</span>
+        <span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;alpha_e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mf">127.925</span>
+        <span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;s2w&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mf">0.2315</span>
+        <span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;m_t&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mf">173.3</span>
+        <span class="n">cl</span> <span class="o">=</span> <span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">CL_SM</span><span class="p">(</span><span class="n">par_dict</span><span class="p">)</span>
+        <span class="c"># comparing the central value of X_t to (4.2) of 1009.0947</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="o">-</span><span class="n">cl</span><span class="o">*</span><span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;s2w&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">1.469</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2314,12 +2310,11 @@ operator.</p></div>
         <span class="n">unexpected_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">unexpected_regex</span><span class="p">)</span>
     <span class="n">match</span> <span class="o">=</span> <span class="n">unexpected_regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-        <span class="n">standardMsg</span> <span class="o">=</span> <span class="s">&#39;Regex matched: </span><span class="si">%r</span><span class="s"> matches </span><span class="si">%r</span><span class="s"> in </span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">text</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="p">:</span> <span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">()],</span>
-            <span class="n">unexpected_regex</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span>
-            <span class="n">text</span><span class="p">)</span>
-        <span class="c"># _formatMessage ensures the longMessage option is respected</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatMessage</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">standardMsg</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span> <span class="ow">or</span> <span class="s">&quot;Regex matched&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">: </span><span class="si">%r</span><span class="s"> matches </span><span class="si">%r</span><span class="s"> in </span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">msg</span><span class="p">,</span>
+                                           <span class="n">text</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">():</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">()],</span>
+                                           <span class="n">unexpected_regex</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span>
+                                           <span class="n">text</span><span class="p">)</span>
         <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">failureException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 
@@ -2330,44 +2325,20 @@ operator.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="flavio.physics.bdecays.test_wc.TestBWilson.assertNotRegexpMatches">
-    <p>def <span class="ident">assertNotRegexpMatches</span>(</p><p>*args, **kwargs)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_wc.TestBWilson.assertNotRegexpMatches', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.test_wc.TestBWilson.assertNotRegexpMatches" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">deprecated_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s">&#39;Please use {0} instead.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">original_func</span><span class="o">.</span><span class="n">__name__</span><span class="p">),</span>
-        <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">original_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
     <div class="name def" id="flavio.physics.bdecays.test_wc.TestBWilson.assertRaises">
-    <p>def <span class="ident">assertRaises</span>(</p><p>self, expected_exception, *args, **kwargs)</p>
+    <p>def <span class="ident">assertRaises</span>(</p><p>self, excClass, callableObj=None, *args, **kwargs)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Fail unless an exception of class expected_exception is raised
-by the callable when invoked with specified positional and
-keyword arguments. If a different type of exception is
+    <div class="desc"><p>Fail unless an exception of class excClass is raised
+by callableObj when invoked with arguments args and keyword
+arguments kwargs. If a different type of exception is
 raised, it will not be caught, and the test case will be
 deemed to have suffered an error, exactly as for an
 unexpected exception.</p>
-<p>If called with the callable and arguments omitted, will return a
+<p>If called with callableObj omitted or None, will return a
 context object used like this::</p>
 <div class="codehilite"><pre> with self.assertRaises(SomeException):
      do_something()
@@ -2387,14 +2358,14 @@ self.assertEqual(the_exception.error_code, 3)
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_wc.TestBWilson.assertRaises', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.test_wc.TestBWilson.assertRaises" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">assertRaises</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_exception</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Fail unless an exception of class expected_exception is raised</span>
-<span class="sd">       by the callable when invoked with specified positional and</span>
-<span class="sd">       keyword arguments. If a different type of exception is</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">assertRaises</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">excClass</span><span class="p">,</span> <span class="n">callableObj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fail unless an exception of class excClass is raised</span>
+<span class="sd">       by callableObj when invoked with arguments args and keyword</span>
+<span class="sd">       arguments kwargs. If a different type of exception is</span>
 <span class="sd">       raised, it will not be caught, and the test case will be</span>
 <span class="sd">       deemed to have suffered an error, exactly as for an</span>
 <span class="sd">       unexpected exception.</span>
-<span class="sd">       If called with the callable and arguments omitted, will return a</span>
+<span class="sd">       If called with callableObj omitted or None, will return a</span>
 <span class="sd">       context object used like this::</span>
 <span class="sd">            with self.assertRaises(SomeException):</span>
 <span class="sd">                do_something()</span>
@@ -2408,8 +2379,8 @@ self.assertEqual(the_exception.error_code, 3)
 <span class="sd">           the_exception = cm.exception</span>
 <span class="sd">           self.assertEqual(the_exception.error_code, 3)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">context</span> <span class="o">=</span> <span class="n">_AssertRaisesContext</span><span class="p">(</span><span class="n">expected_exception</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="s">&#39;assertRaises&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="n">_AssertRaisesContext</span><span class="p">(</span><span class="n">excClass</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">callableObj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="s">&#39;assertRaises&#39;</span><span class="p">,</span> <span class="n">callableObj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2420,7 +2391,7 @@ self.assertEqual(the_exception.error_code, 3)
             
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.test_wc.TestBWilson.assertRaisesRegex">
-    <p>def <span class="ident">assertRaisesRegex</span>(</p><p>self, expected_exception, expected_regex, *args, **kwargs)</p>
+    <p>def <span class="ident">assertRaisesRegex</span>(</p><p>self, expected_exception, expected_regex, callable_obj=None, *args, **kwargs)</p>
     </div>
     
 
@@ -2431,27 +2402,30 @@ self.assertEqual(the_exception.error_code, 3)
     expected_exception: Exception class expected to be raised.
     expected_regex: Regex (re pattern object or string) expected
             to be found in error message.
-    args: Function to be called and extra positional args.
-    kwargs: Extra kwargs.
+    callable_obj: Function to be called.
     msg: Optional message used in case of failure. Can only be used
-            when assertRaisesRegex is used as a context manager.</p></div>
+            when assertRaisesRegex is used as a context manager.
+    args: Extra args.
+    kwargs: Extra kwargs.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_wc.TestBWilson.assertRaisesRegex', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.test_wc.TestBWilson.assertRaisesRegex" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">assertRaisesRegex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_exception</span><span class="p">,</span> <span class="n">expected_regex</span><span class="p">,</span>
-                      <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                      <span class="n">callable_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Asserts that the message in a raised exception matches a regex.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        expected_exception: Exception class expected to be raised.</span>
 <span class="sd">        expected_regex: Regex (re pattern object or string) expected</span>
 <span class="sd">                to be found in error message.</span>
-<span class="sd">        args: Function to be called and extra positional args.</span>
-<span class="sd">        kwargs: Extra kwargs.</span>
+<span class="sd">        callable_obj: Function to be called.</span>
 <span class="sd">        msg: Optional message used in case of failure. Can only be used</span>
 <span class="sd">                when assertRaisesRegex is used as a context manager.</span>
+<span class="sd">        args: Extra args.</span>
+<span class="sd">        kwargs: Extra kwargs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">context</span> <span class="o">=</span> <span class="n">_AssertRaisesContext</span><span class="p">(</span><span class="n">expected_exception</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">expected_regex</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="s">&#39;assertRaisesRegex&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="n">_AssertRaisesContext</span><span class="p">(</span><span class="n">expected_exception</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">callable_obj</span><span class="p">,</span>
+                                   <span class="n">expected_regex</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="s">&#39;assertRaisesRegex&#39;</span><span class="p">,</span> <span class="n">callable_obj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2502,10 +2476,8 @@ self.assertEqual(the_exception.error_code, 3)
         <span class="k">assert</span> <span class="n">expected_regex</span><span class="p">,</span> <span class="s">&quot;expected_regex must not be empty.&quot;</span>
         <span class="n">expected_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">expected_regex</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">expected_regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-        <span class="n">standardMsg</span> <span class="o">=</span> <span class="s">&quot;Regex didn&#39;t match: </span><span class="si">%r</span><span class="s"> not found in </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">expected_regex</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-        <span class="c"># _formatMessage ensures the longMessage option is respected</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatMessage</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">standardMsg</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span> <span class="ow">or</span> <span class="s">&quot;Regex didn&#39;t match&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">: </span><span class="si">%r</span><span class="s"> not found in </span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">expected_regex</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
         <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">failureException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 
@@ -2780,19 +2752,19 @@ difference method).</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.test_wc.TestBWilson.assertWarns">
-    <p>def <span class="ident">assertWarns</span>(</p><p>self, expected_warning, *args, **kwargs)</p>
+    <p>def <span class="ident">assertWarns</span>(</p><p>self, expected_warning, callable_obj=None, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Fail unless a warning of class warnClass is triggered
-by the callable when invoked with specified positional and
-keyword arguments.  If a different type of warning is
+by callable_obj when invoked with arguments args and keyword
+arguments kwargs.  If a different type of warning is
 triggered, it will not be handled: depending on the other
 warning filtering rules in effect, it might be silenced, printed
 out, or raised as an exception.</p>
-<p>If called with the callable and arguments omitted, will return a
+<p>If called with callable_obj omitted or None, will return a
 context object used like this::</p>
 <div class="codehilite"><pre> with self.assertWarns(SomeWarning):
      do_something()
@@ -2814,14 +2786,14 @@ self.assertEqual(the_warning.some_attribute, 147)
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_wc.TestBWilson.assertWarns', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.test_wc.TestBWilson.assertWarns" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">assertWarns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_warning</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">assertWarns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_warning</span><span class="p">,</span> <span class="n">callable_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Fail unless a warning of class warnClass is triggered</span>
-<span class="sd">       by the callable when invoked with specified positional and</span>
-<span class="sd">       keyword arguments.  If a different type of warning is</span>
+<span class="sd">       by callable_obj when invoked with arguments args and keyword</span>
+<span class="sd">       arguments kwargs.  If a different type of warning is</span>
 <span class="sd">       triggered, it will not be handled: depending on the other</span>
 <span class="sd">       warning filtering rules in effect, it might be silenced, printed</span>
 <span class="sd">       out, or raised as an exception.</span>
-<span class="sd">       If called with the callable and arguments omitted, will return a</span>
+<span class="sd">       If called with callable_obj omitted or None, will return a</span>
 <span class="sd">       context object used like this::</span>
 <span class="sd">            with self.assertWarns(SomeWarning):</span>
 <span class="sd">                do_something()</span>
@@ -2837,8 +2809,8 @@ self.assertEqual(the_warning.some_attribute, 147)
 <span class="sd">           the_warning = cm.warning</span>
 <span class="sd">           self.assertEqual(the_warning.some_attribute, 147)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">context</span> <span class="o">=</span> <span class="n">_AssertWarnsContext</span><span class="p">(</span><span class="n">expected_warning</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="s">&#39;assertWarns&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="n">_AssertWarnsContext</span><span class="p">(</span><span class="n">expected_warning</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">callable_obj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="s">&#39;assertWarns&#39;</span><span class="p">,</span> <span class="n">callable_obj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2849,7 +2821,7 @@ self.assertEqual(the_warning.some_attribute, 147)
             
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.test_wc.TestBWilson.assertWarnsRegex">
-    <p>def <span class="ident">assertWarnsRegex</span>(</p><p>self, expected_warning, expected_regex, *args, **kwargs)</p>
+    <p>def <span class="ident">assertWarnsRegex</span>(</p><p>self, expected_warning, expected_regex, callable_obj=None, *args, **kwargs)</p>
     </div>
     
 
@@ -2863,15 +2835,16 @@ are considered successful matches.</p>
     expected_warning: Warning class expected to be triggered.
     expected_regex: Regex (re pattern object or string) expected
             to be found in error message.
-    args: Function to be called and extra positional args.
-    kwargs: Extra kwargs.
+    callable_obj: Function to be called.
     msg: Optional message used in case of failure. Can only be used
-            when assertWarnsRegex is used as a context manager.</p></div>
+            when assertWarnsRegex is used as a context manager.
+    args: Extra args.
+    kwargs: Extra kwargs.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_wc.TestBWilson.assertWarnsRegex', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.test_wc.TestBWilson.assertWarnsRegex" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">assertWarnsRegex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_warning</span><span class="p">,</span> <span class="n">expected_regex</span><span class="p">,</span>
-                     <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                     <span class="n">callable_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Asserts that the message in a triggered warning matches a regexp.</span>
 <span class="sd">    Basic functioning is similar to assertWarns() with the addition</span>
 <span class="sd">    that only warnings whose messages also match the regular expression</span>
@@ -2880,13 +2853,15 @@ are considered successful matches.</p>
 <span class="sd">        expected_warning: Warning class expected to be triggered.</span>
 <span class="sd">        expected_regex: Regex (re pattern object or string) expected</span>
 <span class="sd">                to be found in error message.</span>
-<span class="sd">        args: Function to be called and extra positional args.</span>
-<span class="sd">        kwargs: Extra kwargs.</span>
+<span class="sd">        callable_obj: Function to be called.</span>
 <span class="sd">        msg: Optional message used in case of failure. Can only be used</span>
 <span class="sd">                when assertWarnsRegex is used as a context manager.</span>
+<span class="sd">        args: Extra args.</span>
+<span class="sd">        kwargs: Extra kwargs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">context</span> <span class="o">=</span> <span class="n">_AssertWarnsContext</span><span class="p">(</span><span class="n">expected_warning</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">expected_regex</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="s">&#39;assertWarnsRegex&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="n">_AssertWarnsContext</span><span class="p">(</span><span class="n">expected_warning</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">callable_obj</span><span class="p">,</span>
+                                  <span class="n">expected_regex</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="s">&#39;assertWarnsRegex&#39;</span><span class="p">,</span> <span class="n">callable_obj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3263,11 +3238,8 @@ tearDown.</p></div>
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">result</span><span class="o">.</span><span class="n">stopTest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="n">expecting_failure_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">testMethod</span><span class="p">,</span>
-                                       <span class="s">&quot;__unittest_expecting_failure__&quot;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-    <span class="n">expecting_failure_class</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                      <span class="s">&quot;__unittest_expecting_failure__&quot;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-    <span class="n">expecting_failure</span> <span class="o">=</span> <span class="n">expecting_failure_class</span> <span class="ow">or</span> <span class="n">expecting_failure_method</span>
+    <span class="n">expecting_failure</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">testMethod</span><span class="p">,</span>
+                                <span class="s">&quot;__unittest_expecting_failure__&quot;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
     <span class="n">outcome</span> <span class="o">=</span> <span class="n">_Outcome</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_outcome</span> <span class="o">=</span> <span class="n">outcome</span>
@@ -3460,6 +3432,34 @@ block, allowing further test code to be executed.</p></div>
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="s">&quot;Hook method for deconstructing the test fixture after testing it.&quot;</span>
     <span class="k">pass</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.test_wc.TestBWilson.test_clnu">
+    <p>def <span class="ident">test_clnu</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_wc.TestBWilson.test_clnu', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.test_wc.TestBWilson.test_clnu" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">test_clnu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">par_dict</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+    <span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1184</span>
+    <span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;alpha_e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mf">127.925</span>
+    <span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;s2w&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mf">0.2315</span>
+    <span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;m_t&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mf">173.3</span>
+    <span class="n">cl</span> <span class="o">=</span> <span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">CL_SM</span><span class="p">(</span><span class="n">par_dict</span><span class="p">)</span>
+    <span class="c"># comparing the central value of X_t to (4.2) of 1009.0947</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="o">-</span><span class="n">cl</span><span class="o">*</span><span class="n">par_dict</span><span class="p">[</span><span class="s">&#39;s2w&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">1.469</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 </pre></div>
 
   </div>
