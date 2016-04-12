@@ -264,6 +264,7 @@ all parametewrs.
 | `bag_K0_3` | $B_3^{(K)}$ | $K^0$ bag parameter of $O_3$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `bag_K0_4` | $B_4^{(K)}$ | $K^0$ bag parameter of $O_4$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `bag_K0_5` | $B_5^{(K)}$ | $K^0$ bag parameter of $O_5$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
+| `deltaPcu` | $\delta P_{c,u}$ | Contributions to the $K^+\to\pi^+\nu\bar\nu$ amplitude not described by the dimension-6 effective Hamiltonian. |
 | `eta_cc_K0` | $\eta_{cc}$ | SM QCD correction factor for the charm contribution to $K^0$ mixing |
 | `eta_ct_K0` | $\eta_{ct}$ | SM QCD correction factor for the top-charm contribution to $K^0$ mixing |
 | `eta_tt_B0` | $\eta_B$ | SM QCD correction factor for $B^0$ mixing |
@@ -291,7 +292,9 @@ all parametewrs.
 | `f_pi0` | $f_{\pi^0}$ | Neutral pion decay constant |
 | `f_rho0` | $f_{\rho^0}$ | $\rho^0$ decay constant |
 | `gamma` | $\gamma$ | CKM angle $\gamma$ in radians |
+| `kappa_L_tilde` | $\tilde{\kappa}_L$ | Parameter $\kappa_L$ containing the hadronic form factor information needed for the $K_L\to\pi^0\nu\bar\nu$ branching ratio, determined assuming $V_{us}\equiv0.225$ |
 | `kappa_epsilon` | $\kappa_\epsilon$ | Correction factor for $\epsilon_K$ |
+| `kappa_plus_tilde` | $\tilde{\kappa}_+$ | Parameter $\kappa_+$ containing the hadronic form factor information needed for the $K^+\to\pi^+\nu\bar\nu$ branching ratio, determined assuming $V_{us}\equiv0.225$ |
 | `m_B*+` | $m_{B^{*+}}$ | $B^{*+}$ mass |
 | `m_B*0` | $m_{B^{*0}}$ | $B^{*0}$ mass |
 | `m_B+` | $m_{B^{+}}$ | $B^{+}$ mass |
