@@ -866,8 +866,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -1090,7 +1092,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running" class="source">
-    <div class="codehilite"><pre><span class="sd">&quot;&quot;&quot;Functions to solve the renormalization group equations (RGEs) numerically.&quot;&quot;&quot;</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Functions to solve the renormalization group equations (RGEs) numerically.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">flavio.physics.running</span> <span class="kn">import</span> <span class="n">betafunctions</span>
 <span class="kn">from</span> <span class="nn">flavio.physics.running</span> <span class="kn">import</span> <span class="n">masses</span>
@@ -1105,44 +1107,44 @@ table {
 
 <span class="k">def</span> <span class="nf">rg_evolve_sm</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">scale_in</span> <span class="o">==</span> <span class="n">scale_out</span><span class="p">:</span>
-        <span class="c"># no need to run!</span>
+        <span class="c1"># no need to run!</span>
         <span class="k">return</span> <span class="n">initial_condition</span>
     <span class="k">if</span> <span class="n">scale_out</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;RG evolution below the strange threshold not implemented.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;RG evolution below the strange threshold not implemented.&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_rg_evolve_sm</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">),</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">)</span>
 
-<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">][</span><span class="s1">&#39;cache size&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">_rg_evolve_sm</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
-    <span class="c"># quark mass thresholds</span>
+    <span class="c1"># quark mass thresholds</span>
     <span class="n">thresholds</span> <span class="o">=</span> <span class="p">{</span>
         <span class="mi">3</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-        <span class="mi">4</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s">&#39;mc&#39;</span><span class="p">],</span>
-        <span class="mi">5</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s">&#39;mb&#39;</span><span class="p">],</span>
-        <span class="mi">6</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s">&#39;mt&#39;</span><span class="p">],</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mc&#39;</span><span class="p">],</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mb&#39;</span><span class="p">],</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mt&#39;</span><span class="p">],</span>
         <span class="mi">7</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
         <span class="p">}</span>
-    <span class="k">if</span> <span class="n">scale_in</span> <span class="o">&gt;</span> <span class="n">scale_out</span><span class="p">:</span> <span class="c"># running DOWN</span>
-        <span class="c"># set initial values and scales</span>
+    <span class="k">if</span> <span class="n">scale_in</span> <span class="o">&gt;</span> <span class="n">scale_out</span><span class="p">:</span> <span class="c1"># running DOWN</span>
+        <span class="c1"># set initial values and scales</span>
         <span class="n">initial_nf</span> <span class="o">=</span> <span class="n">initial_condition</span>
         <span class="n">scale_in_nf</span> <span class="o">=</span> <span class="n">scale_in</span>
         <span class="k">for</span> <span class="n">nf</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">scale_in</span> <span class="o">&lt;=</span> <span class="n">thresholds</span><span class="p">[</span><span class="n">nf</span><span class="p">]:</span>
                 <span class="k">continue</span>
-             <span class="c"># run either to next threshold or to final scale, whichever is closer</span>
+             <span class="c1"># run either to next threshold or to final scale, whichever is closer</span>
             <span class="n">scale_stop</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">thresholds</span><span class="p">[</span><span class="n">nf</span><span class="p">],</span> <span class="n">scale_out</span><span class="p">)</span>
             <span class="n">sol</span> <span class="o">=</span> <span class="n">rg_evolve</span><span class="p">(</span><span class="n">initial_nf</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">(</span><span class="n">nf</span><span class="p">),</span> <span class="n">scale_in_nf</span><span class="p">,</span> <span class="n">scale_stop</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">scale_stop</span> <span class="o">==</span> <span class="n">scale_out</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">sol</span>
             <span class="n">initial_nf</span> <span class="o">=</span> <span class="n">sol</span>
             <span class="n">scale_in_nf</span> <span class="o">=</span> <span class="n">thresholds</span><span class="p">[</span><span class="n">nf</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="n">scale_in</span> <span class="o">&lt;</span> <span class="n">scale_out</span><span class="p">:</span> <span class="c"># running UP</span>
-        <span class="c"># set initial values and scales</span>
+    <span class="k">elif</span> <span class="n">scale_in</span> <span class="o">&lt;</span> <span class="n">scale_out</span><span class="p">:</span> <span class="c1"># running UP</span>
+        <span class="c1"># set initial values and scales</span>
         <span class="n">initial_nf</span> <span class="o">=</span> <span class="n">initial_condition</span>
         <span class="n">scale_in_nf</span> <span class="o">=</span> <span class="n">scale_in</span>
         <span class="k">for</span> <span class="n">nf</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">nf</span> <span class="o">&lt;</span> <span class="mi">6</span> <span class="ow">and</span> <span class="n">scale_in</span> <span class="o">&gt;=</span> <span class="n">thresholds</span><span class="p">[</span><span class="n">nf</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
                 <span class="k">continue</span>
-             <span class="c"># run either to next threshold or to final scale, whichever is closer</span>
+             <span class="c1"># run either to next threshold or to final scale, whichever is closer</span>
             <span class="n">scale_stop</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">thresholds</span><span class="p">[</span><span class="n">nf</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">scale_out</span><span class="p">)</span>
             <span class="n">sol</span> <span class="o">=</span> <span class="n">rg_evolve</span><span class="p">(</span><span class="n">initial_nf</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">(</span><span class="n">nf</span><span class="p">),</span> <span class="n">scale_in_nf</span><span class="p">,</span> <span class="n">scale_stop</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">scale_stop</span> <span class="o">==</span> <span class="n">scale_out</span><span class="p">:</span>
@@ -1155,14 +1157,14 @@ table {
     <span class="sd">r&quot;&quot;&quot;Get the running $\overline{\mathrm{MS}}$ $\alpha_s$ and $\alpha_e$</span>
 <span class="sd">    at the specified scale.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">alpha_in</span> <span class="o">=</span> <span class="p">[</span><span class="n">par</span><span class="p">[(</span><span class="s">&#39;alpha_s&#39;</span><span class="p">)],</span> <span class="n">par</span><span class="p">[(</span><span class="s">&#39;alpha_e&#39;</span><span class="p">)]]</span>
-    <span class="n">scale_in</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_Z&#39;</span><span class="p">]</span>
+    <span class="n">alpha_in</span> <span class="o">=</span> <span class="p">[</span><span class="n">par</span><span class="p">[(</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">)],</span> <span class="n">par</span><span class="p">[(</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">)]]</span>
+    <span class="n">scale_in</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_Z&#39;</span><span class="p">]</span>
     <span class="n">alpha_out</span> <span class="o">=</span> <span class="n">rg_evolve_sm</span><span class="p">(</span><span class="n">alpha_in</span><span class="p">,</span> <span class="n">betafunctions</span><span class="o">.</span><span class="n">betafunctions_qcd_qed_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s">&#39;alpha_s&#39;</span><span class="p">,</span><span class="s">&#39;alpha_e&#39;</span><span class="p">),</span><span class="n">alpha_out</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">,</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">),</span><span class="n">alpha_out</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">_derivative_mq</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">nf</span><span class="p">):</span>
-    <span class="n">d_alphas</span> <span class="o">=</span> <span class="n">betafunctions</span><span class="o">.</span><span class="n">beta_qcd_qed</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">0</span><span class="p">],</span> <span class="n">mu</span><span class="p">,</span> <span class="n">nf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c"># only alpha_s</span>
+    <span class="n">d_alphas</span> <span class="o">=</span> <span class="n">betafunctions</span><span class="o">.</span><span class="n">beta_qcd_qed</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">0</span><span class="p">],</span> <span class="n">mu</span><span class="p">,</span> <span class="n">nf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># only alpha_s</span>
     <span class="n">d_m</span> <span class="o">=</span> <span class="n">masses</span><span class="o">.</span><span class="n">gamma_qcd</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mu</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">[</span> <span class="n">d_alphas</span><span class="p">,</span> <span class="n">d_m</span> <span class="p">]</span>
 <span class="k">def</span> <span class="nf">_derivative_mq_nf</span><span class="p">(</span><span class="n">nf</span><span class="p">):</span>
@@ -1170,7 +1172,7 @@ table {
 
 
 <span class="k">def</span> <span class="nf">get_mq</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
-    <span class="n">alphas_in</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">)[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="n">alphas_in</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="n">x_in</span> <span class="o">=</span> <span class="p">[</span><span class="n">alphas_in</span><span class="p">,</span> <span class="n">m_in</span><span class="p">]</span>
     <span class="n">sol</span> <span class="o">=</span> <span class="n">rg_evolve_sm</span><span class="p">(</span><span class="n">x_in</span><span class="p">,</span> <span class="n">_derivative_mq_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1178,57 +1180,57 @@ table {
 
 <span class="k">def</span> <span class="nf">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running $b$ quark mass at the specified scale.&quot;&quot;&quot;</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_b&#39;</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">get_mq</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_out</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">get_mc</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running $c$ quark mass at the specified scale.&quot;&quot;&quot;</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_c&#39;</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_c&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">get_mq</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_out</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">get_mu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running $u$ quark mass at the specified scale.&quot;&quot;&quot;</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_u&#39;</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_u&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">get_mq</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_in</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">scale_out</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">get_md</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running $d$ quark mass at the specified scale.&quot;&quot;&quot;</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_d&#39;</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_d&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">get_mq</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_in</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">scale_out</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running $s$ quark mass at the specified scale.&quot;&quot;&quot;</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_s&#39;</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_s&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">get_mq</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_in</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">scale_out</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">get_mc_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="c"># for mc, default to 2-loop conversion only due to renormalon ambiguity!</span>
+<span class="k">def</span> <span class="nf">get_mc_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="c1"># for mc, default to 2-loop conversion only due to renormalon ambiguity!</span>
     <span class="sd">r&quot;&quot;&quot;Get the $c$ quark pole mass, using the 2-loop conversion</span>
 <span class="sd">    formula from the $\overline{\mathrm{MS}}$ mass.&quot;&quot;&quot;</span>
-    <span class="n">mcmc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_c&#39;</span><span class="p">]</span>
-    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mcmc</span><span class="p">)[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="n">mcmc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_c&#39;</span><span class="p">]</span>
+    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mcmc</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">_get_mc_pole</span><span class="p">(</span><span class="n">mcmc</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">alpha_s</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="n">nl</span><span class="p">)</span>
 
-<span class="c"># cached version</span>
+<span class="c1"># cached version</span>
 <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_get_mc_pole</span><span class="p">(</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">nl</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">masses</span><span class="o">.</span><span class="n">mMS2mOS</span><span class="p">(</span><span class="n">MS</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">Nf</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">asmu</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">Mu</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="n">nl</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="c"># for mb, default to 2-loop conversion only due to renormalon ambiguity!</span>
+<span class="k">def</span> <span class="nf">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="c1"># for mb, default to 2-loop conversion only due to renormalon ambiguity!</span>
     <span class="sd">r&quot;&quot;&quot;Get the $b$ quark pole mass, using the 2-loop conversion</span>
 <span class="sd">    formula from the $\overline{\mathrm{MS}}$ mass.&quot;&quot;&quot;</span>
-    <span class="n">mbmb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_b&#39;</span><span class="p">]</span>
-    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mbmb</span><span class="p">)[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="n">mbmb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">]</span>
+    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mbmb</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">_get_mb_pole</span><span class="p">(</span><span class="n">mbmb</span><span class="o">=</span><span class="n">mbmb</span><span class="p">,</span> <span class="n">alpha_s</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="n">nl</span><span class="p">)</span>
 
-<span class="c"># cached version</span>
+<span class="c1"># cached version</span>
 <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_get_mb_pole</span><span class="p">(</span><span class="n">mbmb</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">nl</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">masses</span><span class="o">.</span><span class="n">mMS2mOS</span><span class="p">(</span><span class="n">MS</span><span class="o">=</span><span class="n">mbmb</span><span class="p">,</span> <span class="n">Nf</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">asmu</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">Mu</span><span class="o">=</span><span class="n">mbmb</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="n">nl</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running top quark mass at the specified scale.&quot;&quot;&quot;</span>
-    <span class="n">mt_pole</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_t&#39;</span><span class="p">]</span>
-    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="n">mt_pole</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_t&#39;</span><span class="p">]</span>
+    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">masses</span><span class="o">.</span><span class="n">mOS2mMS</span><span class="p">(</span><span class="n">mOS</span><span class="o">=</span><span class="n">mt_pole</span><span class="p">,</span> <span class="n">Nf</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">asmu</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">Mu</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">make_wilson_rge_derivative</span><span class="p">(</span><span class="n">adm</span><span class="p">):</span>
@@ -1254,9 +1256,9 @@ table {
 <span class="sd">    $$\mu\frac{d}{d\mu} \vec C = \gamma^T(n_f, \alpha_s, \alpha_e) \vec C$$</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">alpha_in</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">)</span>
-    <span class="c"># x is (c_1, ..., c_N, alpha_s, alpha_e)</span>
+    <span class="c1"># x is (c_1, ..., c_N, alpha_s, alpha_e)</span>
     <span class="n">c_in_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c_in</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-    <span class="n">x_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_in_real</span><span class="p">,</span> <span class="p">[</span><span class="n">alpha_in</span><span class="p">[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">],</span> <span class="n">alpha_in</span><span class="p">[</span><span class="s">&#39;alpha_e&#39;</span><span class="p">]])</span>
+    <span class="n">x_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_in_real</span><span class="p">,</span> <span class="p">[</span><span class="n">alpha_in</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">],</span> <span class="n">alpha_in</span><span class="p">[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]])</span>
     <span class="n">sol</span> <span class="o">=</span> <span class="n">rg_evolve_sm</span><span class="p">(</span><span class="n">x_in</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">)</span>
     <span class="n">c_out</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">c_out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">complex</span><span class="p">)</span>
@@ -1292,14 +1294,14 @@ at the specified scale.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_alpha', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.get_alpha" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running $\overline{\mathrm{MS}}$ $\alpha_s$ and $\alpha_e$</span>
 <span class="sd">    at the specified scale.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">alpha_in</span> <span class="o">=</span> <span class="p">[</span><span class="n">par</span><span class="p">[(</span><span class="s">&#39;alpha_s&#39;</span><span class="p">)],</span> <span class="n">par</span><span class="p">[(</span><span class="s">&#39;alpha_e&#39;</span><span class="p">)]]</span>
-    <span class="n">scale_in</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_Z&#39;</span><span class="p">]</span>
+    <span class="n">alpha_in</span> <span class="o">=</span> <span class="p">[</span><span class="n">par</span><span class="p">[(</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">)],</span> <span class="n">par</span><span class="p">[(</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">)]]</span>
+    <span class="n">scale_in</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_Z&#39;</span><span class="p">]</span>
     <span class="n">alpha_out</span> <span class="o">=</span> <span class="n">rg_evolve_sm</span><span class="p">(</span><span class="n">alpha_in</span><span class="p">,</span> <span class="n">betafunctions</span><span class="o">.</span><span class="n">betafunctions_qcd_qed_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s">&#39;alpha_s&#39;</span><span class="p">,</span><span class="s">&#39;alpha_e&#39;</span><span class="p">),</span><span class="n">alpha_out</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">,</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">),</span><span class="n">alpha_out</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1320,9 +1322,9 @@ at the specified scale.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_mb', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.get_mb" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running $b$ quark mass at the specified scale.&quot;&quot;&quot;</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_b&#39;</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">get_mq</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_out</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
 </pre></div>
 
@@ -1345,11 +1347,11 @@ formula from the $\overline{\mathrm{MS}}$ mass.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_mb_pole', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.get_mb_pole" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="c"># for mb, default to 2-loop conversion only due to renormalon ambiguity!</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="c1"># for mb, default to 2-loop conversion only due to renormalon ambiguity!</span>
     <span class="sd">r&quot;&quot;&quot;Get the $b$ quark pole mass, using the 2-loop conversion</span>
 <span class="sd">    formula from the $\overline{\mathrm{MS}}$ mass.&quot;&quot;&quot;</span>
-    <span class="n">mbmb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_b&#39;</span><span class="p">]</span>
-    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mbmb</span><span class="p">)[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="n">mbmb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">]</span>
+    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mbmb</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">_get_mb_pole</span><span class="p">(</span><span class="n">mbmb</span><span class="o">=</span><span class="n">mbmb</span><span class="p">,</span> <span class="n">alpha_s</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="n">nl</span><span class="p">)</span>
 </pre></div>
 
@@ -1371,9 +1373,9 @@ formula from the $\overline{\mathrm{MS}}$ mass.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_mc', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.get_mc" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_mc</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_mc</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running $c$ quark mass at the specified scale.&quot;&quot;&quot;</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_c&#39;</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_c&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">get_mq</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_out</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
 </pre></div>
 
@@ -1396,11 +1398,11 @@ formula from the $\overline{\mathrm{MS}}$ mass.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_mc_pole', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.get_mc_pole" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_mc_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="c"># for mc, default to 2-loop conversion only due to renormalon ambiguity!</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_mc_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="c1"># for mc, default to 2-loop conversion only due to renormalon ambiguity!</span>
     <span class="sd">r&quot;&quot;&quot;Get the $c$ quark pole mass, using the 2-loop conversion</span>
 <span class="sd">    formula from the $\overline{\mathrm{MS}}$ mass.&quot;&quot;&quot;</span>
-    <span class="n">mcmc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_c&#39;</span><span class="p">]</span>
-    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mcmc</span><span class="p">)[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="n">mcmc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_c&#39;</span><span class="p">]</span>
+    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mcmc</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">_get_mc_pole</span><span class="p">(</span><span class="n">mcmc</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">alpha_s</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="n">nl</span><span class="p">)</span>
 </pre></div>
 
@@ -1422,9 +1424,9 @@ formula from the $\overline{\mathrm{MS}}$ mass.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_md', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.get_md" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_md</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_md</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running $d$ quark mass at the specified scale.&quot;&quot;&quot;</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_d&#39;</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_d&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">get_mq</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_in</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">scale_out</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
 </pre></div>
 
@@ -1445,8 +1447,8 @@ formula from the $\overline{\mathrm{MS}}$ mass.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_mq', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.get_mq" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_mq</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
-    <span class="n">alphas_in</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">)[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_mq</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
+    <span class="n">alphas_in</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="n">x_in</span> <span class="o">=</span> <span class="p">[</span><span class="n">alphas_in</span><span class="p">,</span> <span class="n">m_in</span><span class="p">]</span>
     <span class="n">sol</span> <span class="o">=</span> <span class="n">rg_evolve_sm</span><span class="p">(</span><span class="n">x_in</span><span class="p">,</span> <span class="n">_derivative_mq_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1470,9 +1472,9 @@ formula from the $\overline{\mathrm{MS}}$ mass.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_ms', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.get_ms" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running $s$ quark mass at the specified scale.&quot;&quot;&quot;</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_s&#39;</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_s&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">get_mq</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_in</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">scale_out</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
 </pre></div>
 
@@ -1494,10 +1496,10 @@ formula from the $\overline{\mathrm{MS}}$ mass.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_mt', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.get_mt" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running top quark mass at the specified scale.&quot;&quot;&quot;</span>
-    <span class="n">mt_pole</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_t&#39;</span><span class="p">]</span>
-    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="n">mt_pole</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_t&#39;</span><span class="p">]</span>
+    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">masses</span><span class="o">.</span><span class="n">mOS2mMS</span><span class="p">(</span><span class="n">mOS</span><span class="o">=</span><span class="n">mt_pole</span><span class="p">,</span> <span class="n">Nf</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">asmu</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">Mu</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
@@ -1519,9 +1521,9 @@ formula from the $\overline{\mathrm{MS}}$ mass.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_mu', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.get_mu" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_mu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_mu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running $u$ quark mass at the specified scale.&quot;&quot;&quot;</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_u&#39;</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_u&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">get_mq</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_in</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">scale_out</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
 </pre></div>
 
@@ -1545,16 +1547,16 @@ $$\mu\frac{d}{d\mu} \vec C = \gamma^T(n_f, \alpha_s, \alpha_e) \vec C$$</p></div
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_wilson', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.get_wilson" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">c_in</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">c_in</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;RG evolution of a vector of Wilson coefficients.</span>
 
 <span class="sd">    In terms of the anomalous dimension matrix $\gamma$, the RGE reads</span>
 <span class="sd">    $$\mu\frac{d}{d\mu} \vec C = \gamma^T(n_f, \alpha_s, \alpha_e) \vec C$$</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">alpha_in</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">)</span>
-    <span class="c"># x is (c_1, ..., c_N, alpha_s, alpha_e)</span>
+    <span class="c1"># x is (c_1, ..., c_N, alpha_s, alpha_e)</span>
     <span class="n">c_in_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c_in</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-    <span class="n">x_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_in_real</span><span class="p">,</span> <span class="p">[</span><span class="n">alpha_in</span><span class="p">[</span><span class="s">&#39;alpha_s&#39;</span><span class="p">],</span> <span class="n">alpha_in</span><span class="p">[</span><span class="s">&#39;alpha_e&#39;</span><span class="p">]])</span>
+    <span class="n">x_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_in_real</span><span class="p">,</span> <span class="p">[</span><span class="n">alpha_in</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">],</span> <span class="n">alpha_in</span><span class="p">[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]])</span>
     <span class="n">sol</span> <span class="o">=</span> <span class="n">rg_evolve_sm</span><span class="p">(</span><span class="n">x_in</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">)</span>
     <span class="n">c_out</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">c_out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">complex</span><span class="p">)</span>
@@ -1577,7 +1579,7 @@ $$\mu\frac{d}{d\mu} \vec C = \gamma^T(n_f, \alpha_s, \alpha_e) \vec C$$</p></div
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.make_wilson_rge_derivative', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.make_wilson_rge_derivative" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">make_wilson_rge_derivative</span><span class="p">(</span><span class="n">adm</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">make_wilson_rge_derivative</span><span class="p">(</span><span class="n">adm</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">adm</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">None</span>
     <span class="k">def</span> <span class="nf">derivative</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">nf</span><span class="p">):</span>
@@ -1611,7 +1613,7 @@ $$\mu\frac{d}{d\mu} \vec C = \gamma^T(n_f, \alpha_s, \alpha_e) \vec C$$</p></div
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.rg_evolve', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.rg_evolve" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">rg_evolve</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">,</span> <span class="n">derivative</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">rg_evolve</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">,</span> <span class="n">derivative</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
     <span class="n">sol</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="n">derivative</span><span class="p">,</span> <span class="n">initial_condition</span><span class="p">,</span> <span class="p">[</span><span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
@@ -1633,12 +1635,12 @@ $$\mu\frac{d}{d\mu} \vec C = \gamma^T(n_f, \alpha_s, \alpha_e) \vec C$$</p></div
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.rg_evolve_sm', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.running.running.rg_evolve_sm" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">rg_evolve_sm</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">rg_evolve_sm</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">scale_in</span> <span class="o">==</span> <span class="n">scale_out</span><span class="p">:</span>
-        <span class="c"># no need to run!</span>
+        <span class="c1"># no need to run!</span>
         <span class="k">return</span> <span class="n">initial_condition</span>
     <span class="k">if</span> <span class="n">scale_out</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;RG evolution below the strange threshold not implemented.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;RG evolution below the strange threshold not implemented.&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_rg_evolve_sm</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">),</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">)</span>
 </pre></div>
 

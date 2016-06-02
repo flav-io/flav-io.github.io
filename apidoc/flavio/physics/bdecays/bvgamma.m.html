@@ -866,8 +866,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -1068,9 +1070,11 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.bvgamma.amps">amps</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvgamma.amps_bar">amps_bar</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvgamma.amps_ff">amps_ff</a></li>
-    <li class="mono"><a href="#flavio.physics.bdecays.bvgamma.amps_qcdf">amps_qcdf</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvgamma.amps_ss">amps_ss</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvgamma.amps_subleading">amps_subleading</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvgamma.get_a_abar">get_a_abar</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvgamma.prefactor">prefactor</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvgamma.prefactor_helicityamps">prefactor_helicityamps</a></li>
   </ul>
 
     </li>
@@ -1092,7 +1096,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bvgamma" class="source">
-    <div class="codehilite"><pre><span class="sd">r&quot;&quot;&quot;Functions for exclusive $B\to V\gamma$ decays.&quot;&quot;&quot;</span>
+    <div class="codehilite"><pre><span></span><span class="sd">r&quot;&quot;&quot;Functions for exclusive $B\to V\gamma$ decays.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span><span class="p">,</span><span class="n">pi</span>
 <span class="kn">from</span> <span class="nn">cmath</span> <span class="kn">import</span> <span class="n">exp</span>
@@ -1102,75 +1106,104 @@ table {
 <span class="kn">from</span> <span class="nn">flavio.physics</span> <span class="kn">import</span> <span class="n">ckm</span><span class="p">,</span> <span class="n">mesonmixing</span>
 <span class="kn">from</span> <span class="nn">flavio.config</span> <span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span> <span class="nn">flavio.physics.running</span> <span class="kn">import</span> <span class="n">running</span>
-<span class="kn">from</span> <span class="nn">flavio.physics.bdecays.wilsoncoefficients</span> <span class="kn">import</span> <span class="n">wctot_dict</span>
+<span class="kn">from</span> <span class="nn">flavio.physics.bdecays.wilsoncoefficients</span> <span class="kn">import</span> <span class="n">wctot_dict</span><span class="p">,</span> <span class="n">get_wceff</span>
 <span class="kn">from</span> <span class="nn">flavio.physics.common</span> <span class="kn">import</span> <span class="n">conjugate_par</span><span class="p">,</span> <span class="n">conjugate_wc</span><span class="p">,</span> <span class="n">add_dict</span>
 <span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">AuxiliaryQuantity</span><span class="p">,</span> <span class="n">Observable</span><span class="p">,</span> <span class="n">Prediction</span>
 
 
 <span class="k">def</span> <span class="nf">prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
-    <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
-    <span class="n">mV</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_&#39;</span><span class="o">+</span><span class="n">V</span><span class="p">]</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s">&#39;bvgamma&#39;</span><span class="p">]</span>
-    <span class="n">alphaem</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s">&#39;alpha_e&#39;</span><span class="p">]</span>
+    <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+    <span class="n">mV</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">V</span><span class="p">]</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvgamma&#39;</span><span class="p">]</span>
+    <span class="n">alphaem</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
     <span class="n">mb</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;GF&#39;</span><span class="p">]</span>
+    <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
     <span class="n">bq</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span>
-    <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="n">bq</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">bq</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span> <span class="n">sqrt</span><span class="p">((</span><span class="n">GF</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">alphaem</span> <span class="o">*</span> <span class="n">mB</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">mb</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">32</span> <span class="o">*</span> <span class="n">pi</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
                   <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">mV</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">mB</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">xi_t</span> <span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">amps_ff</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">prefactor_helicityamps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">N_BVll</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bvll</span><span class="o">.</span><span class="n">amplitudes</span><span class="o">.</span><span class="n">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+    <span class="n">mV</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">V</span><span class="p">]</span>
+    <span class="n">laB</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">lambda_K</span><span class="p">(</span><span class="n">mB</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mV</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvgamma&#39;</span><span class="p">]</span>
+    <span class="n">mb</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">N</span><span class="o">/</span><span class="p">(</span><span class="o">+</span><span class="mi">1j</span> <span class="o">*</span> <span class="n">mb</span><span class="o">/</span><span class="n">q2</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">laB</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">N_BVll</span>
+
+
+<span class="k">def</span> <span class="nf">amps_ff</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <span class="n">par</span> <span class="o">=</span> <span class="n">par_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">cp_conjugate</span><span class="p">:</span>
+        <span class="n">par</span> <span class="o">=</span> <span class="n">conjugate_par</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="n">bq</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span>
-    <span class="n">ff_name</span> <span class="o">=</span> <span class="n">meson_ff</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span> <span class="o">+</span> <span class="s">&#39; form factor&#39;</span>
+    <span class="n">ff_name</span> <span class="o">=</span> <span class="n">meson_ff</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span> <span class="o">+</span> <span class="s1">&#39; form factor&#39;</span>
     <span class="n">ff</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">ff_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s">&#39;bvgamma&#39;</span><span class="p">]</span>
-    <span class="n">bq</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvgamma&#39;</span><span class="p">]</span>
+    <span class="c1"># these are the b-&gt;qee Wilson coefficients - they contain the b-&gt;qgamma ones as a subset</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">bq</span><span class="o">+</span><span class="s1">&#39;ee&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cp_conjugate</span><span class="p">:</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">conjugate_wc</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
     <span class="n">delta_C7</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">matrixelements</span><span class="o">.</span><span class="n">delta_C7</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="n">wc</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">qiqj</span><span class="o">=</span><span class="n">bq</span><span class="p">)</span>
-    <span class="n">c7</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s">&#39;C7eff_&#39;</span><span class="o">+</span><span class="n">bq</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta_C7</span>
-    <span class="n">c7p</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s">&#39;C7effp_&#39;</span><span class="o">+</span><span class="n">bq</span><span class="p">]</span>
     <span class="n">a</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">a</span><span class="p">[</span><span class="s">&#39;L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">c7</span>  <span class="o">*</span> <span class="n">ff</span><span class="p">[</span><span class="s">&#39;T1&#39;</span><span class="p">]</span>
-    <span class="n">a</span><span class="p">[</span><span class="s">&#39;R&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">c7p</span> <span class="o">*</span> <span class="n">ff</span><span class="p">[</span><span class="s">&#39;T1&#39;</span><span class="p">]</span>
+    <span class="n">a</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;C7eff_&#39;</span><span class="o">+</span><span class="n">bq</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta_C7</span><span class="p">)</span>  <span class="o">*</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;T1&#39;</span><span class="p">]</span>
+    <span class="n">a</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;C7effp_&#39;</span><span class="o">+</span><span class="n">bq</span><span class="p">]</span> <span class="o">*</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;T1&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">a</span>
 
-<span class="k">def</span> <span class="nf">amps_qcdf</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
-    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s">&#39;bvgamma&#39;</span><span class="p">]</span>
-    <span class="n">T_perp</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bvll</span><span class="o">.</span><span class="n">qcdf</span><span class="o">.</span><span class="n">T_perp</span><span class="p">(</span><span class="n">q2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="n">wc</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">amps_ss</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvgamma&#39;</span><span class="p">]</span>
+    <span class="n">ss_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">V</span><span class="o">+</span><span class="s1">&#39;ll spectator scattering&#39;</span>
+    <span class="n">q2</span><span class="o">=</span><span class="mf">0.001</span> <span class="c1"># away from zero to avoid pole</span>
+    <span class="n">amps</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">ss_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor_helicityamps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="n">a</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">a</span><span class="p">[</span><span class="s">&#39;L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">T_perp</span>
-    <span class="n">a</span><span class="p">[</span><span class="s">&#39;R&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">a</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">N</span> <span class="o">*</span> <span class="n">amps</span><span class="p">[(</span><span class="s1">&#39;mi&#39;</span> <span class="p">,</span><span class="s1">&#39;V&#39;</span><span class="p">)]</span>
+    <span class="n">a</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">+</span><span class="n">N</span> <span class="o">*</span> <span class="n">amps</span><span class="p">[(</span><span class="s1">&#39;pl&#39;</span> <span class="p">,</span><span class="s1">&#39;V&#39;</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">a</span>
+
+<span class="k">def</span> <span class="nf">amps_subleading</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvgamma&#39;</span><span class="p">]</span>
+    <span class="n">sub_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">V</span><span class="o">+</span> <span class="s1">&#39;ll subleading effects at low q2&#39;</span>
+    <span class="n">q2</span><span class="o">=</span><span class="mf">0.001</span> <span class="c1"># away from zero to avoid pole</span>
+    <span class="n">amps</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">sub_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor_helicityamps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">a</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">N</span> <span class="o">*</span> <span class="n">amps</span><span class="p">[(</span><span class="s1">&#39;mi&#39;</span> <span class="p">,</span><span class="s1">&#39;V&#39;</span><span class="p">)]</span>
+    <span class="n">a</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">+</span><span class="n">N</span> <span class="o">*</span> <span class="n">amps</span><span class="p">[(</span><span class="s1">&#39;pl&#39;</span> <span class="p">,</span><span class="s1">&#39;V&#39;</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">a</span>
 
 <span class="k">def</span> <span class="nf">amps</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">add_dict</span><span class="p">((</span>
-        <span class="n">amps_ff</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
-        <span class="n">amps_qcdf</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
+        <span class="n">amps_ff</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span>
+        <span class="n">amps_ss</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span>
+        <span class="n">amps_subleading</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span>
         <span class="p">))</span>
 
-<span class="k">def</span> <span class="nf">amps_bar</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
-    <span class="n">par_c</span> <span class="o">=</span> <span class="n">conjugate_par</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
-    <span class="n">wc_c</span> <span class="o">=</span> <span class="n">conjugate_wc</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">amps</span><span class="p">(</span><span class="n">wc_c</span><span class="p">,</span> <span class="n">par_c</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s">&#39;L&#39;</span><span class="p">:</span> <span class="n">a</span><span class="p">[</span><span class="s">&#39;R&#39;</span><span class="p">],</span> <span class="s">&#39;R&#39;</span><span class="p">:</span> <span class="n">a</span><span class="p">[</span><span class="s">&#39;L&#39;</span><span class="p">]}</span>
+<span class="k">def</span> <span class="nf">amps_bar</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">add_dict</span><span class="p">((</span>
+        <span class="n">amps_ff</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+        <span class="n">amps_ss</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+        <span class="n">amps_subleading</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+        <span class="p">))</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="n">a</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">],</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="n">a</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]}</span>
 
 <span class="k">def</span> <span class="nf">get_a_abar</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s">&#39;bvll&#39;</span><span class="p">]</span>
-    <span class="c"># these are the b-&gt;qee Wilson coefficients - they contain the b-&gt;qgamma ones as a subset</span>
-    <span class="n">wc</span> <span class="o">=</span> <span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span> <span class="o">+</span> <span class="s">&#39;ee&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">amps</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
-    <span class="n">a_bar</span> <span class="o">=</span> <span class="n">amps_bar</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvll&#39;</span><span class="p">]</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">amps</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">a_bar</span> <span class="o">=</span> <span class="n">amps_bar</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span>
 
 <span class="k">def</span> <span class="nf">Gamma</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">(</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s">&#39;L&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s">&#39;R&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">Gamma_CPaverage</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span> <span class="n">Gamma</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">Gamma</span><span class="p">(</span><span class="n">a_bar</span><span class="p">)</span> <span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
 
 <span class="k">def</span> <span class="nf">BR</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
-    <span class="n">tauB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;tau_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+    <span class="n">tauB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
     <span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span> <span class="o">=</span> <span class="n">get_a_abar</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">tauB</span> <span class="o">*</span> <span class="n">Gamma_CPaverage</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span><span class="p">)</span>
 
@@ -1182,8 +1215,8 @@ table {
     <span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span> <span class="o">=</span> <span class="n">get_a_abar</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="n">q_over_p</span> <span class="o">=</span> <span class="n">mesonmixing</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">q_over_p</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
     <span class="n">beta</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">get_ckmangle_beta</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
-    <span class="c"># minus sign from different convention of q/p compared to Ball/Zwicky</span>
-    <span class="n">num</span> <span class="o">=</span> <span class="o">-</span><span class="n">q_over_p</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s">&#39;L&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">*</span><span class="n">a_bar</span><span class="p">[</span><span class="s">&#39;L&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">a</span><span class="p">[</span><span class="s">&#39;R&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">*</span><span class="n">a_bar</span><span class="p">[</span><span class="s">&#39;R&#39;</span><span class="p">])</span>
+    <span class="c1"># minus sign from different convention of q/p compared to Ball/Zwicky</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="o">-</span><span class="n">q_over_p</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">*</span><span class="n">a_bar</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">*</span><span class="n">a_bar</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">])</span>
     <span class="n">den</span> <span class="o">=</span> <span class="n">Gamma_CPaverage</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">num</span><span class="o">.</span><span class="n">imag</span> <span class="o">/</span> <span class="n">den</span>
 
@@ -1192,30 +1225,30 @@ table {
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
 
 
-<span class="c"># Observable and Prediction instances</span>
+<span class="c1"># Observable and Prediction instances</span>
 
-<span class="n">_func</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;BR&#39;</span><span class="p">:</span> <span class="n">BR</span><span class="p">,</span> <span class="s">&#39;ACP&#39;</span><span class="p">:</span> <span class="n">ACP</span><span class="p">}</span>
-<span class="n">_tex</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;BR&#39;</span><span class="p">:</span> <span class="s">r&#39;\text{BR}&#39;</span><span class="p">,</span> <span class="s">&#39;ACP&#39;</span><span class="p">:</span> <span class="s">r&#39;A_{CP}&#39;</span><span class="p">}</span>
-<span class="n">_desc</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;BR&#39;</span><span class="p">:</span> <span class="s">&#39;Branching ratio&#39;</span><span class="p">,</span> <span class="s">&#39;ACP&#39;</span><span class="p">:</span> <span class="s">&#39;Direct CP asymmetry&#39;</span><span class="p">}</span>
+<span class="n">_func</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;BR&#39;</span><span class="p">:</span> <span class="n">BR</span><span class="p">,</span> <span class="s1">&#39;ACP&#39;</span><span class="p">:</span> <span class="n">ACP</span><span class="p">}</span>
+<span class="n">_tex</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;BR&#39;</span><span class="p">:</span> <span class="s1">r&#39;\text{BR}&#39;</span><span class="p">,</span> <span class="s1">&#39;ACP&#39;</span><span class="p">:</span> <span class="s1">r&#39;A_{CP}&#39;</span><span class="p">}</span>
+<span class="n">_desc</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;BR&#39;</span><span class="p">:</span> <span class="s1">&#39;Branching ratio&#39;</span><span class="p">,</span> <span class="s1">&#39;ACP&#39;</span><span class="p">:</span> <span class="s1">&#39;Direct CP asymmetry&#39;</span><span class="p">}</span>
 
 <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_func</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-    <span class="n">_obs_name</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="s">&quot;(B+-&gt;K*gamma)&quot;</span>
+    <span class="n">_obs_name</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;(B+-&gt;K*gamma)&quot;</span>
     <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
-    <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">_desc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="s">r&quot; of $B^+\to K^{*+}\gamma$&quot;</span><span class="p">)</span>
-    <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s">r&#39;$&#39;</span> <span class="o">+</span> <span class="n">_tex</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="s">r&quot;(B^+\to K^{*+}\gamma)$&quot;</span>
-    <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BVgamma_function</span><span class="p">(</span><span class="n">_func</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="s">&#39;B+&#39;</span><span class="p">,</span> <span class="s">&#39;K*+&#39;</span><span class="p">))</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">_desc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="s2">r&quot; of $B^+\to K^{*+}\gamma$&quot;</span><span class="p">)</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s1">r&#39;$&#39;</span> <span class="o">+</span> <span class="n">_tex</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="s2">r&quot;(B^+\to K^{*+}\gamma)$&quot;</span>
+    <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BVgamma_function</span><span class="p">(</span><span class="n">_func</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;K*+&#39;</span><span class="p">))</span>
 
-    <span class="n">_obs_name</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="s">&quot;(B0-&gt;K*gamma)&quot;</span>
+    <span class="n">_obs_name</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;(B0-&gt;K*gamma)&quot;</span>
     <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
-    <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">_desc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="s">r&quot; of $B^0\to K^{*0}\gamma$&quot;</span><span class="p">)</span>
-    <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s">r&#39;$&#39;</span> <span class="o">+</span> <span class="n">_tex</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="s">r&quot;(B^0\to K^{*0}\gamma)$&quot;</span>
-    <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BVgamma_function</span><span class="p">(</span><span class="n">_func</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="s">&#39;B0&#39;</span><span class="p">,</span> <span class="s">&#39;K*0&#39;</span><span class="p">))</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">_desc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="s2">r&quot; of $B^0\to K^{*0}\gamma$&quot;</span><span class="p">)</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s1">r&#39;$&#39;</span> <span class="o">+</span> <span class="n">_tex</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="s2">r&quot;(B^0\to K^{*0}\gamma)$&quot;</span>
+    <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BVgamma_function</span><span class="p">(</span><span class="n">_func</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;K*0&#39;</span><span class="p">))</span>
 
-<span class="n">_obs_name</span> <span class="o">=</span> <span class="s">&quot;S_K*gamma&quot;</span>
+<span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;S_K*gamma&quot;</span>
 <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
-<span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s">r&quot;Mixing-induced CP asymmetry in $B^0\to K^{*0}\gamma$&quot;</span><span class="p">)</span>
-<span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s">r&#39;$S_{K^{*}\gamma}$&#39;</span>
-<span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BVgamma_function</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="s">&#39;B0&#39;</span><span class="p">,</span> <span class="s">&#39;K*0&#39;</span><span class="p">))</span>
+<span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Mixing-induced CP asymmetry in $B^0\to K^{*0}\gamma$&quot;</span><span class="p">)</span>
+<span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s1">r&#39;$S_{K^{*}\gamma}$&#39;</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BVgamma_function</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;K*0&#39;</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1278,7 +1311,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.ACP', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bvgamma.ACP" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">ACP</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ACP</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
     <span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span> <span class="o">=</span> <span class="n">get_a_abar</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span> <span class="n">Gamma</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">-</span> <span class="n">Gamma</span><span class="p">(</span><span class="n">a_bar</span><span class="p">)</span> <span class="p">)</span><span class="o">/</span><span class="p">(</span> <span class="n">Gamma</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">Gamma</span><span class="p">(</span><span class="n">a_bar</span><span class="p">)</span> <span class="p">)</span>
 </pre></div>
@@ -1300,8 +1333,8 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.BR', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bvgamma.BR" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">BR</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
-    <span class="n">tauB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;tau_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">tauB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
     <span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span> <span class="o">=</span> <span class="n">get_a_abar</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">tauB</span> <span class="o">*</span> <span class="n">Gamma_CPaverage</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span><span class="p">)</span>
 </pre></div>
@@ -1323,7 +1356,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.BVgamma_function', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bvgamma.BVgamma_function" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">BVgamma_function</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BVgamma_function</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
 </pre></div>
 
@@ -1344,8 +1377,8 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.Gamma', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bvgamma.Gamma" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">Gamma</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">(</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s">&#39;L&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s">&#39;R&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Gamma</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1365,7 +1398,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.Gamma_CPaverage', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bvgamma.Gamma_CPaverage" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">Gamma_CPaverage</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Gamma_CPaverage</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span> <span class="n">Gamma</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">Gamma</span><span class="p">(</span><span class="n">a_bar</span><span class="p">)</span> <span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
 </pre></div>
 
@@ -1386,12 +1419,12 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.S', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bvgamma.S" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">S</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">S</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
     <span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span> <span class="o">=</span> <span class="n">get_a_abar</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="n">q_over_p</span> <span class="o">=</span> <span class="n">mesonmixing</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">q_over_p</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
     <span class="n">beta</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">get_ckmangle_beta</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
-    <span class="c"># minus sign from different convention of q/p compared to Ball/Zwicky</span>
-    <span class="n">num</span> <span class="o">=</span> <span class="o">-</span><span class="n">q_over_p</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s">&#39;L&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">*</span><span class="n">a_bar</span><span class="p">[</span><span class="s">&#39;L&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">a</span><span class="p">[</span><span class="s">&#39;R&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">*</span><span class="n">a_bar</span><span class="p">[</span><span class="s">&#39;R&#39;</span><span class="p">])</span>
+    <span class="c1"># minus sign from different convention of q/p compared to Ball/Zwicky</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="o">-</span><span class="n">q_over_p</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">*</span><span class="n">a_bar</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">*</span><span class="n">a_bar</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">])</span>
     <span class="n">den</span> <span class="o">=</span> <span class="n">Gamma_CPaverage</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">num</span><span class="o">.</span><span class="n">imag</span> <span class="o">/</span> <span class="n">den</span>
 </pre></div>
@@ -1413,10 +1446,11 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.amps', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bvgamma.amps" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">amps</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">amps</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">add_dict</span><span class="p">((</span>
-        <span class="n">amps_ff</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
-        <span class="n">amps_qcdf</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
+        <span class="n">amps_ff</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span>
+        <span class="n">amps_ss</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span>
+        <span class="n">amps_subleading</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span>
         <span class="p">))</span>
 </pre></div>
 
@@ -1428,7 +1462,7 @@ table {
       
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.bvgamma.amps_bar">
-    <p>def <span class="ident">amps_bar</span>(</p><p>wc, par, B, V)</p>
+    <p>def <span class="ident">amps_bar</span>(</p><p>*args, **kwargs)</p>
     </div>
     
 
@@ -1437,11 +1471,13 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.amps_bar', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bvgamma.amps_bar" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">amps_bar</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
-    <span class="n">par_c</span> <span class="o">=</span> <span class="n">conjugate_par</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
-    <span class="n">wc_c</span> <span class="o">=</span> <span class="n">conjugate_wc</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">amps</span><span class="p">(</span><span class="n">wc_c</span><span class="p">,</span> <span class="n">par_c</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s">&#39;L&#39;</span><span class="p">:</span> <span class="n">a</span><span class="p">[</span><span class="s">&#39;R&#39;</span><span class="p">],</span> <span class="s">&#39;R&#39;</span><span class="p">:</span> <span class="n">a</span><span class="p">[</span><span class="s">&#39;L&#39;</span><span class="p">]}</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">amps_bar</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">add_dict</span><span class="p">((</span>
+        <span class="n">amps_ff</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+        <span class="n">amps_ss</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+        <span class="n">amps_subleading</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+        <span class="p">))</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="n">a</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">],</span> <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="n">a</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]}</span>
 </pre></div>
 
   </div>
@@ -1452,7 +1488,7 @@ table {
       
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.bvgamma.amps_ff">
-    <p>def <span class="ident">amps_ff</span>(</p><p>wc, par, B, V)</p>
+    <p>def <span class="ident">amps_ff</span>(</p><p>wc_obj, par_dict, B, V, cp_conjugate)</p>
     </div>
     
 
@@ -1461,19 +1497,23 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.amps_ff', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bvgamma.amps_ff" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">amps_ff</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">amps_ff</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <span class="n">par</span> <span class="o">=</span> <span class="n">par_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">cp_conjugate</span><span class="p">:</span>
+        <span class="n">par</span> <span class="o">=</span> <span class="n">conjugate_par</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="n">bq</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span>
-    <span class="n">ff_name</span> <span class="o">=</span> <span class="n">meson_ff</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span> <span class="o">+</span> <span class="s">&#39; form factor&#39;</span>
+    <span class="n">ff_name</span> <span class="o">=</span> <span class="n">meson_ff</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span> <span class="o">+</span> <span class="s1">&#39; form factor&#39;</span>
     <span class="n">ff</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">ff_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s">&#39;bvgamma&#39;</span><span class="p">]</span>
-    <span class="n">bq</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvgamma&#39;</span><span class="p">]</span>
+    <span class="c1"># these are the b-&gt;qee Wilson coefficients - they contain the b-&gt;qgamma ones as a subset</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">bq</span><span class="o">+</span><span class="s1">&#39;ee&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cp_conjugate</span><span class="p">:</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">conjugate_wc</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
     <span class="n">delta_C7</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">matrixelements</span><span class="o">.</span><span class="n">delta_C7</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="n">wc</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">qiqj</span><span class="o">=</span><span class="n">bq</span><span class="p">)</span>
-    <span class="n">c7</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s">&#39;C7eff_&#39;</span><span class="o">+</span><span class="n">bq</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta_C7</span>
-    <span class="n">c7p</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s">&#39;C7effp_&#39;</span><span class="o">+</span><span class="n">bq</span><span class="p">]</span>
     <span class="n">a</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">a</span><span class="p">[</span><span class="s">&#39;L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">c7</span>  <span class="o">*</span> <span class="n">ff</span><span class="p">[</span><span class="s">&#39;T1&#39;</span><span class="p">]</span>
-    <span class="n">a</span><span class="p">[</span><span class="s">&#39;R&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">c7p</span> <span class="o">*</span> <span class="n">ff</span><span class="p">[</span><span class="s">&#39;T1&#39;</span><span class="p">]</span>
+    <span class="n">a</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;C7eff_&#39;</span><span class="o">+</span><span class="n">bq</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta_C7</span><span class="p">)</span>  <span class="o">*</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;T1&#39;</span><span class="p">]</span>
+    <span class="n">a</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;C7effp_&#39;</span><span class="o">+</span><span class="n">bq</span><span class="p">]</span> <span class="o">*</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;T1&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">a</span>
 </pre></div>
 
@@ -1484,23 +1524,54 @@ table {
   
       
   <div class="item">
-    <div class="name def" id="flavio.physics.bdecays.bvgamma.amps_qcdf">
-    <p>def <span class="ident">amps_qcdf</span>(</p><p>wc, par, B, V)</p>
+    <div class="name def" id="flavio.physics.bdecays.bvgamma.amps_ss">
+    <p>def <span class="ident">amps_ss</span>(</p><p>wc_obj, par, B, V, cp_conjugate)</p>
     </div>
     
 
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.amps_qcdf', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.bvgamma.amps_qcdf" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">amps_qcdf</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
-    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s">&#39;bvgamma&#39;</span><span class="p">]</span>
-    <span class="n">T_perp</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bvll</span><span class="o">.</span><span class="n">qcdf</span><span class="o">.</span><span class="n">T_perp</span><span class="p">(</span><span class="n">q2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="n">wc</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.amps_ss', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvgamma.amps_ss" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">amps_ss</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvgamma&#39;</span><span class="p">]</span>
+    <span class="n">ss_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">V</span><span class="o">+</span><span class="s1">&#39;ll spectator scattering&#39;</span>
+    <span class="n">q2</span><span class="o">=</span><span class="mf">0.001</span> <span class="c1"># away from zero to avoid pole</span>
+    <span class="n">amps</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">ss_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor_helicityamps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="n">a</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">a</span><span class="p">[</span><span class="s">&#39;L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">T_perp</span>
-    <span class="n">a</span><span class="p">[</span><span class="s">&#39;R&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">a</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">N</span> <span class="o">*</span> <span class="n">amps</span><span class="p">[(</span><span class="s1">&#39;mi&#39;</span> <span class="p">,</span><span class="s1">&#39;V&#39;</span><span class="p">)]</span>
+    <span class="n">a</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">+</span><span class="n">N</span> <span class="o">*</span> <span class="n">amps</span><span class="p">[(</span><span class="s1">&#39;pl&#39;</span> <span class="p">,</span><span class="s1">&#39;V&#39;</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">a</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvgamma.amps_subleading">
+    <p>def <span class="ident">amps_subleading</span>(</p><p>wc_obj, par, B, V, cp_conjugate)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.amps_subleading', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvgamma.amps_subleading" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">amps_subleading</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvgamma&#39;</span><span class="p">]</span>
+    <span class="n">sub_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">V</span><span class="o">+</span> <span class="s1">&#39;ll subleading effects at low q2&#39;</span>
+    <span class="n">q2</span><span class="o">=</span><span class="mf">0.001</span> <span class="c1"># away from zero to avoid pole</span>
+    <span class="n">amps</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">sub_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor_helicityamps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">a</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">N</span> <span class="o">*</span> <span class="n">amps</span><span class="p">[(</span><span class="s1">&#39;mi&#39;</span> <span class="p">,</span><span class="s1">&#39;V&#39;</span><span class="p">)]</span>
+    <span class="n">a</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">+</span><span class="n">N</span> <span class="o">*</span> <span class="n">amps</span><span class="p">[(</span><span class="s1">&#39;pl&#39;</span> <span class="p">,</span><span class="s1">&#39;V&#39;</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">a</span>
 </pre></div>
 
@@ -1521,12 +1592,10 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.get_a_abar', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bvgamma.get_a_abar" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_a_abar</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s">&#39;bvll&#39;</span><span class="p">]</span>
-    <span class="c"># these are the b-&gt;qee Wilson coefficients - they contain the b-&gt;qgamma ones as a subset</span>
-    <span class="n">wc</span> <span class="o">=</span> <span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span> <span class="o">+</span> <span class="s">&#39;ee&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">amps</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
-    <span class="n">a_bar</span> <span class="o">=</span> <span class="n">amps_bar</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_a_abar</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvll&#39;</span><span class="p">]</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">amps</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">a_bar</span> <span class="o">=</span> <span class="n">amps_bar</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">a_bar</span>
 </pre></div>
 
@@ -1547,17 +1616,45 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.prefactor', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bvgamma.prefactor" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
-    <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
-    <span class="n">mV</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;m_&#39;</span><span class="o">+</span><span class="n">V</span><span class="p">]</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s">&#39;bvgamma&#39;</span><span class="p">]</span>
-    <span class="n">alphaem</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s">&#39;alpha_e&#39;</span><span class="p">]</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+    <span class="n">mV</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">V</span><span class="p">]</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvgamma&#39;</span><span class="p">]</span>
+    <span class="n">alphaem</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
     <span class="n">mb</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s">&#39;GF&#39;</span><span class="p">]</span>
+    <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
     <span class="n">bq</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span>
-    <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="n">bq</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">bq</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span> <span class="n">sqrt</span><span class="p">((</span><span class="n">GF</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">alphaem</span> <span class="o">*</span> <span class="n">mB</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">mb</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">32</span> <span class="o">*</span> <span class="n">pi</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
                   <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">mV</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">mB</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">xi_t</span> <span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvgamma.prefactor_helicityamps">
+    <p>def <span class="ident">prefactor_helicityamps</span>(</p><p>q2, par, B, V)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvgamma.prefactor_helicityamps', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvgamma.prefactor_helicityamps" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">prefactor_helicityamps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">N_BVll</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bvll</span><span class="o">.</span><span class="n">amplitudes</span><span class="o">.</span><span class="n">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+    <span class="n">mV</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">V</span><span class="p">]</span>
+    <span class="n">laB</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">lambda_K</span><span class="p">(</span><span class="n">mB</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mV</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvgamma&#39;</span><span class="p">]</span>
+    <span class="n">mb</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">N</span><span class="o">/</span><span class="p">(</span><span class="o">+</span><span class="mi">1j</span> <span class="o">*</span> <span class="n">mb</span><span class="o">/</span><span class="n">q2</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">laB</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">N_BVll</span>
 </pre></div>
 
   </div>

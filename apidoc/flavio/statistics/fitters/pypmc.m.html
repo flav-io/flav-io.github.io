@@ -866,8 +866,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -1078,7 +1080,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.pypmc', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.pypmc" class="source">
-    <div class="codehilite"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">flavio</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -1092,12 +1094,12 @@ table {
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">fits</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s">&quot;PyPMC fit object must be an instance of BayesianFit&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">fits</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s2">&quot;PyPMC fit object must be an instance of BayesianFit&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span>
-        <span class="c"># start value is a random vector</span>
+        <span class="c1"># start value is a random vector</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">get_random</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
-        <span class="c"># generate another random vector to guess an initial step size</span>
+        <span class="c1"># generate another random vector to guess an initial step size</span>
         <span class="n">_initial_sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">fit</span><span class="o">.</span><span class="n">get_random</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initial_proposal</span> <span class="o">=</span> <span class="n">pypmc</span><span class="o">.</span><span class="n">density</span><span class="o">.</span><span class="n">gauss</span><span class="o">.</span><span class="n">LocalGauss</span><span class="p">(</span><span class="n">_initial_sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">))</span>
 
@@ -1119,12 +1121,12 @@ table {
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">find_burnin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">target_values</span><span class="p">[:]</span> <span class="c"># this contains all log likelihood values of the chain</span>
-        <span class="n">target_end</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">//</span><span class="mi">10</span><span class="p">:]</span> <span class="c"># take the last 10% of the chain</span>
-        <span class="n">target_end_mn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">target_end</span><span class="p">)</span> <span class="c"># mean of the last 10%</span>
-        <span class="n">target_end_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">target_end</span><span class="p">)</span> <span class="c"># std. deviation of the last 10%</span>
-        <span class="c"># find the index of the first entry where the log likelihood is greater</span>
-        <span class="c"># than the mean of the last 10% - 3 standard deviations</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">target_values</span><span class="p">[:]</span> <span class="c1"># this contains all log likelihood values of the chain</span>
+        <span class="n">target_end</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">//</span><span class="mi">10</span><span class="p">:]</span> <span class="c1"># take the last 10% of the chain</span>
+        <span class="n">target_end_mn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">target_end</span><span class="p">)</span> <span class="c1"># mean of the last 10%</span>
+        <span class="n">target_end_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">target_end</span><span class="p">)</span> <span class="c1"># std. deviation of the last 10%</span>
+        <span class="c1"># find the index of the first entry where the log likelihood is greater</span>
+        <span class="c1"># than the mean of the last 10% - 3 standard deviations</span>
         <span class="n">first_good</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">target</span> <span class="o">&gt;</span> <span class="n">target_end_mn</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="n">target_end_std</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">first_good</span>
 
@@ -1153,18 +1155,18 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.pypmc.pypmcScan', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.pypmc.pypmcScan" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">pypmcScan</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">pypmcScan</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">fits</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s">&quot;PyPMC fit object must be an instance of BayesianFit&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">fits</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s2">&quot;PyPMC fit object must be an instance of BayesianFit&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span>
-        <span class="c"># start value is a random vector</span>
+        <span class="c1"># start value is a random vector</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">get_random</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
-        <span class="c"># generate another random vector to guess an initial step size</span>
+        <span class="c1"># generate another random vector to guess an initial step size</span>
         <span class="n">_initial_sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">fit</span><span class="o">.</span><span class="n">get_random</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initial_proposal</span> <span class="o">=</span> <span class="n">pypmc</span><span class="o">.</span><span class="n">density</span><span class="o">.</span><span class="n">gauss</span><span class="o">.</span><span class="n">LocalGauss</span><span class="p">(</span><span class="n">_initial_sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">))</span>
 
@@ -1186,12 +1188,12 @@ table {
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">find_burnin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">target_values</span><span class="p">[:]</span> <span class="c"># this contains all log likelihood values of the chain</span>
-        <span class="n">target_end</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">//</span><span class="mi">10</span><span class="p">:]</span> <span class="c"># take the last 10% of the chain</span>
-        <span class="n">target_end_mn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">target_end</span><span class="p">)</span> <span class="c"># mean of the last 10%</span>
-        <span class="n">target_end_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">target_end</span><span class="p">)</span> <span class="c"># std. deviation of the last 10%</span>
-        <span class="c"># find the index of the first entry where the log likelihood is greater</span>
-        <span class="c"># than the mean of the last 10% - 3 standard deviations</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">target_values</span><span class="p">[:]</span> <span class="c1"># this contains all log likelihood values of the chain</span>
+        <span class="n">target_end</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">//</span><span class="mi">10</span><span class="p">:]</span> <span class="c1"># take the last 10% of the chain</span>
+        <span class="n">target_end_mn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">target_end</span><span class="p">)</span> <span class="c1"># mean of the last 10%</span>
+        <span class="n">target_end_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">target_end</span><span class="p">)</span> <span class="c1"># std. deviation of the last 10%</span>
+        <span class="c1"># find the index of the first entry where the log likelihood is greater</span>
+        <span class="c1"># than the mean of the last 10% - 3 standard deviations</span>
         <span class="n">first_good</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">target</span> <span class="o">&gt;</span> <span class="n">target_end_mn</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="n">target_end_std</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">first_good</span>
 
@@ -1228,13 +1230,13 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.pypmc.pypmcScan.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.pypmc.pypmcScan.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">fits</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s">&quot;PyPMC fit object must be an instance of BayesianFit&quot;</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">fits</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s2">&quot;PyPMC fit object must be an instance of BayesianFit&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span>
-    <span class="c"># start value is a random vector</span>
+    <span class="c1"># start value is a random vector</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">get_random</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
-    <span class="c"># generate another random vector to guess an initial step size</span>
+    <span class="c1"># generate another random vector to guess an initial step size</span>
     <span class="n">_initial_sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">fit</span><span class="o">.</span><span class="n">get_random</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_initial_proposal</span> <span class="o">=</span> <span class="n">pypmc</span><span class="o">.</span><span class="n">density</span><span class="o">.</span><span class="n">gauss</span><span class="o">.</span><span class="n">LocalGauss</span><span class="p">(</span><span class="n">_initial_sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">mc</span> <span class="o">=</span> <span class="n">pypmc</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">markov_chain</span><span class="o">.</span><span class="n">AdaptiveMarkovChain</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">log_target</span><span class="p">,</span>
@@ -1261,7 +1263,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.pypmc.pypmcScan.run', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.pypmc.pypmcScan.run" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">adapt</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">adapt</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
     <span class="n">done</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run</span><span class="p">(</span> <span class="n">burnin</span> <span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -1289,7 +1291,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.pypmc.pypmcScan.save_result', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.pypmc.pypmcScan.save_result" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
     <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
     <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
 </pre></div>

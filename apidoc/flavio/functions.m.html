@@ -867,8 +867,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -1050,6 +1052,7 @@ table {
       
   <ul>
     <li class="mono"><a href="#flavio.functions.np_prediction">np_prediction</a></li>
+    <li class="mono"><a href="#flavio.functions.sm_covariance">sm_covariance</a></li>
     <li class="mono"><a href="#flavio.functions.sm_error_budget">sm_error_budget</a></li>
     <li class="mono"><a href="#flavio.functions.sm_prediction">sm_prediction</a></li>
     <li class="mono"><a href="#flavio.functions.sm_uncertainty">sm_uncertainty</a></li>
@@ -1075,7 +1078,7 @@ top-level namespace.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions', this);">Show source &equiv;</a></p>
   <div id="source-flavio.functions" class="source">
-    <div class="codehilite"><pre><span class="sd">&quot;&quot;&quot;Main functions for user interaction. All of these are imported into the</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Main functions for user interaction. All of these are imported into the</span>
 <span class="sd">top-level namespace.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">flavio</span>
@@ -1153,11 +1156,11 @@ top-level namespace.</p>
     <span class="n">par_central</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
     <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
 
-    <span class="c"># Step 1: determine the parameters the observable depends on at all.</span>
-    <span class="c"># to this end, compute the observables once for each parameter with a</span>
-    <span class="c"># random value for this parameter but central values for all other</span>
-    <span class="c"># parameters. If the prediction is equal to the central prediction, the</span>
-    <span class="c"># observable does not depend on the parameter!</span>
+    <span class="c1"># Step 1: determine the parameters the observable depends on at all.</span>
+    <span class="c1"># to this end, compute the observables once for each parameter with a</span>
+    <span class="c1"># random value for this parameter but central values for all other</span>
+    <span class="c1"># parameters. If the prediction is equal to the central prediction, the</span>
+    <span class="c1"># observable does not depend on the parameter!</span>
     <span class="n">pred_central</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_central</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">dependent_par</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">par_central</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -1167,9 +1170,9 @@ top-level namespace.</p>
         <span class="k">if</span> <span class="n">pred_tmp</span> <span class="o">!=</span> <span class="n">pred_central</span><span class="p">:</span>
             <span class="n">dependent_par</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
-    <span class="c"># Step 2: for each of the dependent parameters, determine the error</span>
-    <span class="c"># analogous to the sm_uncertainty function. Normalize to the central</span>
-    <span class="c"># prediction (so relative errors are returned)</span>
+    <span class="c1"># Step 2: for each of the dependent parameters, determine the error</span>
+    <span class="c1"># analogous to the sm_uncertainty function. Normalize to the central</span>
+    <span class="c1"># prediction (so relative errors are returned)</span>
     <span class="n">individual_errors</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">def</span> <span class="nf">make_par_random</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">par_random</span><span class="p">):</span>
         <span class="n">par_tmp</span> <span class="o">=</span> <span class="n">par_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -1183,6 +1186,51 @@ top-level namespace.</p>
         <span class="p">])</span>
         <span class="n">individual_errors</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span><span class="o">/</span><span class="nb">abs</span><span class="p">(</span><span class="n">pred_central</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">individual_errors</span>
+
+<span class="k">def</span> <span class="nf">sm_covariance</span><span class="p">(</span><span class="n">obs_list</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">par_vary</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the covariance matrix of the Standard Model predictions for a</span>
+<span class="sd">    list of observables.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    - `obs_list`: a list of observables that should be given either as a string</span>
+<span class="sd">    name (for observables that do not depend on any arguments) or as a tuple</span>
+<span class="sd">    of a string and values for the arguements the observable depends on (e.g.</span>
+<span class="sd">    the values of `q2min` and `q2max` for a binned observable)</span>
+<span class="sd">    - `N` (optional): number of random evaluations of the observables.</span>
+<span class="sd">    The relative accuracy of the uncertainties returned is given by $1/\sqrt{2N}$.</span>
+<span class="sd">    - `par_vary`: a list of parameters to vary. Defaults to &#39;all&#39;, i.e. all</span>
+<span class="sd">    parameters are varied according to their probability distributions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+    <span class="n">par_central_all</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+    <span class="n">par_random_all</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="k">def</span> <span class="nf">par_random_some</span><span class="p">(</span><span class="n">par_random</span><span class="p">,</span> <span class="n">par_central</span><span class="p">):</span>
+        <span class="c1"># take the central values for the parameters not to be varied</span>
+        <span class="n">par1</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_central</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">par_vary</span><span class="p">}</span>
+        <span class="c1"># take the random values for the parameters to be varied</span>
+        <span class="n">par2</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_random</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">par_vary</span><span class="p">}</span>
+        <span class="n">par1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">par2</span><span class="p">)</span> <span class="c1"># merge them</span>
+        <span class="k">return</span> <span class="n">par1</span>
+    <span class="k">if</span> <span class="n">par_vary</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="n">par_random</span> <span class="o">=</span> <span class="n">par_random_all</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_random_some</span><span class="p">(</span><span class="n">par_random_all</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">par_central_all</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="k">def</span> <span class="nf">get_prediction</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+             <span class="n">obs_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+             <span class="k">return</span> <span class="n">obs_obj</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+             <span class="n">obs_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+             <span class="k">return</span> <span class="n">obs_obj</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="n">get_prediction</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">obs_list</span>
+    <span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1212,7 +1260,7 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.np_prediction', this);">Show source &equiv;</a></p>
   <div id="source-flavio.functions.np_prediction" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">np_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">np_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the central value of the new physics prediction of an observable.</span>
 
 <span class="sd">    Parameters</span>
@@ -1226,6 +1274,82 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs_name</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.functions.sm_covariance">
+    <p>def <span class="ident">sm_covariance</span>(</p><p>obs_list, N=100, par_vary=&#39;all&#39;, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the covariance matrix of the Standard Model predictions for a
+list of observables.</p>
+<h2>Parameters</h2>
+<ul>
+<li><code>obs_list</code>: a list of observables that should be given either as a string
+name (for observables that do not depend on any arguments) or as a tuple
+of a string and values for the arguements the observable depends on (e.g.
+the values of <code>q2min</code> and <code>q2max</code> for a binned observable)</li>
+<li><code>N</code> (optional): number of random evaluations of the observables.
+The relative accuracy of the uncertainties returned is given by $1/\sqrt{2N}$.</li>
+<li><code>par_vary</code>: a list of parameters to vary. Defaults to 'all', i.e. all
+parameters are varied according to their probability distributions.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.sm_covariance', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.sm_covariance" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">sm_covariance</span><span class="p">(</span><span class="n">obs_list</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">par_vary</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the covariance matrix of the Standard Model predictions for a</span>
+<span class="sd">    list of observables.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    - `obs_list`: a list of observables that should be given either as a string</span>
+<span class="sd">    name (for observables that do not depend on any arguments) or as a tuple</span>
+<span class="sd">    of a string and values for the arguements the observable depends on (e.g.</span>
+<span class="sd">    the values of `q2min` and `q2max` for a binned observable)</span>
+<span class="sd">    - `N` (optional): number of random evaluations of the observables.</span>
+<span class="sd">    The relative accuracy of the uncertainties returned is given by $1/\sqrt{2N}$.</span>
+<span class="sd">    - `par_vary`: a list of parameters to vary. Defaults to &#39;all&#39;, i.e. all</span>
+<span class="sd">    parameters are varied according to their probability distributions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+    <span class="n">par_central_all</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+    <span class="n">par_random_all</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="k">def</span> <span class="nf">par_random_some</span><span class="p">(</span><span class="n">par_random</span><span class="p">,</span> <span class="n">par_central</span><span class="p">):</span>
+        <span class="c1"># take the central values for the parameters not to be varied</span>
+        <span class="n">par1</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_central</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">par_vary</span><span class="p">}</span>
+        <span class="c1"># take the random values for the parameters to be varied</span>
+        <span class="n">par2</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_random</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">par_vary</span><span class="p">}</span>
+        <span class="n">par1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">par2</span><span class="p">)</span> <span class="c1"># merge them</span>
+        <span class="k">return</span> <span class="n">par1</span>
+    <span class="k">if</span> <span class="n">par_vary</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="n">par_random</span> <span class="o">=</span> <span class="n">par_random_all</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_random_some</span><span class="p">(</span><span class="n">par_random_all</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">par_central_all</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="k">def</span> <span class="nf">get_prediction</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+             <span class="n">obs_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+             <span class="k">return</span> <span class="n">obs_obj</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+             <span class="n">obs_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+             <span class="k">return</span> <span class="n">obs_obj</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="n">get_prediction</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">obs_list</span>
+    <span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1255,7 +1379,7 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.sm_error_budget', this);">Show source &equiv;</a></p>
   <div id="source-flavio.functions.sm_error_budget" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">sm_error_budget</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">sm_error_budget</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the *relative* uncertainty of the Standard Model prediction due to</span>
 <span class="sd">    variation of individual observables.</span>
 
@@ -1274,11 +1398,11 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
     <span class="n">par_central</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
     <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
 
-    <span class="c"># Step 1: determine the parameters the observable depends on at all.</span>
-    <span class="c"># to this end, compute the observables once for each parameter with a</span>
-    <span class="c"># random value for this parameter but central values for all other</span>
-    <span class="c"># parameters. If the prediction is equal to the central prediction, the</span>
-    <span class="c"># observable does not depend on the parameter!</span>
+    <span class="c1"># Step 1: determine the parameters the observable depends on at all.</span>
+    <span class="c1"># to this end, compute the observables once for each parameter with a</span>
+    <span class="c1"># random value for this parameter but central values for all other</span>
+    <span class="c1"># parameters. If the prediction is equal to the central prediction, the</span>
+    <span class="c1"># observable does not depend on the parameter!</span>
     <span class="n">pred_central</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_central</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">dependent_par</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">par_central</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -1288,9 +1412,9 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
         <span class="k">if</span> <span class="n">pred_tmp</span> <span class="o">!=</span> <span class="n">pred_central</span><span class="p">:</span>
             <span class="n">dependent_par</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
-    <span class="c"># Step 2: for each of the dependent parameters, determine the error</span>
-    <span class="c"># analogous to the sm_uncertainty function. Normalize to the central</span>
-    <span class="c"># prediction (so relative errors are returned)</span>
+    <span class="c1"># Step 2: for each of the dependent parameters, determine the error</span>
+    <span class="c1"># analogous to the sm_uncertainty function. Normalize to the central</span>
+    <span class="c1"># prediction (so relative errors are returned)</span>
     <span class="n">individual_errors</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">def</span> <span class="nf">make_par_random</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">par_random</span><span class="p">):</span>
         <span class="n">par_tmp</span> <span class="o">=</span> <span class="n">par_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -1330,7 +1454,7 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.sm_prediction', this);">Show source &equiv;</a></p>
   <div id="source-flavio.functions.sm_prediction" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">sm_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">sm_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the central value of the Standard Model prediction of an observable.</span>
 
 <span class="sd">    Parameters</span>
@@ -1372,7 +1496,7 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.sm_uncertainty', this);">Show source &equiv;</a></p>
   <div id="source-flavio.functions.sm_uncertainty" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the uncertainty of the Standard Model prediction of an observable.</span>
 
 <span class="sd">    Parameters</span>

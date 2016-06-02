@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>flavio.statistics.fitters.emcee API documentation</title>
-    <meta name="description" content="" />
+    <title>flavio.math.functions API documentation</title>
+    <meta name="description" content="Special mathematical functions" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400' rel='stylesheet' type='text/css'>
@@ -1047,22 +1047,16 @@ table {
     <h1>Index</h1>
     <ul id="index">
 
-
-    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
-      <ul>
-        <li class="mono">
-        <span class="class_name"><a href="#flavio.statistics.fitters.emcee.emceeScan">emceeScan</a></span>
-        
-          
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
   <ul>
-    <li class="mono"><a href="#flavio.statistics.fitters.emcee.emceeScan.__init__">__init__</a></li>
-    <li class="mono"><a href="#flavio.statistics.fitters.emcee.emceeScan.run">run</a></li>
-    <li class="mono"><a href="#flavio.statistics.fitters.emcee.emceeScan.save_result">save_result</a></li>
+    <li class="mono"><a href="#flavio.math.functions.ei">ei</a></li>
+    <li class="mono"><a href="#flavio.math.functions.li2">li2</a></li>
+    <li class="mono"><a href="#flavio.math.functions.zeta">zeta</a></li>
   </ul>
 
-        </li>
-      </ul>
     </li>
+
 
     </ul>
   </div>
@@ -1075,55 +1069,31 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">flavio.statistics.fitters.emcee</span> module</h1>
+  <h1 class="title"><span class="name">flavio.math.functions</span> module</h1>
+  <p>Special mathematical functions</p>
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.emcee', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.statistics.fitters.emcee" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">flavio</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">emcee</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="k">pass</span>
-
-<span class="k">class</span> <span class="nc">emceeScan</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">nwalkers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s2">&quot;emcee fit object must be an instance of BayesianFit&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">get_random</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">nwalkers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">nwalkers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">*</span> <span class="mi">10</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">nwalkers</span> <span class="o">=</span> <span class="n">nwalkers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="p">[</span><span class="n">fit</span><span class="o">.</span><span class="n">get_random</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nwalkers</span><span class="p">)]</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.functions', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.functions" class="source">
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Special mathematical functions&quot;&quot;&quot;</span>
 
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">mc</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalkers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nwalkers</span><span class="p">,</span>
-                                        <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span>
-                                        <span class="n">lnpostfn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">log_target</span><span class="p">,</span>
-                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">mpmath</span>
 
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
-        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span>
-        <span class="k">if</span> <span class="n">burnin</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">burnin</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">zeta</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Riemann Zeta function&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">zeta</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">flatchain</span><span class="p">[:]</span>
+<span class="k">def</span> <span class="nf">li2</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Complex Dilogarithm&quot;&quot;&quot;</span>
+    <span class="c1"># for real x&lt;=1: use the special scipy function which is 20x faster</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">imag</span><span class="o">==</span><span class="mf">0.</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">real</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">spence</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mpmath</span><span class="o">.</span><span class="n">fp</span><span class="o">.</span><span class="n">polylog</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">ei</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exponential integral function&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">expi</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1132,91 +1102,49 @@ table {
 
   <section id="section-items">
 
-
-    <h2 class="section-title" id="header-classes">Classes</h2>
+    <h2 class="section-title" id="header-functions">Functions</h2>
       
-      <div class="item">
-      <p id="flavio.statistics.fitters.emcee.emceeScan" class="name">class <span class="ident">emceeScan</span></p>
+  <div class="item">
+    <div class="name def" id="flavio.math.functions.ei">
+    <p>def <span class="ident">ei</span>(</p><p>x)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Exponential integral function</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.functions.ei', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.functions.ei" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ei</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exponential integral function&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">expi</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.emcee.emceeScan', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.statistics.fitters.emcee.emceeScan" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">emceeScan</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">nwalkers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s2">&quot;emcee fit object must be an instance of BayesianFit&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">get_random</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">nwalkers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">nwalkers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">*</span> <span class="mi">10</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">nwalkers</span> <span class="o">=</span> <span class="n">nwalkers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="p">[</span><span class="n">fit</span><span class="o">.</span><span class="n">get_random</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nwalkers</span><span class="p">)]</span>
-
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">mc</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalkers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nwalkers</span><span class="p">,</span>
-                                        <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span>
-                                        <span class="n">lnpostfn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">log_target</span><span class="p">,</span>
-                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
-        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span>
-        <span class="k">if</span> <span class="n">burnin</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">burnin</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">flatchain</span><span class="p">[:]</span>
-
-    <span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#flavio.statistics.fitters.emcee.emceeScan">emceeScan</a></li>
-          <li>builtins.object</li>
-          </ul>
-          <h3>Static methods</h3>
-            
   <div class="item">
-    <div class="name def" id="flavio.statistics.fitters.emcee.emceeScan.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, fit, nwalkers=None, **kwargs)</p>
+    <div class="name def" id="flavio.math.functions.li2">
+    <p>def <span class="ident">li2</span>(</p><p>x)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+    <div class="desc"><p>Complex Dilogarithm</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.emcee.emceeScan.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.statistics.fitters.emcee.emceeScan.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">nwalkers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s2">&quot;emcee fit object must be an instance of BayesianFit&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">get_random</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">nwalkers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nwalkers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">*</span> <span class="mi">10</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nwalkers</span> <span class="o">=</span> <span class="n">nwalkers</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="p">[</span><span class="n">fit</span><span class="o">.</span><span class="n">get_random</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nwalkers</span><span class="p">)]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">mc</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalkers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nwalkers</span><span class="p">,</span>
-                                    <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span>
-                                    <span class="n">lnpostfn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">log_target</span><span class="p">,</span>
-                                    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.functions.li2', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.functions.li2" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">li2</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Complex Dilogarithm&quot;&quot;&quot;</span>
+    <span class="c1"># for real x&lt;=1: use the special scipy function which is 20x faster</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">imag</span><span class="o">==</span><span class="mf">0.</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">real</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">spence</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mpmath</span><span class="o">.</span><span class="n">fp</span><span class="o">.</span><span class="n">polylog</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1224,24 +1152,22 @@ table {
 
   </div>
   
-            
+      
   <div class="item">
-    <div class="name def" id="flavio.statistics.fitters.emcee.emceeScan.run">
-    <p>def <span class="ident">run</span>(</p><p>self, steps, burnin=1000)</p>
+    <div class="name def" id="flavio.math.functions.zeta">
+    <p>def <span class="ident">zeta</span>(</p><p>x)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Riemann Zeta function</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.emcee.emceeScan.run', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.statistics.fitters.emcee.emceeScan.run" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
-    <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span>
-    <span class="k">if</span> <span class="n">burnin</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">burnin</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.functions.zeta', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.functions.zeta" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">zeta</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Riemann Zeta function&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">zeta</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1249,81 +1175,7 @@ table {
 
   </div>
   
-            
-  <div class="item">
-    <div class="name def" id="flavio.statistics.fitters.emcee.emceeScan.save_result">
-    <p>def <span class="ident">save_result</span>(</p><p>self, file)</p>
-    </div>
-    
 
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.emcee.emceeScan.save_result', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.statistics.fitters.emcee.emceeScan.save_result" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="flavio.statistics.fitters.emcee.emceeScan.dimension" class="name">var <span class="ident">dimension</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="flavio.statistics.fitters.emcee.emceeScan.fit" class="name">var <span class="ident">fit</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="flavio.statistics.fitters.emcee.emceeScan.mc" class="name">var <span class="ident">mc</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="flavio.statistics.fitters.emcee.emceeScan.result" class="name">var <span class="ident">result</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="flavio.statistics.fitters.emcee.emceeScan.start" class="name">var <span class="ident">start</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-      </div>
-      </div>
 
   </section>
 
