@@ -326,7 +326,7 @@ all parametewrs.
 | `m_f0` | $m_{f}$ | $f$ mass |
 | `m_h` | $m_{H}$ | $H$ mass |
 | `m_mu` | $m_{\mu}$ | $\mu$ mass |
-| `m_omega` | $m_{\Omega}$ | $\Omega$ mass |
+| `m_omega` | $m_{\omega}$ | $\omega$ mass |
 | `m_phi` | $m_{\phi}$ | $\phi$ mass |
 | `m_pi+` | $m_{\pi^{+}}$ | $\pi^{+}$ mass |
 | `m_pi0` | $m_{\pi^{0}}$ | $\pi^{0}$ mass |
@@ -358,6 +358,7 @@ all parametewrs.
 | `tau_eta` | $\tau_{\eta}$ | $\eta$ lifetime |
 | `tau_f0` | $\tau_{f}$ | $f$ lifetime |
 | `tau_mu` | $\tau_{\mu}$ | $\mu$ lifetime |
+| `tau_omega` | $\tau_{\omega}$ | $\omega$ lifetime |
 | `tau_phi` | $\tau_{\phi}$ | $\phi$ lifetime |
 | `tau_pi+` | $\tau_{\pi^{+}}$ | $\pi^{+}$ lifetime |
 | `tau_pi0` | $\tau_{\pi^{0}}$ | $\pi^{0}$ lifetime |
