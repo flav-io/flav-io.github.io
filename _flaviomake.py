@@ -26,6 +26,10 @@ Some general notes on conventions:
 imply a *CP-average*. For instance, charged $B$ decay modes are always written as
 $B^+ \\to \ldots$, but what is meant is the average of the $B^+$ and the $B^-$
 decay.
+- For lepton flavour violating $B$ decays, no CP-average is made; e.g. the
+decay $B^-\\to e^+\mu^-$ (`B+->emu`, *sic*) is distinct from
+$B^-\\to\mu^+e^-$ (`B+->mue`) but its rate is equal to $B^+\\to \mu^+e^-$
+by CPT.
 - *"Binned branching ratio"* refers to the $q^2$-integral of the differential branching
 ratio, which is a dimensionless number and which coincides with the total branching
 ratio if the bin spans the whole kinematic domain. *"Binned differential branching ratio"*
