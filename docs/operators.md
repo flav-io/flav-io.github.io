@@ -101,14 +101,14 @@ $$\mathcal H_\text{eff} = - \frac{4 G_F}{\sqrt{2}} V_{tb} V_{ts}^* \sum_i C_i O_
 {: class="table"}
 Operator                                                                  | Wilson coefficient
 --------------------------------------------------------------------------|-------
-$O_9 = \frac{e^2}{16\pi^2}(\bar s_L \gamma^\mu b_L)(\bar e \gamma_\mu \mu)$                    | `C9_bsemu`
-$O_9^\prime = \frac{e^2}{16\pi^2}(\bar s_R \gamma^\mu b_R)(\bar e \gamma_\mu \mu)$             | `C9p_bsemu`
-$O_{10} = \frac{e^2}{16\pi^2}(\bar s_L \gamma^\mu b_L)(\bar e \gamma_\mu\gamma_5 \mu)$         | `C10_bsemu`
-$O_{10}^\prime = \frac{e^2}{16\pi^2}(\bar s_R \gamma^\mu b_R)(\bar e \gamma_\mu\gamma_5 \mu)$  | `C10p_bsemu`
-$O_S = \frac{e^2}{16\pi^2}m_b(\bar s_L b_R)(\bar e \mu)$                                       | `CS_bsemu`
-$O_S^\prime = \frac{e^2}{16\pi^2}m_b(\bar s_R b_L)(\bar e \mu)$                                | `CSp_bsemu`
-$O_P = \frac{e^2}{16\pi^2}m_b(\bar s_L b_R)(\bar e \gamma_5 \mu)$                              | `CP_bsemu`
-$O_P^\prime = \frac{e^2}{16\pi^2}m_b(\bar s_R b_L)(\bar e \gamma_5 \mu)$                       | `CPp_bsemu`
+$O_9 = \frac{e^2}{16\pi^2}(\bar s_L \gamma^\mu b_L)(\bar \mu \gamma_\mu e)$                    | `C9_bsemu`
+$O_9^\prime = \frac{e^2}{16\pi^2}(\bar s_R \gamma^\mu b_R)(\bar \mu \gamma_\mu e)$             | `C9p_bsemu`
+$O_{10} = \frac{e^2}{16\pi^2}(\bar s_L \gamma^\mu b_L)(\bar \mu \gamma_\mu\gamma_5 e)$         | `C10_bsemu`
+$O_{10}^\prime = \frac{e^2}{16\pi^2}(\bar s_R \gamma^\mu b_R)(\bar \mu \gamma_\mu\gamma_5 e)$  | `C10p_bsemu`
+$O_S = \frac{e^2}{16\pi^2}m_b(\bar s_L b_R)(\bar \mu e)$                                       | `CS_bsemu`
+$O_S^\prime = \frac{e^2}{16\pi^2}m_b(\bar s_R b_L)(\bar \mu e)$                                | `CSp_bsemu`
+$O_P = \frac{e^2}{16\pi^2}m_b(\bar s_L b_R)(\bar \mu \gamma_5 e)$                              | `CP_bsemu`
+$O_P^\prime = \frac{e^2}{16\pi^2}m_b(\bar s_R b_L)(\bar \mu \gamma_5 e)$                       | `CPp_bsemu`
 
 ## Decays with neutrinos in the final state (`bsnuenue`, `bdnuenue`, ..., `sdnuenutau`, ...)
 
