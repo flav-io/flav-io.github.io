@@ -41,26 +41,26 @@ $$\mathcal H_\text{eff} = - \frac{4 G_F}{\sqrt{2}} V_{tb} V_{ts}^* \sum_i C_i O_
 {: class="table"}
 Operator                                                                  | Wilson coefficient
 --------------------------------------------------------------------------|-------
-$O_1 = (\bar s_L \gamma^\mu T^a c_L)(\bar c_L \gamma_\mu T^a b_L)$        | `C1_bsee`
-$O_1^\prime = (\bar s_R \gamma^\mu T^a c_R)(\bar c_L \gamma_\mu T^a b_L)$ | `C1p_bsee`
-$O_2 = (\bar s_L \gamma^\mu c_L)(\bar c_L \gamma_\mu b_L)$                | `C2_bsee`
-$O_2^\prime = (\bar s_R \gamma^\mu c_R)(\bar c_L \gamma_\mu b_L)$         | `C2p_bsee`
-$O_3 = (\bar s_L \gamma^\mu b_L)\sum_q(\bar q \gamma_\mu q)$                | `C3_bsee`
-$O_3^\prime = (\bar s_R \gamma^\mu b_R)\sum_q(\bar q \gamma_\mu q)$         | `C3p_bsee`
-$O_4 = (\bar s_L \gamma^\mu T^a b_L)\sum_q(\bar q \gamma_\mu T^a q)$        | `C4_bsee`
-$O_4^\prime = (\bar s_R \gamma^\mu T^a b_R)\sum_q(\bar q \gamma_\mu T^a q)$ | `C4p_bsee`
-$O_5 = (\bar s_L \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} b_L)\sum_q(\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C5_bsee`
-$O_5^\prime  = (\bar s_R \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} b_R)\sum_q(\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C5p_bsee`
-$O_6 = (\bar s_L \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} T^a b_L)\sum_q(\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C6_bsee`
-$O_6^\prime  = (\bar s_R \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} T^a b_R)\sum_q(\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C6p_bsee`
-$O_{3Q} = (\bar s_L \gamma^\mu b_L)\sum_q Q_q (\bar q \gamma_\mu q)$                | `C3Q_bsee`
-$O_{3Q}^\prime = (\bar s_R \gamma^\mu b_R)\sum_q Q_q (\bar q \gamma_\mu q)$         | `C3Qp_bsee`
-$O_{4Q} = (\bar s_L \gamma^\mu T^a b_L)\sum_q Q_q (\bar q \gamma_\mu T^a q)$        | `C4Q_bsee`
-$O_{4Q}^\prime = (\bar s_R \gamma^\mu T^a b_R)\sum_q Q_q (\bar q \gamma_\mu T^a q)$ | `C4Qp_bsee`
-$O_{5Q} = (\bar s_L \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} b_L)\sum_q Q_q (\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C5Q_bsee`
-$O_{5Q}^\prime  = (\bar s_R \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} b_R)\sum_q Q_q (\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C5Qp_bsee`
-$O_{6Q} = (\bar s_L \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} T^a b_L)\sum_q Q_q (\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C6Q_bsee`
-$O_{6Q}^\prime  = (\bar s_R \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} T^a b_R)\sum_q Q_q (\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C6Qp_bsee`
+$O_1 = (\bar s_L \gamma^\mu T^a c_L)(\bar c_L \gamma_\mu T^a b_L)$        | `C1_bs`
+$O_1^\prime = (\bar s_R \gamma^\mu T^a c_R)(\bar c_L \gamma_\mu T^a b_L)$ | `C1p_bs`
+$O_2 = (\bar s_L \gamma^\mu c_L)(\bar c_L \gamma_\mu b_L)$                | `C2_bs`
+$O_2^\prime = (\bar s_R \gamma^\mu c_R)(\bar c_L \gamma_\mu b_L)$         | `C2p_bs`
+$O_3 = (\bar s_L \gamma^\mu b_L)\sum_q(\bar q \gamma_\mu q)$                | `C3_bs`
+$O_3^\prime = (\bar s_R \gamma^\mu b_R)\sum_q(\bar q \gamma_\mu q)$         | `C3p_bs`
+$O_4 = (\bar s_L \gamma^\mu T^a b_L)\sum_q(\bar q \gamma_\mu T^a q)$        | `C4_bs`
+$O_4^\prime = (\bar s_R \gamma^\mu T^a b_R)\sum_q(\bar q \gamma_\mu T^a q)$ | `C4p_bs`
+$O_5 = (\bar s_L \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} b_L)\sum_q(\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C5_bs`
+$O_5^\prime  = (\bar s_R \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} b_R)\sum_q(\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C5p_bs`
+$O_6 = (\bar s_L \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} T^a b_L)\sum_q(\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C6_bs`
+$O_6^\prime  = (\bar s_R \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} T^a b_R)\sum_q(\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C6p_bs`
+$O_{3Q} = (\bar s_L \gamma^\mu b_L)\sum_q Q_q (\bar q \gamma_\mu q)$                | `C3Q_bs`
+$O_{3Q}^\prime = (\bar s_R \gamma^\mu b_R)\sum_q Q_q (\bar q \gamma_\mu q)$         | `C3Qp_bs`
+$O_{4Q} = (\bar s_L \gamma^\mu T^a b_L)\sum_q Q_q (\bar q \gamma_\mu T^a q)$        | `C4Q_bs`
+$O_{4Q}^\prime = (\bar s_R \gamma^\mu T^a b_R)\sum_q Q_q (\bar q \gamma_\mu T^a q)$ | `C4Qp_bs`
+$O_{5Q} = (\bar s_L \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} b_L)\sum_q Q_q (\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C5Q_bs`
+$O_{5Q}^\prime  = (\bar s_R \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} b_R)\sum_q Q_q (\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C5Qp_bs`
+$O_{6Q} = (\bar s_L \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} T^a b_L)\sum_q Q_q (\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C6Q_bs`
+$O_{6Q}^\prime  = (\bar s_R \gamma^{\mu_1}\gamma^{\mu_2}\gamma^{\mu_3} T^a b_R)\sum_q Q_q (\bar q \gamma_{\mu_1}\gamma_{\mu_2}\gamma_{\mu_3} T^a q)$ | `C6Qp_bs`
 $O_9 = \frac{e^2}{16\pi^2}(\bar s_L \gamma^\mu b_L)(\bar e \gamma_\mu e)$                    | `C9_bsee`
 $O_9^\prime = \frac{e^2}{16\pi^2}(\bar s_R \gamma^\mu b_R)(\bar e \gamma_\mu e)$             | `C9p_bsee`
 $O_{10} = \frac{e^2}{16\pi^2}(\bar s_L \gamma^\mu b_L)(\bar e \gamma_\mu\gamma_5 e)$         | `C10_bsee`
@@ -79,8 +79,8 @@ In addition, there are the dipole operators
 - $O_8 =  \frac{g_s}{16\pi^2}(\bar s_L \sigma^{\mu\nu} b_R)  T^a  G^a_{\mu\nu}$,
 - $O_8^\prime =  \frac{g_s}{16\pi^2}(\bar s_R \sigma^{\mu\nu} T^a b_L)  G^a_{\mu\nu}$.
 
-For these operators, the effective Wilson coefficients `C7eff_bsee`, `C7effp_bsee`,
-`C8eff_bsee`, `C8effp_bsee`, are  used which are defined as
+For these operators, the effective Wilson coefficients `C7eff_bs`, `C7effp_bs`,
+`C8eff_bs`, `C8effp_bs`, are  used which are defined as
 
 $$C_7^\text{eff} = C_7  + \sum_{i=3}^6 y_i \left[C_i - \frac{1}{3}C_{iQ} \right] $$
 
