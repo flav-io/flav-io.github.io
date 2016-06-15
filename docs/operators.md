@@ -42,9 +42,9 @@ $$\mathcal H_\text{eff} = - \frac{4 G_F}{\sqrt{2}} V_{tb} V_{ts}^* \sum_i C_i O_
 Operator                                                                  | Wilson coefficient
 --------------------------------------------------------------------------|-------
 $O_1 = (\bar s_L \gamma^\mu T^a c_L)(\bar c_L \gamma_\mu T^a b_L)$        | `C1_bs`
-$O_1^\prime = (\bar s_R \gamma^\mu T^a c_R)(\bar c_L \gamma_\mu T^a b_L)$ | `C1p_bs`
+$O_1^\prime = (\bar s_R \gamma^\mu T^a c_R)(\bar c_R \gamma_\mu T^a b_R)$ | `C1p_bs`
 $O_2 = (\bar s_L \gamma^\mu c_L)(\bar c_L \gamma_\mu b_L)$                | `C2_bs`
-$O_2^\prime = (\bar s_R \gamma^\mu c_R)(\bar c_L \gamma_\mu b_L)$         | `C2p_bs`
+$O_2^\prime = (\bar s_R \gamma^\mu c_R)(\bar c_R \gamma_\mu b_R)$         | `C2p_bs`
 $O_3 = (\bar s_L \gamma^\mu b_L)\sum_q(\bar q \gamma_\mu q)$                | `C3_bs`
 $O_3^\prime = (\bar s_R \gamma^\mu b_R)\sum_q(\bar q \gamma_\mu q)$         | `C3p_bs`
 $O_4 = (\bar s_L \gamma^\mu T^a b_L)\sum_q(\bar q \gamma_\mu T^a q)$        | `C4_bs`
