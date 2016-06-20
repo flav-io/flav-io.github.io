@@ -55,7 +55,7 @@ The output should look something like this:
 {% highlight bash %}
 .........................................
 ----------------------------------------------------------------------
-Ran 41 tests in 5.135s
+Ran 57 tests in 5.135s
 
 OK
 {% endhighlight %}
