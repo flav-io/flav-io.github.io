@@ -15,14 +15,14 @@ look at the source code.
 - NNLO QCD corrections and NLO electroweak corrections to the running and
 initial conditions of [all Wilson coefficients](operators.html) are taken
 into account, see [arXiv:1102.5650](http://www.arxiv.org/abs/1102.5650) for references.
-The exception is $C_9$, where NLO electroweak corrections have not been
-computed yet.
+The exception is $C_9$, where NLO electroweak corrections are not fully known
+yet (and the resulting uncertainty is currently not accounted for).
 
 ## $B\to K^\ast\ell^+\ell^-$
 
 - By default, the $B\to K^\ast$ form factors from the combined fit to lattice
 and light-cone sum rules in
-[arXiv:1503.05534v1](http://www.arxiv.org/abs/1503.05534v1)
+[arXiv:1503.05534v2](http://www.arxiv.org/abs/1503.05534v2)
 are used.
 - NNLL corrections to the matrix elements of $O_{1,2}$ are taken numerically from
 [arXiv:0810.4077](http://www.arxiv.org/abs/0810.4077)
@@ -55,6 +55,16 @@ $B\to K^\ast\ell^+\ell^-$ is used, again adopting the ranges in
 
 The same limitations as in $B\to K^\ast\ell^+\ell^-$ apply.
 
+## $B_s\to \phi\ell^+\ell^-$
+
+- By default, the $B_s\to \phi$ form factors from the combined fit to lattice
+and light-cone sum rules in
+[arXiv:1503.05534v2](http://www.arxiv.org/abs/1503.05534v2)
+are used.
+- The effect of the finite $B_s$ lifetime difference is taken into account and
+all observables correspond to time-integrated ones.
+- The other comments and limitations of $B\to K^\ast\ell^+\ell^-$ apply.
+
 ## $B\to D\ell\nu$
 
 - By default, $B\to  D$ form factors are taken from the lattice calculation in
@@ -66,3 +76,11 @@ The same limitations as in $B\to K^\ast\ell^+\ell^-$ apply.
   [arXiv:1203.2654](http://arxiv.org/abs/1203.2654)), with shape parameters
   taken from HFAG and the normalization from the lattice
   ([arXiv:1403.0635](http://arxiv.org/abs/1403.0635))
+
+## $B\to \pi\ell\nu$
+
+- By default, $B\to \pi$ form factors are taken from the lattice
+calculation in [arXiv:1503.07839](http://arxiv.org/abs/1503.07839).
+Note that these have huge uncertainties at low $q^2$ and
+should be improved by adding LCSR information in the future (see e.g.
+[arXiv:1409.7816](http://arxiv.org/abs/1409.7816)).
