@@ -1050,13 +1050,20 @@ table {
       
   <ul>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.M">M</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.br">br</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.c">c</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.config">config</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.l">l</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.ll">ll</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.meson_ff">meson_ff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.meson_quark">meson_quark</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.obs">obs</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.par">par</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.pi">pi</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.wc">wc</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.wc_lfv">wc_lfv</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.wc_obj">wc_obj</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.wc_sm">wc_sm</a></li>
   </ul>
 
     </li>
@@ -1133,6 +1140,7 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.TestBPll.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.TestBPll.tearDown">tearDown</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.TestBPll.test_bkll">test_bkll</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.TestBPll.test_bpll_lfv">test_bpll_lfv</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.TestBPll.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bpll.TestBPll.tearDownClass">tearDownClass</a></li>
   </ul>
@@ -1165,6 +1173,7 @@ table {
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">flavio.parameters</span> <span class="kn">import</span> <span class="n">default_parameters</span>
 <span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">Parameter</span>
+<span class="kn">import</span> <span class="nn">flavio</span>
 
 <span class="n">c</span> <span class="o">=</span> <span class="n">default_parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">c</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;B-&gt;K BCL a0_f+&#39;</span><span class="p">,</span> <span class="mf">0.428</span><span class="p">)</span>
@@ -1182,10 +1191,36 @@ table {
 <span class="n">wc_obj</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
 <span class="n">wc</span> <span class="o">=</span> <span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;bsmumu&#39;</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
 
+<span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+<span class="n">wc_lfv</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+<span class="n">wc_lfv</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C10_bsemu&#39;</span><span class="p">:</span><span class="mf">4.</span><span class="p">,</span> <span class="s1">&#39;C10_bsmue&#39;</span><span class="p">:</span><span class="mf">2.</span><span class="p">},</span> <span class="mf">160.</span><span class="p">)</span>
+
+
 <span class="k">class</span> <span class="nc">TestBPll</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">test_bkll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># rough numerical test for branching ratio at high q^2 to old code</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">bpll_dbrdq2</span><span class="p">(</span><span class="mf">15.</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;K+&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">2.1824401629030333e-8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">bpll_dbrdq2</span><span class="p">(</span><span class="mf">15.</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;K+&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">2.1824401629030333e-8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="c1"># test for errors</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;dBR/dq2(B0-&gt;Kmumu)&#39;</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;AFB(B0-&gt;Kmumu)&#39;</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;FH(B+-&gt;Kmumu)&#39;</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_bpll_lfv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># rough numerical test for branching ratio at high q^2 to old code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">bpll_dbrdq2</span><span class="p">(</span><span class="mf">15.</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;K+&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">2.1824401629030333e-8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="c1"># test for errors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B0-&gt;Kemu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B+-&gt;Ktaumu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B+-&gt;pitaumu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B0-&gt;pitaumu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">obs_1</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s2">&quot;BR(B0-&gt;Kemu)&quot;</span><span class="p">)</span>
+        <span class="n">obs_2</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s2">&quot;BR(B0-&gt;Kmue)&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">obs_1</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># BR(B-&gt;Kemu) should be 4 times larger as Wilson coeff is 2x the mue one</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">obs_1</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_lfv</span><span class="p">)</span>
+            <span class="o">/</span><span class="n">obs_2</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_lfv</span><span class="p">),</span>
+            <span class="mf">4.</span><span class="p">,</span>  <span class="n">places</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1203,6 +1238,22 @@ table {
 
       </div>
       <div class="item">
+      <p id="flavio.physics.bdecays.test_bpll.br" class="name">var <span class="ident">br</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.test_bpll.c" class="name">var <span class="ident">c</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
       <p id="flavio.physics.bdecays.test_bpll.config" class="name">var <span class="ident">config</span></p>
       
   
@@ -1212,6 +1263,14 @@ table {
       </div>
       <div class="item">
       <p id="flavio.physics.bdecays.test_bpll.l" class="name">var <span class="ident">l</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.test_bpll.ll" class="name">var <span class="ident">ll</span></p>
       
   
   <div class="source_cont">
@@ -1258,6 +1317,38 @@ table {
 </div>
 
       </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.test_bpll.wc" class="name">var <span class="ident">wc</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.test_bpll.wc_lfv" class="name">var <span class="ident">wc_lfv</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.test_bpll.wc_obj" class="name">var <span class="ident">wc_obj</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.test_bpll.wc_sm" class="name">var <span class="ident">wc_sm</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
 
 
     <h2 class="section-title" id="header-classes">Classes</h2>
@@ -1297,7 +1388,28 @@ in order to be run.</p>
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TestBPll</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">test_bkll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># rough numerical test for branching ratio at high q^2 to old code</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">bpll_dbrdq2</span><span class="p">(</span><span class="mf">15.</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;K+&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">2.1824401629030333e-8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">bpll_dbrdq2</span><span class="p">(</span><span class="mf">15.</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;K+&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">2.1824401629030333e-8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="c1"># test for errors</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;dBR/dq2(B0-&gt;Kmumu)&#39;</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;AFB(B0-&gt;Kmumu)&#39;</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;FH(B+-&gt;Kmumu)&#39;</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_bpll_lfv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># rough numerical test for branching ratio at high q^2 to old code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">bpll_dbrdq2</span><span class="p">(</span><span class="mf">15.</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;K+&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">2.1824401629030333e-8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="c1"># test for errors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B0-&gt;Kemu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B+-&gt;Ktaumu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B+-&gt;pitaumu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B0-&gt;pitaumu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">obs_1</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s2">&quot;BR(B0-&gt;Kemu)&quot;</span><span class="p">)</span>
+        <span class="n">obs_2</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s2">&quot;BR(B0-&gt;Kmue)&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">obs_1</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># BR(B-&gt;Kemu) should be 4 times larger as Wilson coeff is 2x the mue one</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">obs_1</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_lfv</span><span class="p">)</span>
+            <span class="o">/</span><span class="n">obs_2</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_lfv</span><span class="p">),</span>
+            <span class="mf">4.</span><span class="p">,</span>  <span class="n">places</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3501,7 +3613,46 @@ block, allowing further test code to be executed.</p></div>
   <div id="source-flavio.physics.bdecays.test_bpll.TestBPll.test_bkll" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_bkll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="c1"># rough numerical test for branching ratio at high q^2 to old code</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">bpll_dbrdq2</span><span class="p">(</span><span class="mf">15.</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;K+&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">2.1824401629030333e-8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">bpll_dbrdq2</span><span class="p">(</span><span class="mf">15.</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;K+&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">2.1824401629030333e-8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="c1"># test for errors</span>
+    <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;dBR/dq2(B0-&gt;Kmumu)&#39;</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;AFB(B0-&gt;Kmumu)&#39;</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;FH(B+-&gt;Kmumu)&#39;</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.test_bpll.TestBPll.test_bpll_lfv">
+    <p>def <span class="ident">test_bpll_lfv</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_bpll.TestBPll.test_bpll_lfv', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.test_bpll.TestBPll.test_bpll_lfv" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_bpll_lfv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># rough numerical test for branching ratio at high q^2 to old code</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">bpll_dbrdq2</span><span class="p">(</span><span class="mf">15.</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;K+&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">2.1824401629030333e-8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="c1"># test for errors</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B0-&gt;Kemu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B+-&gt;Ktaumu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B+-&gt;pitaumu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B0-&gt;pitaumu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">obs_1</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s2">&quot;BR(B0-&gt;Kemu)&quot;</span><span class="p">)</span>
+    <span class="n">obs_2</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s2">&quot;BR(B0-&gt;Kmue)&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">obs_1</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># BR(B-&gt;Kemu) should be 4 times larger as Wilson coeff is 2x the mue one</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+        <span class="n">obs_1</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_lfv</span><span class="p">)</span>
+        <span class="o">/</span><span class="n">obs_2</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_lfv</span><span class="p">),</span>
+        <span class="mf">4.</span><span class="p">,</span>  <span class="n">places</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3566,7 +3717,7 @@ block, allowing further test code to be executed.</p></div>
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
     </p>
 
     <p>pdoc is in the public domain with the
