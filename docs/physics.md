@@ -84,3 +84,18 @@ calculation in [arXiv:1503.07839](http://arxiv.org/abs/1503.07839).
 Note that these have huge uncertainties at low $q^2$ and
 should be improved by adding LCSR information in the future (see e.g.
 [arXiv:1409.7816](http://arxiv.org/abs/1409.7816)).
+
+## $B\to X_q\gamma$
+
+- The branching ratio is normalized to the inclusive $B\to X_c\ell\nu$
+decay to reduce theoretical uncertainties.
+- The NLO and NNLO matrix are included numerically (thanks to Mikołaj Misiak
+  for providing them), see [arXiv:1503.01789](http://arxiv.org/abs/1503.01789)
+  and references therein.
+- The dominant uncertainties (due to higher orders, $m_c$-interpolation, and
+  non-perturbative effects) are included in the form of a multiplicative
+  fudge factor $(1+\delta)$ (parameters `delta_BXsgamma` and `delta_BXdgamma`)
+- The (subleading) uncertainties due to variation of $\alpha_s$, $m_{b,c}$ in the
+  N(N)LO matrix elements are not taken into account
+- Strictly speaking, the implementation is only valid for Wilson coefficients
+  not too far from the SM ones (as is required by the experimental measurement)
