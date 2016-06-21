@@ -64,11 +64,9 @@ title: Parameters
 # List of all parameters
 
 This is an automatically generated list  of all parameters defined in the
-default configuration of flavio. The first coolumn contains the string name
+default configuration of flavio. The first column contains the string name
 of the parameter.
 
-Note that the LaTeX symbol and description has not yet been defined for
-all parametewrs.
 
 {: class="table"}
 | Name | Symbol |  Description |

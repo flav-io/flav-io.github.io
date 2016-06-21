@@ -6,11 +6,9 @@ title: Parameters
 # List of all parameters
 
 This is an automatically generated list  of all parameters defined in the
-default configuration of flavio. The first coolumn contains the string name
+default configuration of flavio. The first column contains the string name
 of the parameter.
 
-Note that the LaTeX symbol and description has not yet been defined for
-all parametewrs.
 
 {: class="table"}
 | Name | Symbol |  Description |
@@ -156,6 +154,7 @@ all parametewrs.
 | `B0->K0 deltaC9 b Re` | $\text{Re}\,b^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^0\to K^0\ell^+\ell^-$ at low $q^2$ |
 | `B0->K0 deltaC9 c Im` | $\text{Im}\,c^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^0\to K^0\ell^+\ell^-$ at high $q^2$ |
 | `B0->K0 deltaC9 c Re` | $\text{Re}\,c^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^0\to K^0\ell^+\ell^-$ at high $q^2$ |
+| `BR(B->Xcenu)_exp` | $\text{BR}(B\to X_ce\nu)_\text{exp}$ | Experimental branching ratio of $B\to X_ce\nu$ |
 | `Bs->K* BSZ a0_A1` | $a_0^{A_1}$ | BSZ form factor parametrization coefficient $a_0$ of $A_1$ |
 | `Bs->K* BSZ a0_A12` | $a_0^{A_{12}}$ | BSZ form factor parametrization coefficient $a_0$ of $A_{12}$ |
 | `Bs->K* BSZ a0_T1` | $a_0^{T_1}$ | BSZ form factor parametrization coefficient $a_0$ of $T_1$ |
@@ -212,6 +211,7 @@ all parametewrs.
 | `Bs->phi deltaC9 c_- Re` | $\text{Re}\,c^{\Delta_9}_-$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at high $q^2$ |
 | `Bs->phi deltaC9 c_0 Im` | $\text{Im}\,c^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at high $q^2$ |
 | `Bs->phi deltaC9 c_0 Re` | $\text{Re}\,c^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at high $q^2$ |
+| `C_BXlnu` | $C$ |  |
 | `DeltaGamma/Gamma_B0` | $\Delta \Gamma_d/\Gamma_d$ | Relative decay width difference in the $B_s$ system |
 | `DeltaGamma/Gamma_Bs` | $\Delta \Gamma_s/\Gamma_s$ | Relative decay width difference in the $B_s$ system |
 | `DeltaM_K0` | $\Delta M_K$ | Mass difference in the $K^0$ system |
@@ -265,6 +265,8 @@ all parametewrs.
 | `bag_K0_4` | $B_4^{(K)}$ | $K^0$ bag parameter of $O_4$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `bag_K0_5` | $B_5^{(K)}$ | $K^0$ bag parameter of $O_5$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `deltaPcu` | $\delta P_{c,u}$ | Contributions to the $K^+\to\pi^+\nu\bar\nu$ amplitude not described by the dimension-6 effective Hamiltonian. |
+| `delta_BXdgamma` | $\delta_{bd\gamma}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders, interpolation, and non-perturbative effects in $B\to X_d\gamma$. The relative uncertainty is $1+\delta$. |
+| `delta_BXsgamma` | $\delta_{bs\gamma}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders, interpolation, and non-perturbative effects in $B\to X_s\gamma$. The relative uncertainty is $1+\delta$. |
 | `eta_cc_K0` | $\eta_{cc}$ | SM QCD correction factor for the charm contribution to $K^0$ mixing |
 | `eta_ct_K0` | $\eta_{ct}$ | SM QCD correction factor for the top-charm contribution to $K^0$ mixing |
 | `eta_tt_B0` | $\eta_B$ | SM QCD correction factor for $B^0$ mixing |
