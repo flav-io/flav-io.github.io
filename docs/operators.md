@@ -74,10 +74,10 @@ $T^a$ is a generator of $SU(3)_c$ in the fundamental representation.
 
 In addition, there are the dipole operators
 
-- $O_7 =  \frac{e}{16\pi^2}(\bar s_L \sigma^{\mu\nu} b_R)  F_{\mu\nu}$,
-- $O_7^\prime =  \frac{e}{16\pi^2}(\bar s_R \sigma^{\mu\nu} b_L)  F_{\mu\nu}$,
-- $O_8 =  \frac{g_s}{16\pi^2}(\bar s_L \sigma^{\mu\nu} b_R)  T^a  G^a_{\mu\nu}$,
-- $O_8^\prime =  \frac{g_s}{16\pi^2}(\bar s_R \sigma^{\mu\nu} T^a b_L)  G^a_{\mu\nu}$.
+- $O_7 =  \frac{e}{16\pi^2}m_b(\bar s_L \sigma^{\mu\nu} b_R)  F_{\mu\nu}$,
+- $O_7^\prime =  \frac{e}{16\pi^2}m_b(\bar s_R \sigma^{\mu\nu} b_L)  F_{\mu\nu}$,
+- $O_8 =  \frac{g_s}{16\pi^2}m_b(\bar s_L \sigma^{\mu\nu} b_R)  T^a  G^a_{\mu\nu}$,
+- $O_8^\prime =  \frac{g_s}{16\pi^2}m_b(\bar s_R \sigma^{\mu\nu} T^a b_L)  G^a_{\mu\nu}$.
 
 For these operators, the effective Wilson coefficients `C7eff_bs`, `C7effp_bs`,
 `C8eff_bs`, `C8effp_bs`, are  used which are defined as
