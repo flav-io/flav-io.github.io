@@ -1059,6 +1059,7 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.io.flha.read_ckm">read_ckm</a></li>
     <li class="mono"><a href="#flavio.io.flha.read_wilson">read_wilson</a></li>
   </ul>
 
@@ -1097,6 +1098,7 @@ files, as the normalization is not fixed by the accord.</p>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;SLHA&#39;</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="s1">&#39;WARNING&#39;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_prefactors_bsll</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
@@ -1156,8 +1158,7 @@ files, as the normalization is not fixed by the accord.</p>
 <span class="sd">    `flavio.np_prediction`, for instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;File &quot;</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot; not found.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">keys</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File &quot;</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot; not found.&quot;</span><span class="p">)</span>
     <span class="n">card</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">slha</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="n">wc_flha</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">matrices</span><span class="p">[</span><span class="s1">&#39;fwcoef&#39;</span><span class="p">]</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">wc_flha</span><span class="o">.</span><span class="n">scale</span>
@@ -1178,6 +1179,41 @@ files, as the normalization is not fixed by the accord.</p>
     <span class="n">wc_obj</span> <span class="o">=</span>  <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
     <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="n">wc_dict</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">wc_obj</span>
+
+<span class="k">def</span> <span class="nf">read_ckm</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">par_constraints</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Read CKM Wolfenstein parameters from the `VCKMIN` block of an FLHA</span>
+<span class="sd">    file.</span>
+
+<span class="sd">    Input</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    - `filename`: the path to the file as a string</span>
+<span class="sd">    - `par_constraints`: an instance of `flavio.ParameterConstraints`, e.g.</span>
+<span class="sd">    `flavio.default_parameters`</span>
+
+<span class="sd">    Note that you have to set the config option</span>
+<span class="sd">    `config[&#39;implementation&#39;][&#39;CKM matrix&#39;]`</span>
+<span class="sd">    to `Wolfenstein` first; otherwise an error is raised.</span>
+
+<span class="sd">    *Caution*: since the FLHA/SLHA format does not specify uncertainties,</span>
+<span class="sd">    the parameters are assumed to be known exactly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File &quot;</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot; not found.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;implementation&#39;</span><span class="p">][</span><span class="s1">&#39;CKM matrix&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;Wolfenstein&#39;</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;CKM matrix parametrization is not set to &quot;Wolfenstein&quot;. read_ckm will have no effect!&#39;</span><span class="p">)</span>
+    <span class="n">card</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">slha</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">wc_flha</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="s1">&#39;vckmin&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">par_constraints</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;laC&#39;</span><span class="p">,</span> <span class="n">wc_flha</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">par_constraints</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">wc_flha</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">par_constraints</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;rhob&#39;</span><span class="p">,</span> <span class="n">wc_flha</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">par_constraints</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;etab&#39;</span><span class="p">,</span> <span class="n">wc_flha</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;One of the Wolfenstein parameters seems to be missing from the VCKMIN block&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This file does not contain a VCKMIN block&quot;</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1204,6 +1240,72 @@ files, as the normalization is not fixed by the accord.</p>
       </div>
 
     <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="flavio.io.flha.read_ckm">
+    <p>def <span class="ident">read_ckm</span>(</p><p>filename, par_constraints)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Read CKM Wolfenstein parameters from the <code>VCKMIN</code> block of an FLHA
+file.</p>
+<h2>Input</h2>
+<ul>
+<li><code>filename</code>: the path to the file as a string</li>
+<li><code>par_constraints</code>: an instance of <code>flavio.ParameterConstraints</code>, e.g.
+<code>flavio.default_parameters</code></li>
+</ul>
+<p>Note that you have to set the config option
+<code>config['implementation']['CKM matrix']</code>
+to <code>Wolfenstein</code> first; otherwise an error is raised.</p>
+<p><em>Caution</em>: since the FLHA/SLHA format does not specify uncertainties,
+the parameters are assumed to be known exactly.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.io.flha.read_ckm', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.io.flha.read_ckm" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">read_ckm</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">par_constraints</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Read CKM Wolfenstein parameters from the `VCKMIN` block of an FLHA</span>
+<span class="sd">    file.</span>
+
+<span class="sd">    Input</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    - `filename`: the path to the file as a string</span>
+<span class="sd">    - `par_constraints`: an instance of `flavio.ParameterConstraints`, e.g.</span>
+<span class="sd">    `flavio.default_parameters`</span>
+
+<span class="sd">    Note that you have to set the config option</span>
+<span class="sd">    `config[&#39;implementation&#39;][&#39;CKM matrix&#39;]`</span>
+<span class="sd">    to `Wolfenstein` first; otherwise an error is raised.</span>
+
+<span class="sd">    *Caution*: since the FLHA/SLHA format does not specify uncertainties,</span>
+<span class="sd">    the parameters are assumed to be known exactly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File &quot;</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot; not found.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;implementation&#39;</span><span class="p">][</span><span class="s1">&#39;CKM matrix&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;Wolfenstein&#39;</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;CKM matrix parametrization is not set to &quot;Wolfenstein&quot;. read_ckm will have no effect!&#39;</span><span class="p">)</span>
+    <span class="n">card</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">slha</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">wc_flha</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="s1">&#39;vckmin&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">par_constraints</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;laC&#39;</span><span class="p">,</span> <span class="n">wc_flha</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">par_constraints</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">wc_flha</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">par_constraints</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;rhob&#39;</span><span class="p">,</span> <span class="n">wc_flha</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">par_constraints</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;etab&#39;</span><span class="p">,</span> <span class="n">wc_flha</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;One of the Wolfenstein parameters seems to be missing from the VCKMIN block&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This file does not contain a VCKMIN block&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       
   <div class="item">
     <div class="name def" id="flavio.io.flha.read_wilson">
@@ -1248,8 +1350,7 @@ for the Wilson coefficients.</p>
 <span class="sd">    `flavio.np_prediction`, for instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;File &quot;</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot; not found.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">keys</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File &quot;</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot; not found.&quot;</span><span class="p">)</span>
     <span class="n">card</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">slha</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="n">wc_flha</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">matrices</span><span class="p">[</span><span class="s1">&#39;fwcoef&#39;</span><span class="p">]</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">wc_flha</span><span class="o">.</span><span class="n">scale</span>
