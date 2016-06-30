@@ -418,7 +418,7 @@
     <meta name="description" content="${module.docstring | glimpse, trim}" />
   % endif
 
-  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="/public/plugins/katex/katex.min.css">
   <%namespace name="css" file="css.mako" />

@@ -111,7 +111,7 @@ and imaginary parts have to be treated as independent fit parameters.
 In addition, this allows to fit constrained scenarios such as MFV or models
 with lepton flavour universality.
 
-For details please consult the [API docs](http://flav-io.github.io/apidoc/flavio/statistics/fits.m.html).
+For details please consult the [API docs](https://flav-io.github.io/apidoc/flavio/statistics/fits.m.html).
 
 ### "Fast" fits
 
