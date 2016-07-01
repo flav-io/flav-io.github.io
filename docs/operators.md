@@ -28,8 +28,8 @@ $O_S^{LL} = (\bar s_R \gamma^\mu b_L)(\bar s_R \gamma_\mu b_L)$            | `CS
 $O_S^{RR} = (\bar s_L \gamma^\mu b_R)(\bar s_L \gamma_\mu b_R)$            | `CSRR_bsbs`
 $O_T^{LL} = (\bar s_R \sigma^{\mu\nu} b_L)(\bar s_R \sigma_{\mu\nu} b_L)$  | `CTLL_bsbs`
 $O_T^{RR} = (\bar s_L \sigma^{\mu\nu} b_R)(\bar s_L \sigma_{\mu\nu} b_R)$  | `CTRR_bsbs`
-$O_V^{LR} = (\bar s_L \gamma^\mu b_L)(\bar s_R \gamma_\mu b_R)$            | `CVRR_bsbs`
-$O_S^{LR} = (\bar s_R \gamma^\mu b_L)(\bar s_L \gamma_\mu b_R)$            | `CSLL_bsbs`
+$O_V^{LR} = (\bar s_L \gamma^\mu b_L)(\bar s_R \gamma_\mu b_R)$            | `CVLR_bsbs`
+$O_S^{LR} = (\bar s_R \gamma^\mu b_L)(\bar s_L \gamma_\mu b_R)$            | `CSLR_bsbs`
 
 
 ## Semi-leptonic FCNCs (`bsee`, `bdee`, `sdee`, `bsmumu`, ..., `bstautau`, ...)
