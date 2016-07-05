@@ -264,6 +264,11 @@ of the parameter.
 | `bag_K0_3` | $B_3^{(K)}$ | $K^0$ bag parameter of $O_3$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `bag_K0_4` | $B_4^{(K)}$ | $K^0$ bag parameter of $O_4$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `bag_K0_5` | $B_5^{(K)}$ | $K^0$ bag parameter of $O_5$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
+| `c1_K+lnu` | $c_1^{(K)}$ | Chiral perturbation theory coefficient in $K^+\to\ell^+\nu$ |
+| `c2_K+lnu` | $c_2^{(K)}$ | Chiral perturbation theory coefficient in $K^+\to\ell^+\nu$ |
+| `c2t_K+lnu` | $\tilde{c}_2^{(K)}$ | Chiral perturbation theory coefficient in $K^+\to\ell^+\nu$ |
+| `c3_K+lnu` | $c_3^{(K)}$ | Chiral perturbation theory coefficient in $K^+\to\ell^+\nu$ |
+| `c4_K+munu` | $c_4^{(K)}(m_\mu)$ | Chiral perturbation theory coefficient in $K^+\to\mu^+\nu$ |
 | `deltaPcu` | $\delta P_{c,u}$ | Contributions to the $K^+\to\pi^+\nu\bar\nu$ amplitude not described by the dimension-6 effective Hamiltonian. |
 | `delta_BXdgamma` | $\delta_{bd\gamma}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders, interpolation, and non-perturbative effects in $B\to X_d\gamma$. The relative uncertainty is $1+\delta$. |
 | `delta_BXsgamma` | $\delta_{bs\gamma}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders, interpolation, and non-perturbative effects in $B\to X_s\gamma$. The relative uncertainty is $1+\delta$. |
