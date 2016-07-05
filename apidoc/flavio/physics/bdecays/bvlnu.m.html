@@ -1073,7 +1073,6 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.dGdq2">dGdq2</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.get_angularcoeff">get_angularcoeff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.get_ff">get_ff</a></li>
-    <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.get_wceff">get_wceff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.prefactor">prefactor</a></li>
   </ul>
 
@@ -1111,27 +1110,6 @@ table {
 <span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">Observable</span><span class="p">,</span> <span class="n">Prediction</span>
 
 
-
-<span class="k">def</span> <span class="nf">get_wceff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvll&#39;</span><span class="p">]</span>
-    <span class="n">bqlnu</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span> <span class="o">+</span> <span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39;nu&#39;</span>
-    <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">bqlnu</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-    <span class="n">mb</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;7&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;7p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CV_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;vp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVp_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CV_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;ap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVp_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mb</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CS_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;sp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mb</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mb</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CS_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;pp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mb</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CT_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;tp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">return</span> <span class="n">c</span>
-
 <span class="k">def</span> <span class="nf">get_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
     <span class="n">ff_name</span> <span class="o">=</span> <span class="n">meson_ff</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span> <span class="o">+</span> <span class="s1">&#39; form factor&#39;</span>
     <span class="k">return</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">ff_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">)</span>
@@ -1156,7 +1134,7 @@ table {
 
 <span class="k">def</span> <span class="nf">get_angularcoeff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvll&#39;</span><span class="p">]</span>
-    <span class="n">wc</span> <span class="o">=</span> <span class="n">get_wceff_fccc</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">get_wceff_fccc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)],</span> <span class="n">lep</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="n">ml</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">lep</span><span class="p">]</span>
     <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
     <span class="n">mV</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">V</span><span class="p">]</span>
@@ -1522,7 +1500,7 @@ table {
   <div id="source-flavio.physics.bdecays.bvlnu.get_angularcoeff" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_angularcoeff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvll&#39;</span><span class="p">]</span>
-    <span class="n">wc</span> <span class="o">=</span> <span class="n">get_wceff_fccc</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">get_wceff_fccc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)],</span> <span class="n">lep</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="n">ml</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">lep</span><span class="p">]</span>
     <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
     <span class="n">mV</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">V</span><span class="p">]</span>
@@ -1559,44 +1537,6 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
     <span class="n">ff_name</span> <span class="o">=</span> <span class="n">meson_ff</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span> <span class="o">+</span> <span class="s1">&#39; form factor&#39;</span>
     <span class="k">return</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">ff_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="flavio.physics.bdecays.bvlnu.get_wceff">
-    <p>def <span class="ident">get_wceff</span>(</p><p>q2, wc_obj, par, B, V, lep)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvlnu.get_wceff', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.bvlnu.get_wceff" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_wceff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvll&#39;</span><span class="p">]</span>
-    <span class="n">bqlnu</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span> <span class="o">+</span> <span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39;nu&#39;</span>
-    <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">bqlnu</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-    <span class="n">mb</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;7&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;7p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CV_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;vp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVp_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CV_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;ap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVp_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mb</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CS_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;sp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mb</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mb</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CS_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;pp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mb</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CT_&#39;</span><span class="o">+</span><span class="n">bqlnu</span><span class="p">]</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;tp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">return</span> <span class="n">c</span>
 </pre></div>
 
   </div>
@@ -1649,7 +1589,7 @@ table {
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
     </p>
 
     <p>pdoc is in the public domain with the

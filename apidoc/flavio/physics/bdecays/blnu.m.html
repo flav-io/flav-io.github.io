@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>flavio.physics.bdecays.formfactors.b_v.cln API documentation</title>
-    <meta name="description" content="" />
+    <title>flavio.physics.bdecays.blnu API documentation</title>
+    <meta name="description" content="Functions for $B\to\ell\nu$ decays." />
 
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400' rel='stylesheet' type='text/css'>
@@ -1049,7 +1049,8 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
-    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.b_v.cln.process_dict">process_dict</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.blnu.l">l</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.blnu.pi">pi</a></li>
   </ul>
 
     </li>
@@ -1057,7 +1058,9 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
-    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.b_v.cln.ff">ff</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.blnu.br_blnu">br_blnu</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.blnu.br_blnu_fct">br_blnu_fct</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.blnu.br_plnu_general">br_plnu_general</a></li>
   </ul>
 
     </li>
@@ -1074,53 +1077,60 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">flavio.physics.bdecays.formfactors.b_v.cln</span> module</h1>
+  <h1 class="title"><span class="name">flavio.physics.bdecays.blnu</span> module</h1>
+  <p>Functions for $B\to\ell\nu$ decays.</p>
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_v.cln', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.formfactors.b_v.cln" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">flavio.physics.bdecays.formfactors.b_v.isgurwise</span> <span class="kn">import</span> <span class="n">improved_isgur_wise</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.blnu', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.blnu" class="source">
+    <div class="codehilite"><pre><span></span><span class="sd">r&quot;&quot;&quot;Functions for $B\to\ell\nu$ decays.&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">flavio</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span>
 
-<span class="n">process_dict</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">process_dict</span><span class="p">[</span><span class="s1">&#39;B-&gt;D*&#39;</span><span class="p">]</span> <span class="o">=</span>    <span class="p">{</span><span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="s1">&#39;D*0&#39;</span><span class="p">,</span>   <span class="s1">&#39;q&#39;</span><span class="p">:</span> <span class="s1">&#39;b-&gt;c&#39;</span><span class="p">}</span>
+<span class="k">def</span> <span class="nf">br_plnu_general</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">Vij</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Branching ratio of general $P^+\to\ell^+\nu_\ell$ decay.</span>
 
-
-<span class="k">def</span> <span class="nf">ff</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
-    <span class="sd">r&quot;&quot;&quot;Central value of $B\to V$ form factors in the lattice convention</span>
-<span class="sd">      CLN parametrization.</span>
-
-<span class="sd">    See eqs. (B4)-(B7) of arXiv:1203.2654.</span>
+<span class="sd">    `Vij` is the appropriate CKM matrix element.</span>
+<span class="sd">    `delta` (detaults to 0) is a correction factor to account for different</span>
+<span class="sd">    experimental treatment of electromagnetic effects, for instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">pd</span> <span class="o">=</span> <span class="n">process_dict</span><span class="p">[</span><span class="n">process</span><span class="p">]</span>
-    <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">pd</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]]</span>
-    <span class="n">mV</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">pd</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]]</span>
-    <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">mB</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">mV</span><span class="o">*+</span><span class="mi">2</span> <span class="o">-</span> <span class="n">q2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">mB</span><span class="o">*</span><span class="n">mV</span><span class="p">)</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">w</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">w</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-    <span class="n">RV</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mB</span><span class="o">*</span><span class="n">mV</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">mB</span><span class="o">+</span><span class="n">mV</span><span class="p">)</span>
-    <span class="n">hA1_1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; CLN h_A1(1)&#39;</span><span class="p">]</span>
-    <span class="n">R1_1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; CLN R_1(1)&#39;</span><span class="p">]</span>
-    <span class="n">R2_1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; CLN R_2(1)&#39;</span><span class="p">]</span>
-    <span class="n">R0_1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; CLN R_0(1)&#39;</span><span class="p">]</span>
-    <span class="n">rho2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; CLN rho2&#39;</span><span class="p">]</span>
-    <span class="n">hA1</span> <span class="o">=</span> <span class="n">hA1_1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">8</span><span class="o">*</span><span class="n">rho2</span><span class="o">*</span><span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="mi">53</span><span class="o">*</span><span class="n">rho2</span><span class="o">-</span><span class="mi">15</span><span class="p">)</span><span class="o">*</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="mi">231</span><span class="o">*</span><span class="n">rho2</span><span class="o">-</span><span class="mi">91</span><span class="p">)</span><span class="o">*</span><span class="n">z</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
-    <span class="n">R1</span> <span class="o">=</span> <span class="n">R1_1</span> <span class="o">-</span> <span class="mf">0.12</span><span class="o">*</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">R2</span> <span class="o">=</span> <span class="n">R2_1</span> <span class="o">+</span> <span class="mf">0.11</span><span class="o">*</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.06</span><span class="o">*</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">R0</span> <span class="o">=</span> <span class="n">R0_1</span> <span class="o">-</span> <span class="mf">0.11</span><span class="o">*</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.01</span><span class="o">*</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">ff</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hA1</span> <span class="o">*</span> <span class="n">RV</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;A0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">R0</span><span class="o">/</span><span class="n">RV</span> <span class="o">*</span> <span class="n">hA1</span>
-    <span class="c1"># A2 is not used in the lattice convention</span>
-    <span class="n">A2</span> <span class="o">=</span> <span class="n">R2</span><span class="o">/</span><span class="n">RV</span> <span class="o">*</span> <span class="n">hA1</span>
-    <span class="c1"># conversion from A_1, A_2 to A_12</span>
-    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;A12&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">ff</span><span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">mB</span> <span class="o">+</span> <span class="n">mV</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span> <span class="p">(</span><span class="n">mB</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">mV</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">q2</span><span class="p">)</span>
-              <span class="o">-</span> <span class="n">A2</span><span class="o">*</span><span class="p">(</span><span class="n">mB</span><span class="o">**</span><span class="mi">4</span> <span class="o">+</span> <span class="p">(</span><span class="n">mV</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">q2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">mB</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">mV</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">q2</span><span class="p">)))</span>
-              <span class="o">/</span> <span class="p">(</span><span class="mf">16.</span><span class="o">*</span><span class="n">mB</span><span class="o">*</span><span class="n">mV</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">mB</span> <span class="o">+</span> <span class="n">mV</span><span class="p">)))</span>
-    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">R1</span><span class="o">/</span><span class="n">RV</span> <span class="o">*</span> <span class="n">hA1</span>
-    <span class="n">ff</span> <span class="o">=</span> <span class="n">improved_isgur_wise</span><span class="p">(</span><span class="n">process</span><span class="o">=</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">ff</span><span class="o">=</span><span class="n">ff</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ff</span>
+    <span class="n">ml</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">lep</span><span class="p">]</span>
+    <span class="n">mP</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">P</span><span class="p">]</span>
+    <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
+    <span class="n">tau</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">P</span><span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;f_&#39;</span><span class="o">+</span><span class="n">P</span><span class="p">]</span>
+    <span class="c1"># Wilson coefficient dependence</span>
+    <span class="n">qqlnu</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">meson_quark</span><span class="p">[</span><span class="n">P</span><span class="p">]</span> <span class="o">+</span> <span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39;nu&#39;</span>
+    <span class="n">rWC</span> <span class="o">=</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CV_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span> <span class="o">-</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVp_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">])</span> <span class="o">+</span> <span class="n">mP</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">ml</span> <span class="o">*</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CS_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span> <span class="o">-</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">])</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">tau</span> <span class="o">*</span> <span class="n">GF</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">f</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">mP</span> <span class="o">*</span> <span class="n">ml</span><span class="o">**</span><span class="mi">2</span>  <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ml</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">mP</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">N</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Vij</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rWC</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">delta</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">br_blnu</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Branching ratio of $B^+\to\ell^+\nu_\ell$.&quot;&quot;&quot;</span>
+    <span class="c1"># CKM element</span>
+    <span class="n">Vub</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">ckm</span><span class="o">.</span><span class="n">get_ckm</span><span class="p">(</span><span class="n">par</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+    <span class="c1"># renormalization scale</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bll&#39;</span><span class="p">]</span>
+    <span class="c1"># Wilson coefficients</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bu&#39;</span> <span class="o">+</span> <span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39;nu&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="c1"># add SM contribution to Wilson coefficient</span>
+    <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CV_bu&#39;</span><span class="o">+</span><span class="n">lep</span><span class="o">+</span><span class="s1">&#39;nu&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">get_CVSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="s1">&#39;bu&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">br_plnu_general</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">Vub</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># function returning function needed for prediction instance</span>
+<span class="k">def</span> <span class="nf">br_blnu_fct</span><span class="p">(</span><span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">br_blnu</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span>
+
+<span class="c1"># Observable and Prediction instances</span>
+<span class="n">_tex</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="s1">&#39;\mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span> <span class="s1">r&#39;\tau&#39;</span><span class="p">}</span>
+<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]:</span>
+    <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;BR(B+-&gt;&quot;</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;nu)&quot;</span>
+    <span class="n">_obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Branching ratio of $B^+\to &quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+\nu_&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;$&quot;</span><span class="p">)</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$\text{BR}(B^+\to &quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+\nu_&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;)$&quot;</span>
+    <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">br_blnu_fct</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1130,7 +1140,15 @@ table {
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p id="flavio.physics.bdecays.formfactors.b_v.cln.process_dict" class="name">var <span class="ident">process_dict</span></p>
+      <p id="flavio.physics.bdecays.blnu.l" class="name">var <span class="ident">l</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.blnu.pi" class="name">var <span class="ident">pi</span></p>
       
   
   <div class="source_cont">
@@ -1141,52 +1159,91 @@ table {
     <h2 class="section-title" id="header-functions">Functions</h2>
       
   <div class="item">
-    <div class="name def" id="flavio.physics.bdecays.formfactors.b_v.cln.ff">
-    <p>def <span class="ident">ff</span>(</p><p>process, q2, par, scale)</p>
+    <div class="name def" id="flavio.physics.bdecays.blnu.br_blnu">
+    <p>def <span class="ident">br_blnu</span>(</p><p>wc_obj, par, lep)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Central value of $B\to V$ form factors in the lattice convention
-  CLN parametrization.</p>
-<p>See eqs. (B4)-(B7) of arXiv:1203.2654.</p></div>
+    <div class="desc"><p>Branching ratio of $B^+\to\ell^+\nu_\ell$.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_v.cln.ff', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.formfactors.b_v.cln.ff" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ff</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
-    <span class="sd">r&quot;&quot;&quot;Central value of $B\to V$ form factors in the lattice convention</span>
-<span class="sd">      CLN parametrization.</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.blnu.br_blnu', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.blnu.br_blnu" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">br_blnu</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Branching ratio of $B^+\to\ell^+\nu_\ell$.&quot;&quot;&quot;</span>
+    <span class="c1"># CKM element</span>
+    <span class="n">Vub</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">ckm</span><span class="o">.</span><span class="n">get_ckm</span><span class="p">(</span><span class="n">par</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+    <span class="c1"># renormalization scale</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bll&#39;</span><span class="p">]</span>
+    <span class="c1"># Wilson coefficients</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bu&#39;</span> <span class="o">+</span> <span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39;nu&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="c1"># add SM contribution to Wilson coefficient</span>
+    <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CV_bu&#39;</span><span class="o">+</span><span class="n">lep</span><span class="o">+</span><span class="s1">&#39;nu&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">get_CVSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="s1">&#39;bu&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">br_plnu_general</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">Vub</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
 
-<span class="sd">    See eqs. (B4)-(B7) of arXiv:1203.2654.</span>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.blnu.br_blnu_fct">
+    <p>def <span class="ident">br_blnu_fct</span>(</p><p>lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.blnu.br_blnu_fct', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.blnu.br_blnu_fct" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">br_blnu_fct</span><span class="p">(</span><span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">br_blnu</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.blnu.br_plnu_general">
+    <p>def <span class="ident">br_plnu_general</span>(</p><p>wc, par, Vij, P, lep, delta=0)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Branching ratio of general $P^+\to\ell^+\nu_\ell$ decay.</p>
+<p><code>Vij</code> is the appropriate CKM matrix element.
+<code>delta</code> (detaults to 0) is a correction factor to account for different
+experimental treatment of electromagnetic effects, for instance.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.blnu.br_plnu_general', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.blnu.br_plnu_general" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">br_plnu_general</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">Vij</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Branching ratio of general $P^+\to\ell^+\nu_\ell$ decay.</span>
+
+<span class="sd">    `Vij` is the appropriate CKM matrix element.</span>
+<span class="sd">    `delta` (detaults to 0) is a correction factor to account for different</span>
+<span class="sd">    experimental treatment of electromagnetic effects, for instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">pd</span> <span class="o">=</span> <span class="n">process_dict</span><span class="p">[</span><span class="n">process</span><span class="p">]</span>
-    <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">pd</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]]</span>
-    <span class="n">mV</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">pd</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]]</span>
-    <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">mB</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">mV</span><span class="o">*+</span><span class="mi">2</span> <span class="o">-</span> <span class="n">q2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">mB</span><span class="o">*</span><span class="n">mV</span><span class="p">)</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">w</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">w</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-    <span class="n">RV</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mB</span><span class="o">*</span><span class="n">mV</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">mB</span><span class="o">+</span><span class="n">mV</span><span class="p">)</span>
-    <span class="n">hA1_1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; CLN h_A1(1)&#39;</span><span class="p">]</span>
-    <span class="n">R1_1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; CLN R_1(1)&#39;</span><span class="p">]</span>
-    <span class="n">R2_1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; CLN R_2(1)&#39;</span><span class="p">]</span>
-    <span class="n">R0_1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; CLN R_0(1)&#39;</span><span class="p">]</span>
-    <span class="n">rho2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; CLN rho2&#39;</span><span class="p">]</span>
-    <span class="n">hA1</span> <span class="o">=</span> <span class="n">hA1_1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">8</span><span class="o">*</span><span class="n">rho2</span><span class="o">*</span><span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="mi">53</span><span class="o">*</span><span class="n">rho2</span><span class="o">-</span><span class="mi">15</span><span class="p">)</span><span class="o">*</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="mi">231</span><span class="o">*</span><span class="n">rho2</span><span class="o">-</span><span class="mi">91</span><span class="p">)</span><span class="o">*</span><span class="n">z</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
-    <span class="n">R1</span> <span class="o">=</span> <span class="n">R1_1</span> <span class="o">-</span> <span class="mf">0.12</span><span class="o">*</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">R2</span> <span class="o">=</span> <span class="n">R2_1</span> <span class="o">+</span> <span class="mf">0.11</span><span class="o">*</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.06</span><span class="o">*</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">R0</span> <span class="o">=</span> <span class="n">R0_1</span> <span class="o">-</span> <span class="mf">0.11</span><span class="o">*</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.01</span><span class="o">*</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">ff</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hA1</span> <span class="o">*</span> <span class="n">RV</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;A0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">R0</span><span class="o">/</span><span class="n">RV</span> <span class="o">*</span> <span class="n">hA1</span>
-    <span class="c1"># A2 is not used in the lattice convention</span>
-    <span class="n">A2</span> <span class="o">=</span> <span class="n">R2</span><span class="o">/</span><span class="n">RV</span> <span class="o">*</span> <span class="n">hA1</span>
-    <span class="c1"># conversion from A_1, A_2 to A_12</span>
-    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;A12&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">ff</span><span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">mB</span> <span class="o">+</span> <span class="n">mV</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span> <span class="p">(</span><span class="n">mB</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">mV</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">q2</span><span class="p">)</span>
-              <span class="o">-</span> <span class="n">A2</span><span class="o">*</span><span class="p">(</span><span class="n">mB</span><span class="o">**</span><span class="mi">4</span> <span class="o">+</span> <span class="p">(</span><span class="n">mV</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">q2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">mB</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">mV</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">q2</span><span class="p">)))</span>
-              <span class="o">/</span> <span class="p">(</span><span class="mf">16.</span><span class="o">*</span><span class="n">mB</span><span class="o">*</span><span class="n">mV</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">mB</span> <span class="o">+</span> <span class="n">mV</span><span class="p">)))</span>
-    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">R1</span><span class="o">/</span><span class="n">RV</span> <span class="o">*</span> <span class="n">hA1</span>
-    <span class="n">ff</span> <span class="o">=</span> <span class="n">improved_isgur_wise</span><span class="p">(</span><span class="n">process</span><span class="o">=</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">ff</span><span class="o">=</span><span class="n">ff</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ff</span>
+    <span class="n">ml</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">lep</span><span class="p">]</span>
+    <span class="n">mP</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">P</span><span class="p">]</span>
+    <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
+    <span class="n">tau</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">P</span><span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;f_&#39;</span><span class="o">+</span><span class="n">P</span><span class="p">]</span>
+    <span class="c1"># Wilson coefficient dependence</span>
+    <span class="n">qqlnu</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">meson_quark</span><span class="p">[</span><span class="n">P</span><span class="p">]</span> <span class="o">+</span> <span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39;nu&#39;</span>
+    <span class="n">rWC</span> <span class="o">=</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CV_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span> <span class="o">-</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVp_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">])</span> <span class="o">+</span> <span class="n">mP</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">ml</span> <span class="o">*</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CS_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span> <span class="o">-</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">])</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">tau</span> <span class="o">*</span> <span class="n">GF</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">f</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">mP</span> <span class="o">*</span> <span class="n">ml</span><span class="o">**</span><span class="mi">2</span>  <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ml</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">mP</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">N</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Vij</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rWC</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">delta</span><span class="p">)</span>
 </pre></div>
 
   </div>
