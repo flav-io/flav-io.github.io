@@ -25,6 +25,14 @@ of the parameter.
 | `B+->K*+ deltaC7 b_- Re` | $\text{Re}\,b^{\Delta_7}_-$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at low $q^2$ |
 | `B+->K*+ deltaC7 b_0 Im` | $\text{Im}\,b^{\Delta_7}_0$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at low $q^2$ |
 | `B+->K*+ deltaC7 b_0 Re` | $\text{Re}\,b^{\Delta_7}_0$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at low $q^2$ |
+| `B+->K*+ deltaC7p a_+ Im` | $\text{Im}\,a^{\Delta_7^\prime}_+$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at low $q^2$ |
+| `B+->K*+ deltaC7p a_+ Re` | $\text{Re}\,a^{\Delta_7^\prime}_+$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at low $q^2$ |
+| `B+->K*+ deltaC7p b_+ Im` | $\text{Im}\,b^{\Delta_7^\prime}_+$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at low $q^2$ |
+| `B+->K*+ deltaC7p b_+ Re` | $\text{Re}\,b^{\Delta_7^\prime}_+$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at low $q^2$ |
+| `B+->K*+ deltaC9 a_0 Im` | $\text{Im}\,a^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at low $q^2$ |
+| `B+->K*+ deltaC9 a_0 Re` | $\text{Re}\,a^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at low $q^2$ |
+| `B+->K*+ deltaC9 b_0 Im` | $\text{Im}\,b^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at low $q^2$ |
+| `B+->K*+ deltaC9 b_0 Re` | $\text{Re}\,b^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at low $q^2$ |
 | `B+->K*+ deltaC9 c_+ Im` | $\text{Im}\,c^{\Delta_9}_+$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at high $q^2$ |
 | `B+->K*+ deltaC9 c_+ Re` | $\text{Re}\,c^{\Delta_9}_+$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at high $q^2$ |
 | `B+->K*+ deltaC9 c_- Im` | $\text{Im}\,c^{\Delta_9}_-$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at high $q^2$ |
@@ -142,6 +150,14 @@ of the parameter.
 | `B0->K*0 deltaC7 b_- Re` | $\text{Re}\,b^{\Delta_7}_-$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at low $q^2$ |
 | `B0->K*0 deltaC7 b_0 Im` | $\text{Im}\,b^{\Delta_7}_0$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at low $q^2$ |
 | `B0->K*0 deltaC7 b_0 Re` | $\text{Re}\,b^{\Delta_7}_0$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at low $q^2$ |
+| `B0->K*0 deltaC7p a_+ Im` | $\text{Im}\,a^{\Delta_7^\prime}_+$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at low $q^2$ |
+| `B0->K*0 deltaC7p a_+ Re` | $\text{Re}\,a^{\Delta_7^\prime}_+$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at low $q^2$ |
+| `B0->K*0 deltaC7p b_+ Im` | $\text{Im}\,b^{\Delta_7^\prime}_+$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at low $q^2$ |
+| `B0->K*0 deltaC7p b_+ Re` | $\text{Re}\,b^{\Delta_7^\prime}_+$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at low $q^2$ |
+| `B0->K*0 deltaC9 a_0 Im` | $\text{Im}\,a^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at low $q^2$ |
+| `B0->K*0 deltaC9 a_0 Re` | $\text{Re}\,a^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at low $q^2$ |
+| `B0->K*0 deltaC9 b_0 Im` | $\text{Im}\,b^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at low $q^2$ |
+| `B0->K*0 deltaC9 b_0 Re` | $\text{Re}\,b^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at low $q^2$ |
 | `B0->K*0 deltaC9 c_+ Im` | $\text{Im}\,c^{\Delta_9}_+$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at high $q^2$ |
 | `B0->K*0 deltaC9 c_+ Re` | $\text{Re}\,c^{\Delta_9}_+$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at high $q^2$ |
 | `B0->K*0 deltaC9 c_- Im` | $\text{Im}\,c^{\Delta_9}_-$ | Parameter for subleading hadronic effects in $B^0\to K^{*0}\ell^+\ell^-$ at high $q^2$ |
@@ -205,6 +221,14 @@ of the parameter.
 | `Bs->phi deltaC7 b_- Re` | $\text{Re}\,b^{\Delta_7}_-$ |  |
 | `Bs->phi deltaC7 b_0 Im` | $\text{Im}\,b^{\Delta_7}_0$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
 | `Bs->phi deltaC7 b_0 Re` | $\text{Re}\,b^{\Delta_7}_0$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
+| `Bs->phi deltaC7p a_+ Im` | $\text{Im}\,a^{\Delta_7^\prime}_+$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
+| `Bs->phi deltaC7p a_+ Re` | $\text{Re}\,a^{\Delta_7^\prime}_+$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
+| `Bs->phi deltaC7p b_+ Im` | $\text{Im}\,b^{\Delta_7^\prime}_+$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
+| `Bs->phi deltaC7p b_+ Re` | $\text{Re}\,b^{\Delta_7^\prime}_+$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
+| `Bs->phi deltaC9 a_0 Im` | $\text{Im}\,a^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
+| `Bs->phi deltaC9 a_0 Re` | $\text{Re}\,a^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
+| `Bs->phi deltaC9 b_0 Im` | $\text{Im}\,b^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
+| `Bs->phi deltaC9 b_0 Re` | $\text{Re}\,b^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
 | `Bs->phi deltaC9 c_+ Im` | $\text{Im}\,c^{\Delta_9}_+$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at high $q^2$ |
 | `Bs->phi deltaC9 c_+ Re` | $\text{Re}\,c^{\Delta_9}_+$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at high $q^2$ |
 | `Bs->phi deltaC9 c_- Im` | $\text{Im}\,c^{\Delta_9}_-$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at high $q^2$ |
@@ -220,6 +244,21 @@ of the parameter.
 | `Gamma12_B0_c` | $c$ | Coefficient in the approximate equality $\Delta \Gamma_d/M_{12}^d=10^{-4}[c+a\frac{\lambda_u}{\lambda_t}]$ |
 | `Gamma12_Bs_a` | $a$ | Coefficient in the approximate equality $\Delta \Gamma_s/M_{12}^s=10^{-4}[c+a\frac{\lambda_u}{\lambda_t}]$ |
 | `Gamma12_Bs_c` | $c$ | Coefficient in the approximate equality $\Delta \Gamma_s/M_{12}^s=10^{-4}[c+a\frac{\lambda_u}{\lambda_t}]$ |
+| `K+e3 delta_EM` | $\delta_\text{em}^{K^+e}$ | Relative electromagnetic correction to $K^+\to\pi^0 e^+\bar\nu$ decay rate |
+| `K+mu3 delta_EM` | $\delta_\text{em}^{K^+\mu}$ | Relative electromagnetic correction to $K^+\to\pi^0 \mu^+\bar\nu$ decay rate |
+| `K->pi D` | $D$ | Parameter in the dispersive parametrization of the $K\to\pi$ form factors |
+| `K->pi H1` | $H_1$ | Parameter in the dispersive parametrization of the $K\to\pi$ form factors |
+| `K->pi H2` | $H_s$ | Parameter in the dispersive parametrization of the $K\to\pi$ form factors |
+| `K->pi Lambda_+` | $\Lambda_+$ | Parameter in the dispersive parametrization of the $K\to\pi$ form factors |
+| `K->pi d` | $d$ | Parameter in the dispersive parametrization of the $K\to\pi$ form factors |
+| `K->pi delta_K+pi0` | $\delta_{SU(2)}^{K^+\pi^0}$ | Isospin breaking parameter in $K\to \pi\ell\nu$ decays |
+| `K->pi f+(0)` | $f_+(0)$ | $K\to\pi$ form factor $f_+$ at $q^2=0$ |
+| `K->pi fT(0)` | $f_T(0)$ | $K\to\pi$ form factor $f_T$ at $q^2=0$ |
+| `K->pi k` | $k$ | Parameter in the dispersive parametrization of the $K\to\pi$ form factors |
+| `K->pi ln(C)` | $\ln C$ | Parameter in the dispersive parametrization of the $K\to\pi$ form factors |
+| `K->pi sT` | $s_T$ | Parameter in the pole parametrization of the $K\to\pi$ tensor form factor |
+| `K0e3 delta_EM` | $\delta_\text{em}^{K^0e}$ | Relative electromagnetic correction to $K^0\to\pi^+ e^-\nu$ decay rate |
+| `K0mu3 delta_EM` | $\delta_\text{em}^{K^0\mu}$ | Relative electromagnetic correction to $K^0\to\pi^+ \mu^-\nu$ decay rate |
 | `Vcb` | $V_{cb}$ | CKM element $V_{cb}$ |
 | `Vub` | $\vert V_{ub}\vert$ | Absolute value of the CKM element $V_{ub}$ |
 | `Vus` | $V_{us}$ | CKM element $V_{us}$ |
@@ -265,10 +304,15 @@ of the parameter.
 | `bag_K0_4` | $B_4^{(K)}$ | $K^0$ bag parameter of $O_4$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `bag_K0_5` | $B_5^{(K)}$ | $K^0$ bag parameter of $O_5$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `c1_K+lnu` | $c_1^{(K)}$ | Chiral perturbation theory coefficient in $K^+\to\ell^+\nu$ |
+| `c1_pi+lnu` | $c_1^{(\pi)}$ | Chiral perturbation theory coefficient in $\pi^+\to\ell^+\nu$ |
 | `c2_K+lnu` | $c_2^{(K)}$ | Chiral perturbation theory coefficient in $K^+\to\ell^+\nu$ |
+| `c2_pi+lnu` | $c_2^{(\pi)}$ | Chiral perturbation theory coefficient in $\pi^+\to\ell^+\nu$ |
 | `c2t_K+lnu` | $\tilde{c}_2^{(K)}$ | Chiral perturbation theory coefficient in $K^+\to\ell^+\nu$ |
+| `c2t_pi+lnu` | $\tilde{c}_2^{(\pi)}$ | Chiral perturbation theory coefficient in $\pi^+\to\ell^+\nu$ |
 | `c3_K+lnu` | $c_3^{(K)}$ | Chiral perturbation theory coefficient in $K^+\to\ell^+\nu$ |
+| `c3_pi+lnu` | $c_3^{(\pi)}$ | Chiral perturbation theory coefficient in $\pi^+\to\ell^+\nu$ |
 | `c4_K+munu` | $c_4^{(K)}(m_\mu)$ | Chiral perturbation theory coefficient in $K^+\to\mu^+\nu$ |
+| `c4_pi+munu` | $c_4^{(\pi)}(m_\mu)$ | Chiral perturbation theory coefficient in $\pi^+\to\mu^+\nu$ |
 | `deltaPcu` | $\delta P_{c,u}$ | Contributions to the $K^+\to\pi^+\nu\bar\nu$ amplitude not described by the dimension-6 effective Hamiltonian. |
 | `delta_BXdgamma` | $\delta_{bd\gamma}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders, interpolation, and non-perturbative effects in $B\to X_d\gamma$. The relative uncertainty is $1+\delta$. |
 | `delta_BXsgamma` | $\delta_{bs\gamma}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders, interpolation, and non-perturbative effects in $B\to X_s\gamma$. The relative uncertainty is $1+\delta$. |
