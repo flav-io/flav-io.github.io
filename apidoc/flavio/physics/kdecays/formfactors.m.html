@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>flavio.physics.kdecays API documentation</title>
-    <meta name="description" content="Observables in kaon decays." />
+    <title>flavio.physics.kdecays.formfactors API documentation</title>
+    <meta name="description" content="Functions for $K\to pi$ hadronic form factors." />
 
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400' rel='stylesheet' type='text/css'>
@@ -1046,21 +1046,27 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#flavio.physics.kdecays.formfactors.config">config</a></li>
+    <li class="mono"><a href="#flavio.physics.kdecays.formfactors.iname">iname</a></li>
+    <li class="mono"><a href="#flavio.physics.kdecays.formfactors.quantity">quantity</a></li>
+  </ul>
 
-
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
-      <ul>
-        <li class="mono"><a href="formfactors.m.html">flavio.physics.kdecays.formfactors</a></li>
-        <li class="mono"><a href="klnu.m.html">flavio.physics.kdecays.klnu</a></li>
-        <li class="mono"><a href="kpilnu.m.html">flavio.physics.kdecays.kpilnu</a></li>
-        <li class="mono"><a href="kpinunu.m.html">flavio.physics.kdecays.kpinunu</a></li>
-        <li class="mono"><a href="test_formfactors.m.html">flavio.physics.kdecays.test_formfactors</a></li>
-        <li class="mono"><a href="test_klnu.m.html">flavio.physics.kdecays.test_klnu</a></li>
-        <li class="mono"><a href="test_kpilnu.m.html">flavio.physics.kdecays.test_kpilnu</a></li>
-        <li class="mono"><a href="test_kpinunu.m.html">flavio.physics.kdecays.test_kpinunu</a></li>
-      </ul>
     </li>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#flavio.physics.kdecays.formfactors.fT_pole">fT_pole</a></li>
+    <li class="mono"><a href="#flavio.physics.kdecays.formfactors.ff_dispersive_pole">ff_dispersive_pole</a></li>
+    <li class="mono"><a href="#flavio.physics.kdecays.formfactors.fp0_dispersive">fp0_dispersive</a></li>
+  </ul>
+
+    </li>
+
+
     </ul>
   </div>
 
@@ -1072,17 +1078,69 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">flavio.physics.kdecays</span> module</h1>
-  <p>Observables in kaon decays.</p>
+  <h1 class="title"><span class="name">flavio.physics.kdecays.formfactors</span> module</h1>
+  <p>Functions for $K\to pi$ hadronic form factors.</p>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.kdecays" class="source">
-    <div class="codehilite"><pre><span></span><span class="sd">r&quot;&quot;&quot;Observables in kaon decays.&quot;&quot;&quot;</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.formfactors', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.kdecays.formfactors" class="source">
+    <div class="codehilite"><pre><span></span><span class="sd">r&quot;&quot;&quot;Functions for $K\to pi$ hadronic form factors.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">formfactors</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">kpinunu</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">kpilnu</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">klnu</span>
+<span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">AuxiliaryQuantity</span><span class="p">,</span> <span class="n">Implementation</span>
+<span class="kn">from</span> <span class="nn">flavio.config</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">exp</span>
+
+<span class="k">def</span> <span class="nf">fp0_dispersive</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+    <span class="n">mK</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_KL&#39;</span><span class="p">]</span>
+    <span class="n">mpi</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_pi+&#39;</span><span class="p">]</span>
+    <span class="n">DeltaKpi</span> <span class="o">=</span> <span class="n">mK</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">mpi</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="p">(</span><span class="n">mK</span> <span class="o">-</span> <span class="n">mpi</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="c1"># specific parameters</span>
+    <span class="n">fp_0</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi f+(0)&#39;</span><span class="p">]</span>
+    <span class="n">lnC</span> <span class="o">=</span>    <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi ln(C)&#39;</span><span class="p">]</span>
+    <span class="n">Lp</span> <span class="o">=</span>   <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi Lambda_+&#39;</span><span class="p">]</span>
+    <span class="n">D</span> <span class="o">=</span>    <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi D&#39;</span><span class="p">]</span>
+    <span class="n">d</span> <span class="o">=</span>    <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi d&#39;</span><span class="p">]</span>
+    <span class="n">k</span> <span class="o">=</span>    <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi k&#39;</span><span class="p">]</span>
+    <span class="n">H1</span> <span class="o">=</span>    <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi H1&#39;</span><span class="p">]</span>
+    <span class="n">H2</span> <span class="o">=</span>    <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi H2&#39;</span><span class="p">]</span>
+    <span class="c1"># (A.1) of 0903.1654</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">q2</span><span class="o">/</span><span class="n">t0</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">D</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">d</span> <span class="o">+</span> <span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">k</span>
+    <span class="c1"># (A.3) of 0903.1654</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">H1</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">H2</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+    <span class="c1"># (33) of 1005.2323</span>
+    <span class="n">fp_bar</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">q2</span><span class="o">/</span><span class="n">DeltaKpi</span> <span class="o">*</span> <span class="p">(</span><span class="n">lnC</span> <span class="o">-</span> <span class="n">G</span><span class="p">))</span>
+    <span class="c1"># (37) of 1005.2323</span>
+    <span class="n">f0_bar</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">q2</span><span class="o">/</span><span class="n">mpi</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">Lp</span> <span class="o">+</span> <span class="n">H</span><span class="p">))</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;f+&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fp_0</span> <span class="o">*</span> <span class="n">fp_bar</span>
+    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;f0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fp_0</span> <span class="o">*</span> <span class="n">f0_bar</span>
+    <span class="k">return</span> <span class="n">ff</span>
+
+<span class="k">def</span> <span class="nf">fT_pole</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+    <span class="c1"># specific parameters</span>
+    <span class="n">fT_0</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi fT(0)&#39;</span><span class="p">]</span>
+    <span class="n">sT</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi sT&#39;</span><span class="p">]</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># (4) of 1108.1021</span>
+    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;fT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fT_0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span> <span class="n">sT</span> <span class="o">*</span> <span class="n">q2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ff</span>
+
+<span class="k">def</span> <span class="nf">ff_dispersive_pole</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ff</span><span class="o">.</span><span class="n">update</span><span class="p">(</span> <span class="n">fp0_dispersive</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">ff</span><span class="o">.</span><span class="n">update</span><span class="p">(</span> <span class="n">fT_pole</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ff</span>
+
+<span class="n">quantity</span> <span class="o">=</span> <span class="s1">&#39;K-&gt;pi form factor&#39;</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">quantity</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2&#39;</span><span class="p">])</span>
+<span class="n">a</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s1">r&#39;Hadronic form factor for the $K\to\pi$ transition&#39;</span><span class="p">)</span>
+
+<span class="n">iname</span> <span class="o">=</span> <span class="s1">&#39;K-&gt;pi dispersive + pole&#39;</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">Implementation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">iname</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="n">quantity</span><span class="p">,</span>
+               <span class="n">function</span><span class="o">=</span><span class="n">ff_dispersive_pole</span><span class="p">)</span>
+<span class="n">i</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Dispersive parametrization (see arXiv:hep-ph/0603202) for &quot;</span>
+                  <span class="s2">r&quot;$f_+$ and $f_0$ and simple pole for $f_T$.&quot;</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1090,62 +1148,132 @@ table {
   </header>
 
   <section id="section-items">
-
-
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+    <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p class="name"><a href="formfactors.m.html">flavio.physics.kdecays.formfactors</a></p>
+      <p id="flavio.physics.kdecays.formfactors.config" class="name">var <span class="ident">config</span></p>
       
   
-    <div class="desc"><p>Functions for $K\to pi$ hadronic form factors.</p></div>
+  <div class="source_cont">
+</div>
 
       </div>
       <div class="item">
-      <p class="name"><a href="klnu.m.html">flavio.physics.kdecays.klnu</a></p>
+      <p id="flavio.physics.kdecays.formfactors.iname" class="name">var <span class="ident">iname</span></p>
       
   
-    <div class="desc"><p>Functions for $K\to\ell\nu$ and $\pi\to\ell\nu$ decays.</p></div>
+  <div class="source_cont">
+</div>
 
       </div>
       <div class="item">
-      <p class="name"><a href="kpilnu.m.html">flavio.physics.kdecays.kpilnu</a></p>
+      <p id="flavio.physics.kdecays.formfactors.quantity" class="name">var <span class="ident">quantity</span></p>
       
   
-    <div class="desc"><p>Functions for $K\to \pi\ell\nu$ decays.</p></div>
+  <div class="source_cont">
+</div>
 
       </div>
-      <div class="item">
-      <p class="name"><a href="kpinunu.m.html">flavio.physics.kdecays.kpinunu</a></p>
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
       
-  
-    <div class="desc"><p>Observables in $K\to \pi\nu\bar\nu$ decays</p></div>
+  <div class="item">
+    <div class="name def" id="flavio.physics.kdecays.formfactors.fT_pole">
+    <p>def <span class="ident">fT_pole</span>(</p><p>q2, par)</p>
+    </div>
+    
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="test_formfactors.m.html">flavio.physics.kdecays.test_formfactors</a></p>
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.formfactors.fT_pole', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.kdecays.formfactors.fT_pole" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fT_pole</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+    <span class="c1"># specific parameters</span>
+    <span class="n">fT_0</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi fT(0)&#39;</span><span class="p">]</span>
+    <span class="n">sT</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi sT&#39;</span><span class="p">]</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># (4) of 1108.1021</span>
+    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;fT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fT_0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span> <span class="n">sT</span> <span class="o">*</span> <span class="n">q2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ff</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       
-  
+  <div class="item">
+    <div class="name def" id="flavio.physics.kdecays.formfactors.ff_dispersive_pole">
+    <p>def <span class="ident">ff_dispersive_pole</span>(</p><p>wc_obj, par_dict, q2)</p>
+    </div>
+    
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="test_klnu.m.html">flavio.physics.kdecays.test_klnu</a></p>
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.formfactors.ff_dispersive_pole', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.kdecays.formfactors.ff_dispersive_pole" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ff_dispersive_pole</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ff</span><span class="o">.</span><span class="n">update</span><span class="p">(</span> <span class="n">fp0_dispersive</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">ff</span><span class="o">.</span><span class="n">update</span><span class="p">(</span> <span class="n">fT_pole</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ff</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       
+  <div class="item">
+    <div class="name def" id="flavio.physics.kdecays.formfactors.fp0_dispersive">
+    <p>def <span class="ident">fp0_dispersive</span>(</p><p>q2, par)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.formfactors.fp0_dispersive', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.kdecays.formfactors.fp0_dispersive" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fp0_dispersive</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+    <span class="n">mK</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_KL&#39;</span><span class="p">]</span>
+    <span class="n">mpi</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_pi+&#39;</span><span class="p">]</span>
+    <span class="n">DeltaKpi</span> <span class="o">=</span> <span class="n">mK</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">mpi</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="p">(</span><span class="n">mK</span> <span class="o">-</span> <span class="n">mpi</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="c1"># specific parameters</span>
+    <span class="n">fp_0</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi f+(0)&#39;</span><span class="p">]</span>
+    <span class="n">lnC</span> <span class="o">=</span>    <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi ln(C)&#39;</span><span class="p">]</span>
+    <span class="n">Lp</span> <span class="o">=</span>   <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi Lambda_+&#39;</span><span class="p">]</span>
+    <span class="n">D</span> <span class="o">=</span>    <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi D&#39;</span><span class="p">]</span>
+    <span class="n">d</span> <span class="o">=</span>    <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi d&#39;</span><span class="p">]</span>
+    <span class="n">k</span> <span class="o">=</span>    <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi k&#39;</span><span class="p">]</span>
+    <span class="n">H1</span> <span class="o">=</span>    <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi H1&#39;</span><span class="p">]</span>
+    <span class="n">H2</span> <span class="o">=</span>    <span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi H2&#39;</span><span class="p">]</span>
+    <span class="c1"># (A.1) of 0903.1654</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">q2</span><span class="o">/</span><span class="n">t0</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">D</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">d</span> <span class="o">+</span> <span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">k</span>
+    <span class="c1"># (A.3) of 0903.1654</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">H1</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">H2</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+    <span class="c1"># (33) of 1005.2323</span>
+    <span class="n">fp_bar</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">q2</span><span class="o">/</span><span class="n">DeltaKpi</span> <span class="o">*</span> <span class="p">(</span><span class="n">lnC</span> <span class="o">-</span> <span class="n">G</span><span class="p">))</span>
+    <span class="c1"># (37) of 1005.2323</span>
+    <span class="n">f0_bar</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">q2</span><span class="o">/</span><span class="n">mpi</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">Lp</span> <span class="o">+</span> <span class="n">H</span><span class="p">))</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;f+&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fp_0</span> <span class="o">*</span> <span class="n">fp_bar</span>
+    <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;f0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fp_0</span> <span class="o">*</span> <span class="n">f0_bar</span>
+    <span class="k">return</span> <span class="n">ff</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
   
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="test_kpilnu.m.html">flavio.physics.kdecays.test_kpilnu</a></p>
-      
-  
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="test_kpinunu.m.html">flavio.physics.kdecays.test_kpinunu</a></p>
-      
-  
-
-      </div>
   </section>
 
     </article>
