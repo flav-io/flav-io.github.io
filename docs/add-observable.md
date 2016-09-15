@@ -45,7 +45,7 @@ could be done via
 
 {% highlight python %}
 my_obs = Observable('m_B0-obs')
-my_obs.tex = r"m_{B^0}"
+my_obs.tex = r"$m_{B^0}$"
 my_obs.description = r"Mass of the $B^0$ meson."
 {% endhighlight %}
 
