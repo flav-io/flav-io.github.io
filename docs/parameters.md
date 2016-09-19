@@ -259,6 +259,35 @@ of the parameter.
 | `K->pi sT` | $s_T$ | Parameter in the pole parametrization of the $K\to\pi$ tensor form factor |
 | `K0e3 delta_EM` | $\delta_\text{em}^{K^0e}$ | Relative electromagnetic correction to $K^0\to\pi^+ e^-\nu$ decay rate |
 | `K0mu3 delta_EM` | $\delta_\text{em}^{K^0\mu}$ | Relative electromagnetic correction to $K^0\to\pi^+ \mu^-\nu$ decay rate |
+| `Lambda->ppi alpha_-` | $\alpha_-$ | $\Lambda\to p \pi^-$ decay parameter |
+| `Lambdab->Lambda SSE a0_fA0` | $a_0^{f^A_0}$ | SSE form factor parametrization coefficient $a_0$ of $f^A_0$ |
+| `Lambdab->Lambda SSE a0_fAt` | $a_0^{f^A_t}$ | SSE form factor parametrization coefficient $a_0$ of $f^A_t$ |
+| `Lambdab->Lambda SSE a0_fT0` | $a_0^{f^T_0}$ | SSE form factor parametrization coefficient $a_0$ of $f^T_0$ |
+| `Lambdab->Lambda SSE a0_fT50` | $a_0^{f^{T5}_0}$ | SSE form factor parametrization coefficient $a_0$ of $f^{T5}_0$ |
+| `Lambdab->Lambda SSE a0_fTperp` | $a_0^{f^T_\perp}$ | SSE form factor parametrization coefficient $a_0$ of $f^T_\perp$ |
+| `Lambdab->Lambda SSE a0_fV0` | $a_0^{f^V_0}$ | SSE form factor parametrization coefficient $a_0$ of $f^V_0$ |
+| `Lambdab->Lambda SSE a0_fVperp` | $a_0^{f^V_\perp}$ | SSE form factor parametrization coefficient $a_0$ of $f^V_\perp$ |
+| `Lambdab->Lambda SSE a0_fVt` | $a_0^{f^V_t}$ | SSE form factor parametrization coefficient $a_0$ of $f^V_t$ |
+| `Lambdab->Lambda SSE a1_fA0` | $a_1^{f^A_0}$ | SSE form factor parametrization coefficient $a_1$ of $f^A_0$ |
+| `Lambdab->Lambda SSE a1_fAperp` | $a_1^{f^A_\perp}$ | SSE form factor parametrization coefficient $a_1$ of $f^A_\perp$ |
+| `Lambdab->Lambda SSE a1_fAt` | $a_1^{f^A_t}$ | SSE form factor parametrization coefficient $a_1$ of $f^A_t$ |
+| `Lambdab->Lambda SSE a1_fT0` | $a_1^{f^T_0}$ | SSE form factor parametrization coefficient $a_1$ of $f^T_0$ |
+| `Lambdab->Lambda SSE a1_fT50` | $a_1^{f^{T5}_0}$ | SSE form factor parametrization coefficient $a_1$ of $f^{T5}_0$ |
+| `Lambdab->Lambda SSE a1_fT5perp` | $a_1^{f^{T5}_\perp}$ | SSE form factor parametrization coefficient $a_1$ of $f^{T5}_\perp$ |
+| `Lambdab->Lambda SSE a1_fTperp` | $a_1^{f^T_\perp}$ | SSE form factor parametrization coefficient $a_1$ of $f^T_\perp$ |
+| `Lambdab->Lambda SSE a1_fV0` | $a_1^{f^V_0}$ | SSE form factor parametrization coefficient $a_1$ of $f^V_0$ |
+| `Lambdab->Lambda SSE a1_fVperp` | $a_1^{f^V_\perp}$ | SSE form factor parametrization coefficient $a_1$ of $f^V_\perp$ |
+| `Lambdab->Lambda SSE a1_fVt` | $a_1^{f^V_t}$ | SSE form factor parametrization coefficient $a_1$ of $f^V_t$ |
+| `Lambdab->Lambda SSE a2_fA0` | $a_2^{f^A_0}$ | SSE form factor parametrization coefficient $a_2$ of $f^A_0$ |
+| `Lambdab->Lambda SSE a2_fAperp` | $a_2^{f^A_\perp}$ | SSE form factor parametrization coefficient $a_2$ of $f^A_\perp$ |
+| `Lambdab->Lambda SSE a2_fAt` | $a_2^{f^A_t}$ | SSE form factor parametrization coefficient $a_2$ of $f^A_t$ |
+| `Lambdab->Lambda SSE a2_fT0` | $a_2^{f^T_0}$ | SSE form factor parametrization coefficient $a_2$ of $f^T_0$ |
+| `Lambdab->Lambda SSE a2_fT50` | $a_2^{f^{T5}_0}$ | SSE form factor parametrization coefficient $a_2$ of $f^{T5}_0$ |
+| `Lambdab->Lambda SSE a2_fT5perp` | $a_2^{f^{T5}_\perp}$ | SSE form factor parametrization coefficient $a_2$ of $f^{T5}_\perp$ |
+| `Lambdab->Lambda SSE a2_fTperp` | $a_2^{f^T_\perp}$ | SSE form factor parametrization coefficient $a_2$ of $f^T_\perp$ |
+| `Lambdab->Lambda SSE a2_fV0` | $a_2^{f^V_0}$ | SSE form factor parametrization coefficient $a_2$ of $f^V_0$ |
+| `Lambdab->Lambda SSE a2_fVperp` | $a_2^{f^V_\perp}$ | SSE form factor parametrization coefficient $a_2$ of $f^V_\perp$ |
+| `Lambdab->Lambda SSE a2_fVt` | $a_2^{f^V_t}$ | SSE form factor parametrization coefficient $a_2$ of $f^V_t$ |
 | `Vcb` | $V_{cb}$ | CKM element $V_{cb}$ |
 | `Vub` | $\vert V_{ub}\vert$ | Absolute value of the CKM element $V_{ub}$ |
 | `Vus` | $V_{us}$ | CKM element $V_{us}$ |
@@ -366,11 +395,12 @@ of the parameter.
 | `m_KL` | $m_{K_{L}}$ | $K_{L}$ mass |
 | `m_KS` | $m_{K_{S}}$ | $K_{S}$ mass |
 | `m_Lambda` | $m_{\Lambda}$ | $\Lambda$ mass |
-| `m_Lambda(b)` | $m_{\Lambda_{b}}$ | $\Lambda_{b}$ mass |
+| `m_Lambdab` | $m_{\Lambda_{b}}$ | $\Lambda_{b}$ mass |
 | `m_W` | $m_{W}$ | $W$ mass |
 | `m_Z` | $m_{Z}$ | $Z$ mass |
 | `m_b` | $m_{b}(m_{b})$ | $b$ quark mass in the $\overline{\text{MS}}$ scheme at the scale $m_b$ |
 | `m_c` | $m_{c}(m_{c})$ | $c$ quark mass in the $\overline{\text{MS}}$ scheme at the scale $m_c$ |
+| `m_c BVgamma` | $m_c$ | Charm quark mass entering $O(\alpha_s)$ corrections to matrix elements in exclusive radiative $B$ decays. Uncertainty contains scheme ambiguity at $O(\alpha_s)$. |
 | `m_d` | $m_{d}(2\,\text{GeV})$ | $d$ quark mass in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `m_e` | $m_{e}$ | $e$ mass |
 | `m_eta` | $m_{\eta}$ | $\eta$ mass |
@@ -403,7 +433,7 @@ of the parameter.
 | `tau_KL` | $\tau_{K_{L}}$ | $K_{L}$ lifetime |
 | `tau_KS` | $\tau_{K_{S}}$ | $K_{S}$ lifetime |
 | `tau_Lambda` | $\tau_{\Lambda}$ | $\Lambda$ lifetime |
-| `tau_Lambda(b)` | $\tau_{\Lambda_{b}}$ | $\Lambda_{b}$ lifetime |
+| `tau_Lambdab` | $\tau_{\Lambda_{b}}$ | $\Lambda_{b}$ lifetime |
 | `tau_W` | $\tau_{W}$ | $W$ lifetime |
 | `tau_Z` | $\tau_{Z}$ | $Z$ lifetime |
 | `tau_eta` | $\tau_{\eta}$ | $\eta$ lifetime |
