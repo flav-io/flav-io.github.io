@@ -3,10 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>flavio.physics.bdecays.bvll.nonfactorizable API documentation</title>
-    <meta name="description" content="Functions for spectator scattering corrections to $B\to V\ell^+\ell^-$ decays.
-
-This includes weak a..." />
+    <title>flavio.physics.ddecays.rge API documentation</title>
+    <meta name="description" content="" />
 
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400' rel='stylesheet' type='text/css'>
@@ -1048,27 +1046,7 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#flavio.physics.bdecays.bvll.nonfactorizable.config">config</a></li>
-    <li class="mono"><a href="#flavio.physics.bdecays.bvll.nonfactorizable.had">had</a></li>
-    <li class="mono"><a href="#flavio.physics.bdecays.bvll.nonfactorizable.iname">iname</a></li>
-    <li class="mono"><a href="#flavio.physics.bdecays.bvll.nonfactorizable.meson_quark">meson_quark</a></li>
-    <li class="mono"><a href="#flavio.physics.bdecays.bvll.nonfactorizable.process">process</a></li>
-    <li class="mono"><a href="#flavio.physics.bdecays.bvll.nonfactorizable.quantity">quantity</a></li>
-  </ul>
 
-    </li>
-
-    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#flavio.physics.bdecays.bvll.nonfactorizable.ha_qcdf_function">ha_qcdf_function</a></li>
-    <li class="mono"><a href="#flavio.physics.bdecays.bvll.nonfactorizable.ha_qcdf_interpolate_function">ha_qcdf_interpolate_function</a></li>
-  </ul>
-
-    </li>
 
 
     </ul>
@@ -1082,188 +1060,14 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">flavio.physics.bdecays.bvll.nonfactorizable</span> module</h1>
-  <p>Functions for spectator scattering corrections to $B\to V\ell^+\ell^-$ decays.</p>
-<p>This includes weak annihilation, chromomagnetic contributions, and light
-quark-loop spectator scattering.</p>
+  <h1 class="title"><span class="name">flavio.physics.ddecays.rge</span> module</h1>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvll.nonfactorizable', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.bvll.nonfactorizable" class="source">
-    <div class="codehilite"><pre><span></span><span class="sd">r&quot;&quot;&quot;Functions for spectator scattering corrections to $B\to V\ell^+\ell^-$ decays.</span>
-
-<span class="sd">This includes weak annihilation, chromomagnetic contributions, and light</span>
-<span class="sd">quark-loop spectator scattering.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">flavio</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">AuxiliaryQuantity</span><span class="p">,</span> <span class="n">Implementation</span>
-<span class="kn">from</span> <span class="nn">flavio.physics.bdecays.common</span> <span class="kn">import</span> <span class="n">meson_quark</span>
-<span class="kn">from</span> <span class="nn">flavio.physics.bdecays.wilsoncoefficients</span> <span class="kn">import</span> <span class="n">wctot_dict</span>
-<span class="kn">from</span> <span class="nn">flavio.physics.common</span> <span class="kn">import</span> <span class="n">conjugate_par</span><span class="p">,</span> <span class="n">conjugate_wc</span><span class="p">,</span> <span class="n">add_dict</span>
-<span class="kn">from</span> <span class="nn">flavio.config</span> <span class="kn">import</span> <span class="n">config</span>
-
-
-
-<span class="c1"># Auxiliary quantities and implementations</span>
-
-<span class="c1"># function needed for the QCD factorization implementation (see qcdf.py)</span>
-<span class="k">def</span> <span class="nf">ha_qcdf_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvll&#39;</span><span class="p">]</span>
-    <span class="n">label</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span> <span class="o">+</span> <span class="s1">&#39;ee&#39;</span> <span class="c1"># the lepton flavour is irrelevant here</span>
-                                      <span class="c1"># as only dipole and 4-quark operators contribute!</span>
-    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
-        <span class="n">par</span> <span class="o">=</span> <span class="n">par_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">cp_conjugate</span><span class="p">:</span>
-            <span class="n">par</span> <span class="o">=</span> <span class="n">conjugate_par</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
-        <span class="n">wc</span> <span class="o">=</span> <span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">cp_conjugate</span><span class="p">:</span>
-            <span class="n">wc</span> <span class="o">=</span> <span class="n">conjugate_wc</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bvll</span><span class="o">.</span><span class="n">qcdf</span><span class="o">.</span><span class="n">helicity_amps_qcdf</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">function</span>
-
-<span class="c1"># ... and the same for the interpolated version (see qcdf_interpolate.py)</span>
-<span class="k">def</span> <span class="nf">ha_qcdf_interpolate_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">contribution</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvll&#39;</span><span class="p">]</span>
-    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bvll</span><span class="o">.</span><span class="n">qcdf_interpolate</span><span class="o">.</span><span class="n">helicity_amps_qcdf</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">,</span> <span class="n">contribution</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">function</span>
-
-<span class="c1"># loop over hadronic transitions and lepton flavours</span>
-<span class="c1"># BTW, it is not necessary to loop over tau: for tautau final states, the minimum</span>
-<span class="c1"># q2=4*mtau**2 is so high that QCDF is not valid anymore anyway!</span>
-<span class="k">for</span> <span class="n">had</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;B0&#39;</span><span class="p">,</span><span class="s1">&#39;K*0&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;B+&#39;</span><span class="p">,</span><span class="s1">&#39;K*+&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;B0&#39;</span><span class="p">,</span><span class="s1">&#39;rho0&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;B+&#39;</span><span class="p">,</span><span class="s1">&#39;rho+&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Bs&#39;</span><span class="p">,</span><span class="s1">&#39;phi&#39;</span><span class="p">),</span> <span class="p">]:</span>
-    <span class="n">process</span> <span class="o">=</span> <span class="n">had</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;-&gt;&#39;</span> <span class="o">+</span> <span class="n">had</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;ll&#39;</span> <span class="c1"># e.g. B0-&gt;K*0mumu</span>
-    <span class="n">quantity</span> <span class="o">=</span> <span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; spectator scattering&#39;</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">quantity</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2&#39;</span><span class="p">,</span> <span class="s1">&#39;cp_conjugate&#39;</span><span class="p">])</span>
-    <span class="n">a</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Contribution to &#39;</span> <span class="o">+</span> <span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; helicity amplitudes from&#39;</span>
-                    <span class="s1">&#39; non-factorizable spectator scattering.&#39;</span><span class="p">)</span>
-
-    <span class="c1"># Implementation: QCD factorization</span>
-    <span class="n">iname</span> <span class="o">=</span> <span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; QCDF&#39;</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="n">Implementation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">iname</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="n">quantity</span><span class="p">,</span>
-                   <span class="n">function</span><span class="o">=</span><span class="n">ha_qcdf_function</span><span class="p">(</span><span class="n">B</span><span class="o">=</span><span class="n">had</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">V</span><span class="o">=</span><span class="n">had</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-    <span class="n">i</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;QCD factorization&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Implementation: interpolated QCD factorization</span>
-    <span class="n">iname</span> <span class="o">=</span> <span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; QCDF interpolated&#39;</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="n">Implementation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">iname</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="n">quantity</span><span class="p">,</span>
-                   <span class="n">function</span><span class="o">=</span><span class="n">ha_qcdf_interpolate_function</span><span class="p">(</span><span class="n">B</span><span class="o">=</span><span class="n">had</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">V</span><span class="o">=</span><span class="n">had</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-    <span class="n">i</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;Interpolated version of QCD factorization&quot;</span><span class="p">)</span>
-</pre></div>
-
-  </div>
+  
 
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="flavio.physics.bdecays.bvll.nonfactorizable.config" class="name">var <span class="ident">config</span></p>
-      
-  
-  <div class="source_cont">
-</div>
 
-      </div>
-      <div class="item">
-      <p id="flavio.physics.bdecays.bvll.nonfactorizable.had" class="name">var <span class="ident">had</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.physics.bdecays.bvll.nonfactorizable.iname" class="name">var <span class="ident">iname</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.physics.bdecays.bvll.nonfactorizable.meson_quark" class="name">var <span class="ident">meson_quark</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.physics.bdecays.bvll.nonfactorizable.process" class="name">var <span class="ident">process</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.physics.bdecays.bvll.nonfactorizable.quantity" class="name">var <span class="ident">quantity</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-
-    <h2 class="section-title" id="header-functions">Functions</h2>
-      
-  <div class="item">
-    <div class="name def" id="flavio.physics.bdecays.bvll.nonfactorizable.ha_qcdf_function">
-    <p>def <span class="ident">ha_qcdf_function</span>(</p><p>B, V)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvll.nonfactorizable.ha_qcdf_function', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.bvll.nonfactorizable.ha_qcdf_function" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ha_qcdf_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvll&#39;</span><span class="p">]</span>
-    <span class="n">label</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">V</span><span class="p">)]</span> <span class="o">+</span> <span class="s1">&#39;ee&#39;</span> <span class="c1"># the lepton flavour is irrelevant here</span>
-                                      <span class="c1"># as only dipole and 4-quark operators contribute!</span>
-    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
-        <span class="n">par</span> <span class="o">=</span> <span class="n">par_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">cp_conjugate</span><span class="p">:</span>
-            <span class="n">par</span> <span class="o">=</span> <span class="n">conjugate_par</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
-        <span class="n">wc</span> <span class="o">=</span> <span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">cp_conjugate</span><span class="p">:</span>
-            <span class="n">wc</span> <span class="o">=</span> <span class="n">conjugate_wc</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bvll</span><span class="o">.</span><span class="n">qcdf</span><span class="o">.</span><span class="n">helicity_amps_qcdf</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">function</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="flavio.physics.bdecays.bvll.nonfactorizable.ha_qcdf_interpolate_function">
-    <p>def <span class="ident">ha_qcdf_interpolate_function</span>(</p><p>B, V, contribution=&#39;all&#39;)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvll.nonfactorizable.ha_qcdf_interpolate_function', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.bvll.nonfactorizable.ha_qcdf_interpolate_function" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ha_qcdf_interpolate_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">contribution</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvll&#39;</span><span class="p">]</span>
-    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bvll</span><span class="o">.</span><span class="n">qcdf_interpolate</span><span class="o">.</span><span class="n">helicity_amps_qcdf</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">,</span> <span class="n">contribution</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">function</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
 
 
   </section>

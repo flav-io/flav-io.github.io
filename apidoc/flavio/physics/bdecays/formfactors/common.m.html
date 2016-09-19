@@ -1046,14 +1046,15 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-
-    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.common.config">config</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.formfactors.common.z">z</a></li>
   </ul>
 
     </li>
+
 
 
     </ul>
@@ -1074,8 +1075,10 @@ table {
   <div id="source-flavio.physics.bdecays.formfactors.common" class="source">
     <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">flavio.config</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 
-
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">][</span><span class="s1">&#39;cache size&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">z</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mM</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Form factor expansion parameter $z$.</span>
 
@@ -1110,69 +1113,24 @@ table {
   </header>
 
   <section id="section-items">
-
-    <h2 class="section-title" id="header-functions">Functions</h2>
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="flavio.physics.bdecays.formfactors.common.config" class="name">var <span class="ident">config</span></p>
       
-  <div class="item">
-    <div class="name def" id="flavio.physics.bdecays.formfactors.common.z">
-    <p>def <span class="ident">z</span>(</p><p>mB, mM, q2, t0=None)</p>
-    </div>
-    
-
-    
   
-    <div class="desc"><p>Form factor expansion parameter $z$.</p>
-<h2>Parameters</h2>
-<ul>
-<li><code>mB</code>:
-    initial pseudoscalar meson mass</li>
-<li><code>mM</code>:
-    final meson meson mass</li>
-<li><code>q2</code>:
-    momentum transfer squared $q^2$</li>
-<li><code>t0</code> (optional):
-    parameter $t_0$.
-    If not given, chosen as $t_0 = t_+ (1-\sqrt{1-t_-/t_+})$ where
-    $t_\pm = (m_B \pm m_M)^2$.
-    If equal to <code>'tm'</code>, set to $t_0=t_-$</li>
-</ul></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.common.z', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.formfactors.common.z" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">z</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mM</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">r&quot;&quot;&quot;Form factor expansion parameter $z$.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    - `mB`:</span>
-<span class="sd">        initial pseudoscalar meson mass</span>
-<span class="sd">    - `mM`:</span>
-<span class="sd">        final meson meson mass</span>
-<span class="sd">    - `q2`:</span>
-<span class="sd">        momentum transfer squared $q^2$</span>
-<span class="sd">    - `t0` (optional):</span>
-<span class="sd">        parameter $t_0$.</span>
-<span class="sd">        If not given, chosen as $t_0 = t_+ (1-\sqrt{1-t_-/t_+})$ where</span>
-<span class="sd">        $t_\pm = (m_B \pm m_M)^2$.</span>
-<span class="sd">        If equal to `&#39;tm&#39;`, set to $t_0=t_-$</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tm</span> <span class="o">=</span> <span class="p">(</span><span class="n">mB</span><span class="o">-</span><span class="n">mM</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">tp</span> <span class="o">=</span> <span class="p">(</span><span class="n">mB</span><span class="o">+</span><span class="n">mM</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-    <span class="k">if</span> <span class="n">t0</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">t0</span> <span class="o">=</span> <span class="n">tp</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">tm</span><span class="o">/</span><span class="n">tp</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">t0</span> <span class="o">==</span> <span class="s1">&#39;tm&#39;</span><span class="p">:</span>
-        <span class="n">t0</span> <span class="o">=</span> <span class="n">tm</span>
-    <span class="n">sq2</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">tp</span><span class="o">-</span><span class="n">q2</span><span class="p">)</span>
-    <span class="n">st0</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">tp</span><span class="o">-</span><span class="n">t0</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">sq2</span><span class="o">-</span><span class="n">st0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">sq2</span><span class="o">+</span><span class="n">st0</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
-  </div>
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.formfactors.common.z" class="name">var <span class="ident">z</span></p>
+      
   
+  <div class="source_cont">
+</div>
+
+      </div>
+
 
 
   </section>

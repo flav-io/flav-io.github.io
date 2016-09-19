@@ -1099,6 +1099,7 @@ table {
     <li class="mono"><a href="#flavio.classes.Implementation.__init__">__init__</a></li>
     <li class="mono"><a href="#flavio.classes.Implementation.get">get</a></li>
     <li class="mono"><a href="#flavio.classes.Implementation.get_central">get_central</a></li>
+    <li class="mono"><a href="#flavio.classes.Implementation.get_random">get_random</a></li>
     <li class="mono"><a href="#flavio.classes.Implementation.set_description">set_description</a></li>
     <li class="mono"><a href="#flavio.classes.Implementation.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.classes.Implementation.get_instance">get_instance</a></li>
@@ -1449,7 +1450,11 @@ table {
                     <span class="c1"># in the vector and return the appropriate entry</span>
                     <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parameter</span><span class="p">)]</span>
             <span class="c1"># construct the vector of values from the par_dict, replaced by central values in the case of excluded_parameters</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span> <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
+                <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1516,9 +1521,9 @@ table {
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;No implementation specified for auxiliary quantity &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Implementation</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">implementation_name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">prediction_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">prediction_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">implementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_implementation</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">implementation</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">implementation</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">implementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_implementation</span><span class="p">()</span>
@@ -1575,6 +1580,10 @@ table {
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1653,9 +1662,9 @@ factor.</p></div>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;No implementation specified for auxiliary quantity &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Implementation</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">implementation_name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">prediction_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">prediction_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">implementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_implementation</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">implementation</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">implementation</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">implementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_implementation</span><span class="p">()</span>
@@ -1758,7 +1767,7 @@ factor.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.AuxiliaryQuantity.prediction_central">
-    <p>def <span class="ident">prediction_central</span>(</p><p>self, wc_obj, *args, **kwargs)</p>
+    <p>def <span class="ident">prediction_central</span>(</p><p>self, constraints_obj, wc_obj, *args, **kwargs)</p>
     </div>
     
 
@@ -1767,9 +1776,9 @@ factor.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.AuxiliaryQuantity.prediction_central', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.AuxiliaryQuantity.prediction_central" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">prediction_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">prediction_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">implementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_implementation</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">implementation</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">implementation</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2005,7 +2014,11 @@ documentation.</p></div>
                     <span class="c1"># in the vector and return the appropriate entry</span>
                     <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parameter</span><span class="p">)]</span>
             <span class="c1"># construct the vector of values from the par_dict, replaced by central values in the case of excluded_parameters</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span> <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
+                <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -2277,7 +2290,11 @@ constraint/probability distribution.</p>
                 <span class="c1"># in the vector and return the appropriate entry</span>
                 <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parameter</span><span class="p">)]</span>
         <span class="c1"># construct the vector of values from the par_dict, replaced by central values in the case of excluded_parameters</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span> <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
+            <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -2434,6 +2451,10 @@ quantity.</p></div>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -2525,6 +2546,28 @@ quantity.</p></div>
   <div id="source-flavio.classes.Implementation.get_central" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.classes.Implementation.get_random">
+    <p>def <span class="ident">get_random</span>(</p><p>self, constraints_obj, wc_obj, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Implementation.get_random', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.Implementation.get_random" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -2974,7 +3017,11 @@ constraint/probability distribution.</p>
                 <span class="c1"># in the vector and return the appropriate entry</span>
                 <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parameter</span><span class="p">)]</span>
         <span class="c1"># construct the vector of values from the par_dict, replaced by central values in the case of excluded_parameters</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span> <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
+            <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -3104,10 +3151,14 @@ constraints will be removed.</p></div>
             <div class="item">
             <p id="flavio.classes.Measurement.all_parameters" class="name">var <span class="ident">all_parameters</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.classes.Constraints">Constraints</a></code>.<code><a href="#flavio.classes.Constraints.all_parameters">all_parameters</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Returns a list of all parameters/observables constrained.</p></div>
+    <div class="desc inherited"><p>Returns a list of all parameters/observables constrained.</p></div>
   <div class="source_cont">
 </div>
 
@@ -4049,7 +4100,11 @@ constraint/probability distribution.</p>
                 <span class="c1"># in the vector and return the appropriate entry</span>
                 <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parameter</span><span class="p">)]</span>
         <span class="c1"># construct the vector of values from the par_dict, replaced by central values in the case of excluded_parameters</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span> <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
+            <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -4585,7 +4640,11 @@ constraint/probability distribution.</p>
                 <span class="c1"># in the vector and return the appropriate entry</span>
                 <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parameter</span><span class="p">)]</span>
         <span class="c1"># construct the vector of values from the par_dict, replaced by central values in the case of excluded_parameters</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span> <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
+            <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

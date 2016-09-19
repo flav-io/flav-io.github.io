@@ -1239,23 +1239,23 @@ as tree-level $B$ decays</p>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;tp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="n">c</span>
 
-<span class="k">def</span> <span class="nf">get_CVSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_CVSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the Wilson coefficient of the operator $C_V$ in $d_i\to d_j\ell\nu$</span>
 <span class="sd">    in the SM including EW corrections.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">scale</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># for B physics</span>
+    <span class="k">if</span> <span class="n">nf</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># for B and D physics</span>
         <span class="n">alpha_e</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">alpha_e</span><span class="o">/</span><span class="n">pi</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_Z&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">scale</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span> <span class="c1"># for K and pi physocs</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># for K and pi physics</span>
         <span class="c1"># Marciano &amp; Sirlin 1993</span>
-        <span class="k">return</span> <span class="mf">1.0232</span>
+        <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0232</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">get_wceff_fccc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">qiqj</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">mqi</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_wceff_fccc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">qiqj</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">mqi</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get a dictionary with the $d_i\to d_j$ Wilson coefficients</span>
 <span class="sd">    in the convention appropriate for the generalized angular distributions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">qqlnu</span> <span class="o">=</span> <span class="n">qiqj</span> <span class="o">+</span> <span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39;nu&#39;</span>
     <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">qqlnu</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-    <span class="n">c_sm</span> <span class="o">=</span> <span class="n">get_CVSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">c_sm</span> <span class="o">=</span> <span class="n">get_CVSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;7&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;7p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1346,7 +1346,7 @@ mass.</p></div>
       
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.wilsoncoefficients.get_CVSM">
-    <p>def <span class="ident">get_CVSM</span>(</p><p>par, scale)</p>
+    <p>def <span class="ident">get_CVSM</span>(</p><p>par, scale, nf)</p>
     </div>
     
 
@@ -1357,15 +1357,15 @@ in the SM including EW corrections.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.wilsoncoefficients.get_CVSM', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.wilsoncoefficients.get_CVSM" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_CVSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_CVSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the Wilson coefficient of the operator $C_V$ in $d_i\to d_j\ell\nu$</span>
 <span class="sd">    in the SM including EW corrections.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">scale</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># for B physics</span>
+    <span class="k">if</span> <span class="n">nf</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># for B and D physics</span>
         <span class="n">alpha_e</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">alpha_e</span><span class="o">/</span><span class="n">pi</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_Z&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">scale</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span> <span class="c1"># for K and pi physocs</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># for K and pi physics</span>
         <span class="c1"># Marciano &amp; Sirlin 1993</span>
-        <span class="k">return</span> <span class="mf">1.0232</span>
+        <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0232</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1424,7 +1424,7 @@ in the convention appropriate for the generalized angular distributions.</p></di
       
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.wilsoncoefficients.get_wceff_fccc">
-    <p>def <span class="ident">get_wceff_fccc</span>(</p><p>wc_obj, par, qiqj, lep, mqi, scale)</p>
+    <p>def <span class="ident">get_wceff_fccc</span>(</p><p>wc_obj, par, qiqj, lep, mqi, scale, nf=5)</p>
     </div>
     
 
@@ -1435,13 +1435,13 @@ in the convention appropriate for the generalized angular distributions.</p></di
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.wilsoncoefficients.get_wceff_fccc', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.wilsoncoefficients.get_wceff_fccc" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_wceff_fccc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">qiqj</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">mqi</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_wceff_fccc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">qiqj</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">mqi</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get a dictionary with the $d_i\to d_j$ Wilson coefficients</span>
 <span class="sd">    in the convention appropriate for the generalized angular distributions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">qqlnu</span> <span class="o">=</span> <span class="n">qiqj</span> <span class="o">+</span> <span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39;nu&#39;</span>
     <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">qqlnu</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-    <span class="n">c_sm</span> <span class="o">=</span> <span class="n">get_CVSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">c_sm</span> <span class="o">=</span> <span class="n">get_CVSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span>
     <span class="n">c</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;7&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;7p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
