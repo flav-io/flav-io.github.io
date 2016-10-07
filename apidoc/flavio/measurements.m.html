@@ -1051,6 +1051,9 @@ table {
       
   <ul>
     <li class="mono"><a href="#flavio.measurements.load">load</a></li>
+    <li class="mono"><a href="#flavio.measurements.read_default">read_default</a></li>
+    <li class="mono"><a href="#flavio.measurements.read_file">read_file</a></li>
+    <li class="mono"><a href="#flavio.measurements.read_url">read_url</a></li>
   </ul>
 
     </li>
@@ -1093,31 +1096,17 @@ table {
         <span class="k">if</span> <span class="s1">&#39;correlation&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">m_data</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m_data</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">value_dict</span> <span class="ow">in</span> <span class="n">m_data</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]:</span>
-                    <span class="c1"># if &quot;value&quot; is a list, it contains the values of observable</span>
-                    <span class="c1"># arguments (like q^2)</span>
                     <span class="n">args</span> <span class="o">=</span> <span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">value_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">arguments</span>
+                    <span class="c1"># numerical values of arguments, e.g. [1, 6]</span>
                     <span class="n">args_num</span> <span class="o">=</span> <span class="p">[</span><span class="n">value_dict</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
-                    <span class="n">error_dict</span> <span class="o">=</span> <span class="n">errors_from_string</span><span class="p">(</span><span class="n">value_dict</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
-                    <span class="n">central_value</span> <span class="o">=</span> <span class="n">error_dict</span><span class="p">[</span><span class="s1">&#39;central_value&#39;</span><span class="p">]</span>
-                    <span class="n">squared_error</span> <span class="o">=</span> <span class="mf">0.</span>
-                    <span class="k">for</span> <span class="n">sym_err</span> <span class="ow">in</span> <span class="n">error_dict</span><span class="p">[</span><span class="s1">&#39;symmetric_errors&#39;</span><span class="p">]:</span>
-                        <span class="n">squared_error</span> <span class="o">+=</span> <span class="n">sym_err</span><span class="o">**</span><span class="mi">2</span>
-                    <span class="k">for</span> <span class="n">asym_err</span> <span class="ow">in</span> <span class="n">error_dict</span><span class="p">[</span><span class="s1">&#39;asymmetric_errors&#39;</span><span class="p">]:</span>
-                        <span class="n">squared_error</span> <span class="o">+=</span> <span class="n">asym_err</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">asym_err</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="c1"># insert string name in front of argument values and turn it</span>
+                    <span class="c1"># into a tuple, e.g. (&#39;FL(B0-&gt;K*mumu)&#39;, 1, 6)</span>
                     <span class="n">args_num</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">value_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
                     <span class="n">obs_tuple</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">args_num</span><span class="p">)</span>
-                    <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">obs_tuple</span><span class="p">],</span> <span class="n">probability</span><span class="o">.</span><span class="n">NormalDistribution</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">squared_error</span><span class="p">)))</span>
+                    <span class="n">m</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="n">obs_tuple</span><span class="p">,</span> <span class="n">value_dict</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span> <span class="c1"># otherwise, &#39;values&#39; is a dict just containing name: constraint_string</span>
                 <span class="k">for</span> <span class="n">obs</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">m_data</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">error_dict</span> <span class="o">=</span> <span class="n">errors_from_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                    <span class="n">central_value</span> <span class="o">=</span> <span class="n">error_dict</span><span class="p">[</span><span class="s1">&#39;central_value&#39;</span><span class="p">]</span>
-                    <span class="n">squared_error</span> <span class="o">=</span> <span class="mf">0.</span>
-                    <span class="k">for</span> <span class="n">sym_err</span> <span class="ow">in</span> <span class="n">error_dict</span><span class="p">[</span><span class="s1">&#39;symmetric_errors&#39;</span><span class="p">]:</span>
-                        <span class="n">squared_error</span> <span class="o">+=</span> <span class="n">sym_err</span><span class="o">**</span><span class="mi">2</span>
-                    <span class="k">for</span> <span class="n">asym_err</span> <span class="ow">in</span> <span class="n">error_dict</span><span class="p">[</span><span class="s1">&#39;asymmetric_errors&#39;</span><span class="p">]:</span>
-                        <span class="n">squared_error</span> <span class="o">+=</span> <span class="n">asym_err</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">asym_err</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">obs</span><span class="p">],</span> <span class="n">probability</span><span class="o">.</span><span class="n">NormalDistribution</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">squared_error</span><span class="p">)))</span>
-
+                    <span class="n">m</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">observables</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">central_values</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1161,6 +1150,7 @@ table {
                 <span class="c1"># if it still isn&#39;t positive definite, give up.</span>
                 <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;The covariance matrix is not positive definite!&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
             <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">observables</span><span class="p">,</span> <span class="n">probability</span><span class="o">.</span><span class="n">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">central_values</span><span class="p">,</span> <span class="n">covariance</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">measurements</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
 <span class="k">def</span> <span class="nf">_fix_correlation_matrix</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;In the input file, the correlation matrix can be specified as a list</span>
@@ -1201,12 +1191,30 @@ table {
     <span class="k">return</span> <span class="n">corr_out</span>
 
 
-<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">read_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read measurements from a YAML file.&quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
-<span class="n">_load</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;data/measurements.yml&#39;</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">read_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read measurements from a URL.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">requests</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;You need to install the python requests module to load measurements from a URL.&quot;</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="c1"># alias for function name prior to v0.13</span>
+<span class="n">load</span> <span class="o">=</span> <span class="n">read_file</span>
+
+<span class="k">def</span> <span class="nf">read_default</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Read all measurements from `data/measurements.yml`.</span>
+
+<span class="sd">    This function is invoked once when the package is loaded.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;data/measurements.yml&#39;</span><span class="p">))</span>
+
+<span class="n">read_default</span><span class="p">()</span>
 </pre></div>
 
   </div>
@@ -1229,10 +1237,88 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.measurements.load', this);">Show source &equiv;</a></p>
   <div id="source-flavio.measurements.load" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">read_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read measurements from a YAML file.&quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.measurements.read_default">
+    <p>def <span class="ident">read_default</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Read all measurements from <code>data/measurements.yml</code>.</p>
+<p>This function is invoked once when the package is loaded.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.measurements.read_default', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.measurements.read_default" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">read_default</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Read all measurements from `data/measurements.yml`.</span>
+
+<span class="sd">    This function is invoked once when the package is loaded.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;data/measurements.yml&#39;</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.measurements.read_file">
+    <p>def <span class="ident">read_file</span>(</p><p>filename)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Read measurements from a YAML file.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.measurements.read_file', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.measurements.read_file" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">read_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read measurements from a YAML file.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.measurements.read_url">
+    <p>def <span class="ident">read_url</span>(</p><p>url)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Read measurements from a URL.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.measurements.read_url', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.measurements.read_url" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">read_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read measurements from a URL.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">requests</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;You need to install the python requests module to load measurements from a URL.&quot;</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1249,7 +1335,7 @@ table {
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
     </p>
 
     <p>pdoc is in the public domain with the

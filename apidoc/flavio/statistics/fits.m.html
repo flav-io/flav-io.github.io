@@ -1067,6 +1067,7 @@ table {
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.log_prior_wilson_coeffs">log_prior_wilson_coeffs</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.log_target">log_target</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.set_description">set_description</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.get_instance">get_instance</a></li>
   </ul>
@@ -1089,6 +1090,7 @@ table {
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.log_target">log_target</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.make_measurement">make_measurement</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.set_description">set_description</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.FastFit.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_instance">get_instance</a></li>
   </ul>
@@ -1101,6 +1103,7 @@ table {
   <ul>
     <li class="mono"><a href="#flavio.statistics.fits.Fit.__init__">__init__</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.Fit.set_description">set_description</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.Fit.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.Fit.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.Fit.get_instance">get_instance</a></li>
   </ul>
@@ -1152,6 +1155,7 @@ to be used directly).</p>
                  <span class="n">fit_wc_priors</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">input_scale</span><span class="o">=</span><span class="mf">160.</span><span class="p">,</span>
                  <span class="n">exclude_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                 <span class="p">):</span>
         <span class="c1"># some checks to make sure the input is sane</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">fit_parameters</span> <span class="o">+</span> <span class="n">nuisance_parameters</span><span class="p">:</span>
@@ -1166,6 +1170,8 @@ to be used directly).</p>
                     <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Observable &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; not found!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">exclude_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">include_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The options exclude_measurements and include_measurements must not be specified simultaneously&quot;</span><span class="p">)</span>
         <span class="c1"># check that no parameter appears as fit *and* nuisance parameter</span>
         <span class="n">intersect</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">nuisance_parameters</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">intersect</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(),</span> <span class="s2">&quot;Parameters appearing as fit_parameters and nuisance_parameters: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">intersect</span><span class="p">)</span>
@@ -1182,6 +1188,7 @@ to be used directly).</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span> <span class="o">=</span> <span class="n">fit_parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span> <span class="o">=</span> <span class="n">nuisance_parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="o">=</span> <span class="n">exclude_measurements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="o">=</span> <span class="n">include_measurements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="n">fit_wc_names</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span> <span class="o">=</span> <span class="n">fit_wc_function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_priors</span> <span class="o">=</span> <span class="n">fit_wc_priors</span>
@@ -1231,10 +1238,12 @@ to be used directly).</p>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># else, add measurement name to output list</span>
                 <span class="n">all_measurements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">all_measurements</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_measurements</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_measurements</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span><span class="p">))</span>
 
 
 
@@ -1251,8 +1260,10 @@ to be used directly).</p>
 <span class="sd">    - `nuisance_parameters`: a list of string names of nuisance parameters. The existing</span>
 <span class="sd">      constraints on the parameter will be taken as prior.</span>
 <span class="sd">    - `observables`: a list of observable names to be included in the fit</span>
-<span class="sd">    - `exclude_measurements`: a list of measurement names not to be included in</span>
-<span class="sd">    the fit</span>
+<span class="sd">    - `exclude_measurements`: optional; a list of measurement names *not* to be included in</span>
+<span class="sd">    the fit. By default, all existing measurements are included.</span>
+<span class="sd">    - `include_measurements`: optional; a list of measurement names to be included in</span>
+<span class="sd">    the fit. By default, all existing measurements are included.</span>
 <span class="sd">    - `fit_wc_names`: optional; a list of string names of arguments of the Wilson</span>
 <span class="sd">      coefficient function below</span>
 <span class="sd">    - `fit_wc_function`: optional; a function that has exactly the arguements listed</span>
@@ -1453,22 +1464,13 @@ to be used directly).</p>
                                         <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">pred_arr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize the fit by producing a pseudo-measurement containing both</span>
 <span class="sd">        experimental uncertainties as well as theory uncertainties stemming</span>
 <span class="sd">        from nuisance parameters.&quot;&quot;&quot;</span>
-        <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+        <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">Nexp</span><span class="p">)</span>
         <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance_sm</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
         <span class="n">covariance</span> <span class="o">=</span> <span class="n">cov_exp</span> <span class="o">+</span> <span class="n">cov_sm</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">central_exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
-                <span class="c1"># if the covariance matrix is not positive definite, try a dirty trick:</span>
-                <span class="c1"># multiply all the correlations by 0.9.</span>
-                <span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
-                <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">covariance</span><span class="p">))</span>
-                <span class="n">correlation</span> <span class="o">=</span> <span class="n">covariance</span><span class="o">/</span><span class="n">err</span><span class="o">/</span><span class="n">err</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="c1"># correlation matrix</span>
-                <span class="n">correlation</span> <span class="o">=</span> <span class="p">(</span><span class="n">correlation</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">))</span><span class="o">*</span><span class="mf">0.9</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">)</span>
-                <span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span> <span class="o">*</span> <span class="n">correlation</span>
         <span class="c1"># add the Pseudo-measurement</span>
         <span class="n">m</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">central_exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -1539,8 +1541,10 @@ to be used directly).</p>
 <li><code>nuisance_parameters</code>: a list of string names of nuisance parameters. The existing
   constraints on the parameter will be taken as prior.</li>
 <li><code>observables</code>: a list of observable names to be included in the fit</li>
-<li><code>exclude_measurements</code>: a list of measurement names not to be included in
-the fit</li>
+<li><code>exclude_measurements</code>: optional; a list of measurement names <em>not</em> to be included in
+the fit. By default, all existing measurements are included.</li>
+<li><code>include_measurements</code>: optional; a list of measurement names to be included in
+the fit. By default, all existing measurements are included.</li>
 <li><code>fit_wc_names</code>: optional; a list of string names of arguments of the Wilson
   coefficient function below</li>
 <li><code>fit_wc_function</code>: optional; a function that has exactly the arguements listed
@@ -1567,8 +1571,10 @@ the fit</li>
 <span class="sd">    - `nuisance_parameters`: a list of string names of nuisance parameters. The existing</span>
 <span class="sd">      constraints on the parameter will be taken as prior.</span>
 <span class="sd">    - `observables`: a list of observable names to be included in the fit</span>
-<span class="sd">    - `exclude_measurements`: a list of measurement names not to be included in</span>
-<span class="sd">    the fit</span>
+<span class="sd">    - `exclude_measurements`: optional; a list of measurement names *not* to be included in</span>
+<span class="sd">    the fit. By default, all existing measurements are included.</span>
+<span class="sd">    - `include_measurements`: optional; a list of measurement names to be included in</span>
+<span class="sd">    the fit. By default, all existing measurements are included.</span>
 <span class="sd">    - `fit_wc_names`: optional; a list of string names of arguments of the Wilson</span>
 <span class="sd">      coefficient function below</span>
 <span class="sd">    - `fit_wc_function`: optional; a function that has exactly the arguements listed</span>
@@ -2042,14 +2048,10 @@ given an input array</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.BayesianFit.get_central_nuisance_parameters" class="name">var <span class="ident">get_central_nuisance_parameters</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_central_nuisance_parameters">get_central_nuisance_parameters</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return a numpy array with the central values of all nuisance parameters.</p></div>
+    <div class="desc"><p>Return a numpy array with the central values of all nuisance parameters.</p></div>
   <div class="source_cont">
 </div>
 
@@ -2112,6 +2114,30 @@ parameters</p></div>
 
             </div>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.fits.BayesianFit.clear_all">
+    <p>def <span class="ident">clear_all</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Delete all instances.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.BayesianFit.clear_all', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.BayesianFit.clear_all" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">clear_all</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Delete all instances.&quot;&quot;&quot;</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">instances</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.BayesianFit.del_instance">
@@ -2264,22 +2290,13 @@ importantly,</p>
                                         <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">pred_arr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize the fit by producing a pseudo-measurement containing both</span>
 <span class="sd">        experimental uncertainties as well as theory uncertainties stemming</span>
 <span class="sd">        from nuisance parameters.&quot;&quot;&quot;</span>
-        <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+        <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">Nexp</span><span class="p">)</span>
         <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance_sm</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
         <span class="n">covariance</span> <span class="o">=</span> <span class="n">cov_exp</span> <span class="o">+</span> <span class="n">cov_sm</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">central_exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
-                <span class="c1"># if the covariance matrix is not positive definite, try a dirty trick:</span>
-                <span class="c1"># multiply all the correlations by 0.9.</span>
-                <span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
-                <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">covariance</span><span class="p">))</span>
-                <span class="n">correlation</span> <span class="o">=</span> <span class="n">covariance</span><span class="o">/</span><span class="n">err</span><span class="o">/</span><span class="n">err</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="c1"># correlation matrix</span>
-                <span class="n">correlation</span> <span class="o">=</span> <span class="p">(</span><span class="n">correlation</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">))</span><span class="o">*</span><span class="mf">0.9</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">)</span>
-                <span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span> <span class="o">*</span> <span class="n">correlation</span>
         <span class="c1"># add the Pseudo-measurement</span>
         <span class="n">m</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">central_exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -2627,7 +2644,7 @@ given an input array</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.FastFit.make_measurement">
-    <p>def <span class="ident">make_measurement</span>(</p><p>self, N=100)</p>
+    <p>def <span class="ident">make_measurement</span>(</p><p>self, N=100, Nexp=1000)</p>
     </div>
     
 
@@ -2639,22 +2656,13 @@ from nuisance parameters.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.make_measurement', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits.FastFit.make_measurement" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Initialize the fit by producing a pseudo-measurement containing both</span>
 <span class="sd">    experimental uncertainties as well as theory uncertainties stemming</span>
 <span class="sd">    from nuisance parameters.&quot;&quot;&quot;</span>
-    <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">Nexp</span><span class="p">)</span>
     <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance_sm</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
     <span class="n">covariance</span> <span class="o">=</span> <span class="n">cov_exp</span> <span class="o">+</span> <span class="n">cov_sm</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">central_exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="c1"># if the covariance matrix is not positive definite, try a dirty trick:</span>
-            <span class="c1"># multiply all the correlations by 0.9.</span>
-            <span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
-            <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">covariance</span><span class="p">))</span>
-            <span class="n">correlation</span> <span class="o">=</span> <span class="n">covariance</span><span class="o">/</span><span class="n">err</span><span class="o">/</span><span class="n">err</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="c1"># correlation matrix</span>
-            <span class="n">correlation</span> <span class="o">=</span> <span class="p">(</span><span class="n">correlation</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">))</span><span class="o">*</span><span class="mf">0.9</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">)</span>
-            <span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span> <span class="o">*</span> <span class="n">correlation</span>
     <span class="c1"># add the Pseudo-measurement</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">central_exp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -2729,10 +2737,14 @@ constrain any of the fit observables.</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.FastFit.get_random" class="name">var <span class="ident">get_random</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.fits.BayesianFit">BayesianFit</a></code>.<code><a href="#flavio.statistics.fits.BayesianFit.get_random">get_random</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Get an array with random values for all the fit and nuisance
+    <div class="desc inherited"><p>Get an array with random values for all the fit and nuisance
 parameters</p></div>
   <div class="source_cont">
 </div>
@@ -2741,10 +2753,14 @@ parameters</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.FastFit.get_random_fit_parameters" class="name">var <span class="ident">get_random_fit_parameters</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_random_fit_parameters">get_random_fit_parameters</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return a numpy array with random values for all fit parameters.</p></div>
+    <div class="desc inherited"><p>Return a numpy array with random values for all fit parameters.</p></div>
   <div class="source_cont">
 </div>
 
@@ -2782,6 +2798,30 @@ parameters</p></div>
 
             </div>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.fits.FastFit.clear_all">
+    <p>def <span class="ident">clear_all</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Delete all instances.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.clear_all', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.FastFit.clear_all" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">clear_all</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Delete all instances.&quot;&quot;&quot;</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">instances</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.FastFit.del_instance">
@@ -2851,6 +2891,7 @@ parameters</p></div>
                  <span class="n">fit_wc_priors</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">input_scale</span><span class="o">=</span><span class="mf">160.</span><span class="p">,</span>
                  <span class="n">exclude_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                 <span class="p">):</span>
         <span class="c1"># some checks to make sure the input is sane</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">fit_parameters</span> <span class="o">+</span> <span class="n">nuisance_parameters</span><span class="p">:</span>
@@ -2865,6 +2906,8 @@ parameters</p></div>
                     <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Observable &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; not found!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">exclude_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">include_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The options exclude_measurements and include_measurements must not be specified simultaneously&quot;</span><span class="p">)</span>
         <span class="c1"># check that no parameter appears as fit *and* nuisance parameter</span>
         <span class="n">intersect</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">nuisance_parameters</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">intersect</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(),</span> <span class="s2">&quot;Parameters appearing as fit_parameters and nuisance_parameters: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">intersect</span><span class="p">)</span>
@@ -2881,6 +2924,7 @@ parameters</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span> <span class="o">=</span> <span class="n">fit_parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span> <span class="o">=</span> <span class="n">nuisance_parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="o">=</span> <span class="n">exclude_measurements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="o">=</span> <span class="n">include_measurements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="n">fit_wc_names</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span> <span class="o">=</span> <span class="n">fit_wc_function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_priors</span> <span class="o">=</span> <span class="n">fit_wc_priors</span>
@@ -2930,10 +2974,12 @@ parameters</p></div>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># else, add measurement name to output list</span>
                 <span class="n">all_measurements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">all_measurements</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_measurements</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_measurements</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -2951,7 +2997,7 @@ parameters</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.Fit.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj, fit_parameters, nuisance_parameters, observables, fit_wc_names=[], fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj, fit_parameters, nuisance_parameters, observables, fit_wc_names=[], fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None)</p>
     </div>
     
 
@@ -2972,6 +3018,7 @@ parameters</p></div>
              <span class="n">fit_wc_priors</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
              <span class="n">input_scale</span><span class="o">=</span><span class="mf">160.</span><span class="p">,</span>
              <span class="n">exclude_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
             <span class="p">):</span>
     <span class="c1"># some checks to make sure the input is sane</span>
     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">fit_parameters</span> <span class="o">+</span> <span class="n">nuisance_parameters</span><span class="p">:</span>
@@ -2986,6 +3033,8 @@ parameters</p></div>
                 <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Observable &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; not found!&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">exclude_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">include_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The options exclude_measurements and include_measurements must not be specified simultaneously&quot;</span><span class="p">)</span>
     <span class="c1"># check that no parameter appears as fit *and* nuisance parameter</span>
     <span class="n">intersect</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">nuisance_parameters</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">intersect</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(),</span> <span class="s2">&quot;Parameters appearing as fit_parameters and nuisance_parameters: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">intersect</span><span class="p">)</span>
@@ -3002,6 +3051,7 @@ parameters</p></div>
     <span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span> <span class="o">=</span> <span class="n">fit_parameters</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span> <span class="o">=</span> <span class="n">nuisance_parameters</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="o">=</span> <span class="n">exclude_measurements</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="o">=</span> <span class="n">include_measurements</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="n">fit_wc_names</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span> <span class="o">=</span> <span class="n">fit_wc_function</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_priors</span> <span class="o">=</span> <span class="n">fit_wc_priors</span>
@@ -3154,6 +3204,16 @@ constrain any of the fit observables.</p></div>
 
             </div>
             <div class="item">
+            <p id="flavio.statistics.fits.Fit.include_measurements" class="name">var <span class="ident">include_measurements</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="flavio.statistics.fits.Fit.input_scale" class="name">var <span class="ident">input_scale</span></p>
             
 
@@ -3204,6 +3264,30 @@ constrain any of the fit observables.</p></div>
 
             </div>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.fits.Fit.clear_all">
+    <p>def <span class="ident">clear_all</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Delete all instances.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.Fit.clear_all', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.Fit.clear_all" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">clear_all</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Delete all instances.&quot;&quot;&quot;</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">instances</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.Fit.del_instance">
@@ -3258,7 +3342,7 @@ constrain any of the fit observables.</p></div>
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
     </p>
 
     <p>pdoc is in the public domain with the

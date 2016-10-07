@@ -1081,6 +1081,7 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.bpll.bpll_obs_ratio_func">bpll_obs_ratio_func</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bpll.dGdq2">dGdq2</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bpll.dGdq2_cpaverage">dGdq2_cpaverage</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bpll.dGdq2_cpdiff">dGdq2_cpdiff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bpll.denominator">denominator</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bpll.get_ff">get_ff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bpll.get_subleading">get_subleading</a></li>
@@ -1124,16 +1125,12 @@ table {
 <span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">Observable</span><span class="p">,</span> <span class="n">Prediction</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="k">def</span> <span class="nf">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
     <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
-    <span class="n">ml1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">l1</span><span class="p">]</span>
-    <span class="n">ml2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">l2</span><span class="p">]</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bpll&#39;</span><span class="p">]</span>
     <span class="n">alphaem</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
     <span class="n">di_dj</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">P</span><span class="p">)]</span>
     <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">q2</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">ml1</span><span class="o">+</span><span class="n">ml2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="n">GF</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">xi_t</span><span class="o">*</span><span class="n">alphaem</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 
 <span class="c1"># form factors</span>
@@ -1144,10 +1141,10 @@ table {
 <span class="c1"># get subleading hadronic contribution</span>
 <span class="k">def</span> <span class="nf">get_subleading</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">q2</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
-        <span class="n">sub_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">P</span><span class="o">+</span><span class="n">lep</span><span class="o">+</span><span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39; subleading effects at low q2&#39;</span>
+        <span class="n">sub_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">P</span> <span class="o">+</span> <span class="s1">&#39;ll subleading effects at low q2&#39;</span>
         <span class="k">return</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">sub_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">q2</span> <span class="o">&gt;</span> <span class="mi">14</span><span class="p">:</span>
-        <span class="n">sub_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">P</span><span class="o">+</span><span class="n">lep</span><span class="o">+</span><span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39; subleading effects at high q2&#39;</span>
+        <span class="n">sub_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">P</span> <span class="o">+</span> <span class="s1">&#39;ll subleading effects at high q2&#39;</span>
         <span class="k">return</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">sub_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{}</span>
@@ -1175,7 +1172,7 @@ table {
     <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
     <span class="n">mP</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">P</span><span class="p">]</span>
     <span class="n">mb</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
     <span class="n">ff</span> <span class="o">=</span> <span class="n">get_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
     <span class="n">h</span> <span class="o">=</span> <span class="n">angular</span><span class="o">.</span><span class="n">helicity_amps_p</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ml1</span><span class="p">,</span> <span class="n">ml2</span><span class="p">,</span> <span class="n">ff</span><span class="p">,</span> <span class="n">wc_eff</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">h</span>
@@ -1228,6 +1225,8 @@ table {
 
 <span class="k">def</span> <span class="nf">dGdq2_cpaverage</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">J_bar</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">dGdq2</span><span class="p">(</span><span class="n">J</span><span class="p">)</span> <span class="o">+</span> <span class="n">dGdq2</span><span class="p">(</span><span class="n">J_bar</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span>
+<span class="k">def</span> <span class="nf">dGdq2_cpdiff</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">J_bar</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">dGdq2</span><span class="p">(</span><span class="n">J</span><span class="p">)</span> <span class="o">-</span> <span class="n">dGdq2</span><span class="p">(</span><span class="n">J_bar</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span>
 
 <span class="k">def</span> <span class="nf">AFB_cpaverage_num</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">J_bar</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">AFB_num</span><span class="p">(</span><span class="n">J</span><span class="p">)</span> <span class="o">+</span> <span class="n">AFB_num</span><span class="p">(</span><span class="n">J_bar</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span>
@@ -1270,7 +1269,7 @@ table {
         <span class="n">ml2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">l2</span><span class="p">]</span>
         <span class="n">q2max</span> <span class="o">=</span> <span class="p">(</span><span class="n">mB</span><span class="o">-</span><span class="n">mP</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
         <span class="n">q2min</span> <span class="o">=</span> <span class="p">(</span><span class="n">ml1</span><span class="o">+</span><span class="n">ml2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-        <span class="k">return</span> <span class="n">bpll_dbrdq2_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bpll_dbrdq2_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fct</span>
 
 
@@ -1311,6 +1310,7 @@ table {
 
 <span class="n">_tex</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="s1">&#39;\mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span> <span class="s1">r&#39;\tau&#39;</span><span class="p">}</span>
 <span class="n">_observables</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s1">&#39;ACP&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;func_num&#39;</span><span class="p">:</span> <span class="n">dGdq2_cpdiff</span><span class="p">,</span> <span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s1">r&#39;A_\text{CP}&#39;</span><span class="p">,</span> <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Direct CP asymmetry&#39;</span><span class="p">},</span>
 <span class="s1">&#39;AFB&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;func_num&#39;</span><span class="p">:</span> <span class="n">AFB_cpaverage_num</span><span class="p">,</span> <span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s1">r&#39;A_\text{FB}&#39;</span><span class="p">,</span> <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;forward-backward asymmetry&#39;</span><span class="p">},</span>
 <span class="s1">&#39;FH&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;func_num&#39;</span><span class="p">:</span> <span class="n">FH_cpaverage_num</span><span class="p">,</span> <span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s1">r&#39;F_H&#39;</span><span class="p">,</span> <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;flat term&#39;</span><span class="p">},</span>
 <span class="p">}</span>
@@ -1654,7 +1654,7 @@ table {
         <span class="n">ml2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">l2</span><span class="p">]</span>
         <span class="n">q2max</span> <span class="o">=</span> <span class="p">(</span><span class="n">mB</span><span class="o">-</span><span class="n">mP</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
         <span class="n">q2min</span> <span class="o">=</span> <span class="p">(</span><span class="n">ml1</span><span class="o">+</span><span class="n">ml2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-        <span class="k">return</span> <span class="n">bpll_dbrdq2_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bpll_dbrdq2_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fct</span>
 </pre></div>
 
@@ -1844,6 +1844,27 @@ table {
   
       
   <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bpll.dGdq2_cpdiff">
+    <p>def <span class="ident">dGdq2_cpdiff</span>(</p><p>J, J_bar)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bpll.dGdq2_cpdiff', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bpll.dGdq2_cpdiff" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">dGdq2_cpdiff</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">J_bar</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">dGdq2</span><span class="p">(</span><span class="n">J</span><span class="p">)</span> <span class="o">-</span> <span class="n">dGdq2</span><span class="p">(</span><span class="n">J_bar</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.physics.bdecays.bpll.denominator">
     <p>def <span class="ident">denominator</span>(</p><p>J, J_bar)</p>
     </div>
@@ -1899,10 +1920,10 @@ table {
   <div id="source-flavio.physics.bdecays.bpll.get_subleading" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_subleading</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">q2</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
-        <span class="n">sub_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">P</span><span class="o">+</span><span class="n">lep</span><span class="o">+</span><span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39; subleading effects at low q2&#39;</span>
+        <span class="n">sub_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">P</span> <span class="o">+</span> <span class="s1">&#39;ll subleading effects at low q2&#39;</span>
         <span class="k">return</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">sub_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">q2</span> <span class="o">&gt;</span> <span class="mi">14</span><span class="p">:</span>
-        <span class="n">sub_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">P</span><span class="o">+</span><span class="n">lep</span><span class="o">+</span><span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39; subleading effects at high q2&#39;</span>
+        <span class="n">sub_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">P</span> <span class="o">+</span> <span class="s1">&#39;ll subleading effects at high q2&#39;</span>
         <span class="k">return</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">sub_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{}</span>
@@ -2005,7 +2026,7 @@ table {
     <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
     <span class="n">mP</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">P</span><span class="p">]</span>
     <span class="n">mb</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
     <span class="n">ff</span> <span class="o">=</span> <span class="n">get_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
     <span class="n">h</span> <span class="o">=</span> <span class="n">angular</span><span class="o">.</span><span class="n">helicity_amps_p</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ml1</span><span class="p">,</span> <span class="n">ml2</span><span class="p">,</span> <span class="n">ff</span><span class="p">,</span> <span class="n">wc_eff</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">h</span>
@@ -2019,7 +2040,7 @@ table {
       
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.bpll.prefactor">
-    <p>def <span class="ident">prefactor</span>(</p><p>q2, par, B, P, l1, l2)</p>
+    <p>def <span class="ident">prefactor</span>(</p><p>q2, par, B, P)</p>
     </div>
     
 
@@ -2028,16 +2049,12 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bpll.prefactor', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bpll.prefactor" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
     <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
-    <span class="n">ml1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">l1</span><span class="p">]</span>
-    <span class="n">ml2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">l2</span><span class="p">]</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bpll&#39;</span><span class="p">]</span>
     <span class="n">alphaem</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
     <span class="n">di_dj</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[(</span><span class="n">B</span><span class="p">,</span><span class="n">P</span><span class="p">)]</span>
     <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">q2</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">ml1</span><span class="o">+</span><span class="n">ml2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="n">GF</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">xi_t</span><span class="o">*</span><span class="n">alphaem</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 </pre></div>
 
@@ -2055,7 +2072,7 @@ table {
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
     </p>
 
     <p>pdoc is in the public domain with the

@@ -1067,6 +1067,7 @@ table {
     <li class="mono"><a href="#flavio.classes.AuxiliaryQuantity.prediction">prediction</a></li>
     <li class="mono"><a href="#flavio.classes.AuxiliaryQuantity.prediction_central">prediction_central</a></li>
     <li class="mono"><a href="#flavio.classes.AuxiliaryQuantity.set_description">set_description</a></li>
+    <li class="mono"><a href="#flavio.classes.AuxiliaryQuantity.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.classes.AuxiliaryQuantity.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.classes.AuxiliaryQuantity.get_instance">get_instance</a></li>
   </ul>
@@ -1101,6 +1102,7 @@ table {
     <li class="mono"><a href="#flavio.classes.Implementation.get_central">get_central</a></li>
     <li class="mono"><a href="#flavio.classes.Implementation.get_random">get_random</a></li>
     <li class="mono"><a href="#flavio.classes.Implementation.set_description">set_description</a></li>
+    <li class="mono"><a href="#flavio.classes.Implementation.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.classes.Implementation.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.classes.Implementation.get_instance">get_instance</a></li>
     <li class="mono"><a href="#flavio.classes.Implementation.show_all">show_all</a></li>
@@ -1124,6 +1126,7 @@ table {
     <li class="mono"><a href="#flavio.classes.Measurement.remove_constraints">remove_constraints</a></li>
     <li class="mono"><a href="#flavio.classes.Measurement.set_constraint">set_constraint</a></li>
     <li class="mono"><a href="#flavio.classes.Measurement.set_description">set_description</a></li>
+    <li class="mono"><a href="#flavio.classes.Measurement.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.classes.Measurement.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.classes.Measurement.get_instance">get_instance</a></li>
   </ul>
@@ -1136,6 +1139,7 @@ table {
   <ul>
     <li class="mono"><a href="#flavio.classes.NamedInstanceClass.__init__">__init__</a></li>
     <li class="mono"><a href="#flavio.classes.NamedInstanceClass.set_description">set_description</a></li>
+    <li class="mono"><a href="#flavio.classes.NamedInstanceClass.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.classes.NamedInstanceClass.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.classes.NamedInstanceClass.get_instance">get_instance</a></li>
   </ul>
@@ -1151,6 +1155,7 @@ table {
     <li class="mono"><a href="#flavio.classes.Observable.prediction_par">prediction_par</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.set_description">set_description</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.set_prediction">set_prediction</a></li>
+    <li class="mono"><a href="#flavio.classes.Observable.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.get_instance">get_instance</a></li>
   </ul>
@@ -1163,6 +1168,7 @@ table {
   <ul>
     <li class="mono"><a href="#flavio.classes.Parameter.__init__">__init__</a></li>
     <li class="mono"><a href="#flavio.classes.Parameter.set_description">set_description</a></li>
+    <li class="mono"><a href="#flavio.classes.Parameter.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.classes.Parameter.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.classes.Parameter.get_instance">get_instance</a></li>
   </ul>
@@ -1244,7 +1250,7 @@ table {
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">flavio._parse_errors</span> <span class="kn">import</span> <span class="n">constraints_from_string</span><span class="p">,</span> <span class="n">combine_distributions</span><span class="p">,</span> <span class="n">errors_from_string</span><span class="p">,</span> <span class="n">string_from_constraints</span>
+<span class="kn">from</span> <span class="nn">flavio._parse_errors</span> <span class="kn">import</span> <span class="n">constraints_from_string</span><span class="p">,</span> <span class="n">convolve_distributions</span><span class="p">,</span> <span class="n">errors_from_string</span><span class="p">,</span> <span class="n">string_from_constraints</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span>
 
 <span class="k">def</span> <span class="nf">_is_number</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
@@ -1287,6 +1293,11 @@ table {
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">del_instance</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">del</span> <span class="n">cls</span><span class="o">.</span><span class="n">instances</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">clear_all</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Delete all instances.&quot;&quot;&quot;</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">instances</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">set_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
@@ -1364,7 +1375,7 @@ table {
 <span class="sd">        that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing</span>
 <span class="sd">        constraints will be removed.&quot;&quot;&quot;</span>
         <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
-        <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">combine_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
+        <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_constraint_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
@@ -1821,6 +1832,30 @@ factor.</p></div>
           <h3>Methods</h3>
             
   <div class="item">
+    <div class="name def" id="flavio.classes.AuxiliaryQuantity.clear_all">
+    <p>def <span class="ident">clear_all</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Delete all instances.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.AuxiliaryQuantity.clear_all', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.AuxiliaryQuantity.clear_all" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">clear_all</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Delete all instances.&quot;&quot;&quot;</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">instances</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.classes.AuxiliaryQuantity.del_instance">
     <p>def <span class="ident">del_instance</span>(</p><p>cls, name)</p>
     </div>
@@ -1928,7 +1963,7 @@ documentation.</p></div>
 <span class="sd">        that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing</span>
 <span class="sd">        constraints will be removed.&quot;&quot;&quot;</span>
         <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
-        <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">combine_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
+        <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_constraint_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
@@ -2390,7 +2425,7 @@ constraints will be removed.</p></div>
 <span class="sd">    that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing</span>
 <span class="sd">    constraints will be removed.&quot;&quot;&quot;</span>
     <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
-    <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">combine_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
+    <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 </pre></div>
 
@@ -2629,6 +2664,30 @@ quantity.</p></div>
 
             </div>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.classes.Implementation.clear_all">
+    <p>def <span class="ident">clear_all</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Delete all instances.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Implementation.clear_all', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.Implementation.clear_all" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">clear_all</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Delete all instances.&quot;&quot;&quot;</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">instances</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="flavio.classes.Implementation.del_instance">
@@ -3117,7 +3176,7 @@ constraints will be removed.</p></div>
 <span class="sd">    that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing</span>
 <span class="sd">    constraints will be removed.&quot;&quot;&quot;</span>
     <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
-    <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">combine_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
+    <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 </pre></div>
 
@@ -3151,14 +3210,10 @@ constraints will be removed.</p></div>
             <div class="item">
             <p id="flavio.classes.Measurement.all_parameters" class="name">var <span class="ident">all_parameters</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.classes.Constraints">Constraints</a></code>.<code><a href="#flavio.classes.Constraints.all_parameters">all_parameters</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Returns a list of all parameters/observables constrained.</p></div>
+    <div class="desc"><p>Returns a list of all parameters/observables constrained.</p></div>
   <div class="source_cont">
 </div>
 
@@ -3194,6 +3249,30 @@ constraints will be removed.</p></div>
 
             </div>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.classes.Measurement.clear_all">
+    <p>def <span class="ident">clear_all</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Delete all instances.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Measurement.clear_all', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.Measurement.clear_all" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">clear_all</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Delete all instances.&quot;&quot;&quot;</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">instances</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="flavio.classes.Measurement.del_instance">
@@ -3296,6 +3375,11 @@ by their name.</p>
     <span class="k">def</span> <span class="nf">del_instance</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">del</span> <span class="n">cls</span><span class="o">.</span><span class="n">instances</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">clear_all</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Delete all instances.&quot;&quot;&quot;</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">instances</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
     <span class="k">def</span> <span class="nf">set_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
 </pre></div>
@@ -3380,6 +3464,30 @@ by their name.</p>
 
             </div>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.classes.NamedInstanceClass.clear_all">
+    <p>def <span class="ident">clear_all</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Delete all instances.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.NamedInstanceClass.clear_all', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.NamedInstanceClass.clear_all" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">clear_all</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Delete all instances.&quot;&quot;&quot;</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">instances</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="flavio.classes.NamedInstanceClass.del_instance">
@@ -3622,6 +3730,30 @@ predicted theoretically.</p></div>
           <h3>Methods</h3>
             
   <div class="item">
+    <div class="name def" id="flavio.classes.Observable.clear_all">
+    <p>def <span class="ident">clear_all</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Delete all instances.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Observable.clear_all', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.Observable.clear_all" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">clear_all</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Delete all instances.&quot;&quot;&quot;</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">instances</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.classes.Observable.del_instance">
     <p>def <span class="ident">del_instance</span>(</p><p>cls, name)</p>
     </div>
@@ -3787,6 +3919,30 @@ of the Parameter class.</p>
 
             </div>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.classes.Parameter.clear_all">
+    <p>def <span class="ident">clear_all</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Delete all instances.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Parameter.clear_all', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.Parameter.clear_all" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">clear_all</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Delete all instances.&quot;&quot;&quot;</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">instances</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="flavio.classes.Parameter.del_instance">
@@ -4200,7 +4356,7 @@ constraints will be removed.</p></div>
 <span class="sd">    that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing</span>
 <span class="sd">    constraints will be removed.&quot;&quot;&quot;</span>
     <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
-    <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">combine_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
+    <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 </pre></div>
 
@@ -4740,7 +4896,7 @@ constraints will be removed.</p></div>
 <span class="sd">    that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing</span>
 <span class="sd">    constraints will be removed.&quot;&quot;&quot;</span>
     <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
-    <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">combine_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
+    <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 </pre></div>
 
@@ -4775,7 +4931,7 @@ constraints will be removed.</p></div>
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
     </p>
 
     <p>pdoc is in the public domain with the

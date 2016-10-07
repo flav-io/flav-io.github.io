@@ -1050,7 +1050,7 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
-    <li class="mono"><a href="#flavio.statistics.probability.combine_distributions">combine_distributions</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.convolve_distributions">convolve_distributions</a></li>
   </ul>
 
     </li>
@@ -1082,6 +1082,31 @@ table {
 
         </li>
         <li class="mono">
+        <span class="class_name"><a href="#flavio.statistics.probability.GaussianUpperLimit">GaussianUpperLimit</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#flavio.statistics.probability.GaussianUpperLimit.__init__">__init__</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.GaussianUpperLimit.get_central">get_central</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.GaussianUpperLimit.get_random">get_random</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.GaussianUpperLimit.get_standard_deviation">get_standard_deviation</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.GaussianUpperLimit.logpdf">logpdf</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#flavio.statistics.probability.HalfNormalDistribution">HalfNormalDistribution</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#flavio.statistics.probability.HalfNormalDistribution.__init__">__init__</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.HalfNormalDistribution.get_central">get_central</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.HalfNormalDistribution.get_random">get_random</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.HalfNormalDistribution.logpdf">logpdf</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
         <span class="class_name"><a href="#flavio.statistics.probability.MultivariateNormalDistribution">MultivariateNormalDistribution</a></span>
         
           
@@ -1102,6 +1127,19 @@ table {
     <li class="mono"><a href="#flavio.statistics.probability.NormalDistribution.get_central">get_central</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.NormalDistribution.get_random">get_random</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.NormalDistribution.logpdf">logpdf</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#flavio.statistics.probability.NumericalDistribution">NumericalDistribution</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.__init__">__init__</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.get_central">get_central</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.get_random">get_random</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.logpdf">logpdf</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.from_pd">from_pd</a></li>
   </ul>
 
         </li>
@@ -1148,15 +1186,18 @@ table {
   <div id="source-flavio.statistics.probability" class="source">
     <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">import</span> <span class="nn">scipy.interpolate</span>
+<span class="kn">import</span> <span class="nn">scipy.signal</span>
 <span class="kn">import</span> <span class="nn">math</span>
-
+<span class="kn">from</span> <span class="nn">flavio.math.functions</span> <span class="kn">import</span> <span class="n">normal_logpdf</span><span class="p">,</span> <span class="n">normal_pdf</span>
 
 <span class="c1">########## ProbabilityDistribution Class ##########</span>
 <span class="k">class</span> <span class="nc">ProbabilityDistribution</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
    <span class="sd">&quot;&quot;&quot;Common base class for all probability distributions&quot;&quot;&quot;</span>
 
-   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">):</span>
+   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">=</span> <span class="n">central_value</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">support</span> <span class="o">=</span> <span class="n">support</span>
 
    <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
@@ -1175,23 +1216,27 @@ table {
 <span class="k">class</span> <span class="nc">UniformDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
 
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">half_range</span><span class="p">):</span>
-      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span> <span class="o">=</span> <span class="n">half_range</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">range</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">range</span> <span class="o">=</span> <span class="p">(</span><span class="n">central_value</span> <span class="o">-</span> <span class="n">half_range</span><span class="p">,</span>
+                    <span class="n">central_value</span> <span class="o">+</span> <span class="n">half_range</span><span class="p">)</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="p">)</span>
 
-   <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+   <span class="k">def</span> <span class="nf">_logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-           <span class="k">return</span> <span class="mi">0</span>
+           <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
        <span class="k">else</span><span class="p">:</span>
            <span class="k">return</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">half_range</span><span class="p">)</span>
 
+   <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
 <span class="k">class</span> <span class="nc">DeltaDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">):</span>
-      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">central_value</span><span class="p">))</span>
 
    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
       <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -1208,23 +1253,31 @@ table {
 <span class="k">class</span> <span class="nc">NormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
 
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="p">):</span>
-      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                      <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">central_value</span><span class="o">-</span><span class="mi">6</span><span class="o">*</span><span class="n">standard_deviation</span><span class="p">,</span>
+                               <span class="n">central_value</span><span class="o">+</span><span class="mi">6</span><span class="o">*</span><span class="n">standard_deviation</span><span class="p">))</span>
+      <span class="k">if</span> <span class="n">standard_deviation</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Standard deviation must be positive number&quot;</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">=</span> <span class="n">standard_deviation</span>
 
    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-       <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span>
+       <span class="k">return</span> <span class="n">normal_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">AsymmetricNormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
 
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">right_deviation</span><span class="p">,</span> <span class="n">left_deviation</span><span class="p">):</span>
-      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
-      <span class="k">if</span> <span class="n">right_deviation</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">left_deviation</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                       <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">central_value</span><span class="o">-</span><span class="mi">6</span><span class="o">*</span><span class="n">left_deviation</span><span class="p">,</span>
+                                <span class="n">central_value</span><span class="o">+</span><span class="mi">6</span><span class="o">*</span><span class="n">right_deviation</span><span class="p">))</span>
+      <span class="k">if</span> <span class="n">right_deviation</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">left_deviation</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
           <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Left and right standard deviations must be positive numbers&quot;</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span> <span class="o">=</span> <span class="n">right_deviation</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span> <span class="o">=</span> <span class="n">left_deviation</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">p_right</span> <span class="o">=</span> <span class="n">normal_pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">p_left</span> <span class="o">=</span> <span class="n">normal_pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
@@ -1236,70 +1289,201 @@ table {
             <span class="n">x</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">))</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="n">x</span>
 
-   <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+   <span class="k">def</span> <span class="nf">_logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
        <span class="c1"># values of the PDF at the central value</span>
-       <span class="n">p_right</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">)</span>
-       <span class="n">p_left</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">)</span>
        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">:</span>
            <span class="c1"># left-hand side: scale factor</span>
-           <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">p_right</span><span class="o">/</span><span class="p">(</span><span class="n">p_left</span><span class="o">+</span><span class="n">p_right</span><span class="p">)</span>
-           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">)</span>
+           <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">p_right</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_left</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">p_right</span><span class="p">)</span>
+           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">)</span>
        <span class="k">else</span><span class="p">:</span>
            <span class="c1"># left-hand side: scale factor</span>
-           <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">p_left</span><span class="o">/</span><span class="p">(</span><span class="n">p_left</span><span class="o">+</span><span class="n">p_right</span><span class="p">)</span>
-           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">)</span>
+           <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">p_left</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_left</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">p_right</span><span class="p">)</span>
+           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">)</span>
+
+   <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">HalfNormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
+
+   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="p">):</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                       <span class="n">support</span><span class="o">=</span><span class="nb">sorted</span><span class="p">((</span><span class="n">central_value</span><span class="p">,</span>
+                                       <span class="n">central_value</span><span class="o">+</span><span class="mi">6</span><span class="o">*</span><span class="n">standard_deviation</span><span class="p">)))</span>
+      <span class="k">if</span> <span class="n">standard_deviation</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Standard deviation must be non-zero number&quot;</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">=</span> <span class="n">standard_deviation</span>
+
+   <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span><span class="o">*</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">),</span> <span class="n">size</span><span class="p">))</span>
+
+   <span class="k">def</span> <span class="nf">_logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+       <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+           <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+       <span class="k">else</span><span class="p">:</span>
+           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">))</span>
+
+   <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">GaussianUpperLimit</span><span class="p">(</span><span class="n">HalfNormalDistribution</span><span class="p">):</span>
+   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">confidence_level</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">confidence_level</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Confidence level should be between 0 und 1&quot;</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">limit</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The upper limit should be a positive number&quot;</span><span class="p">)</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                       <span class="n">standard_deviation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_standard_deviation</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">confidence_level</span> <span class="o">=</span> <span class="n">confidence_level</span>
+
+   <span class="k">def</span> <span class="nf">get_standard_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Convert the confidence level into a Gaussian standard deviation&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="n">limit</span><span class="o">*</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="n">confidence_level</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">NumericalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
+   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">central_value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">central_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">central_value</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+              <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+          <span class="k">else</span><span class="p">:</span>
+              <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Central value must be within range provided&quot;</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+          <span class="n">mode</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span>
+          <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+      <span class="n">_x_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+      <span class="n">_bin_width</span> <span class="o">=</span> <span class="n">_x_range</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+      <span class="n">_y_norm</span> <span class="o">=</span> <span class="n">y</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="n">_bin_width</span> <span class="c1"># normalize PDF to 1</span>
+      <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span> <span class="c1"># ignore warning from log(0)=-np.inf</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_y_norm</span><span class="p">),</span>
+                                    <span class="n">fill_value</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+      <span class="n">_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">_y_norm</span><span class="p">)</span><span class="o">*</span><span class="n">_bin_width</span>
+      <span class="c1"># adapt the borders of the PPF to be 0 and 1</span>
+      <span class="n">_cdf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+      <span class="n">_cdf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">_cdf</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+   <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+      <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+   <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+   <span class="nd">@classmethod</span>
+   <span class="k">def</span> <span class="nf">from_pd</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+       <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">support</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">support</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">nsteps</span><span class="p">)</span>
+       <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">_x</span><span class="p">))</span>
+       <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">_x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">_y</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
 
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">covariance</span><span class="p">):</span>
-      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
-      <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;The covariance matrix is not positive definite!&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span> <span class="o">=</span> <span class="n">covariance</span>
+      <span class="c1"># to avoid ill-conditioned covariance matrices, all data are rescaled</span>
+      <span class="c1"># by the inverse variances</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">)</span>
+      <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;The covariance matrix is not positive definite!&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-       <span class="c1"># to avoid ill-conditioned covariance matrices, all data are rescaled</span>
-       <span class="c1"># by the inverse variances</span>
-       <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">))</span>
-       <span class="n">scale_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
-       <span class="n">pdf_scaled</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="o">/</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="o">/</span><span class="n">scale_matrix</span><span class="p">)</span>
-       <span class="k">return</span> <span class="n">pdf_scaled</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="o">/</span><span class="n">scale_matrix</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span>
+       <span class="c1"># undoing the rescaling of the covariance</span>
+       <span class="n">pdf_scaled</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span><span class="p">)</span>
+       <span class="n">sign</span><span class="p">,</span> <span class="n">logdet</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">)</span>
+       <span class="k">return</span> <span class="n">pdf_scaled</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
 
 
 
 
 <span class="c1"># Auxiliary functions</span>
 
-<span class="k">def</span> <span class="nf">combine_distributions</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">convolve_distributions</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Combine a set of univariate probability distributions.</span>
 
 <span class="sd">    This function is meant for combining uncertainties on a single parameter/</span>
-<span class="sd">    observable. As an argument, it takes a list of Gaussians that all have</span>
-<span class="sd">    the same mean. It returns their convolution, but with location equal to the</span>
-<span class="sd">    original mean.</span>
+<span class="sd">    observable. As an argument, it takes a list of probability distributions</span>
+<span class="sd">    that all have the same central value. It returns their convolution, but</span>
+<span class="sd">    with location equal to the original central value.</span>
 
-<span class="sd">    This should be generalized to other kinds of distributions in the future...</span>
+<span class="sd">    At present, this function is only implemented for univariate normal</span>
+<span class="sd">    distributions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># if there&#39;s just one: return it immediately</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">probability_distributions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">central_value</span> <span class="o">=</span> <span class="n">probability_distributions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span> <span class="c1"># central value of the first dist</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="s2">&quot;Combination only implemented for univariate distributions&quot;</span>
-    <span class="n">gaussians</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">pd</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">central_value</span> <span class="o">!=</span> <span class="n">central_value</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All distributions to be combined must have the same central value&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pd</span><span class="p">,</span> <span class="n">DeltaDistribution</span><span class="p">):</span>
-            <span class="c1"># delta distributions (= no error) can be skipped</span>
-            <span class="k">continue</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pd</span><span class="p">,</span> <span class="n">NormalDistribution</span><span class="p">):</span>
-            <span class="n">gaussians</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;Combination only implemented for univariate distributions&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">central_value</span> <span class="o">==</span> <span class="n">central_value</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">),</span> \
+        <span class="s2">&quot;Distrubtions must all have the same central value&quot;</span>
+    <span class="c1"># all normal dists</span>
+    <span class="n">gaussians</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">NormalDistribution</span><span class="p">)]</span>
+    <span class="c1"># let&#39;s alrady combined the normal distributions into 1</span>
+    <span class="k">if</span> <span class="n">gaussians</span><span class="p">:</span>
+        <span class="n">gaussian</span> <span class="o">=</span> <span class="n">_convolve_gaussians</span><span class="p">(</span><span class="n">gaussians</span><span class="p">)</span>
+    <span class="c1"># all delta dists -  they can be ignored!</span>
+    <span class="n">deltas</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">DeltaDistribution</span><span class="p">)]</span>
+    <span class="c1"># all other univariate dists</span>
+    <span class="n">others</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">gaussians</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">deltas</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">others</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">gaussians</span><span class="p">:</span>
+        <span class="c1"># if there is only a delta (or more than one), just return it</span>
+        <span class="k">return</span> <span class="n">deltas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">gaussians</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">others</span><span class="p">:</span>
+        <span class="c1"># if there are only the gaussians, we are done.</span>
+        <span class="k">return</span> <span class="n">gaussian</span>
+    <span class="k">else</span><span class="p">:</span>
+    <span class="c1"># otherwise, we need to combine the (combined) gaussian with the others</span>
+        <span class="k">if</span> <span class="n">gaussians</span><span class="p">:</span>
+            <span class="n">to_be_combined</span> <span class="o">=</span> <span class="n">others</span> <span class="o">+</span> <span class="p">[</span><span class="n">gaussian</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Combination only implemented for normal distributions&quot;</span><span class="p">)</span>
-    <span class="n">err_squared</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">pd</span><span class="o">.</span><span class="n">standard_deviation</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">pd</span> <span class="ow">in</span> <span class="n">gaussians</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">central_value</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">err_squared</span><span class="p">))</span>
+            <span class="n">to_be_combined</span> <span class="o">=</span> <span class="n">others</span>
+        <span class="c1"># turn all distributions into numerical distributions!</span>
+        <span class="n">numerical</span> <span class="o">=</span> <span class="p">[</span><span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">to_be_combined</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">_convolve_numerical</span><span class="p">(</span><span class="n">numerical</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_convolve_gaussians</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">NormalDistribution</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">),</span> \
+        <span class="s2">&quot;Distributions should all be instances of NormalDistribution&quot;</span>
+    <span class="n">central_value</span> <span class="o">=</span> <span class="n">probability_distributions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span> <span class="c1"># central value of the first dist</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">central_value</span> <span class="o">==</span> <span class="n">central_value</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">),</span> \
+        <span class="s2">&quot;Distrubtions must all have the same central value&quot;</span>
+    <span class="n">sigmas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">])</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sigmas</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">central_value</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_convolve_numerical</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">NumericalDistribution</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">),</span> \
+        <span class="s2">&quot;Distributions should all be instances of NumericalDistribution&quot;</span>
+    <span class="n">central_value</span> <span class="o">=</span> <span class="n">probability_distributions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span> <span class="c1"># central value of the first dist</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">central_value</span> <span class="o">==</span> <span class="n">central_value</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">),</span> \
+        <span class="s2">&quot;Distrubtions must all have the same central value&quot;</span>
+    <span class="c1"># the combined support is the one including all individual supports</span>
+    <span class="n">supports</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">support</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">])</span>
+    <span class="n">support</span> <span class="o">=</span> <span class="p">(</span><span class="n">supports</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">supports</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="p">(</span><span class="n">support</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">support</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">nsteps</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">support</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">support</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">nsteps</span><span class="p">)</span>
+    <span class="c1"># position of the central value</span>
+    <span class="n">n_x_central</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">central_value</span> <span class="o">-</span> <span class="n">support</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">delta</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">for</span> <span class="n">pd</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">:</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">*</span> <span class="n">delta</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c1"># first step</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># convolution</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="s1">&#39;full&#39;</span><span class="p">)</span>
+            <span class="c1"># cut out the convolved signal at the right place</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">n_x_central</span><span class="p">:</span><span class="n">nsteps</span> <span class="o">+</span> <span class="n">n_x_central</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">NumericalDistribution</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">central_value</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1311,8 +1495,8 @@ table {
     <h2 class="section-title" id="header-functions">Functions</h2>
       
   <div class="item">
-    <div class="name def" id="flavio.statistics.probability.combine_distributions">
-    <p>def <span class="ident">combine_distributions</span>(</p><p>probability_distributions)</p>
+    <div class="name def" id="flavio.statistics.probability.convolve_distributions">
+    <p>def <span class="ident">convolve_distributions</span>(</p><p>probability_distributions)</p>
     </div>
     
 
@@ -1320,41 +1504,59 @@ table {
   
     <div class="desc"><p>Combine a set of univariate probability distributions.</p>
 <p>This function is meant for combining uncertainties on a single parameter/
-observable. As an argument, it takes a list of Gaussians that all have
-the same mean. It returns their convolution, but with location equal to the
-original mean.</p>
-<p>This should be generalized to other kinds of distributions in the future...</p></div>
+observable. As an argument, it takes a list of probability distributions
+that all have the same central value. It returns their convolution, but
+with location equal to the original central value.</p>
+<p>At present, this function is only implemented for univariate normal
+distributions.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.combine_distributions', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.statistics.probability.combine_distributions" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">combine_distributions</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">):</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.convolve_distributions', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.convolve_distributions" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">convolve_distributions</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Combine a set of univariate probability distributions.</span>
 
 <span class="sd">    This function is meant for combining uncertainties on a single parameter/</span>
-<span class="sd">    observable. As an argument, it takes a list of Gaussians that all have</span>
-<span class="sd">    the same mean. It returns their convolution, but with location equal to the</span>
-<span class="sd">    original mean.</span>
+<span class="sd">    observable. As an argument, it takes a list of probability distributions</span>
+<span class="sd">    that all have the same central value. It returns their convolution, but</span>
+<span class="sd">    with location equal to the original central value.</span>
 
-<span class="sd">    This should be generalized to other kinds of distributions in the future...</span>
+<span class="sd">    At present, this function is only implemented for univariate normal</span>
+<span class="sd">    distributions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># if there&#39;s just one: return it immediately</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">probability_distributions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">central_value</span> <span class="o">=</span> <span class="n">probability_distributions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span> <span class="c1"># central value of the first dist</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="s2">&quot;Combination only implemented for univariate distributions&quot;</span>
-    <span class="n">gaussians</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">pd</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">central_value</span> <span class="o">!=</span> <span class="n">central_value</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All distributions to be combined must have the same central value&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pd</span><span class="p">,</span> <span class="n">DeltaDistribution</span><span class="p">):</span>
-            <span class="c1"># delta distributions (= no error) can be skipped</span>
-            <span class="k">continue</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pd</span><span class="p">,</span> <span class="n">NormalDistribution</span><span class="p">):</span>
-            <span class="n">gaussians</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;Combination only implemented for univariate distributions&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">central_value</span> <span class="o">==</span> <span class="n">central_value</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">),</span> \
+        <span class="s2">&quot;Distrubtions must all have the same central value&quot;</span>
+    <span class="c1"># all normal dists</span>
+    <span class="n">gaussians</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">NormalDistribution</span><span class="p">)]</span>
+    <span class="c1"># let&#39;s alrady combined the normal distributions into 1</span>
+    <span class="k">if</span> <span class="n">gaussians</span><span class="p">:</span>
+        <span class="n">gaussian</span> <span class="o">=</span> <span class="n">_convolve_gaussians</span><span class="p">(</span><span class="n">gaussians</span><span class="p">)</span>
+    <span class="c1"># all delta dists -  they can be ignored!</span>
+    <span class="n">deltas</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">DeltaDistribution</span><span class="p">)]</span>
+    <span class="c1"># all other univariate dists</span>
+    <span class="n">others</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">gaussians</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">deltas</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">others</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">gaussians</span><span class="p">:</span>
+        <span class="c1"># if there is only a delta (or more than one), just return it</span>
+        <span class="k">return</span> <span class="n">deltas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">gaussians</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">others</span><span class="p">:</span>
+        <span class="c1"># if there are only the gaussians, we are done.</span>
+        <span class="k">return</span> <span class="n">gaussian</span>
+    <span class="k">else</span><span class="p">:</span>
+    <span class="c1"># otherwise, we need to combine the (combined) gaussian with the others</span>
+        <span class="k">if</span> <span class="n">gaussians</span><span class="p">:</span>
+            <span class="n">to_be_combined</span> <span class="o">=</span> <span class="n">others</span> <span class="o">+</span> <span class="p">[</span><span class="n">gaussian</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Combination only implemented for normal distributions&quot;</span><span class="p">)</span>
-    <span class="n">err_squared</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">pd</span><span class="o">.</span><span class="n">standard_deviation</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">pd</span> <span class="ow">in</span> <span class="n">gaussians</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">central_value</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">err_squared</span><span class="p">))</span>
+            <span class="n">to_be_combined</span> <span class="o">=</span> <span class="n">others</span>
+        <span class="c1"># turn all distributions into numerical distributions!</span>
+        <span class="n">numerical</span> <span class="o">=</span> <span class="p">[</span><span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">to_be_combined</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">_convolve_numerical</span><span class="p">(</span><span class="n">numerical</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1376,11 +1578,15 @@ original mean.</p>
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AsymmetricNormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
 
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">right_deviation</span><span class="p">,</span> <span class="n">left_deviation</span><span class="p">):</span>
-      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
-      <span class="k">if</span> <span class="n">right_deviation</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">left_deviation</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                       <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">central_value</span><span class="o">-</span><span class="mi">6</span><span class="o">*</span><span class="n">left_deviation</span><span class="p">,</span>
+                                <span class="n">central_value</span><span class="o">+</span><span class="mi">6</span><span class="o">*</span><span class="n">right_deviation</span><span class="p">))</span>
+      <span class="k">if</span> <span class="n">right_deviation</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">left_deviation</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
           <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Left and right standard deviations must be positive numbers&quot;</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span> <span class="o">=</span> <span class="n">right_deviation</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span> <span class="o">=</span> <span class="n">left_deviation</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">p_right</span> <span class="o">=</span> <span class="n">normal_pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">p_left</span> <span class="o">=</span> <span class="n">normal_pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
@@ -1392,18 +1598,20 @@ original mean.</p>
             <span class="n">x</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">))</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="n">x</span>
 
-   <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+   <span class="k">def</span> <span class="nf">_logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
        <span class="c1"># values of the PDF at the central value</span>
-       <span class="n">p_right</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">)</span>
-       <span class="n">p_left</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">)</span>
        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">:</span>
            <span class="c1"># left-hand side: scale factor</span>
-           <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">p_right</span><span class="o">/</span><span class="p">(</span><span class="n">p_left</span><span class="o">+</span><span class="n">p_right</span><span class="p">)</span>
-           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">)</span>
+           <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">p_right</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_left</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">p_right</span><span class="p">)</span>
+           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">)</span>
        <span class="k">else</span><span class="p">:</span>
            <span class="c1"># left-hand side: scale factor</span>
-           <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">p_left</span><span class="o">/</span><span class="p">(</span><span class="n">p_left</span><span class="o">+</span><span class="n">p_right</span><span class="p">)</span>
-           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">)</span>
+           <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">p_left</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_left</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">p_right</span><span class="p">)</span>
+           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">)</span>
+
+   <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1432,11 +1640,15 @@ original mean.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.AsymmetricNormalDistribution.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.AsymmetricNormalDistribution.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">right_deviation</span><span class="p">,</span> <span class="n">left_deviation</span><span class="p">):</span>
-   <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
-   <span class="k">if</span> <span class="n">right_deviation</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">left_deviation</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+   <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                    <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">central_value</span><span class="o">-</span><span class="mi">6</span><span class="o">*</span><span class="n">left_deviation</span><span class="p">,</span>
+                             <span class="n">central_value</span><span class="o">+</span><span class="mi">6</span><span class="o">*</span><span class="n">right_deviation</span><span class="p">))</span>
+   <span class="k">if</span> <span class="n">right_deviation</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">left_deviation</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Left and right standard deviations must be positive numbers&quot;</span><span class="p">)</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span> <span class="o">=</span> <span class="n">right_deviation</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span> <span class="o">=</span> <span class="n">left_deviation</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">p_right</span> <span class="o">=</span> <span class="n">normal_pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">)</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">p_left</span> <span class="o">=</span> <span class="n">normal_pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1506,17 +1718,8 @@ original mean.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.AsymmetricNormalDistribution.logpdf', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.AsymmetricNormalDistribution.logpdf" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-    <span class="c1"># values of the PDF at the central value</span>
-    <span class="n">p_right</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">)</span>
-    <span class="n">p_left</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">:</span>
-        <span class="c1"># left-hand side: scale factor</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">p_right</span><span class="o">/</span><span class="p">(</span><span class="n">p_left</span><span class="o">+</span><span class="n">p_right</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># left-hand side: scale factor</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">p_left</span><span class="o">/</span><span class="p">(</span><span class="n">p_left</span><span class="o">+</span><span class="n">p_right</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">)</span>
+     <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
+     <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1527,6 +1730,26 @@ original mean.</p>
           <h3>Instance variables</h3>
             <div class="item">
             <p id="flavio.statistics.probability.AsymmetricNormalDistribution.left_deviation" class="name">var <span class="ident">left_deviation</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.AsymmetricNormalDistribution.p_left" class="name">var <span class="ident">p_left</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.AsymmetricNormalDistribution.p_right" class="name">var <span class="ident">p_right</span></p>
             
 
             
@@ -1558,7 +1781,7 @@ original mean.</p>
   <div id="source-flavio.statistics.probability.DeltaDistribution" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">DeltaDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">):</span>
-      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">central_value</span><span class="p">))</span>
 
    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
       <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -1591,15 +1814,19 @@ original mean.</p>
     <p>def <span class="ident">__init__</span>(</p><p>self, central_value)</p>
     </div>
     
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.__init__">__init__</a></code>
+    </p>
 
     
   
-    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+    <div class="desc inherited"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.DeltaDistribution.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.DeltaDistribution.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">):</span>
-   <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
+   <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">central_value</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1613,10 +1840,6 @@ original mean.</p>
     <p>def <span class="ident">get_central</span>(</p><p>self)</p>
     </div>
     
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.get_central">get_central</a></code>
-    </p>
 
     
   
@@ -1684,6 +1907,332 @@ original mean.</p>
       </div>
       
       <div class="item">
+      <p id="flavio.statistics.probability.GaussianUpperLimit" class="name">class <span class="ident">GaussianUpperLimit</span></p>
+      
+  
+    <div class="desc"><p>Common base class for all probability distributions</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GaussianUpperLimit', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.GaussianUpperLimit" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">GaussianUpperLimit</span><span class="p">(</span><span class="n">HalfNormalDistribution</span><span class="p">):</span>
+   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">confidence_level</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">confidence_level</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Confidence level should be between 0 und 1&quot;</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">limit</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The upper limit should be a positive number&quot;</span><span class="p">)</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                       <span class="n">standard_deviation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_standard_deviation</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">confidence_level</span> <span class="o">=</span> <span class="n">confidence_level</span>
+
+   <span class="k">def</span> <span class="nf">get_standard_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Convert the confidence level into a Gaussian standard deviation&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="n">limit</span><span class="o">*</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="n">confidence_level</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#flavio.statistics.probability.GaussianUpperLimit">GaussianUpperLimit</a></li>
+          <li><a href="#flavio.statistics.probability.HalfNormalDistribution">HalfNormalDistribution</a></li>
+          <li><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.GaussianUpperLimit.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, limit, confidence_level)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GaussianUpperLimit.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.GaussianUpperLimit.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">):</span>
+   <span class="k">if</span> <span class="n">confidence_level</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">confidence_level</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Confidence level should be between 0 und 1&quot;</span><span class="p">)</span>
+   <span class="k">if</span> <span class="n">limit</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The upper limit should be a positive number&quot;</span><span class="p">)</span>
+   <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">standard_deviation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_standard_deviation</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">))</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">confidence_level</span> <span class="o">=</span> <span class="n">confidence_level</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.GaussianUpperLimit.get_central">
+    <p>def <span class="ident">get_central</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GaussianUpperLimit.get_central', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.GaussianUpperLimit.get_central" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+   <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.GaussianUpperLimit.get_random">
+    <p>def <span class="ident">get_random</span>(</p><p>self, size=None)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GaussianUpperLimit.get_random', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.GaussianUpperLimit.get_random" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+   <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span><span class="o">*</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">),</span> <span class="n">size</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.GaussianUpperLimit.get_standard_deviation">
+    <p>def <span class="ident">get_standard_deviation</span>(</p><p>self, limit, confidence_level)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Convert the confidence level into a Gaussian standard deviation</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GaussianUpperLimit.get_standard_deviation', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.GaussianUpperLimit.get_standard_deviation" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_standard_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert the confidence level into a Gaussian standard deviation&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">limit</span><span class="o">*</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="n">confidence_level</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.GaussianUpperLimit.logpdf">
+    <p>def <span class="ident">logpdf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GaussianUpperLimit.logpdf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.GaussianUpperLimit.logpdf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+     <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
+     <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="flavio.statistics.probability.GaussianUpperLimit.confidence_level" class="name">var <span class="ident">confidence_level</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.GaussianUpperLimit.limit" class="name">var <span class="ident">limit</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="flavio.statistics.probability.HalfNormalDistribution" class="name">class <span class="ident">HalfNormalDistribution</span></p>
+      
+  
+    <div class="desc"><p>Common base class for all probability distributions</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.HalfNormalDistribution', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.HalfNormalDistribution" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">HalfNormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
+
+   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="p">):</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                       <span class="n">support</span><span class="o">=</span><span class="nb">sorted</span><span class="p">((</span><span class="n">central_value</span><span class="p">,</span>
+                                       <span class="n">central_value</span><span class="o">+</span><span class="mi">6</span><span class="o">*</span><span class="n">standard_deviation</span><span class="p">)))</span>
+      <span class="k">if</span> <span class="n">standard_deviation</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Standard deviation must be non-zero number&quot;</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">=</span> <span class="n">standard_deviation</span>
+
+   <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span><span class="o">*</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">),</span> <span class="n">size</span><span class="p">))</span>
+
+   <span class="k">def</span> <span class="nf">_logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+       <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+           <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+       <span class="k">else</span><span class="p">:</span>
+           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">))</span>
+
+   <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#flavio.statistics.probability.HalfNormalDistribution">HalfNormalDistribution</a></li>
+          <li><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.HalfNormalDistribution.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, central_value, standard_deviation)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.HalfNormalDistribution.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.HalfNormalDistribution.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="p">):</span>
+   <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                    <span class="n">support</span><span class="o">=</span><span class="nb">sorted</span><span class="p">((</span><span class="n">central_value</span><span class="p">,</span>
+                                    <span class="n">central_value</span><span class="o">+</span><span class="mi">6</span><span class="o">*</span><span class="n">standard_deviation</span><span class="p">)))</span>
+   <span class="k">if</span> <span class="n">standard_deviation</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Standard deviation must be non-zero number&quot;</span><span class="p">)</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">=</span> <span class="n">standard_deviation</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.HalfNormalDistribution.get_central">
+    <p>def <span class="ident">get_central</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.HalfNormalDistribution.get_central', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.HalfNormalDistribution.get_central" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+   <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.HalfNormalDistribution.get_random">
+    <p>def <span class="ident">get_random</span>(</p><p>self, size=None)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.HalfNormalDistribution.get_random', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.HalfNormalDistribution.get_random" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+   <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span><span class="o">*</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">),</span> <span class="n">size</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.HalfNormalDistribution.logpdf">
+    <p>def <span class="ident">logpdf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.HalfNormalDistribution.logpdf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.HalfNormalDistribution.logpdf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+     <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
+     <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="flavio.statistics.probability.HalfNormalDistribution.standard_deviation" class="name">var <span class="ident">standard_deviation</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
       <p id="flavio.statistics.probability.MultivariateNormalDistribution" class="name">class <span class="ident">MultivariateNormalDistribution</span></p>
       
   
@@ -1694,20 +2243,22 @@ original mean.</p>
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
 
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">covariance</span><span class="p">):</span>
-      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
-      <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;The covariance matrix is not positive definite!&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span> <span class="o">=</span> <span class="n">covariance</span>
+      <span class="c1"># to avoid ill-conditioned covariance matrices, all data are rescaled</span>
+      <span class="c1"># by the inverse variances</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">)</span>
+      <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;The covariance matrix is not positive definite!&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-       <span class="c1"># to avoid ill-conditioned covariance matrices, all data are rescaled</span>
-       <span class="c1"># by the inverse variances</span>
-       <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">))</span>
-       <span class="n">scale_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
-       <span class="n">pdf_scaled</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="o">/</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="o">/</span><span class="n">scale_matrix</span><span class="p">)</span>
-       <span class="k">return</span> <span class="n">pdf_scaled</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="o">/</span><span class="n">scale_matrix</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span>
+       <span class="c1"># undoing the rescaling of the covariance</span>
+       <span class="n">pdf_scaled</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span><span class="p">)</span>
+       <span class="n">sign</span><span class="p">,</span> <span class="n">logdet</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">)</span>
+       <span class="k">return</span> <span class="n">pdf_scaled</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
 </pre></div>
 
   </div>
@@ -1736,9 +2287,13 @@ original mean.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.MultivariateNormalDistribution.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.MultivariateNormalDistribution.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">covariance</span><span class="p">):</span>
-   <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
-   <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;The covariance matrix is not positive definite!&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
+   <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span> <span class="o">=</span> <span class="n">covariance</span>
+   <span class="c1"># to avoid ill-conditioned covariance matrices, all data are rescaled</span>
+   <span class="c1"># by the inverse variances</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">))</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">)</span>
+   <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;The covariance matrix is not positive definite!&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1801,12 +2356,10 @@ original mean.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.MultivariateNormalDistribution.logpdf', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.MultivariateNormalDistribution.logpdf" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-    <span class="c1"># to avoid ill-conditioned covariance matrices, all data are rescaled</span>
-    <span class="c1"># by the inverse variances</span>
-    <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">))</span>
-    <span class="n">scale_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
-    <span class="n">pdf_scaled</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="o">/</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="o">/</span><span class="n">scale_matrix</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pdf_scaled</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="o">/</span><span class="n">scale_matrix</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="c1"># undoing the rescaling of the covariance</span>
+    <span class="n">pdf_scaled</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span><span class="p">)</span>
+    <span class="n">sign</span><span class="p">,</span> <span class="n">logdet</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pdf_scaled</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
 </pre></div>
 
   </div>
@@ -1817,6 +2370,26 @@ original mean.</p>
           <h3>Instance variables</h3>
             <div class="item">
             <p id="flavio.statistics.probability.MultivariateNormalDistribution.covariance" class="name">var <span class="ident">covariance</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.MultivariateNormalDistribution.err" class="name">var <span class="ident">err</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.MultivariateNormalDistribution.scaled_covariance" class="name">var <span class="ident">scaled_covariance</span></p>
             
 
             
@@ -1839,14 +2412,18 @@ original mean.</p>
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">NormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
 
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="p">):</span>
-      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                      <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">central_value</span><span class="o">-</span><span class="mi">6</span><span class="o">*</span><span class="n">standard_deviation</span><span class="p">,</span>
+                               <span class="n">central_value</span><span class="o">+</span><span class="mi">6</span><span class="o">*</span><span class="n">standard_deviation</span><span class="p">))</span>
+      <span class="k">if</span> <span class="n">standard_deviation</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Standard deviation must be positive number&quot;</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">=</span> <span class="n">standard_deviation</span>
 
    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-       <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span>
+       <span class="k">return</span> <span class="n">normal_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1875,7 +2452,11 @@ original mean.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NormalDistribution.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.NormalDistribution.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="p">):</span>
-   <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
+   <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                   <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">central_value</span><span class="o">-</span><span class="mi">6</span><span class="o">*</span><span class="n">standard_deviation</span><span class="p">,</span>
+                            <span class="n">central_value</span><span class="o">+</span><span class="mi">6</span><span class="o">*</span><span class="n">standard_deviation</span><span class="p">))</span>
+   <span class="k">if</span> <span class="n">standard_deviation</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Standard deviation must be positive number&quot;</span><span class="p">)</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">=</span> <span class="n">standard_deviation</span>
 </pre></div>
 
@@ -1939,7 +2520,7 @@ original mean.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NormalDistribution.logpdf', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.NormalDistribution.logpdf" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">normal_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1962,6 +2543,205 @@ original mean.</p>
       </div>
       
       <div class="item">
+      <p id="flavio.statistics.probability.NumericalDistribution" class="name">class <span class="ident">NumericalDistribution</span></p>
+      
+  
+    <div class="desc"><p>Common base class for all probability distributions</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NumericalDistribution', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.NumericalDistribution" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">NumericalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
+   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">central_value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">central_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">central_value</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+              <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+          <span class="k">else</span><span class="p">:</span>
+              <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Central value must be within range provided&quot;</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+          <span class="n">mode</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span>
+          <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+      <span class="n">_x_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+      <span class="n">_bin_width</span> <span class="o">=</span> <span class="n">_x_range</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+      <span class="n">_y_norm</span> <span class="o">=</span> <span class="n">y</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="n">_bin_width</span> <span class="c1"># normalize PDF to 1</span>
+      <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span> <span class="c1"># ignore warning from log(0)=-np.inf</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_y_norm</span><span class="p">),</span>
+                                    <span class="n">fill_value</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+      <span class="n">_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">_y_norm</span><span class="p">)</span><span class="o">*</span><span class="n">_bin_width</span>
+      <span class="c1"># adapt the borders of the PPF to be 0 and 1</span>
+      <span class="n">_cdf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+      <span class="n">_cdf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">_cdf</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+   <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+      <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+   <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+   <span class="nd">@classmethod</span>
+   <span class="k">def</span> <span class="nf">from_pd</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+       <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">support</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">support</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">nsteps</span><span class="p">)</span>
+       <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">_x</span><span class="p">))</span>
+       <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">_x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">_y</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#flavio.statistics.probability.NumericalDistribution">NumericalDistribution</a></li>
+          <li><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.NumericalDistribution.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, x, y, central_value=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NumericalDistribution.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.NumericalDistribution.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">central_value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+   <span class="k">if</span> <span class="n">central_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+       <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">central_value</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+           <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+       <span class="k">else</span><span class="p">:</span>
+           <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Central value must be within range provided&quot;</span><span class="p">)</span>
+   <span class="k">else</span><span class="p">:</span>
+       <span class="n">mode</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span>
+       <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+   <span class="n">_x_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+   <span class="n">_bin_width</span> <span class="o">=</span> <span class="n">_x_range</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+   <span class="n">_y_norm</span> <span class="o">=</span> <span class="n">y</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="n">_bin_width</span> <span class="c1"># normalize PDF to 1</span>
+   <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span> <span class="c1"># ignore warning from log(0)=-np.inf</span>
+       <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_y_norm</span><span class="p">),</span>
+                                 <span class="n">fill_value</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+   <span class="n">_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">_y_norm</span><span class="p">)</span><span class="o">*</span><span class="n">_bin_width</span>
+   <span class="c1"># adapt the borders of the PPF to be 0 and 1</span>
+   <span class="n">_cdf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+   <span class="n">_cdf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">_cdf</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.NumericalDistribution.get_central">
+    <p>def <span class="ident">get_central</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NumericalDistribution.get_central', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.NumericalDistribution.get_central" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+   <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.NumericalDistribution.get_random">
+    <p>def <span class="ident">get_random</span>(</p><p>self, size=None)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NumericalDistribution.get_random', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.NumericalDistribution.get_random" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+   <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+   <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.NumericalDistribution.logpdf">
+    <p>def <span class="ident">logpdf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NumericalDistribution.logpdf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.NumericalDistribution.logpdf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="flavio.statistics.probability.NumericalDistribution.ppf_interp" class="name">var <span class="ident">ppf_interp</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.NumericalDistribution.from_pd">
+    <p>def <span class="ident">from_pd</span>(</p><p>cls, pd, nsteps=1000)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NumericalDistribution.from_pd', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.NumericalDistribution.from_pd" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_pd</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">support</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">support</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">nsteps</span><span class="p">)</span>
+    <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">_x</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">_x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">_y</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
       <p id="flavio.statistics.probability.ProbabilityDistribution" class="name">class <span class="ident">ProbabilityDistribution</span></p>
       
   
@@ -1972,8 +2752,9 @@ original mean.</p>
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ProbabilityDistribution</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
    <span class="sd">&quot;&quot;&quot;Common base class for all probability distributions&quot;&quot;&quot;</span>
 
-   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">):</span>
+   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">=</span> <span class="n">central_value</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">support</span> <span class="o">=</span> <span class="n">support</span>
 
    <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
@@ -2002,7 +2783,7 @@ original mean.</p>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.ProbabilityDistribution.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, central_value)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, central_value, support)</p>
     </div>
     
 
@@ -2012,8 +2793,9 @@ original mean.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.ProbabilityDistribution.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.ProbabilityDistribution.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="p">):</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">=</span> <span class="n">central_value</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">support</span> <span class="o">=</span> <span class="n">support</span>
 </pre></div>
 
   </div>
@@ -2053,6 +2835,16 @@ original mean.</p>
 </div>
 
             </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.ProbabilityDistribution.support" class="name">var <span class="ident">support</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
       </div>
       </div>
       
@@ -2067,19 +2859,23 @@ original mean.</p>
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">UniformDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
 
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">half_range</span><span class="p">):</span>
-      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span> <span class="o">=</span> <span class="n">half_range</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">range</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">range</span> <span class="o">=</span> <span class="p">(</span><span class="n">central_value</span> <span class="o">-</span> <span class="n">half_range</span><span class="p">,</span>
+                    <span class="n">central_value</span> <span class="o">+</span> <span class="n">half_range</span><span class="p">)</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="p">)</span>
 
-   <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+   <span class="k">def</span> <span class="nf">_logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-           <span class="k">return</span> <span class="mi">0</span>
+           <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
        <span class="k">else</span><span class="p">:</span>
            <span class="k">return</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">half_range</span><span class="p">)</span>
+
+   <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2108,10 +2904,10 @@ original mean.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.UniformDistribution.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.UniformDistribution.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">half_range</span><span class="p">):</span>
-   <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span> <span class="o">=</span> <span class="n">half_range</span>
-   <span class="bp">self</span><span class="o">.</span><span class="n">range</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span><span class="p">,</span>
-                 <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span><span class="p">)</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">range</span> <span class="o">=</span> <span class="p">(</span><span class="n">central_value</span> <span class="o">-</span> <span class="n">half_range</span><span class="p">,</span>
+                 <span class="n">central_value</span> <span class="o">+</span> <span class="n">half_range</span><span class="p">)</span>
+   <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2174,10 +2970,8 @@ original mean.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.UniformDistribution.logpdf', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.UniformDistribution.logpdf" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="mi">0</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">half_range</span><span class="p">)</span>
+     <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
+     <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2216,7 +3010,7 @@ original mean.</p>
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
     </p>
 
     <p>pdoc is in the public domain with the

@@ -1052,6 +1052,7 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.l">l</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.meson_ff">meson_ff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.meson_quark">meson_quark</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.obs">obs</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.pi">pi</a></li>
   </ul>
 
@@ -1060,15 +1061,26 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.AFBh_num">AFBh_num</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.AFBl_num">AFBl_num</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.AFBlh_num">AFBlh_num</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.FL_num">FL_num</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.angular_coefficients">angular_coefficients</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.dGdq2">dGdq2</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.dbrdq2">dbrdq2</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.dbrdq2_func">dbrdq2_func</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.dbrdq2_int">dbrdq2_int</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.dbrdq2_int_func">dbrdq2_int_func</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.get_ff">get_ff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.get_obs">get_obs</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.get_subleading">get_subleading</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.get_transverity_amps">get_transverity_amps</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.get_transverity_amps_ff">get_transverity_amps_ff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.helicity_amps">helicity_amps</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.obs_int">obs_int</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.obs_int_ratio_func">obs_int_ratio_func</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.obs_ratio_func">obs_ratio_func</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.prefactor">prefactor</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.lambdablambdall.transverity_amps">transverity_amps</a></li>
   </ul>
 
@@ -1097,11 +1109,12 @@ table {
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span><span class="p">,</span><span class="n">pi</span>
 <span class="kn">from</span> <span class="nn">flavio.physics.bdecays.common</span> <span class="kn">import</span> <span class="n">lambda_K</span><span class="p">,</span> <span class="n">beta_l</span><span class="p">,</span> <span class="n">meson_quark</span><span class="p">,</span> <span class="n">meson_ff</span>
 <span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">Observable</span><span class="p">,</span> <span class="n">Prediction</span><span class="p">,</span> <span class="n">AuxiliaryQuantity</span>
+<span class="kn">from</span> <span class="nn">flavio.physics.common</span> <span class="kn">import</span> <span class="n">conjugate_par</span><span class="p">,</span> <span class="n">conjugate_wc</span><span class="p">,</span> <span class="n">add_dict</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 
 <span class="k">def</span> <span class="nf">helicity_amps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">mLb</span><span class="p">,</span> <span class="n">mL</span><span class="p">,</span> <span class="n">ff</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;$\Lambda_b\to \Lambda\ell^+\ell^-$ helicity amplitudes.</span>
+    <span class="sd">r&quot;&quot;&quot;$\Lambda_b\to \Lambda\ell^+\ell^-$ helicity amplitudes.</span>
 
 <span class="sd">    See (3.12)-(3.15) of arXiv:1410.2115.&quot;&quot;&quot;</span>
     <span class="n">sp</span> <span class="o">=</span> <span class="p">(</span><span class="n">mLb</span> <span class="o">+</span> <span class="n">mL</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">q2</span>
@@ -1192,8 +1205,20 @@ table {
                               <span class="o">+</span> <span class="n">ta</span><span class="p">[</span><span class="s1">&#39;para1&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">ta</span><span class="p">[</span><span class="s1">&#39;para0&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span> <span class="p">)</span><span class="o">.</span><span class="n">imag</span>
     <span class="k">return</span> <span class="n">K</span>
 
+<span class="k">def</span> <span class="nf">get_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+    <span class="n">ff_aux</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s1">&#39;Lambdab-&gt;Lambda form factor&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ff_aux</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">get_transverity_amps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="n">xi_t</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="s1">&#39;bs&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">alphaem</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
+    <span class="n">mLb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_Lambdab&#39;</span><span class="p">]</span>
+    <span class="n">mL</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_Lambda&#39;</span><span class="p">]</span>
+    <span class="n">la_K</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">lambda_K</span><span class="p">(</span><span class="n">mLb</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mL</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi_t</span> <span class="o">*</span> <span class="n">alphaem</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">q2</span><span class="p">)</span> <span class="o">*</span> <span class="n">la_K</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mLb</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">pi</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="mf">32.</span>
+
+
+<span class="k">def</span> <span class="nf">get_transverity_amps_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
     <span class="n">par</span> <span class="o">=</span> <span class="n">par_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">cp_conjugate</span><span class="p">:</span>
         <span class="n">par</span> <span class="o">=</span> <span class="n">conjugate_par</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
@@ -1201,17 +1226,34 @@ table {
     <span class="n">mLb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_Lambdab&#39;</span><span class="p">]</span>
     <span class="n">mL</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_Lambda&#39;</span><span class="p">]</span>
     <span class="n">mb</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="n">ff_aux</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s1">&#39;Lambdab-&gt;Lambda form factor&#39;</span><span class="p">)</span>
-    <span class="n">ff</span> <span class="o">=</span> <span class="n">ff_aux</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">)</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="n">get_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
     <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;bs&#39;</span> <span class="o">+</span> <span class="n">lep</span> <span class="o">+</span> <span class="n">lep</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
     <span class="n">wc_eff</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">get_wceff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Lambdab&#39;</span><span class="p">,</span> <span class="s1">&#39;Lambda&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="n">ha</span> <span class="o">=</span> <span class="n">helicity_amps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">mLb</span><span class="p">,</span> <span class="n">mL</span><span class="p">,</span> <span class="n">ff</span><span class="p">)</span>
-    <span class="n">xi_t</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="s1">&#39;bs&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
-    <span class="n">alphaem</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
-    <span class="n">la_K</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">lambda_K</span><span class="p">(</span><span class="n">mLb</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mL</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span>
-    <span class="n">N</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi_t</span> <span class="o">*</span> <span class="n">alphaem</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">q2</span><span class="p">)</span> <span class="o">*</span> <span class="n">la_K</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mLb</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">pi</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="mf">32.</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="n">ta_ff</span> <span class="o">=</span> <span class="n">transverity_amps</span><span class="p">(</span><span class="n">ha</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">mLb</span><span class="p">,</span> <span class="n">mL</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">wc_eff</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ta_ff</span>
+
+
+<span class="c1"># get subleading hadronic contribution at low q2</span>
+<span class="k">def</span> <span class="nf">get_subleading</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">q2</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
+        <span class="n">sub_name</span> <span class="o">=</span> <span class="s1">&#39;Lambdab-&gt;Lambdall subleading effects at low q2&#39;</span>
+        <span class="k">return</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">sub_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">q2</span> <span class="o">&gt;</span> <span class="mi">14</span><span class="p">:</span>
+        <span class="n">sub_name</span> <span class="o">=</span> <span class="s1">&#39;Lambdab-&gt;Lambdall subleading effects at high q2&#39;</span>
+        <span class="k">return</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">sub_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+<span class="k">def</span> <span class="nf">get_transverity_amps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">q2</span> <span class="o">&gt;=</span> <span class="mf">8.7</span> <span class="ow">and</span> <span class="n">q2</span> <span class="o">&lt;</span> <span class="mi">14</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The predictions in the region of narrow charmonium resonances are not meaningful&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">add_dict</span><span class="p">((</span>
+        <span class="n">get_transverity_amps_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">),</span>
+        <span class="n">get_subleading</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">)</span>
+        <span class="p">))</span>
+
 
 <span class="k">def</span> <span class="nf">get_obs</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="n">ml</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">lep</span><span class="p">]</span>
@@ -1227,6 +1269,18 @@ table {
 <span class="k">def</span> <span class="nf">dGdq2</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
     <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">K</span><span class="p">[</span><span class="s1">&#39;1ss&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">K</span><span class="p">[</span><span class="s1">&#39;1cc&#39;</span><span class="p">]</span>
 
+<span class="k">def</span> <span class="nf">FL_num</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">K</span><span class="p">[</span><span class="s1">&#39;1ss&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">K</span><span class="p">[</span><span class="s1">&#39;1cc&#39;</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">AFBl_num</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="n">K</span><span class="p">[</span><span class="s1">&#39;1c&#39;</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">AFBh_num</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">K</span><span class="p">[</span><span class="s1">&#39;2ss&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">K</span><span class="p">[</span><span class="s1">&#39;2cc&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
+
+<span class="k">def</span> <span class="nf">AFBlh_num</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span> <span class="o">*</span> <span class="n">K</span><span class="p">[</span><span class="s1">&#39;2c&#39;</span><span class="p">]</span>
+
 <span class="k">def</span> <span class="nf">dbrdq2</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="n">tauLb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_Lambdab&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">tauLb</span> <span class="o">*</span> <span class="n">get_obs</span><span class="p">(</span><span class="n">dGdq2</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
@@ -1235,6 +1289,11 @@ table {
     <span class="k">def</span> <span class="nf">obs</span><span class="p">(</span><span class="n">q2</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">dbrdq2</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">nintegrate</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">obs_int</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">obs</span><span class="p">(</span><span class="n">q2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">get_obs</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">nintegrate</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">)</span>
 
 <span class="c1"># Functions returning functions needed for Prediction instances</span>
 
@@ -1248,24 +1307,61 @@ table {
         <span class="k">return</span> <span class="n">dbrdq2</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fct</span>
 
+<span class="k">def</span> <span class="nf">obs_ratio_func</span><span class="p">(</span><span class="n">func_num</span><span class="p">,</span> <span class="n">func_den</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">get_obs</span><span class="p">(</span><span class="n">func_num</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="n">get_obs</span><span class="p">(</span><span class="n">func_den</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">denom</span>
+    <span class="k">return</span> <span class="n">fct</span>
+
+<span class="k">def</span> <span class="nf">obs_int_ratio_func</span><span class="p">(</span><span class="n">func_num</span><span class="p">,</span> <span class="n">func_den</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">):</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">obs_int</span><span class="p">(</span><span class="n">func_num</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="n">obs_int</span><span class="p">(</span><span class="n">func_den</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">denom</span>
+    <span class="k">return</span> <span class="n">fct</span>
+
 
 <span class="n">_tex</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="s1">&#39;\mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span> <span class="s1">r&#39;\tau&#39;</span><span class="p">}</span>
-
+<span class="n">_observables</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s1">&#39;FL&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;func_num&#39;</span><span class="p">:</span> <span class="n">FL_num</span><span class="p">,</span> <span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s1">r&#39;F_L&#39;</span><span class="p">,</span> <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;longitudinal polarization fraction&#39;</span><span class="p">},</span>
+<span class="s1">&#39;AFBl&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;func_num&#39;</span><span class="p">:</span> <span class="n">AFBl_num</span><span class="p">,</span> <span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s1">r&#39;A_\text{FB}^\ell&#39;</span><span class="p">,</span> <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;leptonic forward-backward asymmetry&#39;</span><span class="p">},</span>
+<span class="s1">&#39;AFBh&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;func_num&#39;</span><span class="p">:</span> <span class="n">AFBh_num</span><span class="p">,</span> <span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s1">r&#39;A_\text{FB}^h&#39;</span><span class="p">,</span> <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;hadronic forward-backward asymmetry&#39;</span><span class="p">},</span>
+<span class="s1">&#39;AFBlh&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;func_num&#39;</span><span class="p">:</span> <span class="n">AFBlh_num</span><span class="p">,</span> <span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s1">r&#39;A_\text{FB}^{\ell h}&#39;</span><span class="p">,</span> <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;lepton-hadron forward-backward asymmetry&#39;</span><span class="p">},</span>
+<span class="p">}</span>
 <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="p">]:</span> <span class="c1"># tau requires lepton mass dependence!</span>
+    <span class="c1"># binned branching ratio</span>
+    <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;&lt;dBR/dq2&gt;(Lambdab-&gt;Lambda&quot;</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
+    <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">])</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Binned differential branching ratio of $\Lambda_b\to\Lambda &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-$&quot;</span><span class="p">)</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$\langle \frac{d\text{BR}}{dq^2} \rangle(\Lambda_b\to\Lambda &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-)$&quot;</span>
+    <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">dbrdq2_int_func</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
 
-        <span class="c1"># binned branching ratio</span>
-        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;&lt;dBR/dq2&gt;(Lambdab-&gt;Lambda&quot;</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
+    <span class="c1"># differential branching ratio</span>
+    <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;dBR/dq2(Lambdab-&gt;Lambda&quot;</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
+    <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2&#39;</span><span class="p">])</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Differential branching ratio of $\Lambda_b\to\Lambda &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-$&quot;</span><span class="p">)</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$\frac{d\text{BR}}{dq^2}(\Lambda_b\to\Lambda &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-)$&quot;</span>
+    <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">dbrdq2_func</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">_observables</span><span class="p">:</span>
+        <span class="c1"># binned angular observables</span>
+        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;&lt;&quot;</span> <span class="o">+</span> <span class="n">obs</span> <span class="o">+</span> <span class="s2">&quot;&gt;(Lambdab-&gt;Lambda&quot;</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
         <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">])</span>
-        <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Binned differential branching ratio of $\Lambda_b\to\Lambda &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-$&quot;</span><span class="p">)</span>
-        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$\langle \frac{d\text{BR}}{dq^2} \rangle(\Lambda_b\to\Lambda &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-)$&quot;</span>
-        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">dbrdq2_int_func</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;Binned &quot;</span> <span class="o">+</span> <span class="n">_observables</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="s1">&#39;desc&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">r&quot; in $\Lambda_b\to\Lambda &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-$&quot;</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$\langle &quot;</span> <span class="o">+</span> <span class="n">_observables</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">r&quot;\rangle(\Lambda_b\to\Lambda &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-)$&quot;</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">obs_int_ratio_func</span><span class="p">(</span><span class="n">_observables</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="s1">&#39;func_num&#39;</span><span class="p">],</span> <span class="n">dGdq2</span><span class="p">,</span> <span class="n">l</span><span class="p">))</span>
 
-        <span class="c1"># differential branching ratio</span>
-        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;dBR/dq2(Lambdab-&gt;Lambda&quot;</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
+        <span class="c1"># differential angular observables</span>
+        <span class="n">_obs_name</span> <span class="o">=</span> <span class="n">obs</span> <span class="o">+</span> <span class="s2">&quot;(Lambdab-&gt;Lambda&quot;</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
         <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2&#39;</span><span class="p">])</span>
-        <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Differential branching ratio of $\Lambda_b\to\Lambda &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-$&quot;</span><span class="p">)</span>
-        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$\frac{d\text{BR}}{dq^2}(\Lambda_b\to\Lambda &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-)$&quot;</span>
-        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">dbrdq2_func</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">_observables</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="s1">&#39;desc&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="o">+</span> <span class="n">_observables</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="s1">&#39;desc&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="s2">r&quot; in $\Lambda_b\to\Lambda &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-$&quot;</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$&quot;</span> <span class="o">+</span> <span class="n">_observables</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">r&quot;(\Lambda_b\to\Lambda &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-)$&quot;</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">obs_ratio_func</span><span class="p">(</span><span class="n">_observables</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="s1">&#39;func_num&#39;</span><span class="p">],</span> <span class="n">dGdq2</span><span class="p">,</span> <span class="n">l</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1299,6 +1395,14 @@ table {
 
       </div>
       <div class="item">
+      <p id="flavio.physics.bdecays.lambdablambdall.obs" class="name">var <span class="ident">obs</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
       <p id="flavio.physics.bdecays.lambdablambdall.pi" class="name">var <span class="ident">pi</span></p>
       
   
@@ -1308,6 +1412,90 @@ table {
       </div>
 
     <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.lambdablambdall.AFBh_num">
+    <p>def <span class="ident">AFBh_num</span>(</p><p>K)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.AFBh_num', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.lambdablambdall.AFBh_num" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">AFBh_num</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">K</span><span class="p">[</span><span class="s1">&#39;2ss&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">K</span><span class="p">[</span><span class="s1">&#39;2cc&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.lambdablambdall.AFBl_num">
+    <p>def <span class="ident">AFBl_num</span>(</p><p>K)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.AFBl_num', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.lambdablambdall.AFBl_num" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">AFBl_num</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="n">K</span><span class="p">[</span><span class="s1">&#39;1c&#39;</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.lambdablambdall.AFBlh_num">
+    <p>def <span class="ident">AFBlh_num</span>(</p><p>K)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.AFBlh_num', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.lambdablambdall.AFBlh_num" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">AFBlh_num</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span> <span class="o">*</span> <span class="n">K</span><span class="p">[</span><span class="s1">&#39;2c&#39;</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.lambdablambdall.FL_num">
+    <p>def <span class="ident">FL_num</span>(</p><p>K)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.FL_num', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.lambdablambdall.FL_num" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">FL_num</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">K</span><span class="p">[</span><span class="s1">&#39;1ss&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">K</span><span class="p">[</span><span class="s1">&#39;1cc&#39;</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.lambdablambdall.angular_coefficients">
@@ -1483,6 +1671,28 @@ transversity amplitudes and decay parameter $\alpha$.</p>
   
       
   <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.lambdablambdall.get_ff">
+    <p>def <span class="ident">get_ff</span>(</p><p>q2, par)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.get_ff', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.lambdablambdall.get_ff" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+    <span class="n">ff_aux</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s1">&#39;Lambdab-&gt;Lambda form factor&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ff_aux</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.physics.bdecays.lambdablambdall.get_obs">
     <p>def <span class="ident">get_obs</span>(</p><p>function, q2, wc_obj, par, lep)</p>
     </div>
@@ -1512,8 +1722,36 @@ transversity amplitudes and decay parameter $\alpha$.</p>
   
       
   <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.lambdablambdall.get_subleading">
+    <p>def <span class="ident">get_subleading</span>(</p><p>q2, wc_obj, par_dict, cp_conjugate)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.get_subleading', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.lambdablambdall.get_subleading" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_subleading</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">q2</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
+        <span class="n">sub_name</span> <span class="o">=</span> <span class="s1">&#39;Lambdab-&gt;Lambdall subleading effects at low q2&#39;</span>
+        <span class="k">return</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">sub_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">q2</span> <span class="o">&gt;</span> <span class="mi">14</span><span class="p">:</span>
+        <span class="n">sub_name</span> <span class="o">=</span> <span class="s1">&#39;Lambdab-&gt;Lambdall subleading effects at high q2&#39;</span>
+        <span class="k">return</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">sub_name</span><span class="p">)</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.physics.bdecays.lambdablambdall.get_transverity_amps">
-    <p>def <span class="ident">get_transverity_amps</span>(</p><p>q2, wc_obj, par_dict, lep, cp_conjugate)</p>
+    <p>def <span class="ident">get_transverity_amps</span>(</p><p>q2, wc_obj, par, lep, cp_conjugate)</p>
     </div>
     
 
@@ -1522,7 +1760,33 @@ transversity amplitudes and decay parameter $\alpha$.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.get_transverity_amps', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.lambdablambdall.get_transverity_amps" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_transverity_amps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_transverity_amps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">q2</span> <span class="o">&gt;=</span> <span class="mf">8.7</span> <span class="ow">and</span> <span class="n">q2</span> <span class="o">&lt;</span> <span class="mi">14</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The predictions in the region of narrow charmonium resonances are not meaningful&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">add_dict</span><span class="p">((</span>
+        <span class="n">get_transverity_amps_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">),</span>
+        <span class="n">get_subleading</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">)</span>
+        <span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.lambdablambdall.get_transverity_amps_ff">
+    <p>def <span class="ident">get_transverity_amps_ff</span>(</p><p>q2, wc_obj, par_dict, lep, cp_conjugate)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.get_transverity_amps_ff', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.lambdablambdall.get_transverity_amps_ff" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_transverity_amps_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
     <span class="n">par</span> <span class="o">=</span> <span class="n">par_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">cp_conjugate</span><span class="p">:</span>
         <span class="n">par</span> <span class="o">=</span> <span class="n">conjugate_par</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
@@ -1530,15 +1794,11 @@ transversity amplitudes and decay parameter $\alpha$.</p>
     <span class="n">mLb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_Lambdab&#39;</span><span class="p">]</span>
     <span class="n">mL</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_Lambda&#39;</span><span class="p">]</span>
     <span class="n">mb</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="n">ff_aux</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s1">&#39;Lambdab-&gt;Lambda form factor&#39;</span><span class="p">)</span>
-    <span class="n">ff</span> <span class="o">=</span> <span class="n">ff_aux</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">)</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="n">get_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
     <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;bs&#39;</span> <span class="o">+</span> <span class="n">lep</span> <span class="o">+</span> <span class="n">lep</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
     <span class="n">wc_eff</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">get_wceff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Lambdab&#39;</span><span class="p">,</span> <span class="s1">&#39;Lambda&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="n">ha</span> <span class="o">=</span> <span class="n">helicity_amps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">mLb</span><span class="p">,</span> <span class="n">mL</span><span class="p">,</span> <span class="n">ff</span><span class="p">)</span>
-    <span class="n">xi_t</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="s1">&#39;bs&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
-    <span class="n">alphaem</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
-    <span class="n">la_K</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">lambda_K</span><span class="p">(</span><span class="n">mLb</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mL</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span>
-    <span class="n">N</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi_t</span> <span class="o">*</span> <span class="n">alphaem</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">q2</span><span class="p">)</span> <span class="o">*</span> <span class="n">la_K</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mLb</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">pi</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="mf">32.</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="n">ta_ff</span> <span class="o">=</span> <span class="n">transverity_amps</span><span class="p">(</span><span class="n">ha</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">mLb</span><span class="p">,</span> <span class="n">mL</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">wc_eff</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ta_ff</span>
 </pre></div>
@@ -1557,13 +1817,13 @@ transversity amplitudes and decay parameter $\alpha$.</p>
 
     
   
-    <div class="desc"><p>$\Lambda_b      o \Lambda\ell^+\ell^-$ helicity amplitudes.</p>
+    <div class="desc"><p>$\Lambda_b\to \Lambda\ell^+\ell^-$ helicity amplitudes.</p>
 <p>See (3.12)-(3.15) of arXiv:1410.2115.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.helicity_amps', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.lambdablambdall.helicity_amps" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">helicity_amps</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">mLb</span><span class="p">,</span> <span class="n">mL</span><span class="p">,</span> <span class="n">ff</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;$\Lambda_b\to \Lambda\ell^+\ell^-$ helicity amplitudes.</span>
+    <span class="sd">r&quot;&quot;&quot;$\Lambda_b\to \Lambda\ell^+\ell^-$ helicity amplitudes.</span>
 
 <span class="sd">    See (3.12)-(3.15) of arXiv:1410.2115.&quot;&quot;&quot;</span>
     <span class="n">sp</span> <span class="o">=</span> <span class="p">(</span><span class="n">mLb</span> <span class="o">+</span> <span class="n">mL</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">q2</span>
@@ -1586,6 +1846,109 @@ transversity amplitudes and decay parameter $\alpha$.</p>
     <span class="n">H</span><span class="p">[</span><span class="s1">&#39;0T5--&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">H</span><span class="p">[</span><span class="s1">&#39;0T5++&#39;</span><span class="p">]</span>
     <span class="n">H</span><span class="p">[</span><span class="s1">&#39;+T5+-&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">H</span><span class="p">[</span><span class="s1">&#39;+T5-+&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">H</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.lambdablambdall.obs_int">
+    <p>def <span class="ident">obs_int</span>(</p><p>function, q2min, q2max, wc_obj, par, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.obs_int', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.lambdablambdall.obs_int" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">obs_int</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">obs</span><span class="p">(</span><span class="n">q2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">get_obs</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">nintegrate</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.lambdablambdall.obs_int_ratio_func">
+    <p>def <span class="ident">obs_int_ratio_func</span>(</p><p>func_num, func_den, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.obs_int_ratio_func', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.lambdablambdall.obs_int_ratio_func" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">obs_int_ratio_func</span><span class="p">(</span><span class="n">func_num</span><span class="p">,</span> <span class="n">func_den</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">):</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">obs_int</span><span class="p">(</span><span class="n">func_num</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="n">obs_int</span><span class="p">(</span><span class="n">func_den</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">denom</span>
+    <span class="k">return</span> <span class="n">fct</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.lambdablambdall.obs_ratio_func">
+    <p>def <span class="ident">obs_ratio_func</span>(</p><p>func_num, func_den, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.obs_ratio_func', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.lambdablambdall.obs_ratio_func" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">obs_ratio_func</span><span class="p">(</span><span class="n">func_num</span><span class="p">,</span> <span class="n">func_den</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">get_obs</span><span class="p">(</span><span class="n">func_num</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="n">get_obs</span><span class="p">(</span><span class="n">func_den</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">denom</span>
+    <span class="k">return</span> <span class="n">fct</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.lambdablambdall.prefactor">
+    <p>def <span class="ident">prefactor</span>(</p><p>q2, par, scale)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.lambdablambdall.prefactor', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.lambdablambdall.prefactor" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">prefactor</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="n">xi_t</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="s1">&#39;bs&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">alphaem</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
+    <span class="n">mLb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_Lambdab&#39;</span><span class="p">]</span>
+    <span class="n">mL</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_Lambda&#39;</span><span class="p">]</span>
+    <span class="n">la_K</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">lambda_K</span><span class="p">(</span><span class="n">mLb</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mL</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi_t</span> <span class="o">*</span> <span class="n">alphaem</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">q2</span><span class="p">)</span> <span class="o">*</span> <span class="n">la_K</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mLb</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">pi</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="mf">32.</span>
 </pre></div>
 
   </div>
@@ -1649,7 +2012,7 @@ transversity amplitudes and decay parameter $\alpha$.</p>
   <footer id="footer">
     <p>
       Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.1</a>
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
     </p>
 
     <p>pdoc is in the public domain with the
