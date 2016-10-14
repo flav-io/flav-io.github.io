@@ -1137,6 +1137,7 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.test_bll.TestBll.skipTest">skipTest</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bll.TestBll.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bll.TestBll.tearDown">tearDown</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.test_bll.TestBll.test_EffectiveLifetimes">test_EffectiveLifetimes</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bll.TestBll.test_bsll">test_bsll</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bll.TestBll.test_bsll_classes">test_bsll_classes</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bll.TestBll.test_bsll_lfv">test_bsll_lfv</a></li>
@@ -1228,6 +1229,23 @@ table {
         <span class="c1"># test for errors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B0-&gt;emu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(Bs-&gt;taumu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_EffectiveLifetimes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># In this test we trivially check that the prefactors in (22) and (28) of arXiv:1204.1737 are the same</span>
+
+        <span class="n">ys</span>     <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;DeltaGamma/Gamma_Bs&#39;</span><span class="p">]</span>
+        <span class="n">tau_Bs</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_Bs&#39;</span><span class="p">]</span>
+
+        <span class="n">wc_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="n">wc_e</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="n">wc</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span> <span class="n">wc_tau</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]:</span>
+            <span class="n">ADG</span>    <span class="o">=</span> <span class="n">ADeltaGamma</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_dict</span><span class="p">[</span><span class="n">l</span><span class="p">],</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+            <span class="n">tau</span>    <span class="o">=</span> <span class="n">tau_ll</span><span class="p">(</span><span class="n">wc_dict</span><span class="p">[</span><span class="n">l</span><span class="p">],</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+
+            <span class="n">prefactor1</span> <span class="o">=</span> <span class="n">br_lifetime_corr</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">ADG</span><span class="p">)</span>        <span class="c1"># eq. (22) of arXiv:1204.1737</span>
+            <span class="n">prefactor2</span> <span class="o">=</span> <span class="mf">2.</span>  <span class="o">-</span> <span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">ys</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">/</span> <span class="n">tau_Bs</span>  <span class="c1"># eq. (28) of arXiv:1204.1737</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">prefactor1</span><span class="p">,</span> <span class="n">prefactor2</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1407,6 +1425,23 @@ in order to be run.</p>
         <span class="c1"># test for errors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B0-&gt;emu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(Bs-&gt;taumu)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_EffectiveLifetimes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># In this test we trivially check that the prefactors in (22) and (28) of arXiv:1204.1737 are the same</span>
+
+        <span class="n">ys</span>     <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;DeltaGamma/Gamma_Bs&#39;</span><span class="p">]</span>
+        <span class="n">tau_Bs</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_Bs&#39;</span><span class="p">]</span>
+
+        <span class="n">wc_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="n">wc_e</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="n">wc</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span> <span class="n">wc_tau</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]:</span>
+            <span class="n">ADG</span>    <span class="o">=</span> <span class="n">ADeltaGamma</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_dict</span><span class="p">[</span><span class="n">l</span><span class="p">],</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+            <span class="n">tau</span>    <span class="o">=</span> <span class="n">tau_ll</span><span class="p">(</span><span class="n">wc_dict</span><span class="p">[</span><span class="n">l</span><span class="p">],</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+
+            <span class="n">prefactor1</span> <span class="o">=</span> <span class="n">br_lifetime_corr</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">ADG</span><span class="p">)</span>        <span class="c1"># eq. (22) of arXiv:1204.1737</span>
+            <span class="n">prefactor2</span> <span class="o">=</span> <span class="mf">2.</span>  <span class="o">-</span> <span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">ys</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">/</span> <span class="n">tau_Bs</span>  <span class="c1"># eq. (28) of arXiv:1204.1737</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">prefactor1</span><span class="p">,</span> <span class="n">prefactor2</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3589,6 +3624,36 @@ block, allowing further test code to be executed.</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="s2">&quot;Hook method for deconstructing the test fixture after testing it.&quot;</span>
     <span class="k">pass</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.test_bll.TestBll.test_EffectiveLifetimes">
+    <p>def <span class="ident">test_EffectiveLifetimes</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_bll.TestBll.test_EffectiveLifetimes', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.test_bll.TestBll.test_EffectiveLifetimes" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_EffectiveLifetimes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># In this test we trivially check that the prefactors in (22) and (28) of arXiv:1204.1737 are the same</span>
+    <span class="n">ys</span>     <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;DeltaGamma/Gamma_Bs&#39;</span><span class="p">]</span>
+    <span class="n">tau_Bs</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_Bs&#39;</span><span class="p">]</span>
+    <span class="n">wc_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="n">wc_e</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="n">wc</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span> <span class="n">wc_tau</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]:</span>
+        <span class="n">ADG</span>    <span class="o">=</span> <span class="n">ADeltaGamma</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_dict</span><span class="p">[</span><span class="n">l</span><span class="p">],</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+        <span class="n">tau</span>    <span class="o">=</span> <span class="n">tau_ll</span><span class="p">(</span><span class="n">wc_dict</span><span class="p">[</span><span class="n">l</span><span class="p">],</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+        <span class="n">prefactor1</span> <span class="o">=</span> <span class="n">br_lifetime_corr</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">ADG</span><span class="p">)</span>        <span class="c1"># eq. (22) of arXiv:1204.1737</span>
+        <span class="n">prefactor2</span> <span class="o">=</span> <span class="mf">2.</span>  <span class="o">-</span> <span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">ys</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">/</span> <span class="n">tau_Bs</span>  <span class="c1"># eq. (28) of arXiv:1204.1737</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">prefactor1</span><span class="p">,</span> <span class="n">prefactor2</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 </pre></div>
 
   </div>

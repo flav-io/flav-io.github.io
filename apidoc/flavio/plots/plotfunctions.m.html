@@ -1303,7 +1303,10 @@ table {
 
 
 <span class="k">def</span> <span class="nf">band_plot</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-              <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">contour_args</span><span class="o">=</span><span class="p">{},</span> <span class="n">contourf_args</span><span class="o">=</span><span class="p">{}):</span>
+              <span class="n">interpolation_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+              <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">pre_calculated_z</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">contour_args</span><span class="o">=</span><span class="p">{},</span> <span class="n">contourf_args</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">r&quot;&quot;&quot;Plot coloured confidence contours (or bands) given a log likelihood</span>
 <span class="sd">    function.</span>
 
@@ -1317,24 +1320,41 @@ table {
 <span class="sd">      contours.</span>
 <span class="sd">    - `steps`: number of grid steps in each dimension (total computing time is</span>
 <span class="sd">      this number squared times the computing time of one `log_likelihood` call!)</span>
+<span class="sd">    - `interpolation factor` (optional): in between the points on the grid</span>
+<span class="sd">      set by `steps`, the log likelihood can be interpolated to get smoother contours.</span>
+<span class="sd">      This parameter sets the number of subdivisions (default: 1, i.e. no</span>
+<span class="sd">      interpolation). It should be larger than 1.</span>
 <span class="sd">    - `col` (optional): number between 0 and 9 to choose the color of the plot</span>
 <span class="sd">      from a predefined palette</span>
 <span class="sd">    - `label` (optional): label that will be added to a legend created with</span>
 <span class="sd">       maplotlib.pyplot.legend()</span>
+<span class="sd">    - `pre_calculated_z` (optional): z values for a band plot, previously</span>
+<span class="sd">       calculated. In this case, no likelihood scan is performed and time can</span>
+<span class="sd">       be saved.</span>
 <span class="sd">    - `contour_args`: dictionary of additional options that will be passed</span>
 <span class="sd">       to matplotlib.pyplot.contour() (that draws the contour lines)</span>
 <span class="sd">    - `contourf_args`: dictionary of additional options that will be passed</span>
 <span class="sd">       to matplotlib.pyplot.contourf() (that paints the contour filling)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="c1"># coarse grid</span>
     <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
     <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">)</span>
     <span class="nd">@np.vectorize</span>
     <span class="k">def</span> <span class="nf">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span> <span class="c1"># needed for evaluation on meshgrid</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">log_likelihood</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="n">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pre_calculated_z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">pre_calculated_z</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="c1"># fine grid</span>
+    <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">steps</span><span class="o">*</span><span class="n">interpolation_factor</span><span class="p">)</span>
+    <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">steps</span><span class="o">*</span><span class="n">interpolation_factor</span><span class="p">)</span>
+    <span class="c1"># interpolate z from coarse to fine grid</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">)</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="c1"># subtract the best fit point (on the grid)</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">contourf_args</span><span class="p">[</span><span class="s1">&#39;colors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">[</span><span class="n">col</span><span class="p">]]</span>
         <span class="n">contour_args</span><span class="p">[</span><span class="s1">&#39;colors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">set1</span><span class="p">[</span><span class="n">col</span><span class="p">]]</span>
@@ -1361,11 +1381,12 @@ table {
     <span class="n">CS</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="o">**</span><span class="n">contour_args</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">CS</span><span class="o">.</span><span class="n">collections</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
 
 
 <span class="k">def</span> <span class="nf">flavio_branding</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.94</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Displays a little box containing &#39;flavio&#39;&quot;&quot;&quot;</span>
-    <span class="n">props</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
     <span class="n">text</span> <span class="o">=</span> <span class="s1">r&#39;\textsf{\textbf{flavio}}&#39;</span>
     <span class="k">if</span> <span class="n">version</span><span class="p">:</span>
@@ -1401,7 +1422,7 @@ table {
       
   <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.band_plot">
-    <p>def <span class="ident">band_plot</span>(</p><p>log_likelihood, x_min, x_max, y_min, y_max, n_sigma=1, steps=20, col=None, label=None, contour_args={}, contourf_args={})</p>
+    <p>def <span class="ident">band_plot</span>(</p><p>log_likelihood, x_min, x_max, y_min, y_max, n_sigma=1, steps=20, interpolation_factor=1, col=None, label=None, pre_calculated_z=None, contour_args={}, contourf_args={})</p>
     </div>
     
 
@@ -1419,10 +1440,17 @@ function.</p>
   contours.</li>
 <li><code>steps</code>: number of grid steps in each dimension (total computing time is
   this number squared times the computing time of one <code>log_likelihood</code> call!)</li>
+<li><code>interpolation factor</code> (optional): in between the points on the grid
+  set by <code>steps</code>, the log likelihood can be interpolated to get smoother contours.
+  This parameter sets the number of subdivisions (default: 1, i.e. no
+  interpolation). It should be larger than 1.</li>
 <li><code>col</code> (optional): number between 0 and 9 to choose the color of the plot
   from a predefined palette</li>
 <li><code>label</code> (optional): label that will be added to a legend created with
    maplotlib.pyplot.legend()</li>
+<li><code>pre_calculated_z</code> (optional): z values for a band plot, previously
+   calculated. In this case, no likelihood scan is performed and time can
+   be saved.</li>
 <li><code>contour_args</code>: dictionary of additional options that will be passed
    to matplotlib.pyplot.contour() (that draws the contour lines)</li>
 <li><code>contourf_args</code>: dictionary of additional options that will be passed
@@ -1432,7 +1460,10 @@ function.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.band_plot', this);">Show source &equiv;</a></p>
   <div id="source-flavio.plots.plotfunctions.band_plot" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">band_plot</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-              <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">contour_args</span><span class="o">=</span><span class="p">{},</span> <span class="n">contourf_args</span><span class="o">=</span><span class="p">{}):</span>
+              <span class="n">interpolation_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+              <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">pre_calculated_z</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">contour_args</span><span class="o">=</span><span class="p">{},</span> <span class="n">contourf_args</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">r&quot;&quot;&quot;Plot coloured confidence contours (or bands) given a log likelihood</span>
 <span class="sd">    function.</span>
 
@@ -1446,24 +1477,41 @@ function.</p>
 <span class="sd">      contours.</span>
 <span class="sd">    - `steps`: number of grid steps in each dimension (total computing time is</span>
 <span class="sd">      this number squared times the computing time of one `log_likelihood` call!)</span>
+<span class="sd">    - `interpolation factor` (optional): in between the points on the grid</span>
+<span class="sd">      set by `steps`, the log likelihood can be interpolated to get smoother contours.</span>
+<span class="sd">      This parameter sets the number of subdivisions (default: 1, i.e. no</span>
+<span class="sd">      interpolation). It should be larger than 1.</span>
 <span class="sd">    - `col` (optional): number between 0 and 9 to choose the color of the plot</span>
 <span class="sd">      from a predefined palette</span>
 <span class="sd">    - `label` (optional): label that will be added to a legend created with</span>
 <span class="sd">       maplotlib.pyplot.legend()</span>
+<span class="sd">    - `pre_calculated_z` (optional): z values for a band plot, previously</span>
+<span class="sd">       calculated. In this case, no likelihood scan is performed and time can</span>
+<span class="sd">       be saved.</span>
 <span class="sd">    - `contour_args`: dictionary of additional options that will be passed</span>
 <span class="sd">       to matplotlib.pyplot.contour() (that draws the contour lines)</span>
 <span class="sd">    - `contourf_args`: dictionary of additional options that will be passed</span>
 <span class="sd">       to matplotlib.pyplot.contourf() (that paints the contour filling)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="c1"># coarse grid</span>
     <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
     <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">)</span>
     <span class="nd">@np.vectorize</span>
     <span class="k">def</span> <span class="nf">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span> <span class="c1"># needed for evaluation on meshgrid</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">log_likelihood</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="n">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pre_calculated_z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">pre_calculated_z</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="c1"># fine grid</span>
+    <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">steps</span><span class="o">*</span><span class="n">interpolation_factor</span><span class="p">)</span>
+    <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">steps</span><span class="o">*</span><span class="n">interpolation_factor</span><span class="p">)</span>
+    <span class="c1"># interpolate z from coarse to fine grid</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">)</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="c1"># subtract the best fit point (on the grid)</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">contourf_args</span><span class="p">[</span><span class="s1">&#39;colors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">[</span><span class="n">col</span><span class="p">]]</span>
         <span class="n">contour_args</span><span class="p">[</span><span class="s1">&#39;colors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">set1</span><span class="p">[</span><span class="n">col</span><span class="p">]]</span>
@@ -1490,6 +1538,7 @@ function.</p>
     <span class="n">CS</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="o">**</span><span class="n">contour_args</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">CS</span><span class="o">.</span><span class="n">collections</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
 </pre></div>
 
   </div>
@@ -1684,7 +1733,7 @@ uncertainties, so the representation can be misleading.</p></div>
   <div id="source-flavio.plots.plotfunctions.flavio_branding" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">flavio_branding</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.94</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Displays a little box containing &#39;flavio&#39;&quot;&quot;&quot;</span>
-    <span class="n">props</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
     <span class="n">text</span> <span class="o">=</span> <span class="s1">r&#39;\textsf{\textbf{flavio}}&#39;</span>
     <span class="k">if</span> <span class="n">version</span><span class="p">:</span>

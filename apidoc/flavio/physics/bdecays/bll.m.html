@@ -1070,6 +1070,8 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.bll.br_inst">br_inst</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bll.br_lifetime_corr">br_lifetime_corr</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bll.br_timeint">br_timeint</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bll.tau_ll">tau_ll</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bll.tau_ll_func">tau_ll_func</a></li>
   </ul>
 
     </li>
@@ -1218,6 +1220,36 @@ $\tau$.</p>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">bqll_obs</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
 
 
+<span class="c1"># Bs -&gt; l+l- effective lifetime</span>
+
+<span class="k">def</span> <span class="nf">tau_ll</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Effective B-&gt;l+l- lifetime as defined in eq. (26) of arXiv:1204.1737 .</span>
+<span class="sd">    This formula one either gets by integrating eq. (21) or by inverting eq. (27) of arXiv:1204.1737.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    - `wc`         : dict of Wilson coefficients</span>
+<span class="sd">    - `par`        : parameter dictionary</span>
+<span class="sd">    - `B`          : should be `&#39;Bs&#39;` or `&#39;B0&#39;`</span>
+<span class="sd">    - `lep`        : lepton: &#39;e&#39;, &#39;mu&#39; or &#39;tau&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    $-\frac{\tau_{B_s} \left(y_s^2+2 A_{\Delta\Gamma_q} ys+1\right)}{\left(ys^2-1\right) (A_{\Delta\Gamma_q} ys+1)}$</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ADG</span>    <span class="o">=</span> <span class="n">ADeltaGamma</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="n">y</span>      <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;DeltaGamma/Gamma_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+    <span class="n">tauB</span>   <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">ADG</span><span class="p">)</span><span class="o">*</span><span class="n">tauB</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="n">ADG</span><span class="p">)))</span>
+
+<span class="k">def</span> <span class="nf">tau_ll_func</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bll&#39;</span><span class="p">]</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[</span><span class="n">B</span><span class="p">]</span><span class="o">+</span><span class="n">lep</span><span class="o">+</span><span class="n">lep</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tau_ll</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+
 <span class="c1"># Observable and Prediction instances</span>
 
 <span class="n">_tex</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="s1">&#39;\mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span> <span class="s1">r&#39;\tau&#39;</span><span class="p">}</span>
@@ -1235,6 +1267,18 @@ $\tau$.</p>
     <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Branching ratio of $B^0\to &quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-$.&quot;</span><span class="p">)</span>
     <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$\text{BR}(B^0\to &quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-)$.&quot;</span>
     <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">bqll_obs_function</span><span class="p">(</span><span class="n">br_inst</span><span class="p">,</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l</span><span class="p">))</span>
+
+    <span class="c1"># Add the effective lifetimes for Bs</span>
+    <span class="n">_obs_name</span> <span class="o">=</span> <span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="n">l</span>
+    <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Effective lifetime for $B_s \to &quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-$.&quot;</span><span class="p">)</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$\tau_{B_s \to &quot;</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;}$.&quot;</span>
+    <span class="k">if</span> <span class="n">l</span><span class="o">==</span><span class="s1">&#39;e&#39;</span><span class="p">:</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">tau_ll_func</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">l</span><span class="o">==</span><span class="s1">&#39;mu&#39;</span><span class="p">:</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">tau_ll_func</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">l</span><span class="o">==</span><span class="s1">&#39;tau&#39;</span><span class="p">:</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">tau_ll_func</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">))</span>
 
 <span class="n">_tex_B</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;B0&#39;</span><span class="p">:</span> <span class="s1">r&#39;\bar B^0&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">:</span> <span class="s1">r&#39;\bar B_s&#39;</span><span class="p">}</span>
 <span class="n">_tex_lfv</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;emu&#39;</span><span class="p">:</span> <span class="s1">r&#39;e^+\mu^-&#39;</span><span class="p">,</span> <span class="s1">&#39;mue&#39;</span><span class="p">:</span> <span class="s1">r&#39;\mu^+e^-&#39;</span><span class="p">,</span>
@@ -1566,6 +1610,81 @@ of arXiv:1204.1735.</p>
     <span class="n">ADG</span> <span class="o">=</span> <span class="n">ADeltaGamma</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
     <span class="n">corr</span> <span class="o">=</span> <span class="n">br_lifetime_corr</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ADG</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">br0</span> <span class="o">/</span> <span class="n">corr</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bll.tau_ll">
+    <p>def <span class="ident">tau_ll</span>(</p><p>wc, par, B, lep)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Effective B-&gt;l+l- lifetime as defined in eq. (26) of arXiv:1204.1737 .
+This formula one either gets by integrating eq. (21) or by inverting eq. (27) of arXiv:1204.1737.</p>
+<h2>Parameters</h2>
+<ul>
+<li><code>wc</code>         : dict of Wilson coefficients</li>
+<li><code>par</code>        : parameter dictionary</li>
+<li><code>B</code>          : should be <code>'Bs'</code> or <code>'B0'</code></li>
+<li><code>lep</code>        : lepton: 'e', 'mu' or 'tau'</li>
+</ul>
+<h2>Returns</h2>
+<p>$-\frac{\tau_{B_s} \left(y_s^2+2 A_{\Delta\Gamma_q} ys+1\right)}{\left(ys^2-1\right) (A_{\Delta\Gamma_q} ys+1)}$</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bll.tau_ll', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bll.tau_ll" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">tau_ll</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Effective B-&gt;l+l- lifetime as defined in eq. (26) of arXiv:1204.1737 .</span>
+<span class="sd">    This formula one either gets by integrating eq. (21) or by inverting eq. (27) of arXiv:1204.1737.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    - `wc`         : dict of Wilson coefficients</span>
+<span class="sd">    - `par`        : parameter dictionary</span>
+<span class="sd">    - `B`          : should be `&#39;Bs&#39;` or `&#39;B0&#39;`</span>
+<span class="sd">    - `lep`        : lepton: &#39;e&#39;, &#39;mu&#39; or &#39;tau&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    $-\frac{\tau_{B_s} \left(y_s^2+2 A_{\Delta\Gamma_q} ys+1\right)}{\left(ys^2-1\right) (A_{\Delta\Gamma_q} ys+1)}$</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ADG</span>    <span class="o">=</span> <span class="n">ADeltaGamma</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="n">y</span>      <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;DeltaGamma/Gamma_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+    <span class="n">tauB</span>   <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">ADG</span><span class="p">)</span><span class="o">*</span><span class="n">tauB</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="n">ADG</span><span class="p">)))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bll.tau_ll_func">
+    <p>def <span class="ident">tau_ll_func</span>(</p><p>wc_obj, par, B, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bll.tau_ll_func', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bll.tau_ll_func" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">tau_ll_func</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bll&#39;</span><span class="p">]</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[</span><span class="n">B</span><span class="p">]</span><span class="o">+</span><span class="n">lep</span><span class="o">+</span><span class="n">lep</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wctot_dict</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tau_ll</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
 </pre></div>
 
   </div>
