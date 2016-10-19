@@ -52,6 +52,8 @@ e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 | `A8(B0->K*ee)` | $A_8(B^0\to K^{\ast 0}e^+e^-)$ | Angular CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `<A9>(B0->K*ee)` | $\langle A_9\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned Angular CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `A9(B0->K*ee)` | $A_9(B^0\to K^{\ast 0}e^+e^-)$ | Angular CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
+| `<ACP>(B0->K*ee)` | $\langle A_\text{CP}\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned Direct CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
+| `ACP(B0->K*ee)` | $A_\text{CP}(B^0\to K^{\ast 0}e^+e^-)$ | Direct CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `<AFB>(B0->K*ee)` | $\langle A_\text{FB}\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned forward-backward asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `AFB(B0->K*ee)` | $A_\text{FB}(B^0\to K^{\ast 0}e^+e^-)$ | Forward-backward asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `<FL>(B0->K*ee)` | $\langle F_L\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned longitudinal polarization fraction in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
@@ -100,6 +102,8 @@ e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 | `A8(B+->K*ee)` | $A_8(B^+\to K^{\ast +}e^+e^-)$ | Angular CP asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `<A9>(B+->K*ee)` | $\langle A_9\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned Angular CP asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `A9(B+->K*ee)` | $A_9(B^+\to K^{\ast +}e^+e^-)$ | Angular CP asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
+| `<ACP>(B+->K*ee)` | $\langle A_\text{CP}\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned Direct CP asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
+| `ACP(B+->K*ee)` | $A_\text{CP}(B^+\to K^{\ast +}e^+e^-)$ | Direct CP asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `<AFB>(B+->K*ee)` | $\langle A_\text{FB}\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned forward-backward asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `AFB(B+->K*ee)` | $A_\text{FB}(B^+\to K^{\ast +}e^+e^-)$ | Forward-backward asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `<FL>(B+->K*ee)` | $\langle F_L\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned longitudinal polarization fraction in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
@@ -148,6 +152,8 @@ e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 | `A8(B0->K*mumu)` | $A_8(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Angular CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `<A9>(B0->K*mumu)` | $\langle A_9\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned Angular CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `A9(B0->K*mumu)` | $A_9(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Angular CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
+| `<ACP>(B0->K*mumu)` | $\langle A_\text{CP}\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned Direct CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
+| `ACP(B0->K*mumu)` | $A_\text{CP}(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Direct CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `<AFB>(B0->K*mumu)` | $\langle A_\text{FB}\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned forward-backward asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `AFB(B0->K*mumu)` | $A_\text{FB}(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Forward-backward asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `<FL>(B0->K*mumu)` | $\langle F_L\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned longitudinal polarization fraction in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
@@ -196,6 +202,8 @@ e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 | `A8(B+->K*mumu)` | $A_8(B^+\to K^{\ast +}\mu^+\mu^-)$ | Angular CP asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `<A9>(B+->K*mumu)` | $\langle A_9\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned Angular CP asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `A9(B+->K*mumu)` | $A_9(B^+\to K^{\ast +}\mu^+\mu^-)$ | Angular CP asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
+| `<ACP>(B+->K*mumu)` | $\langle A_\text{CP}\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned Direct CP asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
+| `ACP(B+->K*mumu)` | $A_\text{CP}(B^+\to K^{\ast +}\mu^+\mu^-)$ | Direct CP asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `<AFB>(B+->K*mumu)` | $\langle A_\text{FB}\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned forward-backward asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `AFB(B+->K*mumu)` | $A_\text{FB}(B^+\to K^{\ast +}\mu^+\mu^-)$ | Forward-backward asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `<FL>(B+->K*mumu)` | $\langle F_L\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned longitudinal polarization fraction in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
@@ -244,6 +252,8 @@ e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 | `A8(B0->K*tautau)` | $A_8(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Angular CP asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `<A9>(B0->K*tautau)` | $\langle A_9\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned Angular CP asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `A9(B0->K*tautau)` | $A_9(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Angular CP asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
+| `<ACP>(B0->K*tautau)` | $\langle A_\text{CP}\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned Direct CP asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
+| `ACP(B0->K*tautau)` | $A_\text{CP}(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Direct CP asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `<AFB>(B0->K*tautau)` | $\langle A_\text{FB}\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned forward-backward asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `AFB(B0->K*tautau)` | $A_\text{FB}(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Forward-backward asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `<FL>(B0->K*tautau)` | $\langle F_L\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned longitudinal polarization fraction in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
@@ -292,6 +302,8 @@ e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 | `A8(B+->K*tautau)` | $A_8(B^+\to K^{\ast +}\tau^+\tau^-)$ | Angular CP asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `<A9>(B+->K*tautau)` | $\langle A_9\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned Angular CP asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `A9(B+->K*tautau)` | $A_9(B^+\to K^{\ast +}\tau^+\tau^-)$ | Angular CP asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
+| `<ACP>(B+->K*tautau)` | $\langle A_\text{CP}\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned Direct CP asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
+| `ACP(B+->K*tautau)` | $A_\text{CP}(B^+\to K^{\ast +}\tau^+\tau^-)$ | Direct CP asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `<AFB>(B+->K*tautau)` | $\langle A_\text{FB}\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned forward-backward asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `AFB(B+->K*tautau)` | $A_\text{FB}(B^+\to K^{\ast +}\tau^+\tau^-)$ | Forward-backward asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `<FL>(B+->K*tautau)` | $\langle F_L\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned longitudinal polarization fraction in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
@@ -362,114 +374,117 @@ e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 | `dBR/dq2(Bs->phitautau)` | $\frac{d\overline{\text{BR}}}{dq^2}(B_s\to \phi \tau^+\tau^-)$ | Differential time-integrated branching ratio of $B_s\to \phi \tau^+\tau^-$ | `q2` |
 | `<Rmue>(Bs->phill)` | $\langle R_{\mu e} \rangle(B_s\to \phi \ell^+\ell^-)$ | Ratio of partial branching ratios of $B_s\to \phi \mu^+ \mu^-$ and $B_s\to \phi e^+ e^-$ | `q2min`, `q2max` |
 | `<Rtaumu>(Bs->phill)` | $\langle R_{\tau \mu} \rangle(B_s\to \phi \ell^+\ell^-)$ | Ratio of partial branching ratios of $B_s\to \phi \tau^+ \tau^-$ and $B_s\to \phi \mu^+ \mu^-$ | `q2min`, `q2max` |
-| `BR(B+->rhoemu)` | $\text{BR}(B^-\to \rho^{-} e^+\mu^-)$ | Total branching ratio of $B^-\to \rho^{-} e^+\mu^-$ |  |
-| `BR(B0->K*emu)` | $\text{BR}(\bar B^0\to \bar K^{*0} e^+\mu^-)$ | Total branching ratio of $\bar B^0\to \bar K^{*0} e^+\mu^-$ |  |
 | `BR(Bs->phiemu)` | $\text{BR}(\bar B_s\to \phi e^+\mu^-)$ | Total branching ratio of $\bar B_s\to \phi e^+\mu^-$ |  |
-| `BR(B+->K*emu)` | $\text{BR}(B^-\to K^{*-} e^+\mu^-)$ | Total branching ratio of $B^-\to K^{*-} e^+\mu^-$ |  |
+| `BR(B0->K*emu)` | $\text{BR}(\bar B^0\to \bar K^{*0} e^+\mu^-)$ | Total branching ratio of $\bar B^0\to \bar K^{*0} e^+\mu^-$ |  |
 | `BR(B0->rhoemu)` | $\text{BR}(\bar B^0\to \rho^{0} e^+\mu^-)$ | Total branching ratio of $\bar B^0\to \rho^{0} e^+\mu^-$ |  |
-| `BR(B+->rhomue)` | $\text{BR}(B^-\to \rho^{-} \mu^+e^-)$ | Total branching ratio of $B^-\to \rho^{-} \mu^+e^-$ |  |
-| `BR(B0->K*mue)` | $\text{BR}(\bar B^0\to \bar K^{*0} \mu^+e^-)$ | Total branching ratio of $\bar B^0\to \bar K^{*0} \mu^+e^-$ |  |
+| `BR(B+->rhoemu)` | $\text{BR}(B^-\to \rho^{-} e^+\mu^-)$ | Total branching ratio of $B^-\to \rho^{-} e^+\mu^-$ |  |
+| `BR(B+->K*emu)` | $\text{BR}(B^-\to K^{*-} e^+\mu^-)$ | Total branching ratio of $B^-\to K^{*-} e^+\mu^-$ |  |
 | `BR(Bs->phimue)` | $\text{BR}(\bar B_s\to \phi \mu^+e^-)$ | Total branching ratio of $\bar B_s\to \phi \mu^+e^-$ |  |
-| `BR(B+->K*mue)` | $\text{BR}(B^-\to K^{*-} \mu^+e^-)$ | Total branching ratio of $B^-\to K^{*-} \mu^+e^-$ |  |
+| `BR(B0->K*mue)` | $\text{BR}(\bar B^0\to \bar K^{*0} \mu^+e^-)$ | Total branching ratio of $\bar B^0\to \bar K^{*0} \mu^+e^-$ |  |
 | `BR(B0->rhomue)` | $\text{BR}(\bar B^0\to \rho^{0} \mu^+e^-)$ | Total branching ratio of $\bar B^0\to \rho^{0} \mu^+e^-$ |  |
-| `BR(B+->rhoetau)` | $\text{BR}(B^-\to \rho^{-} e^+\tau^-)$ | Total branching ratio of $B^-\to \rho^{-} e^+\tau^-$ |  |
-| `BR(B0->K*etau)` | $\text{BR}(\bar B^0\to \bar K^{*0} e^+\tau^-)$ | Total branching ratio of $\bar B^0\to \bar K^{*0} e^+\tau^-$ |  |
+| `BR(B+->rhomue)` | $\text{BR}(B^-\to \rho^{-} \mu^+e^-)$ | Total branching ratio of $B^-\to \rho^{-} \mu^+e^-$ |  |
+| `BR(B+->K*mue)` | $\text{BR}(B^-\to K^{*-} \mu^+e^-)$ | Total branching ratio of $B^-\to K^{*-} \mu^+e^-$ |  |
 | `BR(Bs->phietau)` | $\text{BR}(\bar B_s\to \phi e^+\tau^-)$ | Total branching ratio of $\bar B_s\to \phi e^+\tau^-$ |  |
-| `BR(B+->K*etau)` | $\text{BR}(B^-\to K^{*-} e^+\tau^-)$ | Total branching ratio of $B^-\to K^{*-} e^+\tau^-$ |  |
+| `BR(B0->K*etau)` | $\text{BR}(\bar B^0\to \bar K^{*0} e^+\tau^-)$ | Total branching ratio of $\bar B^0\to \bar K^{*0} e^+\tau^-$ |  |
 | `BR(B0->rhoetau)` | $\text{BR}(\bar B^0\to \rho^{0} e^+\tau^-)$ | Total branching ratio of $\bar B^0\to \rho^{0} e^+\tau^-$ |  |
-| `BR(B+->rhotaue)` | $\text{BR}(B^-\to \rho^{-} \tau^+e^-)$ | Total branching ratio of $B^-\to \rho^{-} \tau^+e^-$ |  |
-| `BR(B0->K*taue)` | $\text{BR}(\bar B^0\to \bar K^{*0} \tau^+e^-)$ | Total branching ratio of $\bar B^0\to \bar K^{*0} \tau^+e^-$ |  |
+| `BR(B+->rhoetau)` | $\text{BR}(B^-\to \rho^{-} e^+\tau^-)$ | Total branching ratio of $B^-\to \rho^{-} e^+\tau^-$ |  |
+| `BR(B+->K*etau)` | $\text{BR}(B^-\to K^{*-} e^+\tau^-)$ | Total branching ratio of $B^-\to K^{*-} e^+\tau^-$ |  |
 | `BR(Bs->phitaue)` | $\text{BR}(\bar B_s\to \phi \tau^+e^-)$ | Total branching ratio of $\bar B_s\to \phi \tau^+e^-$ |  |
-| `BR(B+->K*taue)` | $\text{BR}(B^-\to K^{*-} \tau^+e^-)$ | Total branching ratio of $B^-\to K^{*-} \tau^+e^-$ |  |
+| `BR(B0->K*taue)` | $\text{BR}(\bar B^0\to \bar K^{*0} \tau^+e^-)$ | Total branching ratio of $\bar B^0\to \bar K^{*0} \tau^+e^-$ |  |
 | `BR(B0->rhotaue)` | $\text{BR}(\bar B^0\to \rho^{0} \tau^+e^-)$ | Total branching ratio of $\bar B^0\to \rho^{0} \tau^+e^-$ |  |
-| `BR(B+->rhomutau)` | $\text{BR}(B^-\to \rho^{-} \mu^+\tau^-)$ | Total branching ratio of $B^-\to \rho^{-} \mu^+\tau^-$ |  |
-| `BR(B0->K*mutau)` | $\text{BR}(\bar B^0\to \bar K^{*0} \mu^+\tau^-)$ | Total branching ratio of $\bar B^0\to \bar K^{*0} \mu^+\tau^-$ |  |
+| `BR(B+->rhotaue)` | $\text{BR}(B^-\to \rho^{-} \tau^+e^-)$ | Total branching ratio of $B^-\to \rho^{-} \tau^+e^-$ |  |
+| `BR(B+->K*taue)` | $\text{BR}(B^-\to K^{*-} \tau^+e^-)$ | Total branching ratio of $B^-\to K^{*-} \tau^+e^-$ |  |
 | `BR(Bs->phimutau)` | $\text{BR}(\bar B_s\to \phi \mu^+\tau^-)$ | Total branching ratio of $\bar B_s\to \phi \mu^+\tau^-$ |  |
-| `BR(B+->K*mutau)` | $\text{BR}(B^-\to K^{*-} \mu^+\tau^-)$ | Total branching ratio of $B^-\to K^{*-} \mu^+\tau^-$ |  |
+| `BR(B0->K*mutau)` | $\text{BR}(\bar B^0\to \bar K^{*0} \mu^+\tau^-)$ | Total branching ratio of $\bar B^0\to \bar K^{*0} \mu^+\tau^-$ |  |
 | `BR(B0->rhomutau)` | $\text{BR}(\bar B^0\to \rho^{0} \mu^+\tau^-)$ | Total branching ratio of $\bar B^0\to \rho^{0} \mu^+\tau^-$ |  |
-| `BR(B+->rhotaumu)` | $\text{BR}(B^-\to \rho^{-} \tau^+\mu^-)$ | Total branching ratio of $B^-\to \rho^{-} \tau^+\mu^-$ |  |
-| `BR(B0->K*taumu)` | $\text{BR}(\bar B^0\to \bar K^{*0} \tau^+\mu^-)$ | Total branching ratio of $\bar B^0\to \bar K^{*0} \tau^+\mu^-$ |  |
+| `BR(B+->rhomutau)` | $\text{BR}(B^-\to \rho^{-} \mu^+\tau^-)$ | Total branching ratio of $B^-\to \rho^{-} \mu^+\tau^-$ |  |
+| `BR(B+->K*mutau)` | $\text{BR}(B^-\to K^{*-} \mu^+\tau^-)$ | Total branching ratio of $B^-\to K^{*-} \mu^+\tau^-$ |  |
 | `BR(Bs->phitaumu)` | $\text{BR}(\bar B_s\to \phi \tau^+\mu^-)$ | Total branching ratio of $\bar B_s\to \phi \tau^+\mu^-$ |  |
-| `BR(B+->K*taumu)` | $\text{BR}(B^-\to K^{*-} \tau^+\mu^-)$ | Total branching ratio of $B^-\to K^{*-} \tau^+\mu^-$ |  |
+| `BR(B0->K*taumu)` | $\text{BR}(\bar B^0\to \bar K^{*0} \tau^+\mu^-)$ | Total branching ratio of $\bar B^0\to \bar K^{*0} \tau^+\mu^-$ |  |
 | `BR(B0->rhotaumu)` | $\text{BR}(\bar B^0\to \rho^{0} \tau^+\mu^-)$ | Total branching ratio of $\bar B^0\to \rho^{0} \tau^+\mu^-$ |  |
-| `dBR/dq2(B0->D*enu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{\ast -}e^+\nu_e)$ | Differential branching ratio of $B^0\to D^{\ast -}e^+\nu_e$ | `q2` |
-| `dBR/dq2(B+->rhoenu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \rho^0e^+\nu_e)$ | Differential branching ratio of $B^+\to \rho^0e^+\nu_e$ | `q2` |
+| `BR(B+->rhotaumu)` | $\text{BR}(B^-\to \rho^{-} \tau^+\mu^-)$ | Total branching ratio of $B^-\to \rho^{-} \tau^+\mu^-$ |  |
+| `BR(B+->K*taumu)` | $\text{BR}(B^-\to K^{*-} \tau^+\mu^-)$ | Total branching ratio of $B^-\to K^{*-} \tau^+\mu^-$ |  |
 | `dBR/dq2(B+->omegaenu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \omega e^+\nu_e)$ | Differential branching ratio of $B^+\to \omega e^+\nu_e$ | `q2` |
+| `dBR/dq2(B+->rhoenu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \rho^0e^+\nu_e)$ | Differential branching ratio of $B^+\to \rho^0e^+\nu_e$ | `q2` |
+| `dBR/dq2(B0->D*enu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{\ast -}e^+\nu_e)$ | Differential branching ratio of $B^0\to D^{\ast -}e^+\nu_e$ | `q2` |
 | `dBR/dq2(Bs->K*enu)` | $\frac{d\text{BR}}{dq^2}(B_s\to K^{* -} e^+\nu_e)$ | Differential branching ratio of $B_s\to K^{* -} e^+\nu_e$ | `q2` |
-| `dBR/dq2(B+->D*enu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{\ast 0}e^+\nu_e)$ | Differential branching ratio of $B^+\to D^{\ast 0}e^+\nu_e$ | `q2` |
 | `dBR/dq2(B0->rhoenu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \rho^-e^+\nu_e)$ | Differential branching ratio of $B^0\to \rho^-e^+\nu_e$ | `q2` |
-| `BR(B0->D*enu)` | $\text{BR}(B^0\to D^{\ast -}e^+\nu_e)$ | Total branching ratio of $B^0\to D^{\ast -}e^+\nu_e$ |  |
-| `BR(B+->rhoenu)` | $\text{BR}(B^+\to \rho^0e^+\nu_e)$ | Total branching ratio of $B^+\to \rho^0e^+\nu_e$ |  |
+| `dBR/dq2(B+->D*enu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{\ast 0}e^+\nu_e)$ | Differential branching ratio of $B^+\to D^{\ast 0}e^+\nu_e$ | `q2` |
 | `BR(B+->omegaenu)` | $\text{BR}(B^+\to \omega e^+\nu_e)$ | Total branching ratio of $B^+\to \omega e^+\nu_e$ |  |
+| `BR(B+->rhoenu)` | $\text{BR}(B^+\to \rho^0e^+\nu_e)$ | Total branching ratio of $B^+\to \rho^0e^+\nu_e$ |  |
+| `BR(B0->D*enu)` | $\text{BR}(B^0\to D^{\ast -}e^+\nu_e)$ | Total branching ratio of $B^0\to D^{\ast -}e^+\nu_e$ |  |
 | `BR(Bs->K*enu)` | $\text{BR}(B_s\to K^{* -} e^+\nu_e)$ | Total branching ratio of $B_s\to K^{* -} e^+\nu_e$ |  |
-| `BR(B+->D*enu)` | $\text{BR}(B^+\to D^{\ast 0}e^+\nu_e)$ | Total branching ratio of $B^+\to D^{\ast 0}e^+\nu_e$ |  |
 | `BR(B0->rhoenu)` | $\text{BR}(B^0\to \rho^-e^+\nu_e)$ | Total branching ratio of $B^0\to \rho^-e^+\nu_e$ |  |
-| `<BR>(B0->D*enu)` | $\langle\text{BR}\rangle(B^0\to D^{\ast -}e^+\nu_e)$ | Binned branching ratio of $B^0\to D^{\ast -}e^+\nu_e$ | `q2min`, `q2max` |
-| `<BR>(B+->rhoenu)` | $\langle\text{BR}\rangle(B^+\to \rho^0e^+\nu_e)$ | Binned branching ratio of $B^+\to \rho^0e^+\nu_e$ | `q2min`, `q2max` |
+| `BR(B+->D*enu)` | $\text{BR}(B^+\to D^{\ast 0}e^+\nu_e)$ | Total branching ratio of $B^+\to D^{\ast 0}e^+\nu_e$ |  |
 | `<BR>(B+->omegaenu)` | $\langle\text{BR}\rangle(B^+\to \omega e^+\nu_e)$ | Binned branching ratio of $B^+\to \omega e^+\nu_e$ | `q2min`, `q2max` |
+| `<BR>(B+->rhoenu)` | $\langle\text{BR}\rangle(B^+\to \rho^0e^+\nu_e)$ | Binned branching ratio of $B^+\to \rho^0e^+\nu_e$ | `q2min`, `q2max` |
+| `<BR>(B0->D*enu)` | $\langle\text{BR}\rangle(B^0\to D^{\ast -}e^+\nu_e)$ | Binned branching ratio of $B^0\to D^{\ast -}e^+\nu_e$ | `q2min`, `q2max` |
 | `<BR>(Bs->K*enu)` | $\langle\text{BR}\rangle(B_s\to K^{* -} e^+\nu_e)$ | Binned branching ratio of $B_s\to K^{* -} e^+\nu_e$ | `q2min`, `q2max` |
-| `<BR>(B+->D*enu)` | $\langle\text{BR}\rangle(B^+\to D^{\ast 0}e^+\nu_e)$ | Binned branching ratio of $B^+\to D^{\ast 0}e^+\nu_e$ | `q2min`, `q2max` |
 | `<BR>(B0->rhoenu)` | $\langle\text{BR}\rangle(B^0\to \rho^-e^+\nu_e)$ | Binned branching ratio of $B^0\to \rho^-e^+\nu_e$ | `q2min`, `q2max` |
-| `dBR/dq2(B0->D*munu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{\ast -}\mu^+\nu_\mu)$ | Differential branching ratio of $B^0\to D^{\ast -}\mu^+\nu_\mu$ | `q2` |
-| `dBR/dq2(B+->rhomunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \rho^0\mu^+\nu_\mu)$ | Differential branching ratio of $B^+\to \rho^0\mu^+\nu_\mu$ | `q2` |
+| `<BR>(B+->D*enu)` | $\langle\text{BR}\rangle(B^+\to D^{\ast 0}e^+\nu_e)$ | Binned branching ratio of $B^+\to D^{\ast 0}e^+\nu_e$ | `q2min`, `q2max` |
 | `dBR/dq2(B+->omegamunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \omega \mu^+\nu_\mu)$ | Differential branching ratio of $B^+\to \omega \mu^+\nu_\mu$ | `q2` |
+| `dBR/dq2(B+->rhomunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \rho^0\mu^+\nu_\mu)$ | Differential branching ratio of $B^+\to \rho^0\mu^+\nu_\mu$ | `q2` |
+| `dBR/dq2(B0->D*munu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{\ast -}\mu^+\nu_\mu)$ | Differential branching ratio of $B^0\to D^{\ast -}\mu^+\nu_\mu$ | `q2` |
 | `dBR/dq2(Bs->K*munu)` | $\frac{d\text{BR}}{dq^2}(B_s\to K^{* -} \mu^+\nu_\mu)$ | Differential branching ratio of $B_s\to K^{* -} \mu^+\nu_\mu$ | `q2` |
-| `dBR/dq2(B+->D*munu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{\ast 0}\mu^+\nu_\mu)$ | Differential branching ratio of $B^+\to D^{\ast 0}\mu^+\nu_\mu$ | `q2` |
 | `dBR/dq2(B0->rhomunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \rho^-\mu^+\nu_\mu)$ | Differential branching ratio of $B^0\to \rho^-\mu^+\nu_\mu$ | `q2` |
-| `BR(B0->D*munu)` | $\text{BR}(B^0\to D^{\ast -}\mu^+\nu_\mu)$ | Total branching ratio of $B^0\to D^{\ast -}\mu^+\nu_\mu$ |  |
-| `BR(B+->rhomunu)` | $\text{BR}(B^+\to \rho^0\mu^+\nu_\mu)$ | Total branching ratio of $B^+\to \rho^0\mu^+\nu_\mu$ |  |
+| `dBR/dq2(B+->D*munu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{\ast 0}\mu^+\nu_\mu)$ | Differential branching ratio of $B^+\to D^{\ast 0}\mu^+\nu_\mu$ | `q2` |
 | `BR(B+->omegamunu)` | $\text{BR}(B^+\to \omega \mu^+\nu_\mu)$ | Total branching ratio of $B^+\to \omega \mu^+\nu_\mu$ |  |
+| `BR(B+->rhomunu)` | $\text{BR}(B^+\to \rho^0\mu^+\nu_\mu)$ | Total branching ratio of $B^+\to \rho^0\mu^+\nu_\mu$ |  |
+| `BR(B0->D*munu)` | $\text{BR}(B^0\to D^{\ast -}\mu^+\nu_\mu)$ | Total branching ratio of $B^0\to D^{\ast -}\mu^+\nu_\mu$ |  |
 | `BR(Bs->K*munu)` | $\text{BR}(B_s\to K^{* -} \mu^+\nu_\mu)$ | Total branching ratio of $B_s\to K^{* -} \mu^+\nu_\mu$ |  |
-| `BR(B+->D*munu)` | $\text{BR}(B^+\to D^{\ast 0}\mu^+\nu_\mu)$ | Total branching ratio of $B^+\to D^{\ast 0}\mu^+\nu_\mu$ |  |
 | `BR(B0->rhomunu)` | $\text{BR}(B^0\to \rho^-\mu^+\nu_\mu)$ | Total branching ratio of $B^0\to \rho^-\mu^+\nu_\mu$ |  |
-| `<BR>(B0->D*munu)` | $\langle\text{BR}\rangle(B^0\to D^{\ast -}\mu^+\nu_\mu)$ | Binned branching ratio of $B^0\to D^{\ast -}\mu^+\nu_\mu$ | `q2min`, `q2max` |
-| `<BR>(B+->rhomunu)` | $\langle\text{BR}\rangle(B^+\to \rho^0\mu^+\nu_\mu)$ | Binned branching ratio of $B^+\to \rho^0\mu^+\nu_\mu$ | `q2min`, `q2max` |
+| `BR(B+->D*munu)` | $\text{BR}(B^+\to D^{\ast 0}\mu^+\nu_\mu)$ | Total branching ratio of $B^+\to D^{\ast 0}\mu^+\nu_\mu$ |  |
 | `<BR>(B+->omegamunu)` | $\langle\text{BR}\rangle(B^+\to \omega \mu^+\nu_\mu)$ | Binned branching ratio of $B^+\to \omega \mu^+\nu_\mu$ | `q2min`, `q2max` |
+| `<BR>(B+->rhomunu)` | $\langle\text{BR}\rangle(B^+\to \rho^0\mu^+\nu_\mu)$ | Binned branching ratio of $B^+\to \rho^0\mu^+\nu_\mu$ | `q2min`, `q2max` |
+| `<BR>(B0->D*munu)` | $\langle\text{BR}\rangle(B^0\to D^{\ast -}\mu^+\nu_\mu)$ | Binned branching ratio of $B^0\to D^{\ast -}\mu^+\nu_\mu$ | `q2min`, `q2max` |
 | `<BR>(Bs->K*munu)` | $\langle\text{BR}\rangle(B_s\to K^{* -} \mu^+\nu_\mu)$ | Binned branching ratio of $B_s\to K^{* -} \mu^+\nu_\mu$ | `q2min`, `q2max` |
-| `<BR>(B+->D*munu)` | $\langle\text{BR}\rangle(B^+\to D^{\ast 0}\mu^+\nu_\mu)$ | Binned branching ratio of $B^+\to D^{\ast 0}\mu^+\nu_\mu$ | `q2min`, `q2max` |
 | `<BR>(B0->rhomunu)` | $\langle\text{BR}\rangle(B^0\to \rho^-\mu^+\nu_\mu)$ | Binned branching ratio of $B^0\to \rho^-\mu^+\nu_\mu$ | `q2min`, `q2max` |
-| `dBR/dq2(B0->D*taunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{\ast -}\tau^+\nu_\tau)$ | Differential branching ratio of $B^0\to D^{\ast -}\tau^+\nu_\tau$ | `q2` |
-| `dBR/dq2(B+->rhotaunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \rho^0\tau^+\nu_\tau)$ | Differential branching ratio of $B^+\to \rho^0\tau^+\nu_\tau$ | `q2` |
+| `<BR>(B+->D*munu)` | $\langle\text{BR}\rangle(B^+\to D^{\ast 0}\mu^+\nu_\mu)$ | Binned branching ratio of $B^+\to D^{\ast 0}\mu^+\nu_\mu$ | `q2min`, `q2max` |
 | `dBR/dq2(B+->omegataunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \omega \tau^+\nu_\tau)$ | Differential branching ratio of $B^+\to \omega \tau^+\nu_\tau$ | `q2` |
+| `dBR/dq2(B+->rhotaunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \rho^0\tau^+\nu_\tau)$ | Differential branching ratio of $B^+\to \rho^0\tau^+\nu_\tau$ | `q2` |
+| `dBR/dq2(B0->D*taunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{\ast -}\tau^+\nu_\tau)$ | Differential branching ratio of $B^0\to D^{\ast -}\tau^+\nu_\tau$ | `q2` |
 | `dBR/dq2(Bs->K*taunu)` | $\frac{d\text{BR}}{dq^2}(B_s\to K^{* -} \tau^+\nu_\tau)$ | Differential branching ratio of $B_s\to K^{* -} \tau^+\nu_\tau$ | `q2` |
-| `dBR/dq2(B+->D*taunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{\ast 0}\tau^+\nu_\tau)$ | Differential branching ratio of $B^+\to D^{\ast 0}\tau^+\nu_\tau$ | `q2` |
 | `dBR/dq2(B0->rhotaunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \rho^-\tau^+\nu_\tau)$ | Differential branching ratio of $B^0\to \rho^-\tau^+\nu_\tau$ | `q2` |
-| `BR(B0->D*taunu)` | $\text{BR}(B^0\to D^{\ast -}\tau^+\nu_\tau)$ | Total branching ratio of $B^0\to D^{\ast -}\tau^+\nu_\tau$ |  |
-| `BR(B+->rhotaunu)` | $\text{BR}(B^+\to \rho^0\tau^+\nu_\tau)$ | Total branching ratio of $B^+\to \rho^0\tau^+\nu_\tau$ |  |
+| `dBR/dq2(B+->D*taunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{\ast 0}\tau^+\nu_\tau)$ | Differential branching ratio of $B^+\to D^{\ast 0}\tau^+\nu_\tau$ | `q2` |
 | `BR(B+->omegataunu)` | $\text{BR}(B^+\to \omega \tau^+\nu_\tau)$ | Total branching ratio of $B^+\to \omega \tau^+\nu_\tau$ |  |
+| `BR(B+->rhotaunu)` | $\text{BR}(B^+\to \rho^0\tau^+\nu_\tau)$ | Total branching ratio of $B^+\to \rho^0\tau^+\nu_\tau$ |  |
+| `BR(B0->D*taunu)` | $\text{BR}(B^0\to D^{\ast -}\tau^+\nu_\tau)$ | Total branching ratio of $B^0\to D^{\ast -}\tau^+\nu_\tau$ |  |
 | `BR(Bs->K*taunu)` | $\text{BR}(B_s\to K^{* -} \tau^+\nu_\tau)$ | Total branching ratio of $B_s\to K^{* -} \tau^+\nu_\tau$ |  |
-| `BR(B+->D*taunu)` | $\text{BR}(B^+\to D^{\ast 0}\tau^+\nu_\tau)$ | Total branching ratio of $B^+\to D^{\ast 0}\tau^+\nu_\tau$ |  |
 | `BR(B0->rhotaunu)` | $\text{BR}(B^0\to \rho^-\tau^+\nu_\tau)$ | Total branching ratio of $B^0\to \rho^-\tau^+\nu_\tau$ |  |
-| `<BR>(B0->D*taunu)` | $\langle\text{BR}\rangle(B^0\to D^{\ast -}\tau^+\nu_\tau)$ | Binned branching ratio of $B^0\to D^{\ast -}\tau^+\nu_\tau$ | `q2min`, `q2max` |
-| `<BR>(B+->rhotaunu)` | $\langle\text{BR}\rangle(B^+\to \rho^0\tau^+\nu_\tau)$ | Binned branching ratio of $B^+\to \rho^0\tau^+\nu_\tau$ | `q2min`, `q2max` |
+| `BR(B+->D*taunu)` | $\text{BR}(B^+\to D^{\ast 0}\tau^+\nu_\tau)$ | Total branching ratio of $B^+\to D^{\ast 0}\tau^+\nu_\tau$ |  |
 | `<BR>(B+->omegataunu)` | $\langle\text{BR}\rangle(B^+\to \omega \tau^+\nu_\tau)$ | Binned branching ratio of $B^+\to \omega \tau^+\nu_\tau$ | `q2min`, `q2max` |
+| `<BR>(B+->rhotaunu)` | $\langle\text{BR}\rangle(B^+\to \rho^0\tau^+\nu_\tau)$ | Binned branching ratio of $B^+\to \rho^0\tau^+\nu_\tau$ | `q2min`, `q2max` |
+| `<BR>(B0->D*taunu)` | $\langle\text{BR}\rangle(B^0\to D^{\ast -}\tau^+\nu_\tau)$ | Binned branching ratio of $B^0\to D^{\ast -}\tau^+\nu_\tau$ | `q2min`, `q2max` |
 | `<BR>(Bs->K*taunu)` | $\langle\text{BR}\rangle(B_s\to K^{* -} \tau^+\nu_\tau)$ | Binned branching ratio of $B_s\to K^{* -} \tau^+\nu_\tau$ | `q2min`, `q2max` |
-| `<BR>(B+->D*taunu)` | $\langle\text{BR}\rangle(B^+\to D^{\ast 0}\tau^+\nu_\tau)$ | Binned branching ratio of $B^+\to D^{\ast 0}\tau^+\nu_\tau$ | `q2min`, `q2max` |
 | `<BR>(B0->rhotaunu)` | $\langle\text{BR}\rangle(B^0\to \rho^-\tau^+\nu_\tau)$ | Binned branching ratio of $B^0\to \rho^-\tau^+\nu_\tau$ | `q2min`, `q2max` |
-| `dBR/dq2(B0->D*lnu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{\ast -}\ell^+\nu_\ell)$ | Differential branching ratio of $B^0\to D^{\ast -}\ell^+\nu_\ell$ | `q2` |
-| `dBR/dq2(B+->rholnu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \rho^0\ell^+\nu_\ell)$ | Differential branching ratio of $B^+\to \rho^0\ell^+\nu_\ell$ | `q2` |
+| `<BR>(B+->D*taunu)` | $\langle\text{BR}\rangle(B^+\to D^{\ast 0}\tau^+\nu_\tau)$ | Binned branching ratio of $B^+\to D^{\ast 0}\tau^+\nu_\tau$ | `q2min`, `q2max` |
 | `dBR/dq2(B+->omegalnu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \omega \ell^+\nu_\ell)$ | Differential branching ratio of $B^+\to \omega \ell^+\nu_\ell$ | `q2` |
+| `dBR/dq2(B+->rholnu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \rho^0\ell^+\nu_\ell)$ | Differential branching ratio of $B^+\to \rho^0\ell^+\nu_\ell$ | `q2` |
+| `dBR/dq2(B0->D*lnu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{\ast -}\ell^+\nu_\ell)$ | Differential branching ratio of $B^0\to D^{\ast -}\ell^+\nu_\ell$ | `q2` |
 | `dBR/dq2(Bs->K*lnu)` | $\frac{d\text{BR}}{dq^2}(B_s\to K^{* -} \ell^+\nu_\ell)$ | Differential branching ratio of $B_s\to K^{* -} \ell^+\nu_\ell$ | `q2` |
-| `dBR/dq2(B+->D*lnu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{\ast 0}\ell^+\nu_\ell)$ | Differential branching ratio of $B^+\to D^{\ast 0}\ell^+\nu_\ell$ | `q2` |
 | `dBR/dq2(B0->rholnu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \rho^-\ell^+\nu_\ell)$ | Differential branching ratio of $B^0\to \rho^-\ell^+\nu_\ell$ | `q2` |
-| `BR(B0->D*lnu)` | $\text{BR}(B^0\to D^{\ast -}\ell^+\nu_\ell)$ | Total branching ratio of $B^0\to D^{\ast -}\ell^+\nu_\ell$ |  |
-| `BR(B+->rholnu)` | $\text{BR}(B^+\to \rho^0\ell^+\nu_\ell)$ | Total branching ratio of $B^+\to \rho^0\ell^+\nu_\ell$ |  |
+| `dBR/dq2(B+->D*lnu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{\ast 0}\ell^+\nu_\ell)$ | Differential branching ratio of $B^+\to D^{\ast 0}\ell^+\nu_\ell$ | `q2` |
 | `BR(B+->omegalnu)` | $\text{BR}(B^+\to \omega \ell^+\nu_\ell)$ | Total branching ratio of $B^+\to \omega \ell^+\nu_\ell$ |  |
+| `BR(B+->rholnu)` | $\text{BR}(B^+\to \rho^0\ell^+\nu_\ell)$ | Total branching ratio of $B^+\to \rho^0\ell^+\nu_\ell$ |  |
+| `BR(B0->D*lnu)` | $\text{BR}(B^0\to D^{\ast -}\ell^+\nu_\ell)$ | Total branching ratio of $B^0\to D^{\ast -}\ell^+\nu_\ell$ |  |
 | `BR(Bs->K*lnu)` | $\text{BR}(B_s\to K^{* -} \ell^+\nu_\ell)$ | Total branching ratio of $B_s\to K^{* -} \ell^+\nu_\ell$ |  |
-| `BR(B+->D*lnu)` | $\text{BR}(B^+\to D^{\ast 0}\ell^+\nu_\ell)$ | Total branching ratio of $B^+\to D^{\ast 0}\ell^+\nu_\ell$ |  |
 | `BR(B0->rholnu)` | $\text{BR}(B^0\to \rho^-\ell^+\nu_\ell)$ | Total branching ratio of $B^0\to \rho^-\ell^+\nu_\ell$ |  |
-| `<BR>(B0->D*lnu)` | $\langle\text{BR}\rangle(B^0\to D^{\ast -}\ell^+\nu_\ell)$ | Binned branching ratio of $B^0\to D^{\ast -}\ell^+\nu_\ell$ | `q2min`, `q2max` |
-| `<BR>(B+->rholnu)` | $\langle\text{BR}\rangle(B^+\to \rho^0\ell^+\nu_\ell)$ | Binned branching ratio of $B^+\to \rho^0\ell^+\nu_\ell$ | `q2min`, `q2max` |
+| `BR(B+->D*lnu)` | $\text{BR}(B^+\to D^{\ast 0}\ell^+\nu_\ell)$ | Total branching ratio of $B^+\to D^{\ast 0}\ell^+\nu_\ell$ |  |
 | `<BR>(B+->omegalnu)` | $\langle\text{BR}\rangle(B^+\to \omega \ell^+\nu_\ell)$ | Binned branching ratio of $B^+\to \omega \ell^+\nu_\ell$ | `q2min`, `q2max` |
+| `<BR>(B+->rholnu)` | $\langle\text{BR}\rangle(B^+\to \rho^0\ell^+\nu_\ell)$ | Binned branching ratio of $B^+\to \rho^0\ell^+\nu_\ell$ | `q2min`, `q2max` |
+| `<BR>(B0->D*lnu)` | $\langle\text{BR}\rangle(B^0\to D^{\ast -}\ell^+\nu_\ell)$ | Binned branching ratio of $B^0\to D^{\ast -}\ell^+\nu_\ell$ | `q2min`, `q2max` |
 | `<BR>(Bs->K*lnu)` | $\langle\text{BR}\rangle(B_s\to K^{* -} \ell^+\nu_\ell)$ | Binned branching ratio of $B_s\to K^{* -} \ell^+\nu_\ell$ | `q2min`, `q2max` |
-| `<BR>(B+->D*lnu)` | $\langle\text{BR}\rangle(B^+\to D^{\ast 0}\ell^+\nu_\ell)$ | Binned branching ratio of $B^+\to D^{\ast 0}\ell^+\nu_\ell$ | `q2min`, `q2max` |
 | `<BR>(B0->rholnu)` | $\langle\text{BR}\rangle(B^0\to \rho^-\ell^+\nu_\ell)$ | Binned branching ratio of $B^0\to \rho^-\ell^+\nu_\ell$ | `q2min`, `q2max` |
+| `<BR>(B+->D*lnu)` | $\langle\text{BR}\rangle(B^+\to D^{\ast 0}\ell^+\nu_\ell)$ | Binned branching ratio of $B^+\to D^{\ast 0}\ell^+\nu_\ell$ | `q2min`, `q2max` |
 | `BR(Bs->ee)` | $\overline{\text{BR}}(B_s\to e^+e^-)$. | Time-integrated branching ratio of $B_s\to e^+e^-$. |  |
 | `BR(Bd->ee)` | $\text{BR}(B^0\to e^+e^-)$. | Branching ratio of $B^0\to e^+e^-$. |  |
+| `tau_ee` | $\tau_{B_s \to ee}$. | Effective lifetime for $B_s \to e^+e^-$. |  |
 | `BR(Bs->mumu)` | $\overline{\text{BR}}(B_s\to \mu^+\mu^-)$. | Time-integrated branching ratio of $B_s\to \mu^+\mu^-$. |  |
 | `BR(Bd->mumu)` | $\text{BR}(B^0\to \mu^+\mu^-)$. | Branching ratio of $B^0\to \mu^+\mu^-$. |  |
+| `tau_mumu` | $\tau_{B_s \to \mu\mu}$. | Effective lifetime for $B_s \to \mu^+\mu^-$. |  |
 | `BR(Bs->tautau)` | $\overline{\text{BR}}(B_s\to \tau^+\tau^-)$. | Time-integrated branching ratio of $B_s\to \tau^+\tau^-$. |  |
 | `BR(Bd->tautau)` | $\text{BR}(B^0\to \tau^+\tau^-)$. | Branching ratio of $B^0\to \tau^+\tau^-$. |  |
+| `tau_tautau` | $\tau_{B_s \to \tau\tau}$. | Effective lifetime for $B_s \to \tau^+\tau^-$. |  |
 | `BR(Bs->emu)` | $\text{BR}(\bar B_s\to e^+\mu^-$) | Branching ratio of $\bar B_s\to e^+\mu^-$ |  |
 | `BR(B0->emu)` | $\text{BR}(\bar B^0\to e^+\mu^-$) | Branching ratio of $\bar B^0\to e^+\mu^-$ |  |
 | `BR(Bs->mue)` | $\text{BR}(\bar B_s\to \mu^+e^-$) | Branching ratio of $\bar B_s\to \mu^+e^-$ |  |
@@ -485,70 +500,82 @@ e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 | `BR(B+->enu)` | $\text{BR}(B^+\to e^+\nu_e)$ | Branching ratio of $B^+\to e^+\nu_e$ |  |
 | `BR(B+->munu)` | $\text{BR}(B^+\to \mu^+\nu_\mu)$ | Branching ratio of $B^+\to \mu^+\nu_\mu$ |  |
 | `BR(B+->taunu)` | $\text{BR}(B^+\to \tau^+\nu_\tau)$ | Branching ratio of $B^+\to \tau^+\nu_\tau$ |  |
-| `<AFB>(B0->Kee)` | $\langle A_\text{FB}\rangle(B^0\to K^0e^+e^-)$ | Binned forward-backward asymmetry in $B^0\to K^0e^+e^-$ | `q2min`, `q2max` |
-| `AFB(B0->Kee)` | $A_\text{FB}(B^0\to K^0e^+e^-)$ | Forward-backward asymmetry in $B^0\to K^0e^+e^-$ | `q2` |
-| `<FH>(B0->Kee)` | $\langle F_H\rangle(B^0\to K^0e^+e^-)$ | Binned flat term in $B^0\to K^0e^+e^-$ | `q2min`, `q2max` |
-| `FH(B0->Kee)` | $F_H(B^0\to K^0e^+e^-)$ | Flat term in $B^0\to K^0e^+e^-$ | `q2` |
-| `<dBR/dq2>(B0->Kee)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^0e^+e^-)$ | Binned differential branching ratio of $B^0\to K^0e^+e^-$ | `q2min`, `q2max` |
-| `dBR/dq2(B0->Kee)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0e^+e^-)$ | Differential branching ratio of $B^0\to K^0e^+e^-$ | `q2` |
+| `<ACP>(B+->Kee)` | $\langle A_\text{CP}\rangle(B^\pm\to K^\pm e^+e^-)$ | Binned Direct CP asymmetry in $B^\pm\to K^\pm e^+e^-$ | `q2min`, `q2max` |
+| `ACP(B+->Kee)` | $A_\text{CP}(B^\pm\to K^\pm e^+e^-)$ | Direct CP asymmetry in $B^\pm\to K^\pm e^+e^-$ | `q2` |
 | `<AFB>(B+->Kee)` | $\langle A_\text{FB}\rangle(B^\pm\to K^\pm e^+e^-)$ | Binned forward-backward asymmetry in $B^\pm\to K^\pm e^+e^-$ | `q2min`, `q2max` |
 | `AFB(B+->Kee)` | $A_\text{FB}(B^\pm\to K^\pm e^+e^-)$ | Forward-backward asymmetry in $B^\pm\to K^\pm e^+e^-$ | `q2` |
 | `<FH>(B+->Kee)` | $\langle F_H\rangle(B^\pm\to K^\pm e^+e^-)$ | Binned flat term in $B^\pm\to K^\pm e^+e^-$ | `q2min`, `q2max` |
 | `FH(B+->Kee)` | $F_H(B^\pm\to K^\pm e^+e^-)$ | Flat term in $B^\pm\to K^\pm e^+e^-$ | `q2` |
 | `<dBR/dq2>(B+->Kee)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^\pm\to K^\pm e^+e^-)$ | Binned differential branching ratio of $B^\pm\to K^\pm e^+e^-$ | `q2min`, `q2max` |
 | `dBR/dq2(B+->Kee)` | $\frac{d\text{BR}}{dq^2}(B^\pm\to K^\pm e^+e^-)$ | Differential branching ratio of $B^\pm\to K^\pm e^+e^-$ | `q2` |
-| `<AFB>(B0->Kmumu)` | $\langle A_\text{FB}\rangle(B^0\to K^0\mu^+\mu^-)$ | Binned forward-backward asymmetry in $B^0\to K^0\mu^+\mu^-$ | `q2min`, `q2max` |
-| `AFB(B0->Kmumu)` | $A_\text{FB}(B^0\to K^0\mu^+\mu^-)$ | Forward-backward asymmetry in $B^0\to K^0\mu^+\mu^-$ | `q2` |
-| `<FH>(B0->Kmumu)` | $\langle F_H\rangle(B^0\to K^0\mu^+\mu^-)$ | Binned flat term in $B^0\to K^0\mu^+\mu^-$ | `q2min`, `q2max` |
-| `FH(B0->Kmumu)` | $F_H(B^0\to K^0\mu^+\mu^-)$ | Flat term in $B^0\to K^0\mu^+\mu^-$ | `q2` |
-| `<dBR/dq2>(B0->Kmumu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^0\mu^+\mu^-)$ | Binned differential branching ratio of $B^0\to K^0\mu^+\mu^-$ | `q2min`, `q2max` |
-| `dBR/dq2(B0->Kmumu)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0\mu^+\mu^-)$ | Differential branching ratio of $B^0\to K^0\mu^+\mu^-$ | `q2` |
+| `<ACP>(B0->Kee)` | $\langle A_\text{CP}\rangle(B^0\to K^0e^+e^-)$ | Binned Direct CP asymmetry in $B^0\to K^0e^+e^-$ | `q2min`, `q2max` |
+| `ACP(B0->Kee)` | $A_\text{CP}(B^0\to K^0e^+e^-)$ | Direct CP asymmetry in $B^0\to K^0e^+e^-$ | `q2` |
+| `<AFB>(B0->Kee)` | $\langle A_\text{FB}\rangle(B^0\to K^0e^+e^-)$ | Binned forward-backward asymmetry in $B^0\to K^0e^+e^-$ | `q2min`, `q2max` |
+| `AFB(B0->Kee)` | $A_\text{FB}(B^0\to K^0e^+e^-)$ | Forward-backward asymmetry in $B^0\to K^0e^+e^-$ | `q2` |
+| `<FH>(B0->Kee)` | $\langle F_H\rangle(B^0\to K^0e^+e^-)$ | Binned flat term in $B^0\to K^0e^+e^-$ | `q2min`, `q2max` |
+| `FH(B0->Kee)` | $F_H(B^0\to K^0e^+e^-)$ | Flat term in $B^0\to K^0e^+e^-$ | `q2` |
+| `<dBR/dq2>(B0->Kee)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^0e^+e^-)$ | Binned differential branching ratio of $B^0\to K^0e^+e^-$ | `q2min`, `q2max` |
+| `dBR/dq2(B0->Kee)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0e^+e^-)$ | Differential branching ratio of $B^0\to K^0e^+e^-$ | `q2` |
+| `<ACP>(B+->Kmumu)` | $\langle A_\text{CP}\rangle(B^\pm\to K^\pm \mu^+\mu^-)$ | Binned Direct CP asymmetry in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2min`, `q2max` |
+| `ACP(B+->Kmumu)` | $A_\text{CP}(B^\pm\to K^\pm \mu^+\mu^-)$ | Direct CP asymmetry in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2` |
 | `<AFB>(B+->Kmumu)` | $\langle A_\text{FB}\rangle(B^\pm\to K^\pm \mu^+\mu^-)$ | Binned forward-backward asymmetry in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2min`, `q2max` |
 | `AFB(B+->Kmumu)` | $A_\text{FB}(B^\pm\to K^\pm \mu^+\mu^-)$ | Forward-backward asymmetry in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2` |
 | `<FH>(B+->Kmumu)` | $\langle F_H\rangle(B^\pm\to K^\pm \mu^+\mu^-)$ | Binned flat term in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2min`, `q2max` |
 | `FH(B+->Kmumu)` | $F_H(B^\pm\to K^\pm \mu^+\mu^-)$ | Flat term in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2` |
 | `<dBR/dq2>(B+->Kmumu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^\pm\to K^\pm \mu^+\mu^-)$ | Binned differential branching ratio of $B^\pm\to K^\pm \mu^+\mu^-$ | `q2min`, `q2max` |
 | `dBR/dq2(B+->Kmumu)` | $\frac{d\text{BR}}{dq^2}(B^\pm\to K^\pm \mu^+\mu^-)$ | Differential branching ratio of $B^\pm\to K^\pm \mu^+\mu^-$ | `q2` |
-| `<AFB>(B0->Ktautau)` | $\langle A_\text{FB}\rangle(B^0\to K^0\tau^+\tau^-)$ | Binned forward-backward asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2min`, `q2max` |
-| `AFB(B0->Ktautau)` | $A_\text{FB}(B^0\to K^0\tau^+\tau^-)$ | Forward-backward asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2` |
-| `<FH>(B0->Ktautau)` | $\langle F_H\rangle(B^0\to K^0\tau^+\tau^-)$ | Binned flat term in $B^0\to K^0\tau^+\tau^-$ | `q2min`, `q2max` |
-| `FH(B0->Ktautau)` | $F_H(B^0\to K^0\tau^+\tau^-)$ | Flat term in $B^0\to K^0\tau^+\tau^-$ | `q2` |
-| `<dBR/dq2>(B0->Ktautau)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^0\tau^+\tau^-)$ | Binned differential branching ratio of $B^0\to K^0\tau^+\tau^-$ | `q2min`, `q2max` |
-| `dBR/dq2(B0->Ktautau)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0\tau^+\tau^-)$ | Differential branching ratio of $B^0\to K^0\tau^+\tau^-$ | `q2` |
+| `<ACP>(B0->Kmumu)` | $\langle A_\text{CP}\rangle(B^0\to K^0\mu^+\mu^-)$ | Binned Direct CP asymmetry in $B^0\to K^0\mu^+\mu^-$ | `q2min`, `q2max` |
+| `ACP(B0->Kmumu)` | $A_\text{CP}(B^0\to K^0\mu^+\mu^-)$ | Direct CP asymmetry in $B^0\to K^0\mu^+\mu^-$ | `q2` |
+| `<AFB>(B0->Kmumu)` | $\langle A_\text{FB}\rangle(B^0\to K^0\mu^+\mu^-)$ | Binned forward-backward asymmetry in $B^0\to K^0\mu^+\mu^-$ | `q2min`, `q2max` |
+| `AFB(B0->Kmumu)` | $A_\text{FB}(B^0\to K^0\mu^+\mu^-)$ | Forward-backward asymmetry in $B^0\to K^0\mu^+\mu^-$ | `q2` |
+| `<FH>(B0->Kmumu)` | $\langle F_H\rangle(B^0\to K^0\mu^+\mu^-)$ | Binned flat term in $B^0\to K^0\mu^+\mu^-$ | `q2min`, `q2max` |
+| `FH(B0->Kmumu)` | $F_H(B^0\to K^0\mu^+\mu^-)$ | Flat term in $B^0\to K^0\mu^+\mu^-$ | `q2` |
+| `<dBR/dq2>(B0->Kmumu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^0\mu^+\mu^-)$ | Binned differential branching ratio of $B^0\to K^0\mu^+\mu^-$ | `q2min`, `q2max` |
+| `dBR/dq2(B0->Kmumu)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0\mu^+\mu^-)$ | Differential branching ratio of $B^0\to K^0\mu^+\mu^-$ | `q2` |
+| `<ACP>(B+->Ktautau)` | $\langle A_\text{CP}\rangle(B^\pm\to K^\pm \tau^+\tau^-)$ | Binned Direct CP asymmetry in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
+| `ACP(B+->Ktautau)` | $A_\text{CP}(B^\pm\to K^\pm \tau^+\tau^-)$ | Direct CP asymmetry in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
 | `<AFB>(B+->Ktautau)` | $\langle A_\text{FB}\rangle(B^\pm\to K^\pm \tau^+\tau^-)$ | Binned forward-backward asymmetry in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
 | `AFB(B+->Ktautau)` | $A_\text{FB}(B^\pm\to K^\pm \tau^+\tau^-)$ | Forward-backward asymmetry in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
 | `<FH>(B+->Ktautau)` | $\langle F_H\rangle(B^\pm\to K^\pm \tau^+\tau^-)$ | Binned flat term in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
 | `FH(B+->Ktautau)` | $F_H(B^\pm\to K^\pm \tau^+\tau^-)$ | Flat term in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
 | `<dBR/dq2>(B+->Ktautau)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^\pm\to K^\pm \tau^+\tau^-)$ | Binned differential branching ratio of $B^\pm\to K^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
 | `dBR/dq2(B+->Ktautau)` | $\frac{d\text{BR}}{dq^2}(B^\pm\to K^\pm \tau^+\tau^-)$ | Differential branching ratio of $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
-| `<Rmue>(B0->Kll)` | $\langle R_{\mu e} \rangle(B^0\to K^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^0\mu^+ \mu^-$ and $B^0\to K^0e^+ e^-$ | `q2min`, `q2max` |
+| `<ACP>(B0->Ktautau)` | $\langle A_\text{CP}\rangle(B^0\to K^0\tau^+\tau^-)$ | Binned Direct CP asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2min`, `q2max` |
+| `ACP(B0->Ktautau)` | $A_\text{CP}(B^0\to K^0\tau^+\tau^-)$ | Direct CP asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2` |
+| `<AFB>(B0->Ktautau)` | $\langle A_\text{FB}\rangle(B^0\to K^0\tau^+\tau^-)$ | Binned forward-backward asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2min`, `q2max` |
+| `AFB(B0->Ktautau)` | $A_\text{FB}(B^0\to K^0\tau^+\tau^-)$ | Forward-backward asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2` |
+| `<FH>(B0->Ktautau)` | $\langle F_H\rangle(B^0\to K^0\tau^+\tau^-)$ | Binned flat term in $B^0\to K^0\tau^+\tau^-$ | `q2min`, `q2max` |
+| `FH(B0->Ktautau)` | $F_H(B^0\to K^0\tau^+\tau^-)$ | Flat term in $B^0\to K^0\tau^+\tau^-$ | `q2` |
+| `<dBR/dq2>(B0->Ktautau)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^0\tau^+\tau^-)$ | Binned differential branching ratio of $B^0\to K^0\tau^+\tau^-$ | `q2min`, `q2max` |
+| `dBR/dq2(B0->Ktautau)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0\tau^+\tau^-)$ | Differential branching ratio of $B^0\to K^0\tau^+\tau^-$ | `q2` |
 | `<Rmue>(B+->Kll)` | $\langle R_{\mu e} \rangle(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of partial branching ratios of $B^\pm\to K^\pm \mu^+ \mu^-$ and $B^\pm\to K^\pm e^+ e^-$ | `q2min`, `q2max` |
-| `<Rtaumu>(B0->Kll)` | $\langle R_{\tau \mu} \rangle(B^0\to K^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^0\tau^+ \tau^-$ and $B^0\to K^0\mu^+ \mu^-$ | `q2min`, `q2max` |
+| `<Rmue>(B0->Kll)` | $\langle R_{\mu e} \rangle(B^0\to K^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^0\mu^+ \mu^-$ and $B^0\to K^0e^+ e^-$ | `q2min`, `q2max` |
 | `<Rtaumu>(B+->Kll)` | $\langle R_{\tau \mu} \rangle(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of partial branching ratios of $B^\pm\to K^\pm \tau^+ \tau^-$ and $B^\pm\to K^\pm \mu^+ \mu^-$ | `q2min`, `q2max` |
-| `BR(B+->piemu)` | $\text{BR}(B^-\to \pi^- e^+\mu^-)$ | Total branching ratio of $B^-\to \pi^- e^+\mu^-$ |  |
-| `BR(B0->Kemu)` | $\text{BR}(\bar B^0\to \bar K^0 e^+\mu^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 e^+\mu^-$ |  |
-| `BR(B+->Kemu)` | $\text{BR}(B^-\to K^- e^+\mu^-)$ | Total branching ratio of $B^-\to K^- e^+\mu^-$ |  |
+| `<Rtaumu>(B0->Kll)` | $\langle R_{\tau \mu} \rangle(B^0\to K^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^0\tau^+ \tau^-$ and $B^0\to K^0\mu^+ \mu^-$ | `q2min`, `q2max` |
 | `BR(B0->piemu)` | $\text{BR}(\bar B^0\to \pi^0 e^+\mu^-)$ | Total branching ratio of $\bar B^0\to \pi^0 e^+\mu^-$ |  |
-| `BR(B+->pimue)` | $\text{BR}(B^-\to \pi^- \mu^+e^-)$ | Total branching ratio of $B^-\to \pi^- \mu^+e^-$ |  |
-| `BR(B0->Kmue)` | $\text{BR}(\bar B^0\to \bar K^0 \mu^+e^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 \mu^+e^-$ |  |
-| `BR(B+->Kmue)` | $\text{BR}(B^-\to K^- \mu^+e^-)$ | Total branching ratio of $B^-\to K^- \mu^+e^-$ |  |
+| `BR(B+->Kemu)` | $\text{BR}(B^-\to K^- e^+\mu^-)$ | Total branching ratio of $B^-\to K^- e^+\mu^-$ |  |
+| `BR(B0->Kemu)` | $\text{BR}(\bar B^0\to \bar K^0 e^+\mu^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 e^+\mu^-$ |  |
+| `BR(B+->piemu)` | $\text{BR}(B^-\to \pi^- e^+\mu^-)$ | Total branching ratio of $B^-\to \pi^- e^+\mu^-$ |  |
 | `BR(B0->pimue)` | $\text{BR}(\bar B^0\to \pi^0 \mu^+e^-)$ | Total branching ratio of $\bar B^0\to \pi^0 \mu^+e^-$ |  |
-| `BR(B+->pietau)` | $\text{BR}(B^-\to \pi^- e^+\tau^-)$ | Total branching ratio of $B^-\to \pi^- e^+\tau^-$ |  |
-| `BR(B0->Ketau)` | $\text{BR}(\bar B^0\to \bar K^0 e^+\tau^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 e^+\tau^-$ |  |
-| `BR(B+->Ketau)` | $\text{BR}(B^-\to K^- e^+\tau^-)$ | Total branching ratio of $B^-\to K^- e^+\tau^-$ |  |
+| `BR(B+->Kmue)` | $\text{BR}(B^-\to K^- \mu^+e^-)$ | Total branching ratio of $B^-\to K^- \mu^+e^-$ |  |
+| `BR(B0->Kmue)` | $\text{BR}(\bar B^0\to \bar K^0 \mu^+e^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 \mu^+e^-$ |  |
+| `BR(B+->pimue)` | $\text{BR}(B^-\to \pi^- \mu^+e^-)$ | Total branching ratio of $B^-\to \pi^- \mu^+e^-$ |  |
 | `BR(B0->pietau)` | $\text{BR}(\bar B^0\to \pi^0 e^+\tau^-)$ | Total branching ratio of $\bar B^0\to \pi^0 e^+\tau^-$ |  |
-| `BR(B+->pitaue)` | $\text{BR}(B^-\to \pi^- \tau^+e^-)$ | Total branching ratio of $B^-\to \pi^- \tau^+e^-$ |  |
-| `BR(B0->Ktaue)` | $\text{BR}(\bar B^0\to \bar K^0 \tau^+e^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 \tau^+e^-$ |  |
-| `BR(B+->Ktaue)` | $\text{BR}(B^-\to K^- \tau^+e^-)$ | Total branching ratio of $B^-\to K^- \tau^+e^-$ |  |
+| `BR(B+->Ketau)` | $\text{BR}(B^-\to K^- e^+\tau^-)$ | Total branching ratio of $B^-\to K^- e^+\tau^-$ |  |
+| `BR(B0->Ketau)` | $\text{BR}(\bar B^0\to \bar K^0 e^+\tau^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 e^+\tau^-$ |  |
+| `BR(B+->pietau)` | $\text{BR}(B^-\to \pi^- e^+\tau^-)$ | Total branching ratio of $B^-\to \pi^- e^+\tau^-$ |  |
 | `BR(B0->pitaue)` | $\text{BR}(\bar B^0\to \pi^0 \tau^+e^-)$ | Total branching ratio of $\bar B^0\to \pi^0 \tau^+e^-$ |  |
-| `BR(B+->pimutau)` | $\text{BR}(B^-\to \pi^- \mu^+\tau^-)$ | Total branching ratio of $B^-\to \pi^- \mu^+\tau^-$ |  |
-| `BR(B0->Kmutau)` | $\text{BR}(\bar B^0\to \bar K^0 \mu^+\tau^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 \mu^+\tau^-$ |  |
-| `BR(B+->Kmutau)` | $\text{BR}(B^-\to K^- \mu^+\tau^-)$ | Total branching ratio of $B^-\to K^- \mu^+\tau^-$ |  |
+| `BR(B+->Ktaue)` | $\text{BR}(B^-\to K^- \tau^+e^-)$ | Total branching ratio of $B^-\to K^- \tau^+e^-$ |  |
+| `BR(B0->Ktaue)` | $\text{BR}(\bar B^0\to \bar K^0 \tau^+e^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 \tau^+e^-$ |  |
+| `BR(B+->pitaue)` | $\text{BR}(B^-\to \pi^- \tau^+e^-)$ | Total branching ratio of $B^-\to \pi^- \tau^+e^-$ |  |
 | `BR(B0->pimutau)` | $\text{BR}(\bar B^0\to \pi^0 \mu^+\tau^-)$ | Total branching ratio of $\bar B^0\to \pi^0 \mu^+\tau^-$ |  |
-| `BR(B+->pitaumu)` | $\text{BR}(B^-\to \pi^- \tau^+\mu^-)$ | Total branching ratio of $B^-\to \pi^- \tau^+\mu^-$ |  |
-| `BR(B0->Ktaumu)` | $\text{BR}(\bar B^0\to \bar K^0 \tau^+\mu^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 \tau^+\mu^-$ |  |
-| `BR(B+->Ktaumu)` | $\text{BR}(B^-\to K^- \tau^+\mu^-)$ | Total branching ratio of $B^-\to K^- \tau^+\mu^-$ |  |
+| `BR(B+->Kmutau)` | $\text{BR}(B^-\to K^- \mu^+\tau^-)$ | Total branching ratio of $B^-\to K^- \mu^+\tau^-$ |  |
+| `BR(B0->Kmutau)` | $\text{BR}(\bar B^0\to \bar K^0 \mu^+\tau^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 \mu^+\tau^-$ |  |
+| `BR(B+->pimutau)` | $\text{BR}(B^-\to \pi^- \mu^+\tau^-)$ | Total branching ratio of $B^-\to \pi^- \mu^+\tau^-$ |  |
 | `BR(B0->pitaumu)` | $\text{BR}(\bar B^0\to \pi^0 \tau^+\mu^-)$ | Total branching ratio of $\bar B^0\to \pi^0 \tau^+\mu^-$ |  |
+| `BR(B+->Ktaumu)` | $\text{BR}(B^-\to K^- \tau^+\mu^-)$ | Total branching ratio of $B^-\to K^- \tau^+\mu^-$ |  |
+| `BR(B0->Ktaumu)` | $\text{BR}(\bar B^0\to \bar K^0 \tau^+\mu^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 \tau^+\mu^-$ |  |
+| `BR(B+->pitaumu)` | $\text{BR}(B^-\to \pi^- \tau^+\mu^-)$ | Total branching ratio of $B^-\to \pi^- \tau^+\mu^-$ |  |
 | `dBR/dq2(B+->Denu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{0}e^+\nu_e)$ | Differential branching ratio of $B^+\to D^{0}e^+\nu_e$ | `q2` |
 | `dBR/dq2(B0->Denu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{-}e^+\nu_e)$ | Differential branching ratio of $B^0\to D^{-}e^+\nu_e$ | `q2` |
 | `dBR/dq2(B+->pienu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \pi^0e^+\nu_e)$ | Differential branching ratio of $B^+\to \pi^0e^+\nu_e$ | `q2` |
@@ -597,30 +624,30 @@ e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 | `<BR>(B0->Dlnu)` | $\langle\text{BR}\rangle(B^0\to D^{-}\ell^+\nu_\ell)$ | Binned branching ratio of $B^0\to D^{-}\ell^+\nu_\ell$ | `q2min`, `q2max` |
 | `<BR>(B+->pilnu)` | $\langle\text{BR}\rangle(B^+\to \pi^0\ell^+\nu_\ell)$ | Binned branching ratio of $B^+\to \pi^0\ell^+\nu_\ell$ | `q2min`, `q2max` |
 | `<BR>(B0->pilnu)` | $\langle\text{BR}\rangle(B^0\to \pi^-\ell^+\nu_\ell)$ | Binned branching ratio of $B^0\to \pi^-\ell^+\nu_\ell$ | `q2min`, `q2max` |
-| `<dBR/dq2>(B+->rhonunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^+\to \rho^{+}\nu\bar\nu)$ | Binned differential branching ratio of $B^+\to \rho^{+}\nu\bar\nu$ | `q2min`, `q2max` |
-| `dBR/dq2(B+->rhonunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \rho^{+}\nu\bar\nu)$ | Differential branching ratio of $B^+\to \rho^{+}\nu\bar\nu$ | `q2` |
-| `BR(B+->rhonunu)` | $\text{BR}(B^+\to \rho^{+}\nu\bar\nu)$ | Branching ratio of $B^+\to \rho^{+}\nu\bar\nu$ |  |
 | `<dBR/dq2>(B0->K*nunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^{*0}\nu\bar\nu)$ | Binned differential branching ratio of $B^0\to K^{*0}\nu\bar\nu$ | `q2min`, `q2max` |
 | `dBR/dq2(B0->K*nunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^{*0}\nu\bar\nu)$ | Differential branching ratio of $B^0\to K^{*0}\nu\bar\nu$ | `q2` |
 | `BR(B0->K*nunu)` | $\text{BR}(B^0\to K^{*0}\nu\bar\nu)$ | Branching ratio of $B^0\to K^{*0}\nu\bar\nu$ |  |
-| `<dBR/dq2>(B+->K*nunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^+\to K^{*+}\nu\bar\nu)$ | Binned differential branching ratio of $B^+\to K^{*+}\nu\bar\nu$ | `q2min`, `q2max` |
-| `dBR/dq2(B+->K*nunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to K^{*+}\nu\bar\nu)$ | Differential branching ratio of $B^+\to K^{*+}\nu\bar\nu$ | `q2` |
-| `BR(B+->K*nunu)` | $\text{BR}(B^+\to K^{*+}\nu\bar\nu)$ | Branching ratio of $B^+\to K^{*+}\nu\bar\nu$ |  |
 | `<dBR/dq2>(B0->rhonunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to \rho^{0}\nu\bar\nu)$ | Binned differential branching ratio of $B^0\to \rho^{0}\nu\bar\nu$ | `q2min`, `q2max` |
 | `dBR/dq2(B0->rhonunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \rho^{0}\nu\bar\nu)$ | Differential branching ratio of $B^0\to \rho^{0}\nu\bar\nu$ | `q2` |
 | `BR(B0->rhonunu)` | $\text{BR}(B^0\to \rho^{0}\nu\bar\nu)$ | Branching ratio of $B^0\to \rho^{0}\nu\bar\nu$ |  |
-| `<dBR/dq2>(B+->pinunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^+\to \pi^+\nu\bar\nu)$ | Binned differential branching ratio of $B^+\to \pi^+\nu\bar\nu$ | `q2min`, `q2max` |
-| `dBR/dq2(B+->pinunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \pi^+\nu\bar\nu)$ | Differential branching ratio of $B^+\to \pi^+\nu\bar\nu$ | `q2` |
-| `BR(B+->pinunu)` | $\text{BR}(B^+\to \pi^+\nu\bar\nu)$ | Branching ratio of $B^+\to \pi^+\nu\bar\nu$ |  |
-| `<dBR/dq2>(B0->Knunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^0\nu\bar\nu)$ | Binned differential branching ratio of $B^0\to K^0\nu\bar\nu$ | `q2min`, `q2max` |
-| `dBR/dq2(B0->Knunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0\nu\bar\nu)$ | Differential branching ratio of $B^0\to K^0\nu\bar\nu$ | `q2` |
-| `BR(B0->Knunu)` | $\text{BR}(B^0\to K^0\nu\bar\nu)$ | Branching ratio of $B^0\to K^0\nu\bar\nu$ |  |
-| `<dBR/dq2>(B+->Knunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^+\to K^+\nu\bar\nu)$ | Binned differential branching ratio of $B^+\to K^+\nu\bar\nu$ | `q2min`, `q2max` |
-| `dBR/dq2(B+->Knunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to K^+\nu\bar\nu)$ | Differential branching ratio of $B^+\to K^+\nu\bar\nu$ | `q2` |
-| `BR(B+->Knunu)` | $\text{BR}(B^+\to K^+\nu\bar\nu)$ | Branching ratio of $B^+\to K^+\nu\bar\nu$ |  |
+| `<dBR/dq2>(B+->rhonunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^+\to \rho^{+}\nu\bar\nu)$ | Binned differential branching ratio of $B^+\to \rho^{+}\nu\bar\nu$ | `q2min`, `q2max` |
+| `dBR/dq2(B+->rhonunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \rho^{+}\nu\bar\nu)$ | Differential branching ratio of $B^+\to \rho^{+}\nu\bar\nu$ | `q2` |
+| `BR(B+->rhonunu)` | $\text{BR}(B^+\to \rho^{+}\nu\bar\nu)$ | Branching ratio of $B^+\to \rho^{+}\nu\bar\nu$ |  |
+| `<dBR/dq2>(B+->K*nunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^+\to K^{*+}\nu\bar\nu)$ | Binned differential branching ratio of $B^+\to K^{*+}\nu\bar\nu$ | `q2min`, `q2max` |
+| `dBR/dq2(B+->K*nunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to K^{*+}\nu\bar\nu)$ | Differential branching ratio of $B^+\to K^{*+}\nu\bar\nu$ | `q2` |
+| `BR(B+->K*nunu)` | $\text{BR}(B^+\to K^{*+}\nu\bar\nu)$ | Branching ratio of $B^+\to K^{*+}\nu\bar\nu$ |  |
 | `<dBR/dq2>(B0->pinunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to \pi^0\nu\bar\nu)$ | Binned differential branching ratio of $B^0\to \pi^0\nu\bar\nu$ | `q2min`, `q2max` |
 | `dBR/dq2(B0->pinunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \pi^0\nu\bar\nu)$ | Differential branching ratio of $B^0\to \pi^0\nu\bar\nu$ | `q2` |
 | `BR(B0->pinunu)` | $\text{BR}(B^0\to \pi^0\nu\bar\nu)$ | Branching ratio of $B^0\to \pi^0\nu\bar\nu$ |  |
+| `<dBR/dq2>(B+->Knunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^+\to K^+\nu\bar\nu)$ | Binned differential branching ratio of $B^+\to K^+\nu\bar\nu$ | `q2min`, `q2max` |
+| `dBR/dq2(B+->Knunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to K^+\nu\bar\nu)$ | Differential branching ratio of $B^+\to K^+\nu\bar\nu$ | `q2` |
+| `BR(B+->Knunu)` | $\text{BR}(B^+\to K^+\nu\bar\nu)$ | Branching ratio of $B^+\to K^+\nu\bar\nu$ |  |
+| `<dBR/dq2>(B0->Knunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^0\nu\bar\nu)$ | Binned differential branching ratio of $B^0\to K^0\nu\bar\nu$ | `q2min`, `q2max` |
+| `dBR/dq2(B0->Knunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0\nu\bar\nu)$ | Differential branching ratio of $B^0\to K^0\nu\bar\nu$ | `q2` |
+| `BR(B0->Knunu)` | $\text{BR}(B^0\to K^0\nu\bar\nu)$ | Branching ratio of $B^0\to K^0\nu\bar\nu$ |  |
+| `<dBR/dq2>(B+->pinunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^+\to \pi^+\nu\bar\nu)$ | Binned differential branching ratio of $B^+\to \pi^+\nu\bar\nu$ | `q2min`, `q2max` |
+| `dBR/dq2(B+->pinunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \pi^+\nu\bar\nu)$ | Differential branching ratio of $B^+\to \pi^+\nu\bar\nu$ | `q2` |
+| `BR(B+->pinunu)` | $\text{BR}(B^+\to \pi^+\nu\bar\nu)$ | Branching ratio of $B^+\to \pi^+\nu\bar\nu$ |  |
 | `DeltaM_s` | $\Delta M_s$ | Mass difference in the $B_s$-$\bar B_s$ system |  |
 | `DeltaM_d` | $\Delta M_d$ | Mass difference in the $B^0$-$\bar B^0$ system |  |
 | `a_fs_s` | $a_\text{fs}^s$ | CP asymmetry in flavour-specific $B_s$ decays |  |
@@ -630,10 +657,10 @@ e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 | `eps_K` | $\vert\epsilon_K\vert$ | Direct CP violation parameter in the $K^0$-$\bar K^0$ system |  |
 | `S_psiK` | $S_{\psi K_S}$ | Mixing induced CP asymmetry in $B^0\to J/\psi K_S$ |  |
 | `S_psiphi` | $S_{\psi\phi}$ | Mixing induced CP asymmetry in $B_s\to J/\psi \phi$ |  |
-| `ACP(B+->K*gamma)` | $A_{CP}(B^+\to K^{*+}\gamma)$ | Direct CP asymmetry of $B^+\to K^{*+}\gamma$ |  |
-| `ACP(B0->K*gamma)` | $A_{CP}(B^0\to K^{*0}\gamma)$ | Direct CP asymmetry of $B^0\to K^{*0}\gamma$ |  |
 | `BR(B+->K*gamma)` | $\text{BR}(B^+\to K^{*+}\gamma)$ | Branching ratio of $B^+\to K^{*+}\gamma$ |  |
 | `BR(B0->K*gamma)` | $\text{BR}(B^0\to K^{*0}\gamma)$ | Branching ratio of $B^0\to K^{*0}\gamma$ |  |
+| `ACP(B+->K*gamma)` | $A_{CP}(B^+\to K^{*+}\gamma)$ | Direct CP asymmetry of $B^+\to K^{*+}\gamma$ |  |
+| `ACP(B0->K*gamma)` | $A_{CP}(B^0\to K^{*0}\gamma)$ | Direct CP asymmetry of $B^0\to K^{*0}\gamma$ |  |
 | `ACP(Bs->phigamma)` | $A_{CP}(B_s\to \phi\gamma)$ | Direct CP asymmetry of $B_s\to \phi\gamma$ |  |
 | `BR(Bs->phigamma)` | $\overline{\text{BR}}(B_s\to \phi\gamma)$ | Time-integrated branching ratio of $B_s\to \phi\gamma$ |  |
 | `ADeltaGamma(Bs->phigamma)` | $A_{\Delta\Gamma}(B_s\to \phi\gamma)$ | Mass-eigenstate rate asymmetry in $B_s\to \phi\gamma$ |  |
@@ -644,24 +671,40 @@ e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 | `ACP(B->Xgamma)` | $A_\text{CP}(B\to X_{s+d}\gamma)$ | Direct CP asymmetry in $B\to X_{s+d}\gamma$ for $E_\gamma>1.6$ GeV |  |
 | `<dBR/dq2>(Lambdab->Lambdaee)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned differential branching ratio of $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
 | `dBR/dq2(Lambdab->Lambdaee)` | $\frac{d\text{BR}}{dq^2}(\Lambda_b\to\Lambda e^+e^-)$ | Differential branching ratio of $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
-| `<AFBl>(Lambdab->Lambdaee)` | $\langle A_\text{FB}^\ell\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
-| `AFBl(Lambdab->Lambdaee)` | $A_\text{FB}^\ell(\Lambda_b\to\Lambda e^+e^-)$ | Leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
-| `<AFBlh>(Lambdab->Lambdaee)` | $\langle A_\text{FB}^{\ell h}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
-| `AFBlh(Lambdab->Lambdaee)` | $A_\text{FB}^{\ell h}(\Lambda_b\to\Lambda e^+e^-)$ | Lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
 | `<FL>(Lambdab->Lambdaee)` | $\langle F_L\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned longitudinal polarization fraction in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
 | `FL(Lambdab->Lambdaee)` | $F_L(\Lambda_b\to\Lambda e^+e^-)$ | Longitudinal polarization fraction in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `<AFBl>(Lambdab->Lambdaee)` | $\langle A_\text{FB}^\ell\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `AFBl(Lambdab->Lambdaee)` | $A_\text{FB}^\ell(\Lambda_b\to\Lambda e^+e^-)$ | Leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
 | `<AFBh>(Lambdab->Lambdaee)` | $\langle A_\text{FB}^h\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned hadronic forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
 | `AFBh(Lambdab->Lambdaee)` | $A_\text{FB}^h(\Lambda_b\to\Lambda e^+e^-)$ | Hadronic forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `<AFBlh>(Lambdab->Lambdaee)` | $\langle A_\text{FB}^{\ell h}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `AFBlh(Lambdab->Lambdaee)` | $A_\text{FB}^{\ell h}(\Lambda_b\to\Lambda e^+e^-)$ | Lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
 | `<dBR/dq2>(Lambdab->Lambdamumu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned differential branching ratio of $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
 | `dBR/dq2(Lambdab->Lambdamumu)` | $\frac{d\text{BR}}{dq^2}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Differential branching ratio of $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
-| `<AFBl>(Lambdab->Lambdamumu)` | $\langle A_\text{FB}^\ell\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
-| `AFBl(Lambdab->Lambdamumu)` | $A_\text{FB}^\ell(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
-| `<AFBlh>(Lambdab->Lambdamumu)` | $\langle A_\text{FB}^{\ell h}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
-| `AFBlh(Lambdab->Lambdamumu)` | $A_\text{FB}^{\ell h}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
 | `<FL>(Lambdab->Lambdamumu)` | $\langle F_L\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned longitudinal polarization fraction in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
 | `FL(Lambdab->Lambdamumu)` | $F_L(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Longitudinal polarization fraction in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `<AFBl>(Lambdab->Lambdamumu)` | $\langle A_\text{FB}^\ell\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `AFBl(Lambdab->Lambdamumu)` | $A_\text{FB}^\ell(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
 | `<AFBh>(Lambdab->Lambdamumu)` | $\langle A_\text{FB}^h\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned hadronic forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
 | `AFBh(Lambdab->Lambdamumu)` | $A_\text{FB}^h(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Hadronic forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `<AFBlh>(Lambdab->Lambdamumu)` | $\langle A_\text{FB}^{\ell h}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `AFBlh(Lambdab->Lambdamumu)` | $A_\text{FB}^{\ell h}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `<BR>(B->Xsee)` | $\langle \text{BR} \rangle(B\to X_se^+e^-)$ | Binned branching ratio of $B\to X_se^+e^-$ | `q2min`, `q2max` |
+| `dBR/dq2(B->Xsee)` | $\frac{d\text{BR}}{dq^2}(B\to X_se^+e^-)$ | Differential branching ratio of $B\to X_se^+e^-$ | `q2` |
+| `<BR>(B->Xdee)` | $\langle \text{BR} \rangle(B\to X_de^+e^-)$ | Binned branching ratio of $B\to X_de^+e^-$ | `q2min`, `q2max` |
+| `dBR/dq2(B->Xdee)` | $\frac{d\text{BR}}{dq^2}(B\to X_de^+e^-)$ | Differential branching ratio of $B\to X_de^+e^-$ | `q2` |
+| `<BR>(B->Xsmumu)` | $\langle \text{BR} \rangle(B\to X_s\mu^+\mu^-)$ | Binned branching ratio of $B\to X_s\mu^+\mu^-$ | `q2min`, `q2max` |
+| `dBR/dq2(B->Xsmumu)` | $\frac{d\text{BR}}{dq^2}(B\to X_s\mu^+\mu^-)$ | Differential branching ratio of $B\to X_s\mu^+\mu^-$ | `q2` |
+| `<BR>(B->Xdmumu)` | $\langle \text{BR} \rangle(B\to X_d\mu^+\mu^-)$ | Binned branching ratio of $B\to X_d\mu^+\mu^-$ | `q2min`, `q2max` |
+| `dBR/dq2(B->Xdmumu)` | $\frac{d\text{BR}}{dq^2}(B\to X_d\mu^+\mu^-)$ | Differential branching ratio of $B\to X_d\mu^+\mu^-$ | `q2` |
+| `<BR>(B->Xstautau)` | $\langle \text{BR} \rangle(B\to X_s\tau^+\tau^-)$ | Binned branching ratio of $B\to X_s\tau^+\tau^-$ | `q2min`, `q2max` |
+| `dBR/dq2(B->Xstautau)` | $\frac{d\text{BR}}{dq^2}(B\to X_s\tau^+\tau^-)$ | Differential branching ratio of $B\to X_s\tau^+\tau^-$ | `q2` |
+| `<BR>(B->Xdtautau)` | $\langle \text{BR} \rangle(B\to X_d\tau^+\tau^-)$ | Binned branching ratio of $B\to X_d\tau^+\tau^-$ | `q2min`, `q2max` |
+| `dBR/dq2(B->Xdtautau)` | $\frac{d\text{BR}}{dq^2}(B\to X_d\tau^+\tau^-)$ | Differential branching ratio of $B\to X_d\tau^+\tau^-$ | `q2` |
+| `<BR>(B->Xsll)` | $\langle \text{BR} \rangle(B\to X_s\ell^+\ell^-)$ | Binned branching ratio of $B\to X_s\ell^+\ell^-$ | `q2min`, `q2max` |
+| `dBR/dq2(B->Xsll)` | $\frac{d\text{BR}}{dq^2}(B\to X_s\ell^+\ell^-)$ | Differential branching ratio of $B\to X_s\ell^+\ell^-$ | `q2` |
+| `<BR>(B->Xdll)` | $\langle \text{BR} \rangle(B\to X_d\ell^+\ell^-)$ | Binned branching ratio of $B\to X_d\ell^+\ell^-$ | `q2min`, `q2max` |
+| `dBR/dq2(B->Xdll)` | $\frac{d\text{BR}}{dq^2}(B\to X_d\ell^+\ell^-)$ | Differential branching ratio of $B\to X_d\ell^+\ell^-$ | `q2` |
 | `BR(K+->pinunu)` | $\text{BR}(K^+\to\pi^+\nu\bar\nu)$ | Branching ratio of $K^+\to\pi^+\nu\bar\nu$ |  |
 | `BR(KL->pinunu)` | $\text{BR}(K_L\to\pi^0\nu\bar\nu)$ | Branching ratio of $K_L\to\pi^0\nu\bar\nu$ |  |
 | `BR(K+->pienu)` | $\text{BR}(K^+\to \pi^0e^+\nu_e)$ | Total branching ratio of $K^+\to \pi^0e^+\nu_e$ |  |
@@ -674,9 +717,9 @@ e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 | `BR(K+->munu)` | $\text{BR}(K^+\to \mu^+\nu_\mu)$ | Branching ratio of $K^+\to \mu^+\nu_\mu(\gamma)$ |  |
 | `Remu(K+->lnu)` | $R_{e\mu}(K^+\to \ell^+\nu)$ | Ratio of branching ratios of $K^+\to e^+\nu_e$ and $K^+\to \mu^+\nu_\mu$ |  |
 | `BR(pi+->enu)` | $\text{BR}(\pi^+\to e^+\nu)$ | Branching ratio of $\pi^+\to e^+\nu_e(\gamma)$ |  |
-| `BR(Ds->munu)` | $\text{BR}(D_s\to \mu^+\nu_\mu)$ | Branching ratio of $D_s\to \mu^+\nu_\mu$ |  |
-| `BR(Ds->enu)` | $\text{BR}(D_s\to e^+\nu_e)$ | Branching ratio of $D_s\to e^+\nu_e$ |  |
 | `BR(Ds->taunu)` | $\text{BR}(D_s\to \tau^+\nu_\tau)$ | Branching ratio of $D_s\to \tau^+\nu_\tau$ |  |
-| `BR(D+->munu)` | $\text{BR}(D^+\to \mu^+\nu_\mu)$ | Branching ratio of $D^+\to \mu^+\nu_\mu$ |  |
-| `BR(D+->enu)` | $\text{BR}(D^+\to e^+\nu_e)$ | Branching ratio of $D^+\to e^+\nu_e$ |  |
+| `BR(Ds->enu)` | $\text{BR}(D_s\to e^+\nu_e)$ | Branching ratio of $D_s\to e^+\nu_e$ |  |
+| `BR(Ds->munu)` | $\text{BR}(D_s\to \mu^+\nu_\mu)$ | Branching ratio of $D_s\to \mu^+\nu_\mu$ |  |
 | `BR(D+->taunu)` | $\text{BR}(D^+\to \tau^+\nu_\tau)$ | Branching ratio of $D^+\to \tau^+\nu_\tau$ |  |
+| `BR(D+->enu)` | $\text{BR}(D^+\to e^+\nu_e)$ | Branching ratio of $D^+\to e^+\nu_e$ |  |
+| `BR(D+->munu)` | $\text{BR}(D^+\to \mu^+\nu_\mu)$ | Branching ratio of $D^+\to \mu^+\nu_\mu$ |  |
