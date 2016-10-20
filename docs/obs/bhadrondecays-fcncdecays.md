@@ -118,14 +118,6 @@ a scalar observable).
 | `BR(B+->pietau)` | $\text{BR}(B^-\to \pi^- e^+\tau^-)$ | Total branching ratio of $B^-\to \pi^- e^+\tau^-$ |  |
 
 
-### $B^0\to K^0\mu^+ \mu^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `<Rtaumu>(B0->Kll)` | $\langle R_{\tau \mu} \rangle(B^0\to K^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^0\tau^+ \tau^-$ and $B^0\to K^0\mu^+ \mu^-$ | `q2min`, `q2max` |
-
-
 ### $B^0\to K^0\mu^+\mu^-$
 
 {: class="table"}
@@ -134,6 +126,8 @@ a scalar observable).
 | `<ACP>(B0->Kmumu)` | $\langle A_\text{CP}\rangle(B^0\to K^0\mu^+\mu^-)$ | Binned Direct CP asymmetry in $B^0\to K^0\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<AFB>(B0->Kmumu)` | $\langle A_\text{FB}\rangle(B^0\to K^0\mu^+\mu^-)$ | Binned forward-backward asymmetry in $B^0\to K^0\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<FH>(B0->Kmumu)` | $\langle F_H\rangle(B^0\to K^0\mu^+\mu^-)$ | Binned flat term in $B^0\to K^0\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<Rmue>(B0->Kll)` | $\langle R_{\mu e} \rangle(B^0\to K^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^0\mu^+ \mu^-$ and $B^0\to K^0e^+ e^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B0->Kll)` | $\langle R_{\tau \mu} \rangle(B^0\to K^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^0\tau^+ \tau^-$ and $B^0\to K^0\mu^+ \mu^-$ | `q2min`, `q2max` |
 | `<dBR/dq2>(B0->Kmumu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^0\mu^+\mu^-)$ | Binned differential branching ratio of $B^0\to K^0\mu^+\mu^-$ | `q2min`, `q2max` |
 | `ACP(B0->Kmumu)` | $A_\text{CP}(B^0\to K^0\mu^+\mu^-)$ | Direct CP asymmetry in $B^0\to K^0\mu^+\mu^-$ | `q2` |
 | `AFB(B0->Kmumu)` | $A_\text{FB}(B^0\to K^0\mu^+\mu^-)$ | Forward-backward asymmetry in $B^0\to K^0\mu^+\mu^-$ | `q2` |
@@ -149,19 +143,12 @@ a scalar observable).
 | `<ACP>(B0->Ktautau)` | $\langle A_\text{CP}\rangle(B^0\to K^0\tau^+\tau^-)$ | Binned Direct CP asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<AFB>(B0->Ktautau)` | $\langle A_\text{FB}\rangle(B^0\to K^0\tau^+\tau^-)$ | Binned forward-backward asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<FH>(B0->Ktautau)` | $\langle F_H\rangle(B^0\to K^0\tau^+\tau^-)$ | Binned flat term in $B^0\to K^0\tau^+\tau^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B0->Kll)` | $\langle R_{\tau \mu} \rangle(B^0\to K^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^0\tau^+ \tau^-$ and $B^0\to K^0\mu^+ \mu^-$ | `q2min`, `q2max` |
 | `<dBR/dq2>(B0->Ktautau)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^0\tau^+\tau^-)$ | Binned differential branching ratio of $B^0\to K^0\tau^+\tau^-$ | `q2min`, `q2max` |
 | `ACP(B0->Ktautau)` | $A_\text{CP}(B^0\to K^0\tau^+\tau^-)$ | Direct CP asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2` |
 | `AFB(B0->Ktautau)` | $A_\text{FB}(B^0\to K^0\tau^+\tau^-)$ | Forward-backward asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2` |
 | `FH(B0->Ktautau)` | $F_H(B^0\to K^0\tau^+\tau^-)$ | Flat term in $B^0\to K^0\tau^+\tau^-$ | `q2` |
 | `dBR/dq2(B0->Ktautau)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0\tau^+\tau^-)$ | Differential branching ratio of $B^0\to K^0\tau^+\tau^-$ | `q2` |
-
-
-### $B^0\to K^0e^+ e^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `<Rmue>(B0->Kll)` | $\langle R_{\mu e} \rangle(B^0\to K^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^0\mu^+ \mu^-$ and $B^0\to K^0e^+ e^-$ | `q2min`, `q2max` |
 
 
 ### $B^0\to K^0e^+e^-$
@@ -172,19 +159,12 @@ a scalar observable).
 | `<ACP>(B0->Kee)` | $\langle A_\text{CP}\rangle(B^0\to K^0e^+e^-)$ | Binned Direct CP asymmetry in $B^0\to K^0e^+e^-$ | `q2min`, `q2max` |
 | `<AFB>(B0->Kee)` | $\langle A_\text{FB}\rangle(B^0\to K^0e^+e^-)$ | Binned forward-backward asymmetry in $B^0\to K^0e^+e^-$ | `q2min`, `q2max` |
 | `<FH>(B0->Kee)` | $\langle F_H\rangle(B^0\to K^0e^+e^-)$ | Binned flat term in $B^0\to K^0e^+e^-$ | `q2min`, `q2max` |
+| `<Rmue>(B0->Kll)` | $\langle R_{\mu e} \rangle(B^0\to K^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^0\mu^+ \mu^-$ and $B^0\to K^0e^+ e^-$ | `q2min`, `q2max` |
 | `<dBR/dq2>(B0->Kee)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^0e^+e^-)$ | Binned differential branching ratio of $B^0\to K^0e^+e^-$ | `q2min`, `q2max` |
 | `ACP(B0->Kee)` | $A_\text{CP}(B^0\to K^0e^+e^-)$ | Direct CP asymmetry in $B^0\to K^0e^+e^-$ | `q2` |
 | `AFB(B0->Kee)` | $A_\text{FB}(B^0\to K^0e^+e^-)$ | Forward-backward asymmetry in $B^0\to K^0e^+e^-$ | `q2` |
 | `FH(B0->Kee)` | $F_H(B^0\to K^0e^+e^-)$ | Flat term in $B^0\to K^0e^+e^-$ | `q2` |
 | `dBR/dq2(B0->Kee)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0e^+e^-)$ | Differential branching ratio of $B^0\to K^0e^+e^-$ | `q2` |
-
-
-### $B^\pm\to K^\pm \mu^+ \mu^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `<Rtaumu>(B+->Kll)` | $\langle R_{\tau \mu} \rangle(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of partial branching ratios of $B^\pm\to K^\pm \tau^+ \tau^-$ and $B^\pm\to K^\pm \mu^+ \mu^-$ | `q2min`, `q2max` |
 
 
 ### $B^\pm\to K^\pm \mu^+\mu^-$
@@ -195,6 +175,8 @@ a scalar observable).
 | `<ACP>(B+->Kmumu)` | $\langle A_\text{CP}\rangle(B^\pm\to K^\pm \mu^+\mu^-)$ | Binned Direct CP asymmetry in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2min`, `q2max` |
 | `<AFB>(B+->Kmumu)` | $\langle A_\text{FB}\rangle(B^\pm\to K^\pm \mu^+\mu^-)$ | Binned forward-backward asymmetry in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2min`, `q2max` |
 | `<FH>(B+->Kmumu)` | $\langle F_H\rangle(B^\pm\to K^\pm \mu^+\mu^-)$ | Binned flat term in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<Rmue>(B+->Kll)` | $\langle R_{\mu e} \rangle(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of partial branching ratios of $B^\pm\to K^\pm \mu^+ \mu^-$ and $B^\pm\to K^\pm e^+ e^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B+->Kll)` | $\langle R_{\tau \mu} \rangle(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of partial branching ratios of $B^\pm\to K^\pm \tau^+ \tau^-$ and $B^\pm\to K^\pm \mu^+ \mu^-$ | `q2min`, `q2max` |
 | `<dBR/dq2>(B+->Kmumu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^\pm\to K^\pm \mu^+\mu^-)$ | Binned differential branching ratio of $B^\pm\to K^\pm \mu^+\mu^-$ | `q2min`, `q2max` |
 | `ACP(B+->Kmumu)` | $A_\text{CP}(B^\pm\to K^\pm \mu^+\mu^-)$ | Direct CP asymmetry in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2` |
 | `AFB(B+->Kmumu)` | $A_\text{FB}(B^\pm\to K^\pm \mu^+\mu^-)$ | Forward-backward asymmetry in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2` |
@@ -210,19 +192,12 @@ a scalar observable).
 | `<ACP>(B+->Ktautau)` | $\langle A_\text{CP}\rangle(B^\pm\to K^\pm \tau^+\tau^-)$ | Binned Direct CP asymmetry in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
 | `<AFB>(B+->Ktautau)` | $\langle A_\text{FB}\rangle(B^\pm\to K^\pm \tau^+\tau^-)$ | Binned forward-backward asymmetry in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
 | `<FH>(B+->Ktautau)` | $\langle F_H\rangle(B^\pm\to K^\pm \tau^+\tau^-)$ | Binned flat term in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B+->Kll)` | $\langle R_{\tau \mu} \rangle(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of partial branching ratios of $B^\pm\to K^\pm \tau^+ \tau^-$ and $B^\pm\to K^\pm \mu^+ \mu^-$ | `q2min`, `q2max` |
 | `<dBR/dq2>(B+->Ktautau)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^\pm\to K^\pm \tau^+\tau^-)$ | Binned differential branching ratio of $B^\pm\to K^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
 | `ACP(B+->Ktautau)` | $A_\text{CP}(B^\pm\to K^\pm \tau^+\tau^-)$ | Direct CP asymmetry in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
 | `AFB(B+->Ktautau)` | $A_\text{FB}(B^\pm\to K^\pm \tau^+\tau^-)$ | Forward-backward asymmetry in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
 | `FH(B+->Ktautau)` | $F_H(B^\pm\to K^\pm \tau^+\tau^-)$ | Flat term in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
 | `dBR/dq2(B+->Ktautau)` | $\frac{d\text{BR}}{dq^2}(B^\pm\to K^\pm \tau^+\tau^-)$ | Differential branching ratio of $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
-
-
-### $B^\pm\to K^\pm e^+ e^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `<Rmue>(B+->Kll)` | $\langle R_{\mu e} \rangle(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of partial branching ratios of $B^\pm\to K^\pm \mu^+ \mu^-$ and $B^\pm\to K^\pm e^+ e^-$ | `q2min`, `q2max` |
 
 
 ### $B^\pm\to K^\pm e^+e^-$
@@ -233,6 +208,7 @@ a scalar observable).
 | `<ACP>(B+->Kee)` | $\langle A_\text{CP}\rangle(B^\pm\to K^\pm e^+e^-)$ | Binned Direct CP asymmetry in $B^\pm\to K^\pm e^+e^-$ | `q2min`, `q2max` |
 | `<AFB>(B+->Kee)` | $\langle A_\text{FB}\rangle(B^\pm\to K^\pm e^+e^-)$ | Binned forward-backward asymmetry in $B^\pm\to K^\pm e^+e^-$ | `q2min`, `q2max` |
 | `<FH>(B+->Kee)` | $\langle F_H\rangle(B^\pm\to K^\pm e^+e^-)$ | Binned flat term in $B^\pm\to K^\pm e^+e^-$ | `q2min`, `q2max` |
+| `<Rmue>(B+->Kll)` | $\langle R_{\mu e} \rangle(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of partial branching ratios of $B^\pm\to K^\pm \mu^+ \mu^-$ and $B^\pm\to K^\pm e^+ e^-$ | `q2min`, `q2max` |
 | `<dBR/dq2>(B+->Kee)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^\pm\to K^\pm e^+e^-)$ | Binned differential branching ratio of $B^\pm\to K^\pm e^+e^-$ | `q2min`, `q2max` |
 | `ACP(B+->Kee)` | $A_\text{CP}(B^\pm\to K^\pm e^+e^-)$ | Direct CP asymmetry in $B^\pm\to K^\pm e^+e^-$ | `q2` |
 | `AFB(B+->Kee)` | $A_\text{FB}(B^\pm\to K^\pm e^+e^-)$ | Forward-backward asymmetry in $B^\pm\to K^\pm e^+e^-$ | `q2` |
@@ -380,14 +356,6 @@ a scalar observable).
 
 ## $B\to V\ell^+\ell^-$
 
-### $B^+\to K^{\ast +}\mu^+ \mu^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `<Rtaumu>(B+->K*ll)` | $\langle R_{\tau \mu} \rangle(B^+\to K^{\ast +}\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^+\to K^{\ast +}\tau^+ \tau^-$ and $B^+\to K^{\ast +}\mu^+ \mu^-$ | `q2min`, `q2max` |
-
-
 ### $B^+\to K^{\ast +}\mu^+\mu^-$
 
 {: class="table"}
@@ -411,6 +379,8 @@ a scalar observable).
 | `<P5p>(B+->K*mumu)` | $\langle P_5^\prime\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<P6p>(B+->K*mumu)` | $\langle P_6^\prime\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<P8p>(B+->K*mumu)` | $\langle P_8^\prime\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<Rmue>(B+->K*ll)` | $\langle R_{\mu e} \rangle(B^+\to K^{\ast +}\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^+\to K^{\ast +}\mu^+ \mu^-$ and $B^+\to K^{\ast +}e^+ e^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B+->K*ll)` | $\langle R_{\tau \mu} \rangle(B^+\to K^{\ast +}\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^+\to K^{\ast +}\tau^+ \tau^-$ and $B^+\to K^{\ast +}\mu^+ \mu^-$ | `q2min`, `q2max` |
 | `<S3>(B+->K*mumu)` | $\langle S_3\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S4>(B+->K*mumu)` | $\langle S_4\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S5>(B+->K*mumu)` | $\langle S_5\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
@@ -468,6 +438,7 @@ a scalar observable).
 | `<P5p>(B+->K*tautau)` | $\langle P_5^\prime\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<P6p>(B+->K*tautau)` | $\langle P_6^\prime\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<P8p>(B+->K*tautau)` | $\langle P_8^\prime\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B+->K*ll)` | $\langle R_{\tau \mu} \rangle(B^+\to K^{\ast +}\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^+\to K^{\ast +}\tau^+ \tau^-$ and $B^+\to K^{\ast +}\mu^+ \mu^-$ | `q2min`, `q2max` |
 | `<S3>(B+->K*tautau)` | $\langle S_3\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S4>(B+->K*tautau)` | $\langle S_4\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S5>(B+->K*tautau)` | $\langle S_5\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
@@ -502,14 +473,6 @@ a scalar observable).
 | `dBR/dq2(B+->K*tautau)` | $\frac{d\text{BR}}{dq^2}(B^+\to K^{\ast +}\tau^+\tau^-)$ | Differential branching ratio of $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 
 
-### $B^+\to K^{\ast +}e^+ e^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `<Rmue>(B+->K*ll)` | $\langle R_{\mu e} \rangle(B^+\to K^{\ast +}\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^+\to K^{\ast +}\mu^+ \mu^-$ and $B^+\to K^{\ast +}e^+ e^-$ | `q2min`, `q2max` |
-
-
 ### $B^+\to K^{\ast +}e^+e^-$
 
 {: class="table"}
@@ -533,6 +496,7 @@ a scalar observable).
 | `<P5p>(B+->K*ee)` | $\langle P_5^\prime\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<P6p>(B+->K*ee)` | $\langle P_6^\prime\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<P8p>(B+->K*ee)` | $\langle P_8^\prime\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
+| `<Rmue>(B+->K*ll)` | $\langle R_{\mu e} \rangle(B^+\to K^{\ast +}\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^+\to K^{\ast +}\mu^+ \mu^-$ and $B^+\to K^{\ast +}e^+ e^-$ | `q2min`, `q2max` |
 | `<S3>(B+->K*ee)` | $\langle S_3\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<S4>(B+->K*ee)` | $\langle S_4\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<S5>(B+->K*ee)` | $\langle S_5\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
@@ -663,14 +627,6 @@ a scalar observable).
 | `BR(B+->rhoetau)` | $\text{BR}(B^-\to \rho^{-} e^+\tau^-)$ | Total branching ratio of $B^-\to \rho^{-} e^+\tau^-$ |  |
 
 
-### $B^0\to K^{\ast 0}\mu^+ \mu^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `<Rtaumu>(B0->K*ll)` | $\langle R_{\tau \mu} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^{\ast 0}\tau^+ \tau^-$ and $B^0\to K^{\ast 0}\mu^+ \mu^-$ | `q2min`, `q2max` |
-
-
 ### $B^0\to K^{\ast 0}\mu^+\mu^-$
 
 {: class="table"}
@@ -694,6 +650,8 @@ a scalar observable).
 | `<P5p>(B0->K*mumu)` | $\langle P_5^\prime\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<P6p>(B0->K*mumu)` | $\langle P_6^\prime\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<P8p>(B0->K*mumu)` | $\langle P_8^\prime\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<Rmue>(B0->K*ll)` | $\langle R_{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^{\ast 0}\mu^+ \mu^-$ and $B^0\to K^{\ast 0}e^+ e^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B0->K*ll)` | $\langle R_{\tau \mu} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^{\ast 0}\tau^+ \tau^-$ and $B^0\to K^{\ast 0}\mu^+ \mu^-$ | `q2min`, `q2max` |
 | `<S3>(B0->K*mumu)` | $\langle S_3\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S4>(B0->K*mumu)` | $\langle S_4\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S5>(B0->K*mumu)` | $\langle S_5\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
@@ -751,6 +709,7 @@ a scalar observable).
 | `<P5p>(B0->K*tautau)` | $\langle P_5^\prime\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<P6p>(B0->K*tautau)` | $\langle P_6^\prime\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<P8p>(B0->K*tautau)` | $\langle P_8^\prime\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B0->K*ll)` | $\langle R_{\tau \mu} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^{\ast 0}\tau^+ \tau^-$ and $B^0\to K^{\ast 0}\mu^+ \mu^-$ | `q2min`, `q2max` |
 | `<S3>(B0->K*tautau)` | $\langle S_3\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S4>(B0->K*tautau)` | $\langle S_4\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S5>(B0->K*tautau)` | $\langle S_5\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
@@ -785,14 +744,6 @@ a scalar observable).
 | `dBR/dq2(B0->K*tautau)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Differential branching ratio of $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 
 
-### $B^0\to K^{\ast 0}e^+ e^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `<Rmue>(B0->K*ll)` | $\langle R_{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^{\ast 0}\mu^+ \mu^-$ and $B^0\to K^{\ast 0}e^+ e^-$ | `q2min`, `q2max` |
-
-
 ### $B^0\to K^{\ast 0}e^+e^-$
 
 {: class="table"}
@@ -816,6 +767,7 @@ a scalar observable).
 | `<P5p>(B0->K*ee)` | $\langle P_5^\prime\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<P6p>(B0->K*ee)` | $\langle P_6^\prime\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<P8p>(B0->K*ee)` | $\langle P_8^\prime\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
+| `<Rmue>(B0->K*ll)` | $\langle R_{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Ratio of partial branching ratios of $B^0\to K^{\ast 0}\mu^+ \mu^-$ and $B^0\to K^{\ast 0}e^+ e^-$ | `q2min`, `q2max` |
 | `<S3>(B0->K*ee)` | $\langle S_3\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<S4>(B0->K*ee)` | $\langle S_4\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<S5>(B0->K*ee)` | $\langle S_5\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
@@ -856,6 +808,7 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `<FL>(Bs->phimumu)` | $\langle \overline{F_L}\rangle(B_s\to \phi \mu^+\mu^-)$ | Binned Time-averaged longitudinal polarization fraction in $B_s\to \phi \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<Rmue>(Bs->phill)` | $\langle R_{\mu e} \rangle(B_s\to \phi \ell^+\ell^-)$ | Ratio of partial branching ratios of $B_s\to \phi \mu^+ \mu^-$ and $B_s\to \phi e^+ e^-$ | `q2min`, `q2max` |
 | `<Rtaumu>(Bs->phill)` | $\langle R_{\tau \mu} \rangle(B_s\to \phi \ell^+\ell^-)$ | Ratio of partial branching ratios of $B_s\to \phi \tau^+ \tau^-$ and $B_s\to \phi \mu^+ \mu^-$ | `q2min`, `q2max` |
 | `<S3>(Bs->phimumu)` | $\langle \overline{S_3}\rangle(B_s\to \phi \mu^+\mu^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to \phi \mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S4>(Bs->phimumu)` | $\langle \overline{S_4}\rangle(B_s\to \phi \mu^+\mu^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to \phi \mu^+\mu^-$ | `q2min`, `q2max` |
@@ -874,6 +827,7 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `<FL>(Bs->phitautau)` | $\langle \overline{F_L}\rangle(B_s\to \phi \tau^+\tau^-)$ | Binned Time-averaged longitudinal polarization fraction in $B_s\to \phi \tau^+\tau^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(Bs->phill)` | $\langle R_{\tau \mu} \rangle(B_s\to \phi \ell^+\ell^-)$ | Ratio of partial branching ratios of $B_s\to \phi \tau^+ \tau^-$ and $B_s\to \phi \mu^+ \mu^-$ | `q2min`, `q2max` |
 | `<S3>(Bs->phitautau)` | $\langle \overline{S_3}\rangle(B_s\to \phi \tau^+\tau^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to \phi \tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S4>(Bs->phitautau)` | $\langle \overline{S_4}\rangle(B_s\to \phi \tau^+\tau^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to \phi \tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S7>(Bs->phitautau)` | $\langle \overline{S_7}\rangle(B_s\to \phi \tau^+\tau^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to \phi \tau^+\tau^-$ | `q2min`, `q2max` |
