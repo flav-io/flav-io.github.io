@@ -1,26 +1,45 @@
 #!/usr/bin/env python3
 
+# This script autogenerates the observables.md and subpages as well as the
+# parameters.md
+
 import flavio
 import os
 from collections import OrderedDict
 
 os.chdir('docs')
 
-with open('observables.md', 'w') as f:
-    f.write("""---
+# this is displayed at the top of every observable subpage
+observables_header_table = """
+
+The tables below have been generated automatically from the observables currently
+implemented in flavio. The first column is the string name that must  be used
+when calling functions such as `flavio.sm_prediction`. The last column lists
+the arguments the observable depends on (which can also be empty in case of
+a scalar observable).
+
+"""
+
+# this is displayed at the top of the observables overview page
+observables_header = """---
 layout: default
 title: Observables
 ---
 
 # List of all observables
 
-The table below is an automatically generated list of all observables currently
-implemented in flavio. The first column is the string name that must  be used
-when calling functions such as `flavio.sm_prediction`. The last column lists
-the arguments the observable depends on (which can also be empty in case of
-a scalar observable).
+To display automatically generated tables with lists of all observables
+currently implemented in flavio, select a category below. See also the
+[notes on conventions](#some-general-notes-on-conventions) at the bottom
+of this page.
 
-Some general notes on conventions:
+## Categories
+
+"""
+
+# this is displayed at the bottom of the observables overview page
+observables_footer = """
+## Some general notes on conventions
 
 - Unless noted explicitly, branching ratios and angular observables always
 imply a *CP-average*. For instance, charged $B$ decay modes are always written as
@@ -43,18 +62,82 @@ e.g. for $A_\\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
 (see e.g. [arXiv:1506.03970](http://www.arxiv.org/abs/1506.03970)).
 - Lepton flavour $\ell$ always refers to an average of electron and muon modes.
 
+"""
 
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|\n""")
-    for name, instance in flavio.Observable.instances.items():
+# tree-like observable taxonomy as dictionary
+process_dict = flavio.Observable.taxonomy_dict()['Process']
+
+# make filename composed of letters only
+def make_filename(s):
+    return ''.join([x for x in s.lower() if x.isalpha()])
+
+# make table of observables
+def write_obs_table(obs_list, f):
+    f.write("""{: class="table"}\n""")
+    f.write("""| Name | Symbol | Description | Arguments |\n""")
+    f.write("""|------|--------|-------------|-----------|\n""")
+    for name in obs_list:
+        instance = flavio.Observable.get_instance(name)
         f.write('| `' + name + '` | ')
         f.write(instance.tex  + ' | ' + instance.description  + ' | ' )
         if instance.arguments is not None:
             f.write('`' + '`, `'.join(instance.arguments) + '`')
         f.write(' |\n')
+    f.write('\n\n')
+
+# walk the tree and write headings and tables recursively
+def recurse_categories(d, f, n):
+    if not any(d.values()):
+        write_obs_table(sorted(d.keys()), f)
+    else:
+        for k, v in sorted(d.items()):
+            if v:
+                f.write(n*'#' + ' ' + k + 2*'\n')
+                recurse_categories(v, f, n + 1)
+
+# count the leaves of the tree, i.e. nunmber of observables (with double-counting)
+def count_leaves(d, l=[]):
+    for k, v in d.items():
+        if v:
+            count_leaves(v, l)
+        else:
+            l.append(k)
+    return len(l)
+
+# add plural-'s' or not
+def plural_s(n):
+    if n>1:
+        return 's'
+    else:
+        return ''
+
+# write the observables overview page and subpages
+with open('observables.md', 'w') as f:
+    f.write(observables_header)
+    for k1, v1 in sorted(process_dict.items()):
+        f.write("\n\n### " + k1 + "\n\n")
+        for k2, v2 in sorted(v1.items()):
+            filename = 'obs/' + make_filename(k1) + '-' + make_filename(k2)
+            n_obs = count_leaves(v2, []) # number of observables per category
+            f.write("""\n- [""" + k2 + """]("""+filename+""".html) ("""+ str(n_obs) +""" observable""" + plural_s(n_obs) + """)\n""")
+            with open(filename + '.md', 'w') as f2:
+                f2.write("""---\nlayout: default\ntitle: Observables - """ + k1 + """ - """ + k2 + """\n---\n\n""")
+                f2.write("""# Observables / """ + k1 + " / " + k2 + "\n\n")
+                f2.write(observables_header_table)
+                # table of contents
+                f2.write("""
+
+{::options toc_levels="2" /}
+
+* TOC
+{:toc}
+
+""")
+                recurse_categories(v2, f2, 2)
+    f.write(observables_footer)
 
 
+# write the parameter list page
 with open('parameters.md', 'w') as f:
     f.write("""---
 layout: default
@@ -78,33 +161,3 @@ of the parameter.
         # f.write(flavio.default_parameters.get_constraint_string(name)  + ' | ')
         f.write(instance.description)
         f.write(' |\n')
-
-
-# with open('implementations.md', 'w') as f:
-#     f.write("""---
-# layout: default
-# title: Implementations
-# ---
-#
-# # List of all auxiliary quantities and their implementations
-#
-# """)
-#     auxf_sorted = OrderedDict(sorted(flavio.AuxiliaryQuantity.instances.items(), key=lambda t: t[0]))
-#     impl_sorted = OrderedDict(sorted(flavio.Implementation.instances.items(), key=lambda t: t[0]))
-#     for name, instance in auxf_sorted.items():
-#         f.write('\n### ')
-#         f.write('`' + name + '`\n')
-#         f.write(instance.description)
-#
-#         f.write("""
-#
-# {: class="table"}
-# | Implementation | Description |
-# |------|-------------|\n""")
-#
-#         for i_name, i_instance in impl_sorted.items():
-#             if i_instance.quantity != name:
-#                 continue
-#             f.write('| `' + i_name + '` | ')
-#             f.write(i_instance.description)
-#             f.write(' |\n')
