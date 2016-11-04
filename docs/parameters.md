@@ -368,9 +368,11 @@ of the parameter.
 | `c4_pi+munu` | $c_4^{(\pi)}(m_\mu)$ | Chiral perturbation theory coefficient in $\pi^+\to\mu^+\nu$ |
 | `deltaPcu` | $\delta P_{c,u}$ | Contributions to the $K^+\to\pi^+\nu\bar\nu$ amplitude not described by the dimension-6 effective Hamiltonian. |
 | `delta_BXdgamma` | $\delta_{bd\gamma}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders, interpolation, and non-perturbative effects in $B\to X_d\gamma$. The relative uncertainty is $1+\delta$. |
-| `delta_BXdll` | $\delta_{bdll}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_d\ell^+\ell^-$. The relative uncertainty is $1+\delta$. |
+| `delta_BXdll high` | $\delta_{bdll}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_d\ell^+\ell^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BXdll low` | $\delta_{bdll}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_d\ell^+\ell^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXsgamma` | $\delta_{bs\gamma}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders, interpolation, and non-perturbative effects in $B\to X_s\gamma$. The relative uncertainty is $1+\delta$. |
-| `delta_BXsll` | $\delta_{bsll}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\ell^+\ell^-$. The relative uncertainty is $1+\delta$. |
+| `delta_BXsll high` | $\delta_{bsll}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\ell^+\ell^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BXsll low` | $\delta_{bsll}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\ell^+\ell^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
 | `eta_cc_K0` | $\eta_{cc}$ | SM QCD correction factor for the charm contribution to $K^0$ mixing |
 | `eta_ct_K0` | $\eta_{ct}$ | SM QCD correction factor for the top-charm contribution to $K^0$ mixing |
 | `eta_tt_B0` | $\eta_B$ | SM QCD correction factor for $B^0$ mixing |
@@ -401,6 +403,8 @@ of the parameter.
 | `kappa_L_tilde` | $\tilde{\kappa}_L$ | Parameter $\kappa_L$ containing the hadronic form factor information needed for the $K_L\to\pi^0\nu\bar\nu$ branching ratio, determined assuming $V_{us}\equiv0.225$ |
 | `kappa_epsilon` | $\kappa_\epsilon$ | Correction factor for $\epsilon_K$ |
 | `kappa_plus_tilde` | $\tilde{\kappa}_+$ | Parameter $\kappa_+$ containing the hadronic form factor information needed for the $K^+\to\pi^+\nu\bar\nu$ branching ratio, determined assuming $V_{us}\equiv0.225$ |
+| `lambda_1` | $\lambda_1$ | Matrix element of $B$ meson kinetic energy operator |
+| `lambda_2` | $\lambda_2$ | Matrix element of $B$ meson magnetic moment operator |
 | `m_B*+` | $m_{B^{*+}}$ | $B^{*+}$ mass |
 | `m_B*0` | $m_{B^{*0}}$ | $B^{*0}$ mass |
 | `m_B+` | $m_{B^{+}}$ | $B^{+}$ mass |
