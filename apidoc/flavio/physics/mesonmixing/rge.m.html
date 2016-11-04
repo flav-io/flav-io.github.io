@@ -1058,6 +1058,7 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.rge.df2_rge_derivative">df2_rge_derivative</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.rge.gamma_df2">gamma_df2</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.rge.gamma_df2_array">gamma_df2_array</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.rge.gamma_df2_dict">gamma_df2_dict</a></li>
@@ -1128,7 +1129,7 @@ table {
     <span class="n">gamma</span><span class="p">[</span><span class="s1">&#39;LR&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="mi">203</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span> <span class="o">*</span> <span class="n">N</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span><span class="p">(</span><span class="mi">479</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span> <span class="o">+</span><span class="p">(</span><span class="mi">15</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">N</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span><span class="p">(</span><span class="mi">10</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">N</span> <span class="o">*</span> <span class="n">f</span> <span class="o">-</span><span class="p">(</span><span class="mi">22</span><span class="o">/</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">N</span><span class="p">))</span> <span class="o">*</span> <span class="n">f</span>
     <span class="k">return</span> <span class="n">gamma</span>
 
-<span class="k">def</span> <span class="nf">gamma_df2_array</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">gamma_df2_array</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">gamma_dict</span> <span class="o">=</span> <span class="n">gamma_df2_dict</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="n">a</span> <span class="o">=</span>  <span class="n">alpha_s</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
     <span class="c1"># C = alpha_s/(4pi) * ( C^0 + alpha_s/(4pi) * C^1 )</span>
@@ -1156,9 +1157,10 @@ table {
     <span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma_df2_array</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">gamma</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="n">mu</span>
 
+<span class="n">df2_rge_derivative</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">make_wilson_rge_derivative</span><span class="p">(</span><span class="n">gamma_df2_array</span><span class="p">)</span>
+
 <span class="k">def</span> <span class="nf">run_wc_df2</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">c_in</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
-    <span class="n">adm</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">:</span> <span class="n">gamma_df2_array</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">running</span><span class="o">.</span><span class="n">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">c_in</span><span class="p">,</span> <span class="n">running</span><span class="o">.</span><span class="n">make_wilson_rge_derivative</span><span class="p">(</span><span class="n">adm</span><span class="p">),</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">running</span><span class="o">.</span><span class="n">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">c_in</span><span class="p">,</span> <span class="n">df2_rge_derivative</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1185,6 +1187,27 @@ table {
       </div>
 
     <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.rge.df2_rge_derivative">
+    <p>def <span class="ident">df2_rge_derivative</span>(</p><p>nf)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.rge.df2_rge_derivative', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.rge.df2_rge_derivative" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">derivative_nf</span><span class="p">(</span><span class="n">nf</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="n">derivative</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       
   <div class="item">
     <div class="name def" id="flavio.physics.mesonmixing.rge.gamma_df2">
@@ -1215,7 +1238,7 @@ $$\frac{d}{d\mu} \vec C = \gamma^T \vec C / \mu \equiv \vec R$$</p></div>
       
   <div class="item">
     <div class="name def" id="flavio.physics.mesonmixing.rge.gamma_df2_array">
-    <p>def <span class="ident">gamma_df2_array</span>(</p><p>f, alpha_s)</p>
+    <p>def <span class="ident">gamma_df2_array</span>(</p><p>f, alpha_s, *args, **kwargs)</p>
     </div>
     
 
@@ -1224,7 +1247,7 @@ $$\frac{d}{d\mu} \vec C = \gamma^T \vec C / \mu \equiv \vec R$$</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.rge.gamma_df2_array', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.mesonmixing.rge.gamma_df2_array" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">gamma_df2_array</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">gamma_df2_array</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">gamma_dict</span> <span class="o">=</span> <span class="n">gamma_df2_dict</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="n">a</span> <span class="o">=</span>  <span class="n">alpha_s</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
     <span class="c1"># C = alpha_s/(4pi) * ( C^0 + alpha_s/(4pi) * C^1 )</span>
@@ -1318,8 +1341,7 @@ $$\frac{d}{d\mu} \vec C = \gamma^T \vec C / \mu \equiv \vec R$$</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.rge.run_wc_df2', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.mesonmixing.rge.run_wc_df2" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">run_wc_df2</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">c_in</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
-    <span class="n">adm</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">:</span> <span class="n">gamma_df2_array</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">running</span><span class="o">.</span><span class="n">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">c_in</span><span class="p">,</span> <span class="n">running</span><span class="o">.</span><span class="n">make_wilson_rge_derivative</span><span class="p">(</span><span class="n">adm</span><span class="p">),</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">running</span><span class="o">.</span><span class="n">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">c_in</span><span class="p">,</span> <span class="n">df2_rge_derivative</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">)</span>
 </pre></div>
 
   </div>

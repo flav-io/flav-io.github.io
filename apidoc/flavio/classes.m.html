@@ -1054,6 +1054,14 @@ table {
 
     </li>
 
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#flavio.classes.dicts">dicts</a></li>
+    <li class="mono"><a href="#flavio.classes.tree">tree</a></li>
+  </ul>
+
+    </li>
 
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
@@ -1151,6 +1159,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#flavio.classes.Observable.__init__">__init__</a></li>
+    <li class="mono"><a href="#flavio.classes.Observable.add_taxonomy">add_taxonomy</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.prediction_central">prediction_central</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.prediction_par">prediction_par</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.set_description">set_description</a></li>
@@ -1158,6 +1167,7 @@ table {
     <li class="mono"><a href="#flavio.classes.Observable.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.get_instance">get_instance</a></li>
+    <li class="mono"><a href="#flavio.classes.Observable.taxonomy_dict">taxonomy_dict</a></li>
   </ul>
 
         </li>
@@ -1247,7 +1257,7 @@ table {
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">config</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">flavio._parse_errors</span> <span class="kn">import</span> <span class="n">constraints_from_string</span><span class="p">,</span> <span class="n">convolve_distributions</span><span class="p">,</span> <span class="n">errors_from_string</span><span class="p">,</span> <span class="n">string_from_constraints</span>
@@ -1339,16 +1349,16 @@ table {
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="c1"># Here we have two ordered dictionaries. _constraints has the form</span>
-            <span class="c1"># { &lt;constraint1&gt;: [parameter1, parameter2, ...], &lt;constraint2&gt;: ...}</span>
+            <span class="c1"># Here we have two data structures. _constraints has the form</span>
+            <span class="c1"># [ (&lt;constraint1&gt;, [parameter1, parameter2, ...]), (&lt;constraint2&gt;, ...) ]</span>
             <span class="c1"># where the &lt;constraint&gt;s are instances of ProbabilityDistribution</span>
             <span class="c1"># and the parameters string names, while _parameters has the form</span>
             <span class="c1"># { parameter1: [(num1, &lt;constraint1&gt;)]} where num1 is 0 for a</span>
             <span class="c1"># univariate constraints and otherwise gives the position of</span>
             <span class="c1"># parameter1 in the multivariate vector.</span>
-            <span class="c1"># In summary, having these to dicts allow a bijective mapping between</span>
+            <span class="c1"># In summary, having this list and dictionary allow a bijective mapping between</span>
             <span class="c1"># constraints (that might apply to multiple parameters) and parameters.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
     <span class="nd">@property</span>
@@ -1368,7 +1378,7 @@ table {
                 <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraints</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
         <span class="c1"># populate the dictionaries defined in __init__</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">num</span><span class="p">,</span> <span class="n">constraint</span><span class="p">)]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the constraints on a parameter/observable by specifying a string</span>
@@ -1386,12 +1396,12 @@ table {
 
     <span class="k">def</span> <span class="nf">remove_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Remove all constraints on a parameter.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the central value of a parameter&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">parameter</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="c1"># return the num-th entry of the central value vector</span>
@@ -1405,7 +1415,7 @@ table {
         <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
 <span class="sd">        distributed according to the probability distributions applied.&quot;&quot;&quot;</span>
         <span class="c1"># first, generate random values for every single one of the constraints</span>
-        <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">]</span>
         <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># now, iterate over the parameters</span>
         <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -1416,7 +1426,7 @@ table {
             <span class="n">central_value</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
             <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">central_value</span>  <span class="c1"># step 1: p_r = c</span>
             <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
-                <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
                 <span class="c1"># step 1+i: p_r += r_i - c</span>
                 <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span> <span class="o">-</span> <span class="n">central_value</span>
         <span class="k">return</span> <span class="n">random_dict</span>
@@ -1448,7 +1458,7 @@ table {
 <span class="sd">          par_dict play no role.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
             <span class="k">def</span> <span class="nf">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
                 <span class="c1"># this function is required to get the central value for the</span>
                 <span class="c1"># excluded_parameters, consistently for univariate and multivariate</span>
@@ -1494,6 +1504,16 @@ table {
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
 
 
+<span class="k">def</span> <span class="nf">tree</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Tree data structure.</span>
+
+<span class="sd">    See https://gist.github.com/hrldcpr/2012250&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">dicts</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Turn tree into nested dict&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">dicts</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">t</span><span class="p">}</span>
+
 <span class="c1">########## Observable Class ##########</span>
 <span class="k">class</span> <span class="nc">Observable</span><span class="p">(</span><span class="n">NamedInstanceClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An Observable is something that can be measured experimentally and</span>
@@ -1501,6 +1521,8 @@ table {
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="s1">&#39;taxonomy&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">taxonomy</span> <span class="o">=</span> <span class="n">tree</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="n">arguments</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -1513,6 +1535,23 @@ table {
 
     <span class="k">def</span> <span class="nf">prediction_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">get_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_taxonomy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taxonomy_string</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a metadata taxonomy for the observable.</span>
+
+<span class="sd">        `taxonomy_string` has to be a string of the form</span>
+<span class="sd">        &#39;Category :: Subcategory :: Subsubcategory&#39;</span>
+<span class="sd">        etc. LaTeX code is allowed. One observable can also have multiple</span>
+<span class="sd">        taxonomies (e.g. &#39;Animal :: Cat&#39; and &#39;Pet :: Favourite Pet&#39;)&quot;&quot;&quot;</span>
+        <span class="n">taxonomy_list</span> <span class="o">=</span> <span class="n">taxonomy_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; :: &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">taxonomy</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">taxonomy_list</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">taxonomy_dict</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the hierarchical metadata taxonomy as a nested dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">dicts</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">taxonomy</span><span class="p">)</span>
 
 
 <span class="c1">########## AuxiliaryQuantity Class ##########</span>
@@ -1644,6 +1683,56 @@ table {
 
       </div>
 
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="flavio.classes.dicts">
+    <p>def <span class="ident">dicts</span>(</p><p>t)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Turn tree into nested dict</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.dicts', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.dicts" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">dicts</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Turn tree into nested dict&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">dicts</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">t</span><span class="p">}</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.classes.tree">
+    <p>def <span class="ident">tree</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Tree data structure.</p>
+<p>See https://gist.github.com/hrldcpr/2012250</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.tree', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.tree" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">tree</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Tree data structure.</span>
+
+<span class="sd">    See https://gist.github.com/hrldcpr/2012250&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
 
     <h2 class="section-title" id="header-classes">Classes</h2>
       
@@ -1927,16 +2016,16 @@ documentation.</p></div>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="c1"># Here we have two ordered dictionaries. _constraints has the form</span>
-            <span class="c1"># { &lt;constraint1&gt;: [parameter1, parameter2, ...], &lt;constraint2&gt;: ...}</span>
+            <span class="c1"># Here we have two data structures. _constraints has the form</span>
+            <span class="c1"># [ (&lt;constraint1&gt;, [parameter1, parameter2, ...]), (&lt;constraint2&gt;, ...) ]</span>
             <span class="c1"># where the &lt;constraint&gt;s are instances of ProbabilityDistribution</span>
             <span class="c1"># and the parameters string names, while _parameters has the form</span>
             <span class="c1"># { parameter1: [(num1, &lt;constraint1&gt;)]} where num1 is 0 for a</span>
             <span class="c1"># univariate constraints and otherwise gives the position of</span>
             <span class="c1"># parameter1 in the multivariate vector.</span>
-            <span class="c1"># In summary, having these to dicts allow a bijective mapping between</span>
+            <span class="c1"># In summary, having this list and dictionary allow a bijective mapping between</span>
             <span class="c1"># constraints (that might apply to multiple parameters) and parameters.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
     <span class="nd">@property</span>
@@ -1956,7 +2045,7 @@ documentation.</p></div>
                 <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraints</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
         <span class="c1"># populate the dictionaries defined in __init__</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">num</span><span class="p">,</span> <span class="n">constraint</span><span class="p">)]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the constraints on a parameter/observable by specifying a string</span>
@@ -1974,12 +2063,12 @@ documentation.</p></div>
 
     <span class="k">def</span> <span class="nf">remove_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Remove all constraints on a parameter.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the central value of a parameter&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">parameter</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="c1"># return the num-th entry of the central value vector</span>
@@ -1993,7 +2082,7 @@ documentation.</p></div>
         <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
 <span class="sd">        distributed according to the probability distributions applied.&quot;&quot;&quot;</span>
         <span class="c1"># first, generate random values for every single one of the constraints</span>
-        <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">]</span>
         <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># now, iterate over the parameters</span>
         <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -2004,7 +2093,7 @@ documentation.</p></div>
             <span class="n">central_value</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
             <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">central_value</span>  <span class="c1"># step 1: p_r = c</span>
             <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
-                <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
                 <span class="c1"># step 1+i: p_r += r_i - c</span>
                 <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span> <span class="o">-</span> <span class="n">central_value</span>
         <span class="k">return</span> <span class="n">random_dict</span>
@@ -2036,7 +2125,7 @@ documentation.</p></div>
 <span class="sd">          par_dict play no role.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
             <span class="k">def</span> <span class="nf">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
                 <span class="c1"># this function is required to get the central value for the</span>
                 <span class="c1"># excluded_parameters, consistently for univariate and multivariate</span>
@@ -2090,16 +2179,16 @@ documentation.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Constraints.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Constraints.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># Here we have two ordered dictionaries. _constraints has the form</span>
-        <span class="c1"># { &lt;constraint1&gt;: [parameter1, parameter2, ...], &lt;constraint2&gt;: ...}</span>
+        <span class="c1"># Here we have two data structures. _constraints has the form</span>
+        <span class="c1"># [ (&lt;constraint1&gt;, [parameter1, parameter2, ...]), (&lt;constraint2&gt;, ...) ]</span>
         <span class="c1"># where the &lt;constraint&gt;s are instances of ProbabilityDistribution</span>
         <span class="c1"># and the parameters string names, while _parameters has the form</span>
         <span class="c1"># { parameter1: [(num1, &lt;constraint1&gt;)]} where num1 is 0 for a</span>
         <span class="c1"># univariate constraints and otherwise gives the position of</span>
         <span class="c1"># parameter1 in the multivariate vector.</span>
-        <span class="c1"># In summary, having these to dicts allow a bijective mapping between</span>
+        <span class="c1"># In summary, having this list and dictionary allow a bijective mapping between</span>
         <span class="c1"># constraints (that might apply to multiple parameters) and parameters.</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 </pre></div>
 
@@ -2133,7 +2222,7 @@ documentation.</p></div>
             <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraints</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
     <span class="c1"># populate the dictionaries defined in __init__</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">num</span><span class="p">,</span> <span class="n">constraint</span><span class="p">)]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -2209,7 +2298,7 @@ obtained by generating N random values..</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the central value of a parameter&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">parameter</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># return the num-th entry of the central value vector</span>
@@ -2312,7 +2401,7 @@ constraint/probability distribution.</p>
 <span class="sd">      par_dict play no role.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
         <span class="k">def</span> <span class="nf">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
             <span class="c1"># this function is required to get the central value for the</span>
             <span class="c1"># excluded_parameters, consistently for univariate and multivariate</span>
@@ -2360,7 +2449,7 @@ distributed according to the probability distributions applied.</p></div>
     <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
 <span class="sd">    distributed according to the probability distributions applied.&quot;&quot;&quot;</span>
     <span class="c1"># first, generate random values for every single one of the constraints</span>
-    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">]</span>
     <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># now, iterate over the parameters</span>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -2371,7 +2460,7 @@ distributed according to the probability distributions applied.</p></div>
         <span class="n">central_value</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
         <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">central_value</span>  <span class="c1"># step 1: p_r = c</span>
         <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
             <span class="c1"># step 1+i: p_r += r_i - c</span>
             <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span> <span class="o">-</span> <span class="n">central_value</span>
     <span class="k">return</span> <span class="n">random_dict</span>
@@ -2397,7 +2486,7 @@ distributed according to the probability distributions applied.</p></div>
   <div id="source-flavio.classes.Constraints.remove_constraints" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">remove_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Remove all constraints on a parameter.&quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2884,7 +2973,7 @@ ProbabilityDistribution and <code>observables</code> is a list of either
             <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraints</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
     <span class="c1"># populate the dictionaries defined in __init__</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">num</span><span class="p">,</span> <span class="n">constraint</span><span class="p">)]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -2960,7 +3049,7 @@ obtained by generating N random values..</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the central value of a parameter&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">parameter</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># return the num-th entry of the central value vector</span>
@@ -3063,7 +3152,7 @@ constraint/probability distribution.</p>
 <span class="sd">      par_dict play no role.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
         <span class="k">def</span> <span class="nf">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
             <span class="c1"># this function is required to get the central value for the</span>
             <span class="c1"># excluded_parameters, consistently for univariate and multivariate</span>
@@ -3111,7 +3200,7 @@ distributed according to the probability distributions applied.</p></div>
     <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
 <span class="sd">    distributed according to the probability distributions applied.&quot;&quot;&quot;</span>
     <span class="c1"># first, generate random values for every single one of the constraints</span>
-    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">]</span>
     <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># now, iterate over the parameters</span>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -3122,7 +3211,7 @@ distributed according to the probability distributions applied.</p></div>
         <span class="n">central_value</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
         <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">central_value</span>  <span class="c1"># step 1: p_r = c</span>
         <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
             <span class="c1"># step 1+i: p_r += r_i - c</span>
             <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span> <span class="o">-</span> <span class="n">central_value</span>
     <span class="k">return</span> <span class="n">random_dict</span>
@@ -3148,7 +3237,7 @@ distributed according to the probability distributions applied.</p></div>
   <div id="source-flavio.classes.Measurement.remove_constraints" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">remove_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Remove all constraints on a parameter.&quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3550,6 +3639,8 @@ predicted theoretically.</p></div>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="s1">&#39;taxonomy&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">taxonomy</span> <span class="o">=</span> <span class="n">tree</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="n">arguments</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -3562,6 +3653,23 @@ predicted theoretically.</p></div>
 
     <span class="k">def</span> <span class="nf">prediction_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">get_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_taxonomy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taxonomy_string</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a metadata taxonomy for the observable.</span>
+
+<span class="sd">        `taxonomy_string` has to be a string of the form</span>
+<span class="sd">        &#39;Category :: Subcategory :: Subsubcategory&#39;</span>
+<span class="sd">        etc. LaTeX code is allowed. One observable can also have multiple</span>
+<span class="sd">        taxonomies (e.g. &#39;Animal :: Cat&#39; and &#39;Pet :: Favourite Pet&#39;)&quot;&quot;&quot;</span>
+        <span class="n">taxonomy_list</span> <span class="o">=</span> <span class="n">taxonomy_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; :: &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">taxonomy</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">taxonomy_list</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">taxonomy_dict</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the hierarchical metadata taxonomy as a nested dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">dicts</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">taxonomy</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3586,6 +3694,16 @@ predicted theoretically.</p></div>
 </div>
 
             </div>
+            <div class="item">
+            <p id="flavio.classes.Observable.taxonomy" class="name">var <span class="ident">taxonomy</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
           <h3>Static methods</h3>
             
   <div class="item">
@@ -3602,9 +3720,45 @@ predicted theoretically.</p></div>
   <div id="source-flavio.classes.Observable.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="s1">&#39;taxonomy&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">taxonomy</span> <span class="o">=</span> <span class="n">tree</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="n">arguments</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.classes.Observable.add_taxonomy">
+    <p>def <span class="ident">add_taxonomy</span>(</p><p>self, taxonomy_string)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Add a metadata taxonomy for the observable.</p>
+<p><code>taxonomy_string</code> has to be a string of the form
+'Category :: Subcategory :: Subsubcategory'
+etc. LaTeX code is allowed. One observable can also have multiple
+taxonomies (e.g. 'Animal :: Cat' and 'Pet :: Favourite Pet')</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Observable.add_taxonomy', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.Observable.add_taxonomy" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_taxonomy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taxonomy_string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add a metadata taxonomy for the observable.</span>
+<span class="sd">    `taxonomy_string` has to be a string of the form</span>
+<span class="sd">    &#39;Category :: Subcategory :: Subsubcategory&#39;</span>
+<span class="sd">    etc. LaTeX code is allowed. One observable can also have multiple</span>
+<span class="sd">    taxonomies (e.g. &#39;Animal :: Cat&#39; and &#39;Pet :: Favourite Pet&#39;)&quot;&quot;&quot;</span>
+    <span class="n">taxonomy_list</span> <span class="o">=</span> <span class="n">taxonomy_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; :: &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="p">]</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">taxonomy</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">taxonomy_list</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -3789,6 +3943,30 @@ predicted theoretically.</p></div>
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">instances</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.classes.Observable.taxonomy_dict">
+    <p>def <span class="ident">taxonomy_dict</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the hierarchical metadata taxonomy as a nested dictionary.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Observable.taxonomy_dict', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.Observable.taxonomy_dict" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">taxonomy_dict</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the hierarchical metadata taxonomy as a nested dictionary.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dicts</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">taxonomy</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -4064,7 +4242,7 @@ of the Parameter class.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraints</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
     <span class="c1"># populate the dictionaries defined in __init__</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">num</span><span class="p">,</span> <span class="n">constraint</span><span class="p">)]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -4140,7 +4318,7 @@ obtained by generating N random values..</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the central value of a parameter&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">parameter</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># return the num-th entry of the central value vector</span>
@@ -4243,7 +4421,7 @@ constraint/probability distribution.</p>
 <span class="sd">      par_dict play no role.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
         <span class="k">def</span> <span class="nf">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
             <span class="c1"># this function is required to get the central value for the</span>
             <span class="c1"># excluded_parameters, consistently for univariate and multivariate</span>
@@ -4291,7 +4469,7 @@ distributed according to the probability distributions applied.</p></div>
     <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
 <span class="sd">    distributed according to the probability distributions applied.&quot;&quot;&quot;</span>
     <span class="c1"># first, generate random values for every single one of the constraints</span>
-    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">]</span>
     <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># now, iterate over the parameters</span>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -4302,7 +4480,7 @@ distributed according to the probability distributions applied.</p></div>
         <span class="n">central_value</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
         <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">central_value</span>  <span class="c1"># step 1: p_r = c</span>
         <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
             <span class="c1"># step 1+i: p_r += r_i - c</span>
             <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span> <span class="o">-</span> <span class="n">central_value</span>
     <span class="k">return</span> <span class="n">random_dict</span>
@@ -4328,7 +4506,7 @@ distributed according to the probability distributions applied.</p></div>
   <div id="source-flavio.classes.ParameterConstraints.remove_constraints" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">remove_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Remove all constraints on a parameter.&quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -4604,7 +4782,7 @@ constraints will be removed.</p></div>
             <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraints</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
     <span class="c1"># populate the dictionaries defined in __init__</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">num</span><span class="p">,</span> <span class="n">constraint</span><span class="p">)]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -4680,7 +4858,7 @@ obtained by generating N random values..</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the central value of a parameter&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">parameter</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># return the num-th entry of the central value vector</span>
@@ -4783,7 +4961,7 @@ constraint/probability distribution.</p>
 <span class="sd">      par_dict play no role.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
         <span class="k">def</span> <span class="nf">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
             <span class="c1"># this function is required to get the central value for the</span>
             <span class="c1"># excluded_parameters, consistently for univariate and multivariate</span>
@@ -4831,7 +5009,7 @@ distributed according to the probability distributions applied.</p></div>
     <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
 <span class="sd">    distributed according to the probability distributions applied.&quot;&quot;&quot;</span>
     <span class="c1"># first, generate random values for every single one of the constraints</span>
-    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">]</span>
     <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># now, iterate over the parameters</span>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -4842,7 +5020,7 @@ distributed according to the probability distributions applied.</p></div>
         <span class="n">central_value</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
         <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">central_value</span>  <span class="c1"># step 1: p_r = c</span>
         <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
             <span class="c1"># step 1+i: p_r += r_i - c</span>
             <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span> <span class="o">-</span> <span class="n">central_value</span>
     <span class="k">return</span> <span class="n">random_dict</span>
@@ -4868,7 +5046,7 @@ distributed according to the probability distributions applied.</p></div>
   <div id="source-flavio.classes.WilsonCoefficientPriors.remove_constraints" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">remove_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Remove all constraints on a parameter.&quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
 </pre></div>
 
   </div>
