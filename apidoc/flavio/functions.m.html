@@ -1052,6 +1052,7 @@ table {
       
   <ul>
     <li class="mono"><a href="#flavio.functions.np_prediction">np_prediction</a></li>
+    <li class="mono"><a href="#flavio.functions.np_uncertainty">np_uncertainty</a></li>
     <li class="mono"><a href="#flavio.functions.sm_covariance">sm_covariance</a></li>
     <li class="mono"><a href="#flavio.functions.sm_error_budget">sm_error_budget</a></li>
     <li class="mono"><a href="#flavio.functions.sm_prediction">sm_prediction</a></li>
@@ -1115,6 +1116,29 @@ top-level namespace.</p>
     <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
+<span class="k">def</span> <span class="nf">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the uncertainty of the prediction of an observable in the presence</span>
+<span class="sd">    of new physics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    - `obs_name`: name of the observable as a string</span>
+<span class="sd">    - `wc_obj`: an instance of `flavio.WilsonCoefficients`</span>
+<span class="sd">    - `N` (optional): number of random evaluations of the observable.</span>
+<span class="sd">    The relative accuracy of the uncertainty returned is given by $1/\sqrt{2N}$.</span>
+
+<span class="sd">    Additional arguments are passed to the observable and are necessary,</span>
+<span class="sd">    depending on the observable (e.g. $q^2$-dependent observables).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs_name</span><span class="p">)</span>
+    <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span>
+    <span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span>
+
 <span class="k">def</span> <span class="nf">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the uncertainty of the Standard Model prediction of an observable.</span>
 
@@ -1128,14 +1152,8 @@ top-level namespace.</p>
 <span class="sd">    Additional arguments are passed to the observable and are necessary,</span>
 <span class="sd">    depending on the observable (e.g. $q^2$-dependent observables).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs_name</span><span class="p">)</span>
     <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
-    <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
-    <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-        <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span>
-    <span class="p">])</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">sm_error_budget</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the *relative* uncertainty of the Standard Model prediction due to</span>
@@ -1274,6 +1292,58 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs_name</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.functions.np_uncertainty">
+    <p>def <span class="ident">np_uncertainty</span>(</p><p>obs_name, wc_obj, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the uncertainty of the prediction of an observable in the presence
+of new physics.</p>
+<h2>Parameters</h2>
+<ul>
+<li><code>obs_name</code>: name of the observable as a string</li>
+<li><code>wc_obj</code>: an instance of <code>flavio.WilsonCoefficients</code></li>
+<li><code>N</code> (optional): number of random evaluations of the observable.
+The relative accuracy of the uncertainty returned is given by $1/\sqrt{2N}$.</li>
+</ul>
+<p>Additional arguments are passed to the observable and are necessary,
+depending on the observable (e.g. $q^2$-dependent observables).</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.np_uncertainty', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.np_uncertainty" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the uncertainty of the prediction of an observable in the presence</span>
+<span class="sd">    of new physics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    - `obs_name`: name of the observable as a string</span>
+<span class="sd">    - `wc_obj`: an instance of `flavio.WilsonCoefficients`</span>
+<span class="sd">    - `N` (optional): number of random evaluations of the observable.</span>
+<span class="sd">    The relative accuracy of the uncertainty returned is given by $1/\sqrt{2N}$.</span>
+
+<span class="sd">    Additional arguments are passed to the observable and are necessary,</span>
+<span class="sd">    depending on the observable (e.g. $q^2$-dependent observables).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs_name</span><span class="p">)</span>
+    <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span>
+    <span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1509,14 +1579,8 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
 <span class="sd">    Additional arguments are passed to the observable and are necessary,</span>
 <span class="sd">    depending on the observable (e.g. $q^2$-dependent observables).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs_name</span><span class="p">)</span>
     <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
-    <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
-    <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-        <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span>
-    <span class="p">])</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
