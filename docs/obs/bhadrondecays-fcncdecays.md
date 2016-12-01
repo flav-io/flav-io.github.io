@@ -1092,6 +1092,8 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `<BR>(B->Xdmumu)` | $\langle \text{BR} \rangle(B\to X_d\mu^+\mu^-)$ | Binned branching ratio of $B\to X_d\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<Rmue>(B->Xdll)` | $\langle R_{\mu e} \rangle(B\to X_d\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_d\mu^+\mu^-$ and $B\to X_de^+e^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B->Xdll)` | $\langle R_{\tau \mu} \rangle(B\to X_d\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_d\tau^+\tau^-$ and $B\to X_d\mu^+\mu^-$ | `q2min`, `q2max` |
 | `dBR/dq2(B->Xdmumu)` | $\frac{d\text{BR}}{dq^2}(B\to X_d\mu^+\mu^-)$ | Differential branching ratio of $B\to X_d\mu^+\mu^-$ | `q2` |
 
 
@@ -1101,6 +1103,7 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `<BR>(B->Xdtautau)` | $\langle \text{BR} \rangle(B\to X_d\tau^+\tau^-)$ | Binned branching ratio of $B\to X_d\tau^+\tau^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B->Xdll)` | $\langle R_{\tau \mu} \rangle(B\to X_d\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_d\tau^+\tau^-$ and $B\to X_d\mu^+\mu^-$ | `q2min`, `q2max` |
 | `dBR/dq2(B->Xdtautau)` | $\frac{d\text{BR}}{dq^2}(B\to X_d\tau^+\tau^-)$ | Differential branching ratio of $B\to X_d\tau^+\tau^-$ | `q2` |
 
 
@@ -1110,6 +1113,7 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `<BR>(B->Xdee)` | $\langle \text{BR} \rangle(B\to X_de^+e^-)$ | Binned branching ratio of $B\to X_de^+e^-$ | `q2min`, `q2max` |
+| `<Rmue>(B->Xdll)` | $\langle R_{\mu e} \rangle(B\to X_d\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_d\mu^+\mu^-$ and $B\to X_de^+e^-$ | `q2min`, `q2max` |
 | `dBR/dq2(B->Xdee)` | $\frac{d\text{BR}}{dq^2}(B\to X_de^+e^-)$ | Differential branching ratio of $B\to X_de^+e^-$ | `q2` |
 
 
@@ -1128,6 +1132,8 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `<BR>(B->Xsmumu)` | $\langle \text{BR} \rangle(B\to X_s\mu^+\mu^-)$ | Binned branching ratio of $B\to X_s\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<Rmue>(B->Xsll)` | $\langle R_{\mu e} \rangle(B\to X_s\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_s\mu^+\mu^-$ and $B\to X_se^+e^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B->Xsll)` | $\langle R_{\tau \mu} \rangle(B\to X_s\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_s\tau^+\tau^-$ and $B\to X_s\mu^+\mu^-$ | `q2min`, `q2max` |
 | `dBR/dq2(B->Xsmumu)` | $\frac{d\text{BR}}{dq^2}(B\to X_s\mu^+\mu^-)$ | Differential branching ratio of $B\to X_s\mu^+\mu^-$ | `q2` |
 
 
@@ -1137,6 +1143,7 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `<BR>(B->Xstautau)` | $\langle \text{BR} \rangle(B\to X_s\tau^+\tau^-)$ | Binned branching ratio of $B\to X_s\tau^+\tau^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B->Xsll)` | $\langle R_{\tau \mu} \rangle(B\to X_s\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_s\tau^+\tau^-$ and $B\to X_s\mu^+\mu^-$ | `q2min`, `q2max` |
 | `dBR/dq2(B->Xstautau)` | $\frac{d\text{BR}}{dq^2}(B\to X_s\tau^+\tau^-)$ | Differential branching ratio of $B\to X_s\tau^+\tau^-$ | `q2` |
 
 
@@ -1146,6 +1153,7 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `<BR>(B->Xsee)` | $\langle \text{BR} \rangle(B\to X_se^+e^-)$ | Binned branching ratio of $B\to X_se^+e^-$ | `q2min`, `q2max` |
+| `<Rmue>(B->Xsll)` | $\langle R_{\mu e} \rangle(B\to X_s\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_s\mu^+\mu^-$ and $B\to X_se^+e^-$ | `q2min`, `q2max` |
 | `dBR/dq2(B->Xsee)` | $\frac{d\text{BR}}{dq^2}(B\to X_se^+e^-)$ | Differential branching ratio of $B\to X_se^+e^-$ | `q2` |
 
 

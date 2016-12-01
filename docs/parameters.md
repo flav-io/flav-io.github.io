@@ -367,12 +367,18 @@ of the parameter.
 | `c4_K+munu` | $c_4^{(K)}(m_\mu)$ | Chiral perturbation theory coefficient in $K^+\to\mu^+\nu$ |
 | `c4_pi+munu` | $c_4^{(\pi)}(m_\mu)$ | Chiral perturbation theory coefficient in $\pi^+\to\mu^+\nu$ |
 | `deltaPcu` | $\delta P_{c,u}$ | Contributions to the $K^+\to\pi^+\nu\bar\nu$ amplitude not described by the dimension-6 effective Hamiltonian. |
+| `delta_BXdee high` | $\delta_{bdee}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_de^+e^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BXdee low` | $\delta_{bdee}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_de^+e^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXdgamma` | $\delta_{bd\gamma}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders, interpolation, and non-perturbative effects in $B\to X_d\gamma$. The relative uncertainty is $1+\delta$. |
-| `delta_BXdll high` | $\delta_{bdll}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_d\ell^+\ell^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
-| `delta_BXdll low` | $\delta_{bdll}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_d\ell^+\ell^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BXdmumu high` | $\delta_{bd\mu\mu}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_d\mu^+\mu^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BXdmumu low` | $\delta_{bd\mu\mu}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_d\mu^+\mu^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BXdtautau high` | $\delta_{bd\tau\tau}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_d\tau^+\tau^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BXsee high` | $\delta_{bsee}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_se^+e^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BXsee low` | $\delta_{bsee}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_se^+e^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXsgamma` | $\delta_{bs\gamma}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders, interpolation, and non-perturbative effects in $B\to X_s\gamma$. The relative uncertainty is $1+\delta$. |
-| `delta_BXsll high` | $\delta_{bsll}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\ell^+\ell^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
-| `delta_BXsll low` | $\delta_{bsll}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\ell^+\ell^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BXsmumu high` | $\delta_{bs\mu\mu}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\mu^+\mu^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BXsmumu low` | $\delta_{bs\mu\mu}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\mu^+\mu^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BXstautau high` | $\delta_{bs\tau\tau}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\tau^+\tau^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
 | `eta_cc_K0` | $\eta_{cc}$ | SM QCD correction factor for the charm contribution to $K^0$ mixing |
 | `eta_ct_K0` | $\eta_{ct}$ | SM QCD correction factor for the top-charm contribution to $K^0$ mixing |
 | `eta_tt_B0` | $\eta_B$ | SM QCD correction factor for $B^0$ mixing |
