@@ -22,44 +22,52 @@ a scalar observable).
 
 ## $B\to P\ell\nu$
 
-### $B^+\to D^{0}\ell^+\nu_\ell$
+### $B^+\to D^0\ell^+\nu_\ell$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `<BR>(B+->Dlnu)` | $\langle\text{BR}\rangle(B^+\to D^{0}\ell^+\nu_\ell)$ | Binned branching ratio of $B^+\to D^{0}\ell^+\nu_\ell$ | `q2min`, `q2max` |
-| `BR(B+->Dlnu)` | $\text{BR}(B^+\to D^{0}\ell^+\nu_\ell)$ | Total branching ratio of $B^+\to D^{0}\ell^+\nu_\ell$ |  |
-| `dBR/dq2(B+->Dlnu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{0}\ell^+\nu_\ell)$ | Differential branching ratio of $B^+\to D^{0}\ell^+\nu_\ell$ | `q2` |
+| `<BR>(B+->Dlnu)` | $\langle\text{BR}\rangle(B^+\to D^0\ell^+\nu_\ell)$ | Binned branching ratio of $B^+\to D^0\ell^+\nu_\ell$ | `q2min`, `q2max` |
+| `BR(B+->Dlnu)` | $\text{BR}(B^+\to D^0\ell^+\nu_\ell)$ | Total branching ratio of $B^+\to D^0\ell^+\nu_\ell$ |  |
+| `dBR/dq2(B+->Dlnu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^0\ell^+\nu_\ell)$ | Differential branching ratio of $B^+\to D^0\ell^+\nu_\ell$ | `q2` |
 
 
-### $B^+\to D^{0}\mu^+\nu_\mu$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `<BR>(B+->Dmunu)` | $\langle\text{BR}\rangle(B^+\to D^{0}\mu^+\nu_\mu)$ | Binned branching ratio of $B^+\to D^{0}\mu^+\nu_\mu$ | `q2min`, `q2max` |
-| `BR(B+->Dmunu)` | $\text{BR}(B^+\to D^{0}\mu^+\nu_\mu)$ | Total branching ratio of $B^+\to D^{0}\mu^+\nu_\mu$ |  |
-| `dBR/dq2(B+->Dmunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{0}\mu^+\nu_\mu)$ | Differential branching ratio of $B^+\to D^{0}\mu^+\nu_\mu$ | `q2` |
-
-
-### $B^+\to D^{0}\tau^+\nu_\tau$
+### $B^+\to D^0\mu^+\nu_\mu$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `<BR>(B+->Dtaunu)` | $\langle\text{BR}\rangle(B^+\to D^{0}\tau^+\nu_\tau)$ | Binned branching ratio of $B^+\to D^{0}\tau^+\nu_\tau$ | `q2min`, `q2max` |
-| `BR(B+->Dtaunu)` | $\text{BR}(B^+\to D^{0}\tau^+\nu_\tau)$ | Total branching ratio of $B^+\to D^{0}\tau^+\nu_\tau$ |  |
-| `dBR/dq2(B+->Dtaunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{0}\tau^+\nu_\tau)$ | Differential branching ratio of $B^+\to D^{0}\tau^+\nu_\tau$ | `q2` |
+| `<BR>(B+->Dmunu)` | $\langle\text{BR}\rangle(B^+\to D^0\mu^+\nu_\mu)$ | Binned branching ratio of $B^+\to D^0\mu^+\nu_\mu$ | `q2min`, `q2max` |
+| `<Rmue>(B->Dlnu)` | $\langle R_{\mu e} \rangle(B\to D\ell^+\nu)$ | Ratio of partial branching ratios of $B\to D\mu^+ \nu_\mu$ and $B\to De^+ \nu_e$ | `q2min`, `q2max` |
+| `<Rtaumu>(B->Dlnu)` | $\langle R_{\tau \mu} \rangle(B\to D\ell^+\nu)$ | Ratio of partial branching ratios of $B\to D\tau^+ \nu_\tau$ and $B\to D\mu^+ \nu_\mu$ | `q2min`, `q2max` |
+| `BR(B+->Dmunu)` | $\text{BR}(B^+\to D^0\mu^+\nu_\mu)$ | Total branching ratio of $B^+\to D^0\mu^+\nu_\mu$ |  |
+| `Rmue(B->Dlnu)` | $\langle R_{\mu e} \rangle(B\to D\ell^+\nu)$ | Ratio of total branching ratios of $B\to D\mu^+ \nu_\mu$ and $B\to De^+ \nu_e$ | `q2min`, `q2max` |
+| `Rtaumu(B->Dlnu)` | $\langle R_{\tau \mu} \rangle(B\to D\ell^+\nu)$ | Ratio of total branching ratios of $B\to D\tau^+ \nu_\tau$ and $B\to D\mu^+ \nu_\mu$ | `q2min`, `q2max` |
+| `dBR/dq2(B+->Dmunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^0\mu^+\nu_\mu)$ | Differential branching ratio of $B^+\to D^0\mu^+\nu_\mu$ | `q2` |
 
 
-### $B^+\to D^{0}e^+\nu_e$
+### $B^+\to D^0\tau^+\nu_\tau$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `<BR>(B+->Denu)` | $\langle\text{BR}\rangle(B^+\to D^{0}e^+\nu_e)$ | Binned branching ratio of $B^+\to D^{0}e^+\nu_e$ | `q2min`, `q2max` |
-| `BR(B+->Denu)` | $\text{BR}(B^+\to D^{0}e^+\nu_e)$ | Total branching ratio of $B^+\to D^{0}e^+\nu_e$ |  |
-| `dBR/dq2(B+->Denu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^{0}e^+\nu_e)$ | Differential branching ratio of $B^+\to D^{0}e^+\nu_e$ | `q2` |
+| `<BR>(B+->Dtaunu)` | $\langle\text{BR}\rangle(B^+\to D^0\tau^+\nu_\tau)$ | Binned branching ratio of $B^+\to D^0\tau^+\nu_\tau$ | `q2min`, `q2max` |
+| `<Rtaumu>(B->Dlnu)` | $\langle R_{\tau \mu} \rangle(B\to D\ell^+\nu)$ | Ratio of partial branching ratios of $B\to D\tau^+ \nu_\tau$ and $B\to D\mu^+ \nu_\mu$ | `q2min`, `q2max` |
+| `BR(B+->Dtaunu)` | $\text{BR}(B^+\to D^0\tau^+\nu_\tau)$ | Total branching ratio of $B^+\to D^0\tau^+\nu_\tau$ |  |
+| `Rtaumu(B->Dlnu)` | $\langle R_{\tau \mu} \rangle(B\to D\ell^+\nu)$ | Ratio of total branching ratios of $B\to D\tau^+ \nu_\tau$ and $B\to D\mu^+ \nu_\mu$ | `q2min`, `q2max` |
+| `dBR/dq2(B+->Dtaunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^0\tau^+\nu_\tau)$ | Differential branching ratio of $B^+\to D^0\tau^+\nu_\tau$ | `q2` |
+
+
+### $B^+\to D^0e^+\nu_e$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<BR>(B+->Denu)` | $\langle\text{BR}\rangle(B^+\to D^0e^+\nu_e)$ | Binned branching ratio of $B^+\to D^0e^+\nu_e$ | `q2min`, `q2max` |
+| `<Rmue>(B->Dlnu)` | $\langle R_{\mu e} \rangle(B\to D\ell^+\nu)$ | Ratio of partial branching ratios of $B\to D\mu^+ \nu_\mu$ and $B\to De^+ \nu_e$ | `q2min`, `q2max` |
+| `BR(B+->Denu)` | $\text{BR}(B^+\to D^0e^+\nu_e)$ | Total branching ratio of $B^+\to D^0e^+\nu_e$ |  |
+| `Rmue(B->Dlnu)` | $\langle R_{\mu e} \rangle(B\to D\ell^+\nu)$ | Ratio of total branching ratios of $B\to D\mu^+ \nu_\mu$ and $B\to De^+ \nu_e$ | `q2min`, `q2max` |
+| `dBR/dq2(B+->Denu)` | $\frac{d\text{BR}}{dq^2}(B^+\to D^0e^+\nu_e)$ | Differential branching ratio of $B^+\to D^0e^+\nu_e$ | `q2` |
 
 
 ### $B^+\to \pi^0\ell^+\nu_\ell$
@@ -78,7 +86,11 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `<BR>(B+->pimunu)` | $\langle\text{BR}\rangle(B^+\to \pi^0\mu^+\nu_\mu)$ | Binned branching ratio of $B^+\to \pi^0\mu^+\nu_\mu$ | `q2min`, `q2max` |
+| `<Rmue>(B->pilnu)` | $\langle R_{\mu e} \rangle(B\to \pi \ell^+\nu)$ | Ratio of partial branching ratios of $B\to \pi \mu^+ \nu_\mu$ and $B\to \pi e^+ \nu_e$ | `q2min`, `q2max` |
+| `<Rtaumu>(B->pilnu)` | $\langle R_{\tau \mu} \rangle(B\to \pi \ell^+\nu)$ | Ratio of partial branching ratios of $B\to \pi \tau^+ \nu_\tau$ and $B\to \pi \mu^+ \nu_\mu$ | `q2min`, `q2max` |
 | `BR(B+->pimunu)` | $\text{BR}(B^+\to \pi^0\mu^+\nu_\mu)$ | Total branching ratio of $B^+\to \pi^0\mu^+\nu_\mu$ |  |
+| `Rmue(B->pilnu)` | $\langle R_{\mu e} \rangle(B\to \pi \ell^+\nu)$ | Ratio of total branching ratios of $B\to \pi \mu^+ \nu_\mu$ and $B\to \pi e^+ \nu_e$ | `q2min`, `q2max` |
+| `Rtaumu(B->pilnu)` | $\langle R_{\tau \mu} \rangle(B\to \pi \ell^+\nu)$ | Ratio of total branching ratios of $B\to \pi \tau^+ \nu_\tau$ and $B\to \pi \mu^+ \nu_\mu$ | `q2min`, `q2max` |
 | `dBR/dq2(B+->pimunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \pi^0\mu^+\nu_\mu)$ | Differential branching ratio of $B^+\to \pi^0\mu^+\nu_\mu$ | `q2` |
 
 
@@ -88,7 +100,9 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `<BR>(B+->pitaunu)` | $\langle\text{BR}\rangle(B^+\to \pi^0\tau^+\nu_\tau)$ | Binned branching ratio of $B^+\to \pi^0\tau^+\nu_\tau$ | `q2min`, `q2max` |
+| `<Rtaumu>(B->pilnu)` | $\langle R_{\tau \mu} \rangle(B\to \pi \ell^+\nu)$ | Ratio of partial branching ratios of $B\to \pi \tau^+ \nu_\tau$ and $B\to \pi \mu^+ \nu_\mu$ | `q2min`, `q2max` |
 | `BR(B+->pitaunu)` | $\text{BR}(B^+\to \pi^0\tau^+\nu_\tau)$ | Total branching ratio of $B^+\to \pi^0\tau^+\nu_\tau$ |  |
+| `Rtaumu(B->pilnu)` | $\langle R_{\tau \mu} \rangle(B\to \pi \ell^+\nu)$ | Ratio of total branching ratios of $B\to \pi \tau^+ \nu_\tau$ and $B\to \pi \mu^+ \nu_\mu$ | `q2min`, `q2max` |
 | `dBR/dq2(B+->pitaunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \pi^0\tau^+\nu_\tau)$ | Differential branching ratio of $B^+\to \pi^0\tau^+\nu_\tau$ | `q2` |
 
 
@@ -98,88 +112,106 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `<BR>(B+->pienu)` | $\langle\text{BR}\rangle(B^+\to \pi^0e^+\nu_e)$ | Binned branching ratio of $B^+\to \pi^0e^+\nu_e$ | `q2min`, `q2max` |
+| `<Rmue>(B->pilnu)` | $\langle R_{\mu e} \rangle(B\to \pi \ell^+\nu)$ | Ratio of partial branching ratios of $B\to \pi \mu^+ \nu_\mu$ and $B\to \pi e^+ \nu_e$ | `q2min`, `q2max` |
 | `BR(B+->pienu)` | $\text{BR}(B^+\to \pi^0e^+\nu_e)$ | Total branching ratio of $B^+\to \pi^0e^+\nu_e$ |  |
+| `Rmue(B->pilnu)` | $\langle R_{\mu e} \rangle(B\to \pi \ell^+\nu)$ | Ratio of total branching ratios of $B\to \pi \mu^+ \nu_\mu$ and $B\to \pi e^+ \nu_e$ | `q2min`, `q2max` |
 | `dBR/dq2(B+->pienu)` | $\frac{d\text{BR}}{dq^2}(B^+\to \pi^0e^+\nu_e)$ | Differential branching ratio of $B^+\to \pi^0e^+\nu_e$ | `q2` |
 
 
-### $B^0\to D^{-}\ell^+\nu_\ell$
+### $B^0\to D^- \ell^+\nu_\ell$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `<BR>(B0->Dlnu)` | $\langle\text{BR}\rangle(B^0\to D^{-}\ell^+\nu_\ell)$ | Binned branching ratio of $B^0\to D^{-}\ell^+\nu_\ell$ | `q2min`, `q2max` |
-| `BR(B0->Dlnu)` | $\text{BR}(B^0\to D^{-}\ell^+\nu_\ell)$ | Total branching ratio of $B^0\to D^{-}\ell^+\nu_\ell$ |  |
-| `dBR/dq2(B0->Dlnu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{-}\ell^+\nu_\ell)$ | Differential branching ratio of $B^0\to D^{-}\ell^+\nu_\ell$ | `q2` |
+| `<BR>(B0->Dlnu)` | $\langle\text{BR}\rangle(B^0\to D^- \ell^+\nu_\ell)$ | Binned branching ratio of $B^0\to D^- \ell^+\nu_\ell$ | `q2min`, `q2max` |
+| `BR(B0->Dlnu)` | $\text{BR}(B^0\to D^- \ell^+\nu_\ell)$ | Total branching ratio of $B^0\to D^- \ell^+\nu_\ell$ |  |
+| `dBR/dq2(B0->Dlnu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^- \ell^+\nu_\ell)$ | Differential branching ratio of $B^0\to D^- \ell^+\nu_\ell$ | `q2` |
 
 
-### $B^0\to D^{-}\mu^+\nu_\mu$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `<BR>(B0->Dmunu)` | $\langle\text{BR}\rangle(B^0\to D^{-}\mu^+\nu_\mu)$ | Binned branching ratio of $B^0\to D^{-}\mu^+\nu_\mu$ | `q2min`, `q2max` |
-| `BR(B0->Dmunu)` | $\text{BR}(B^0\to D^{-}\mu^+\nu_\mu)$ | Total branching ratio of $B^0\to D^{-}\mu^+\nu_\mu$ |  |
-| `dBR/dq2(B0->Dmunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{-}\mu^+\nu_\mu)$ | Differential branching ratio of $B^0\to D^{-}\mu^+\nu_\mu$ | `q2` |
-
-
-### $B^0\to D^{-}\tau^+\nu_\tau$
+### $B^0\to D^- \mu^+\nu_\mu$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `<BR>(B0->Dtaunu)` | $\langle\text{BR}\rangle(B^0\to D^{-}\tau^+\nu_\tau)$ | Binned branching ratio of $B^0\to D^{-}\tau^+\nu_\tau$ | `q2min`, `q2max` |
-| `BR(B0->Dtaunu)` | $\text{BR}(B^0\to D^{-}\tau^+\nu_\tau)$ | Total branching ratio of $B^0\to D^{-}\tau^+\nu_\tau$ |  |
-| `dBR/dq2(B0->Dtaunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{-}\tau^+\nu_\tau)$ | Differential branching ratio of $B^0\to D^{-}\tau^+\nu_\tau$ | `q2` |
+| `<BR>(B0->Dmunu)` | $\langle\text{BR}\rangle(B^0\to D^- \mu^+\nu_\mu)$ | Binned branching ratio of $B^0\to D^- \mu^+\nu_\mu$ | `q2min`, `q2max` |
+| `<Rmue>(B->Dlnu)` | $\langle R_{\mu e} \rangle(B\to D\ell^+\nu)$ | Ratio of partial branching ratios of $B\to D\mu^+ \nu_\mu$ and $B\to De^+ \nu_e$ | `q2min`, `q2max` |
+| `<Rtaumu>(B->Dlnu)` | $\langle R_{\tau \mu} \rangle(B\to D\ell^+\nu)$ | Ratio of partial branching ratios of $B\to D\tau^+ \nu_\tau$ and $B\to D\mu^+ \nu_\mu$ | `q2min`, `q2max` |
+| `BR(B0->Dmunu)` | $\text{BR}(B^0\to D^- \mu^+\nu_\mu)$ | Total branching ratio of $B^0\to D^- \mu^+\nu_\mu$ |  |
+| `Rmue(B->Dlnu)` | $\langle R_{\mu e} \rangle(B\to D\ell^+\nu)$ | Ratio of total branching ratios of $B\to D\mu^+ \nu_\mu$ and $B\to De^+ \nu_e$ | `q2min`, `q2max` |
+| `Rtaumu(B->Dlnu)` | $\langle R_{\tau \mu} \rangle(B\to D\ell^+\nu)$ | Ratio of total branching ratios of $B\to D\tau^+ \nu_\tau$ and $B\to D\mu^+ \nu_\mu$ | `q2min`, `q2max` |
+| `dBR/dq2(B0->Dmunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^- \mu^+\nu_\mu)$ | Differential branching ratio of $B^0\to D^- \mu^+\nu_\mu$ | `q2` |
 
 
-### $B^0\to D^{-}e^+\nu_e$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `<BR>(B0->Denu)` | $\langle\text{BR}\rangle(B^0\to D^{-}e^+\nu_e)$ | Binned branching ratio of $B^0\to D^{-}e^+\nu_e$ | `q2min`, `q2max` |
-| `BR(B0->Denu)` | $\text{BR}(B^0\to D^{-}e^+\nu_e)$ | Total branching ratio of $B^0\to D^{-}e^+\nu_e$ |  |
-| `dBR/dq2(B0->Denu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^{-}e^+\nu_e)$ | Differential branching ratio of $B^0\to D^{-}e^+\nu_e$ | `q2` |
-
-
-### $B^0\to \pi^-\ell^+\nu_\ell$
+### $B^0\to D^- \tau^+\nu_\tau$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `<BR>(B0->pilnu)` | $\langle\text{BR}\rangle(B^0\to \pi^-\ell^+\nu_\ell)$ | Binned branching ratio of $B^0\to \pi^-\ell^+\nu_\ell$ | `q2min`, `q2max` |
-| `BR(B0->pilnu)` | $\text{BR}(B^0\to \pi^-\ell^+\nu_\ell)$ | Total branching ratio of $B^0\to \pi^-\ell^+\nu_\ell$ |  |
-| `dBR/dq2(B0->pilnu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \pi^-\ell^+\nu_\ell)$ | Differential branching ratio of $B^0\to \pi^-\ell^+\nu_\ell$ | `q2` |
+| `<BR>(B0->Dtaunu)` | $\langle\text{BR}\rangle(B^0\to D^- \tau^+\nu_\tau)$ | Binned branching ratio of $B^0\to D^- \tau^+\nu_\tau$ | `q2min`, `q2max` |
+| `<Rtaumu>(B->Dlnu)` | $\langle R_{\tau \mu} \rangle(B\to D\ell^+\nu)$ | Ratio of partial branching ratios of $B\to D\tau^+ \nu_\tau$ and $B\to D\mu^+ \nu_\mu$ | `q2min`, `q2max` |
+| `BR(B0->Dtaunu)` | $\text{BR}(B^0\to D^- \tau^+\nu_\tau)$ | Total branching ratio of $B^0\to D^- \tau^+\nu_\tau$ |  |
+| `Rtaumu(B->Dlnu)` | $\langle R_{\tau \mu} \rangle(B\to D\ell^+\nu)$ | Ratio of total branching ratios of $B\to D\tau^+ \nu_\tau$ and $B\to D\mu^+ \nu_\mu$ | `q2min`, `q2max` |
+| `dBR/dq2(B0->Dtaunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^- \tau^+\nu_\tau)$ | Differential branching ratio of $B^0\to D^- \tau^+\nu_\tau$ | `q2` |
 
 
-### $B^0\to \pi^-\mu^+\nu_\mu$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `<BR>(B0->pimunu)` | $\langle\text{BR}\rangle(B^0\to \pi^-\mu^+\nu_\mu)$ | Binned branching ratio of $B^0\to \pi^-\mu^+\nu_\mu$ | `q2min`, `q2max` |
-| `BR(B0->pimunu)` | $\text{BR}(B^0\to \pi^-\mu^+\nu_\mu)$ | Total branching ratio of $B^0\to \pi^-\mu^+\nu_\mu$ |  |
-| `dBR/dq2(B0->pimunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \pi^-\mu^+\nu_\mu)$ | Differential branching ratio of $B^0\to \pi^-\mu^+\nu_\mu$ | `q2` |
-
-
-### $B^0\to \pi^-\tau^+\nu_\tau$
+### $B^0\to D^- e^+\nu_e$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `<BR>(B0->pitaunu)` | $\langle\text{BR}\rangle(B^0\to \pi^-\tau^+\nu_\tau)$ | Binned branching ratio of $B^0\to \pi^-\tau^+\nu_\tau$ | `q2min`, `q2max` |
-| `BR(B0->pitaunu)` | $\text{BR}(B^0\to \pi^-\tau^+\nu_\tau)$ | Total branching ratio of $B^0\to \pi^-\tau^+\nu_\tau$ |  |
-| `dBR/dq2(B0->pitaunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \pi^-\tau^+\nu_\tau)$ | Differential branching ratio of $B^0\to \pi^-\tau^+\nu_\tau$ | `q2` |
+| `<BR>(B0->Denu)` | $\langle\text{BR}\rangle(B^0\to D^- e^+\nu_e)$ | Binned branching ratio of $B^0\to D^- e^+\nu_e$ | `q2min`, `q2max` |
+| `<Rmue>(B->Dlnu)` | $\langle R_{\mu e} \rangle(B\to D\ell^+\nu)$ | Ratio of partial branching ratios of $B\to D\mu^+ \nu_\mu$ and $B\to De^+ \nu_e$ | `q2min`, `q2max` |
+| `BR(B0->Denu)` | $\text{BR}(B^0\to D^- e^+\nu_e)$ | Total branching ratio of $B^0\to D^- e^+\nu_e$ |  |
+| `Rmue(B->Dlnu)` | $\langle R_{\mu e} \rangle(B\to D\ell^+\nu)$ | Ratio of total branching ratios of $B\to D\mu^+ \nu_\mu$ and $B\to De^+ \nu_e$ | `q2min`, `q2max` |
+| `dBR/dq2(B0->Denu)` | $\frac{d\text{BR}}{dq^2}(B^0\to D^- e^+\nu_e)$ | Differential branching ratio of $B^0\to D^- e^+\nu_e$ | `q2` |
 
 
-### $B^0\to \pi^-e^+\nu_e$
+### $B^0\to \pi^- \ell^+\nu_\ell$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `<BR>(B0->pienu)` | $\langle\text{BR}\rangle(B^0\to \pi^-e^+\nu_e)$ | Binned branching ratio of $B^0\to \pi^-e^+\nu_e$ | `q2min`, `q2max` |
-| `BR(B0->pienu)` | $\text{BR}(B^0\to \pi^-e^+\nu_e)$ | Total branching ratio of $B^0\to \pi^-e^+\nu_e$ |  |
-| `dBR/dq2(B0->pienu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \pi^-e^+\nu_e)$ | Differential branching ratio of $B^0\to \pi^-e^+\nu_e$ | `q2` |
+| `<BR>(B0->pilnu)` | $\langle\text{BR}\rangle(B^0\to \pi^- \ell^+\nu_\ell)$ | Binned branching ratio of $B^0\to \pi^- \ell^+\nu_\ell$ | `q2min`, `q2max` |
+| `BR(B0->pilnu)` | $\text{BR}(B^0\to \pi^- \ell^+\nu_\ell)$ | Total branching ratio of $B^0\to \pi^- \ell^+\nu_\ell$ |  |
+| `dBR/dq2(B0->pilnu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \pi^- \ell^+\nu_\ell)$ | Differential branching ratio of $B^0\to \pi^- \ell^+\nu_\ell$ | `q2` |
+
+
+### $B^0\to \pi^- \mu^+\nu_\mu$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<BR>(B0->pimunu)` | $\langle\text{BR}\rangle(B^0\to \pi^- \mu^+\nu_\mu)$ | Binned branching ratio of $B^0\to \pi^- \mu^+\nu_\mu$ | `q2min`, `q2max` |
+| `<Rmue>(B->pilnu)` | $\langle R_{\mu e} \rangle(B\to \pi \ell^+\nu)$ | Ratio of partial branching ratios of $B\to \pi \mu^+ \nu_\mu$ and $B\to \pi e^+ \nu_e$ | `q2min`, `q2max` |
+| `<Rtaumu>(B->pilnu)` | $\langle R_{\tau \mu} \rangle(B\to \pi \ell^+\nu)$ | Ratio of partial branching ratios of $B\to \pi \tau^+ \nu_\tau$ and $B\to \pi \mu^+ \nu_\mu$ | `q2min`, `q2max` |
+| `BR(B0->pimunu)` | $\text{BR}(B^0\to \pi^- \mu^+\nu_\mu)$ | Total branching ratio of $B^0\to \pi^- \mu^+\nu_\mu$ |  |
+| `Rmue(B->pilnu)` | $\langle R_{\mu e} \rangle(B\to \pi \ell^+\nu)$ | Ratio of total branching ratios of $B\to \pi \mu^+ \nu_\mu$ and $B\to \pi e^+ \nu_e$ | `q2min`, `q2max` |
+| `Rtaumu(B->pilnu)` | $\langle R_{\tau \mu} \rangle(B\to \pi \ell^+\nu)$ | Ratio of total branching ratios of $B\to \pi \tau^+ \nu_\tau$ and $B\to \pi \mu^+ \nu_\mu$ | `q2min`, `q2max` |
+| `dBR/dq2(B0->pimunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \pi^- \mu^+\nu_\mu)$ | Differential branching ratio of $B^0\to \pi^- \mu^+\nu_\mu$ | `q2` |
+
+
+### $B^0\to \pi^- \tau^+\nu_\tau$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<BR>(B0->pitaunu)` | $\langle\text{BR}\rangle(B^0\to \pi^- \tau^+\nu_\tau)$ | Binned branching ratio of $B^0\to \pi^- \tau^+\nu_\tau$ | `q2min`, `q2max` |
+| `<Rtaumu>(B->pilnu)` | $\langle R_{\tau \mu} \rangle(B\to \pi \ell^+\nu)$ | Ratio of partial branching ratios of $B\to \pi \tau^+ \nu_\tau$ and $B\to \pi \mu^+ \nu_\mu$ | `q2min`, `q2max` |
+| `BR(B0->pitaunu)` | $\text{BR}(B^0\to \pi^- \tau^+\nu_\tau)$ | Total branching ratio of $B^0\to \pi^- \tau^+\nu_\tau$ |  |
+| `Rtaumu(B->pilnu)` | $\langle R_{\tau \mu} \rangle(B\to \pi \ell^+\nu)$ | Ratio of total branching ratios of $B\to \pi \tau^+ \nu_\tau$ and $B\to \pi \mu^+ \nu_\mu$ | `q2min`, `q2max` |
+| `dBR/dq2(B0->pitaunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \pi^- \tau^+\nu_\tau)$ | Differential branching ratio of $B^0\to \pi^- \tau^+\nu_\tau$ | `q2` |
+
+
+### $B^0\to \pi^- e^+\nu_e$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<BR>(B0->pienu)` | $\langle\text{BR}\rangle(B^0\to \pi^- e^+\nu_e)$ | Binned branching ratio of $B^0\to \pi^- e^+\nu_e$ | `q2min`, `q2max` |
+| `<Rmue>(B->pilnu)` | $\langle R_{\mu e} \rangle(B\to \pi \ell^+\nu)$ | Ratio of partial branching ratios of $B\to \pi \mu^+ \nu_\mu$ and $B\to \pi e^+ \nu_e$ | `q2min`, `q2max` |
+| `BR(B0->pienu)` | $\text{BR}(B^0\to \pi^- e^+\nu_e)$ | Total branching ratio of $B^0\to \pi^- e^+\nu_e$ |  |
+| `Rmue(B->pilnu)` | $\langle R_{\mu e} \rangle(B\to \pi \ell^+\nu)$ | Ratio of total branching ratios of $B\to \pi \mu^+ \nu_\mu$ and $B\to \pi e^+ \nu_e$ | `q2min`, `q2max` |
+| `dBR/dq2(B0->pienu)` | $\frac{d\text{BR}}{dq^2}(B^0\to \pi^- e^+\nu_e)$ | Differential branching ratio of $B^0\to \pi^- e^+\nu_e$ | `q2` |
 
 
 ## $B\to V\ell\nu$
