@@ -1052,6 +1052,7 @@ table {
       
   <ul>
     <li class="mono"><a href="#flavio.physics.bdecays.bxll.l">l</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bxll.li">li</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bxll.pi">pi</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bxll.q">q</a></li>
   </ul>
@@ -1065,6 +1066,7 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.bxll.Phill_pc_mb2">Phill_pc_mb2</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bxll.bxll_br_int">bxll_br_int</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bxll.bxll_br_int_func">bxll_br_int_func</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bxll.bxll_br_int_ratio_func">bxll_br_int_ratio_func</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bxll.bxll_br_prefactor">bxll_br_prefactor</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bxll.bxll_dbrdq2">bxll_dbrdq2</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bxll.bxll_dbrdq2_func">bxll_dbrdq2_func</a></li>
@@ -1202,9 +1204,12 @@ table {
     <span class="n">Phi_u</span> <span class="o">=</span> <span class="n">f_u</span><span class="p">(</span><span class="n">alpha_e</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">],</span> <span class="n">mb</span><span class="p">,</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;lambda_1&#39;</span><span class="p">],</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;lambda_2&#39;</span><span class="p">])</span>
     <span class="c1"># fudge factor to account for remaining uncertainty</span>
     <span class="k">if</span> <span class="n">q2</span> <span class="o">&lt;</span> <span class="mi">12</span><span class="p">:</span>
-        <span class="n">unc</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;delta_BX&#39;</span><span class="o">+</span><span class="n">q</span><span class="o">+</span><span class="s1">&#39;ll low&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">lep</span> <span class="o">==</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span>
+            <span class="n">unc</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># for the tau, there is now low q^2 anyway</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">unc</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;delta_BX&#39;</span><span class="o">+</span><span class="n">q</span><span class="o">+</span><span class="n">lep</span><span class="o">+</span><span class="n">lep</span><span class="o">+</span><span class="s1">&#39; low&#39;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">unc</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;delta_BX&#39;</span><span class="o">+</span><span class="n">q</span><span class="o">+</span><span class="s1">&#39;ll high&#39;</span><span class="p">]</span>
+        <span class="n">unc</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;delta_BX&#39;</span><span class="o">+</span><span class="n">q</span><span class="o">+</span><span class="n">lep</span><span class="o">+</span><span class="n">lep</span><span class="o">+</span><span class="s1">&#39; high&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">N</span> <span class="o">*</span> <span class="n">Phi_ll</span> <span class="o">/</span> <span class="n">Phi_u</span> <span class="o">*</span> <span class="n">unc</span>
 
 <span class="k">def</span> <span class="nf">bxll_dbrdq2</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
@@ -1382,6 +1387,15 @@ table {
         <span class="k">return</span> <span class="n">bxll_br_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fct</span>
 
+<span class="k">def</span> <span class="nf">bxll_br_int_ratio_func</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">):</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">bxll_br_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">lnum</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="n">bxll_br_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">lden</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">den</span>
+    <span class="k">return</span> <span class="n">fct</span>
+
 <span class="k">def</span> <span class="nf">bxll_dbrdq2_func</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">bxll_dbrdq2</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
@@ -1411,6 +1425,20 @@ table {
         <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$\frac{d\text{BR}}{dq^2}(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="s2">r&quot;)$&quot;</span>
         <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span><span class="p">)</span>
         <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">bxll_dbrdq2_func</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">l</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;mu&#39;</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;tau&#39;</span><span class="p">,</span><span class="s1">&#39;mu&#39;</span><span class="p">),]:</span>
+    <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">]:</span>
+        <span class="n">_process_taxonomy</span> <span class="o">=</span> <span class="s1">r&#39;Process :: $b$ hadron decays :: FCNC decays :: $B\to X\ell^+\ell^-$ :: $&#39;</span>
+
+        <span class="c1"># binned branching ratio</span>
+        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;&lt;R&quot;</span><span class="o">+</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;&gt;(B-&gt;X&quot;</span><span class="o">+</span><span class="n">q</span><span class="o">+</span><span class="s2">&quot;ll)&quot;</span>
+        <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">])</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Ratio of partial branching ratios of $B\to X_&quot;</span> <span class="o">+</span> <span class="n">q</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span><span class="s2">r&quot;^-$&quot;</span> <span class="o">+</span> <span class="s2">&quot; and &quot;</span> <span class="o">+</span> <span class="s2">r&quot;$B\to X_&quot;</span> <span class="o">+</span> <span class="n">q</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">+</span><span class="s2">r&quot;^-$&quot;</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$\langle R_{&quot;</span> <span class="o">+</span> <span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="s2">r&quot;} \rangle(B\to X_&quot;</span> <span class="o">+</span> <span class="n">q</span> <span class="o">+</span> <span class="s2">r&quot;\ell^+\ell^-)$&quot;</span>
+        <span class="k">for</span>  <span class="n">li</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+            <span class="c1"># add taxonomy for both lepton flavours</span>
+            <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span> <span class="o">+</span> <span class="s2">r&quot;B\to X_&quot;</span> <span class="o">+</span> <span class="n">q</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">li</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">li</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^-$&quot;</span><span class="p">)</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">bxll_br_int_ratio_func</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 </pre></div>
 
   </div>
@@ -1421,6 +1449,14 @@ table {
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
       <p id="flavio.physics.bdecays.bxll.l" class="name">var <span class="ident">l</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.bxll.li" class="name">var <span class="ident">li</span></p>
       
   
   <div class="source_cont">
@@ -1583,6 +1619,33 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bxll_br_int_func</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">bxll_br_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fct</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bxll.bxll_br_int_ratio_func">
+    <p>def <span class="ident">bxll_br_int_ratio_func</span>(</p><p>q, lnum, lden)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bxll.bxll_br_int_ratio_func', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bxll.bxll_br_int_ratio_func" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bxll_br_int_ratio_func</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">):</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">bxll_br_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">lnum</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="n">bxll_br_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">lden</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">den</span>
     <span class="k">return</span> <span class="n">fct</span>
 </pre></div>
 

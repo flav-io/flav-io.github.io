@@ -1125,6 +1125,7 @@ table {
     <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.skipTest">skipTest</a></li>
     <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.tearDown">tearDown</a></li>
+    <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.test_1d_errors">test_1d_errors</a></li>
     <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.test_convolve_normal">test_convolve_normal</a></li>
     <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.test_convolve_numerical">test_convolve_numerical</a></li>
     <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.test_halfnormal">test_halfnormal</a></li>
@@ -1246,6 +1247,46 @@ table {
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
         <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">conv_p_12</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">comb_p_12</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">conv_p_123</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">comb_p_123</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_1d_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">AsymmetricNormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">DeltaDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">UniformDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">*</span><span class="mf">0.68</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">*</span><span class="mf">0.68</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">*</span><span class="mf">0.68</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">*</span><span class="mf">0.68</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">HalfNormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">HalfNormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1380,6 +1421,46 @@ in order to be run.</p>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
         <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">conv_p_12</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">comb_p_12</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">conv_p_123</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">comb_p_123</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_1d_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">AsymmetricNormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">DeltaDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">UniformDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">*</span><span class="mf">0.68</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">*</span><span class="mf">0.68</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">*</span><span class="mf">0.68</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">*</span><span class="mf">0.68</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">HalfNormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">HalfNormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1560,7 +1641,7 @@ difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
 between the two objects is more than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
-as significant digits (measured from the most signficant digit).</p>
+as significant digits (measured from the most significant digit).</p>
 <p>If the two objects compare equal then they will automatically
 compare almost equal.</p></div>
   <div class="source_cont">
@@ -1573,7 +1654,7 @@ compare almost equal.</p></div>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
 <span class="sd">       between the two objects is more than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
-<span class="sd">       as significant digits (measured from the most signficant digit).</span>
+<span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       If the two objects compare equal then they will automatically</span>
 <span class="sd">       compare almost equal.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2229,7 +2310,7 @@ difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
 between the two objects is less than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
-as significant digits (measured from the most signficant digit).</p>
+as significant digits (measured from the most significant digit).</p>
 <p>Objects that are equal automatically fail.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_probability.TestProbability.assertNotAlmostEqual', this);">Show source &equiv;</a></p>
@@ -2241,7 +2322,7 @@ as significant digits (measured from the most signficant digit).</p>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
 <span class="sd">       between the two objects is less than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
-<span class="sd">       as significant digits (measured from the most signficant digit).</span>
+<span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       Objects that are equal automatically fail.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">delta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">places</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -3510,7 +3591,7 @@ block, allowing further test code to be executed.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_probability.TestProbability.subTest', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.test_probability.TestProbability.subTest" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@contextlib.contextmanager</span>
-<span class="k">def</span> <span class="nf">subTest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">subTest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">_subtest_msg_sentinel</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a context manager that will return the enclosed block</span>
 <span class="sd">    of code in a subtest identified by the optional message and</span>
 <span class="sd">    keyword parameters.  A failure in the subtest marks the test</span>
@@ -3562,6 +3643,59 @@ block, allowing further test code to be executed.</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="s2">&quot;Hook method for deconstructing the test fixture after testing it.&quot;</span>
     <span class="k">pass</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.test_probability.TestProbability.test_1d_errors">
+    <p>def <span class="ident">test_1d_errors</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_probability.TestProbability.test_1d_errors', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.test_probability.TestProbability.test_1d_errors" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_1d_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">AsymmetricNormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">DeltaDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">UniformDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">*</span><span class="mf">0.68</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">*</span><span class="mf">0.68</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">*</span><span class="mf">0.68</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.4</span><span class="o">*</span><span class="mf">0.68</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">HalfNormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">HalfNormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">NumericalDistribution</span><span class="o">.</span><span class="n">from_pd</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_left</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">error_right</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
   </div>

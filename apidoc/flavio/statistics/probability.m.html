@@ -1198,6 +1198,7 @@ table {
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">=</span> <span class="n">central_value</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">support</span> <span class="o">=</span> <span class="n">support</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span> <span class="o">=</span> <span class="mf">0.6826894921370859</span> <span class="c1"># 68.2... %</span>
 
    <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
@@ -1224,6 +1225,16 @@ table {
         <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the lower error&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the upper error&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span>
+
 <span class="k">class</span> <span class="nc">DeltaDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">):</span>
       <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">central_value</span><span class="p">))</span>
@@ -1240,6 +1251,14 @@ table {
        <span class="k">else</span><span class="p">:</span>
            <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">return</span> <span class="mi">0</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">return</span> <span class="mi">0</span>
+
 <span class="k">class</span> <span class="nc">NormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
 
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="p">):</span>
@@ -1255,6 +1274,17 @@ table {
 
    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
        <span class="k">return</span> <span class="n">normal_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the lower error&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the upper error&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span>
+
 
 <span class="k">class</span> <span class="nc">AsymmetricNormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
 
@@ -1294,6 +1324,16 @@ table {
         <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the lower error&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the upper error&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span>
+
 <span class="k">class</span> <span class="nc">HalfNormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
 
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="p">):</span>
@@ -1316,6 +1356,22 @@ table {
    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the lower error&quot;&quot;&quot;</span>
+       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+           <span class="k">return</span> <span class="mi">0</span>
+       <span class="k">else</span><span class="p">:</span>
+           <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="c1"># return a positive value!</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the upper error&quot;&quot;&quot;</span>
+       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+           <span class="k">return</span> <span class="mi">0</span>
+       <span class="k">else</span><span class="p">:</span>
+           <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span>
 
 <span class="k">class</span> <span class="nc">GaussianUpperLimit</span><span class="p">(</span><span class="n">HalfNormalDistribution</span><span class="p">):</span>
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">):</span>
@@ -1353,6 +1409,7 @@ table {
       <span class="n">_cdf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
       <span class="n">_cdf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">_cdf</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">_cdf</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
       <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
@@ -1360,6 +1417,20 @@ table {
 
    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the lower error defined such that it contains 68% of the</span>
+<span class="sd">       probability below the central value&quot;&quot;&quot;</span>
+       <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">))</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the upper error defined such that it contains 68% of the</span>
+<span class="sd">       probability above the central value&quot;&quot;&quot;</span>
+       <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">cdf_central</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
 
    <span class="nd">@classmethod</span>
    <span class="k">def</span> <span class="nf">from_pd</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
@@ -1387,7 +1458,15 @@ table {
        <span class="n">sign</span><span class="p">,</span> <span class="n">logdet</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">)</span>
        <span class="k">return</span> <span class="n">pdf_scaled</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
 
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the lower errors&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span>
 
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the upper errors&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span>
 
 
 <span class="c1"># Auxiliary functions</span>
@@ -1602,6 +1681,16 @@ distributions.</p></div>
    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the lower error&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_deviation</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the upper error&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_deviation</span>
 </pre></div>
 
   </div>
@@ -1719,6 +1808,28 @@ distributions.</p></div>
   
           <h3>Instance variables</h3>
             <div class="item">
+            <p id="flavio.statistics.probability.AsymmetricNormalDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the lower error</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.AsymmetricNormalDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the upper error</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="flavio.statistics.probability.AsymmetricNormalDistribution.left_deviation" class="name">var <span class="ident">left_deviation</span></p>
             
 
@@ -1784,6 +1895,14 @@ distributions.</p></div>
            <span class="k">return</span> <span class="mf">0.</span>
        <span class="k">else</span><span class="p">:</span>
            <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">return</span> <span class="mi">0</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">return</span> <span class="mi">0</span>
 </pre></div>
 
   </div>
@@ -1889,6 +2008,27 @@ distributions.</p></div>
 
   </div>
   
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="flavio.statistics.probability.DeltaDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.DeltaDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
       </div>
       </div>
       
@@ -2057,6 +2197,32 @@ distributions.</p></div>
 
             </div>
             <div class="item">
+            <p id="flavio.statistics.probability.GaussianUpperLimit.error_left" class="name">var <span class="ident">error_left</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.probability.HalfNormalDistribution">HalfNormalDistribution</a></code>.<code><a href="#flavio.statistics.probability.HalfNormalDistribution.error_left">error_left</a></code>
+    </p>
+
+            
+  
+    <div class="desc inherited"><p>Return the lower error</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.GaussianUpperLimit.error_right" class="name">var <span class="ident">error_right</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the upper error</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="flavio.statistics.probability.GaussianUpperLimit.limit" class="name">var <span class="ident">limit</span></p>
             
 
@@ -2099,6 +2265,22 @@ distributions.</p></div>
    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the lower error&quot;&quot;&quot;</span>
+       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+           <span class="k">return</span> <span class="mi">0</span>
+       <span class="k">else</span><span class="p">:</span>
+           <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="c1"># return a positive value!</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the upper error&quot;&quot;&quot;</span>
+       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+           <span class="k">return</span> <span class="mi">0</span>
+       <span class="k">else</span><span class="p">:</span>
+           <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span>
 </pre></div>
 
   </div>
@@ -2206,6 +2388,28 @@ distributions.</p></div>
   
           <h3>Instance variables</h3>
             <div class="item">
+            <p id="flavio.statistics.probability.HalfNormalDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the lower error</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.HalfNormalDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the upper error</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="flavio.statistics.probability.HalfNormalDistribution.standard_deviation" class="name">var <span class="ident">standard_deviation</span></p>
             
 
@@ -2245,6 +2449,16 @@ distributions.</p></div>
        <span class="n">pdf_scaled</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span><span class="p">)</span>
        <span class="n">sign</span><span class="p">,</span> <span class="n">logdet</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">)</span>
        <span class="k">return</span> <span class="n">pdf_scaled</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_covariance</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the lower errors&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the upper errors&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span>
 </pre></div>
 
   </div>
@@ -2375,6 +2589,28 @@ distributions.</p></div>
 
             </div>
             <div class="item">
+            <p id="flavio.statistics.probability.MultivariateNormalDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the lower errors</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.MultivariateNormalDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the upper errors</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="flavio.statistics.probability.MultivariateNormalDistribution.scaled_covariance" class="name">var <span class="ident">scaled_covariance</span></p>
             
 
@@ -2410,6 +2646,16 @@ distributions.</p></div>
 
    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
        <span class="k">return</span> <span class="n">normal_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the lower error&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the upper error&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span>
 </pre></div>
 
   </div>
@@ -2516,6 +2762,28 @@ distributions.</p></div>
   
           <h3>Instance variables</h3>
             <div class="item">
+            <p id="flavio.statistics.probability.NormalDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the lower error</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.NormalDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the upper error</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="flavio.statistics.probability.NormalDistribution.standard_deviation" class="name">var <span class="ident">standard_deviation</span></p>
             
 
@@ -2557,6 +2825,7 @@ distributions.</p></div>
       <span class="n">_cdf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
       <span class="n">_cdf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">_cdf</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">_cdf</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
       <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
@@ -2564,6 +2833,20 @@ distributions.</p></div>
 
    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the lower error defined such that it contains 68% of the</span>
+<span class="sd">       probability below the central value&quot;&quot;&quot;</span>
+       <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">))</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the upper error defined such that it contains 68% of the</span>
+<span class="sd">       probability above the central value&quot;&quot;&quot;</span>
+       <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">cdf_central</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
 
    <span class="nd">@classmethod</span>
    <span class="k">def</span> <span class="nf">from_pd</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
@@ -2617,6 +2900,7 @@ distributions.</p></div>
    <span class="n">_cdf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
    <span class="n">_cdf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">_cdf</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">_cdf</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2690,6 +2974,40 @@ distributions.</p></div>
   
           <h3>Instance variables</h3>
             <div class="item">
+            <p id="flavio.statistics.probability.NumericalDistribution.cdf_interp" class="name">var <span class="ident">cdf_interp</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.NumericalDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the lower error defined such that it contains 68% of the
+probability below the central value</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.NumericalDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the upper error defined such that it contains 68% of the
+probability above the central value</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="flavio.statistics.probability.NumericalDistribution.ppf_interp" class="name">var <span class="ident">ppf_interp</span></p>
             
 
@@ -2741,6 +3059,7 @@ distributions.</p></div>
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">=</span> <span class="n">central_value</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">support</span> <span class="o">=</span> <span class="n">support</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span> <span class="o">=</span> <span class="mf">0.6826894921370859</span> <span class="c1"># 68.2... %</span>
 
    <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
@@ -2773,6 +3092,7 @@ distributions.</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="p">):</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">=</span> <span class="n">central_value</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">support</span> <span class="o">=</span> <span class="n">support</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span> <span class="o">=</span> <span class="mf">0.6826894921370859</span> <span class="c1"># 68.2... %</span>
 </pre></div>
 
   </div>
@@ -2853,6 +3173,16 @@ distributions.</p></div>
    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">_lpvect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logpdf</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">_lpvect</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the lower error&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span>
+
+   <span class="nd">@property</span>
+   <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="sd">&quot;&quot;&quot;Return the upper error&quot;&quot;&quot;</span>
+       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_range</span>
 </pre></div>
 
   </div>
@@ -2957,6 +3287,28 @@ distributions.</p></div>
   </div>
   
           <h3>Instance variables</h3>
+            <div class="item">
+            <p id="flavio.statistics.probability.UniformDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the lower error</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.UniformDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the upper error</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
             <div class="item">
             <p id="flavio.statistics.probability.UniformDistribution.half_range" class="name">var <span class="ident">half_range</span></p>
             
