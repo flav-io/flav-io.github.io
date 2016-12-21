@@ -456,3 +456,29 @@ a scalar observable).
 | `dBR/dq2(Bs->K*enu)` | $\frac{d\text{BR}}{dq^2}(B_s\to K^{* -} e^+\nu_e)$ | Differential branching ratio of $B_s\to K^{* -} e^+\nu_e$ | `q2` |
 
 
+## $B\to X\ell\nu$
+
+### $B\to X_c\ell^+\nu_\ell$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B->Xclnu)` | $\text{BR}(B\to X_c\ell^+\nu_\ell)$ | Total branching ratio of $B\to X_c\ell^+\nu_\ell$ |  |
+
+
+### $B\to X_c\mu^+\nu_\mu$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B->Xcmunu)` | $\text{BR}(B\to X_c\mu^+\nu_\mu)$ | Total branching ratio of $B\to X_c\mu^+\nu_\mu$ |  |
+
+
+### $B\to X_ce^+\nu_e$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B->Xcenu)` | $\text{BR}(B\to X_ce^+\nu_e)$ | Total branching ratio of $B\to X_ce^+\nu_e$ |  |
+
+

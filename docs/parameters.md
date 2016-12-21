@@ -454,6 +454,10 @@ of the parameter.
 | `m_t` | $m_{t}$ | $t$ quark pole mass |
 | `m_tau` | $m_{\tau}$ | $\tau$ mass |
 | `m_u` | $m_{u}(2\,\text{GeV})$ | $u$ quark mass in the $\overline{\text{MS}}$ scheme at 2 GeV |
+| `mu_G^2` | $\mu_G^2$ |  |
+| `mu_pi^2` | $\mu_\pi^2$ |  |
+| `rho_D^3` | $\rho_D^3$ |  |
+| `rho_LS^3` | $\rho_LS^3$ |  |
 | `s2w` | $\sin^2 \hat\theta_w(m_Z)$ | sine squared of the weak mixing angle in the $\overline{\text{MS}}$ scheme at the scale $m_Z$ |
 | `tau_B+` | $\tau_{B^{+}}$ | $B^{+}$ lifetime |
 | `tau_B0` | $\tau_{B^{0}}$ | $B^{0}$ lifetime |
