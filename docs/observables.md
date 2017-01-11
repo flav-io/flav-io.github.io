@@ -19,11 +19,11 @@ of this page.
 
 - [FCNC decays](obs/bhadrondecays-fcncdecays.html) (553 observables)
 
-- [Leptonic tree-level decays](obs/bhadrondecays-leptonictreeleveldecays.html) (3 observables)
+- [Leptonic tree-level decays](obs/bhadrondecays-leptonictreeleveldecays.html) (6 observables)
 
 - [Non-leptonic decays](obs/bhadrondecays-nonleptonicdecays.html) (2 observables)
 
-- [Semi-leptonic tree-level decays](obs/bhadrondecays-semileptonictreeleveldecays.html) (155 observables)
+- [Semi-leptonic tree-level decays](obs/bhadrondecays-semileptonictreeleveldecays.html) (243 observables)
 
 
 ### $c$ hadron decays

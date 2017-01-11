@@ -46,3 +46,27 @@ a scalar observable).
 | `BR(B+->enu)` | $\text{BR}(B^+\to e^+\nu_e)$ | Branching ratio of $B^+\to e^+\nu_e$ |  |
 
 
+### $B_c\to \mu^+\nu_\mu$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(Bc->munu)` | $\text{BR}(B_c\to \mu^+\nu_\mu)$ | Branching ratio of $B_c\to \mu^+\nu_\mu$ |  |
+
+
+### $B_c\to \tau^+\nu_\tau$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(Bc->taunu)` | $\text{BR}(B_c\to \tau^+\nu_\tau)$ | Branching ratio of $B_c\to \tau^+\nu_\tau$ |  |
+
+
+### $B_c\to e^+\nu_e$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(Bc->enu)` | $\text{BR}(B_c\to e^+\nu_e)$ | Branching ratio of $B_c\to e^+\nu_e$ |  |
+
+

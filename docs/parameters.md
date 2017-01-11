@@ -386,6 +386,7 @@ of the parameter.
 | `eta_tt_K0` | $\eta_{tt}$ | SM QCD correction factor for the top contribution to $K^0$ mixing |
 | `f_B+` | $f_{B^\pm}$ | $B^\pm$ decay constant |
 | `f_B0` | $f_{B^0}$ | $B^0$ decay constant |
+| `f_Bc` | $f_{B_c}$ | $B_c$ decay constant |
 | `f_Bs` | $f_{B_s}$ | $B_s$ decay constant |
 | `f_D+` | $f_{D^\pm}$ | $D^\pm$ decay constant |
 | `f_D0` | $f_{D^0}$ | $D^0$ decay constant |
@@ -415,6 +416,7 @@ of the parameter.
 | `m_B*0` | $m_{B^{*0}}$ | $B^{*0}$ mass |
 | `m_B+` | $m_{B^{+}}$ | $B^{+}$ mass |
 | `m_B0` | $m_{B^{0}}$ | $B^{0}$ mass |
+| `m_Bc` | $m_{B_{c}}$ | $B_{c}$ mass |
 | `m_Bs` | $m_{B_{s}}$ | $B_{s}$ mass |
 | `m_Bs*` | $m_{B^{*}_{s}}$ | $B^{*}_{s}$ mass |
 | `m_D*+` | $m_{D^{*}}$ | $D^{*}$ mass |
@@ -432,6 +434,7 @@ of the parameter.
 | `m_KS` | $m_{K_{S}}$ | $K_{S}$ mass |
 | `m_Lambda` | $m_{\Lambda}$ | $\Lambda$ mass |
 | `m_Lambdab` | $m_{\Lambda_{b}}$ | $\Lambda_{b}$ mass |
+| `m_Lambdac` | $m_{\Lambda_{c}}$ | $\Lambda_{c}$ mass |
 | `m_W` | $m_{W}$ | $W$ mass |
 | `m_Z` | $m_{Z}$ | $Z$ mass |
 | `m_b` | $m_{b}(m_{b})$ | $b$ quark mass in the $\overline{\text{MS}}$ scheme at the scale $m_b$ |
@@ -461,6 +464,7 @@ of the parameter.
 | `s2w` | $\sin^2 \hat\theta_w(m_Z)$ | sine squared of the weak mixing angle in the $\overline{\text{MS}}$ scheme at the scale $m_Z$ |
 | `tau_B+` | $\tau_{B^{+}}$ | $B^{+}$ lifetime |
 | `tau_B0` | $\tau_{B^{0}}$ | $B^{0}$ lifetime |
+| `tau_Bc` | $\tau_{B_{c}}$ | $B_{c}$ lifetime |
 | `tau_Bs` | $\tau_{B_{s}}$ | $B_{s}$ lifetime |
 | `tau_D*+` | $\tau_{D^{*}}$ | $D^{*}$ lifetime |
 | `tau_D+` | $\tau_{D^{+}}$ | $D^{+}$ lifetime |
@@ -474,6 +478,7 @@ of the parameter.
 | `tau_KS` | $\tau_{K_{S}}$ | $K_{S}$ lifetime |
 | `tau_Lambda` | $\tau_{\Lambda}$ | $\Lambda$ lifetime |
 | `tau_Lambdab` | $\tau_{\Lambda_{b}}$ | $\Lambda_{b}$ lifetime |
+| `tau_Lambdac` | $\tau_{\Lambda_{c}}$ | $\Lambda_{c}$ lifetime |
 | `tau_W` | $\tau_{W}$ | $W$ lifetime |
 | `tau_Z` | $\tau_{Z}$ | $Z$ lifetime |
 | `tau_eta` | $\tau_{\eta}$ | $\eta$ lifetime |
