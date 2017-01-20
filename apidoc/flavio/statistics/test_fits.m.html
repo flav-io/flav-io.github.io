@@ -1049,6 +1049,7 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.statistics.test_fits.class_from_string">class_from_string</a></li>
     <li class="mono"><a href="#flavio.statistics.test_fits.config">config</a></li>
   </ul>
 
@@ -1126,6 +1127,7 @@ table {
     <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.tearDown">tearDown</a></li>
     <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.test_bayesian_fit_class">test_bayesian_fit_class</a></li>
+    <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.test_fastfit">test_fastfit</a></li>
     <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.test_fit_class">test_fit_class</a></li>
     <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.tearDownClass">tearDownClass</a></li>
@@ -1158,17 +1160,21 @@ table {
 <span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">flavio.statistics.probability</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">flavio.config</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
 <span class="k">class</span> <span class="nc">TestClasses</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">test_fit_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs&#39;</span> <span class="p">)</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="mf">4.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
-        <span class="n">m</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement of test_obs&#39;</span> <span class="p">)</span>
-        <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs&#39;</span><span class="p">],</span> <span class="n">d</span><span class="p">)</span>
         <span class="n">par</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">)</span>
         <span class="n">par</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;m_b&#39;</span><span class="p">,</span> <span class="s1">&#39;4.2+-0.2&#39;</span><span class="p">)</span>
         <span class="n">par</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;m_c&#39;</span><span class="p">,</span> <span class="s1">&#39;1.2+-0.1&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
+            <span class="c1"># unconstrained observable</span>
+            <span class="n">Fit</span><span class="p">(</span><span class="s1">&#39;test_fit_1&#39;</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[</span><span class="s1">&#39;m_c&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;test_obs&#39;</span><span class="p">])</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement of test_obs&#39;</span> <span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs&#39;</span><span class="p">],</span> <span class="n">d</span><span class="p">)</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
             <span class="c1"># same parameter as fit and nuisance</span>
             <span class="n">Fit</span><span class="p">(</span><span class="s1">&#39;test_fit_1&#39;</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;test_obs&#39;</span><span class="p">])</span>
@@ -1229,6 +1235,37 @@ table {
         <span class="n">BayesianFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;bayesian_test_fit_1&#39;</span><span class="p">)</span>
         <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 2&#39;</span><span class="p">)</span>
         <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement of test_obs 2&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_fastfit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># dummy observables</span>
+        <span class="n">o1</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs 1&#39;</span> <span class="p">)</span>
+        <span class="n">o2</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs 2&#39;</span> <span class="p">)</span>
+        <span class="c1"># dummy predictions</span>
+        <span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mf">5.9</span>
+        <span class="k">def</span> <span class="nf">f2</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mf">2.5</span>
+        <span class="n">Prediction</span><span class="p">(</span> <span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="n">f1</span> <span class="p">)</span>
+        <span class="n">Prediction</span><span class="p">(</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">,</span> <span class="n">f2</span> <span class="p">)</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="n">cov2</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">*</span><span class="mf">0.1</span><span class="o">*</span><span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="o">*</span><span class="mf">0.1</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="o">**</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="n">d2</span> <span class="o">=</span> <span class="n">MultivariateNormalDistribution</span><span class="p">([</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">cov2</span><span class="p">)</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement 1 of test_obs 1&#39;</span> <span class="p">)</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement 2 of test_obs 1 and test_obs 2&#39;</span> <span class="p">)</span>
+        <span class="n">m1</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span> <span class="n">d1</span><span class="p">)</span>
+        <span class="n">m2</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">],</span> <span class="n">d2</span><span class="p">)</span>
+        <span class="n">fit</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">])</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">()</span>
+        <span class="n">cov_weighted</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.008</span><span class="p">,</span> <span class="mf">0.012</span><span class="p">],[</span><span class="mf">0.012</span><span class="p">,</span><span class="mf">0.0855</span><span class="p">]]</span>
+        <span class="n">mean_weighted</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5.8</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">]</span>
+        <span class="n">exact_log_likelihood</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="mf">5.9</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="n">mean_weighted</span><span class="p">,</span> <span class="n">cov_weighted</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">exact_log_likelihood</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="c1"># removing dummy instances</span>
+        <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 2&#39;</span><span class="p">)</span>
+        <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 1 of test_obs 1&#39;</span><span class="p">)</span>
+        <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 2 of test_obs 1 and test_obs 2&#39;</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1237,6 +1274,14 @@ table {
 
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="flavio.statistics.test_fits.class_from_string" class="name">var <span class="ident">class_from_string</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
       <div class="item">
       <p id="flavio.statistics.test_fits.config" class="name">var <span class="ident">config</span></p>
       
@@ -1285,11 +1330,14 @@ in order to be run.</p>
     <span class="k">def</span> <span class="nf">test_fit_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs&#39;</span> <span class="p">)</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="mf">4.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
-        <span class="n">m</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement of test_obs&#39;</span> <span class="p">)</span>
-        <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs&#39;</span><span class="p">],</span> <span class="n">d</span><span class="p">)</span>
         <span class="n">par</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">)</span>
         <span class="n">par</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;m_b&#39;</span><span class="p">,</span> <span class="s1">&#39;4.2+-0.2&#39;</span><span class="p">)</span>
         <span class="n">par</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;m_c&#39;</span><span class="p">,</span> <span class="s1">&#39;1.2+-0.1&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
+            <span class="c1"># unconstrained observable</span>
+            <span class="n">Fit</span><span class="p">(</span><span class="s1">&#39;test_fit_1&#39;</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[</span><span class="s1">&#39;m_c&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;test_obs&#39;</span><span class="p">])</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement of test_obs&#39;</span> <span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs&#39;</span><span class="p">],</span> <span class="n">d</span><span class="p">)</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
             <span class="c1"># same parameter as fit and nuisance</span>
             <span class="n">Fit</span><span class="p">(</span><span class="s1">&#39;test_fit_1&#39;</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;test_obs&#39;</span><span class="p">])</span>
@@ -1350,6 +1398,37 @@ in order to be run.</p>
         <span class="n">BayesianFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;bayesian_test_fit_1&#39;</span><span class="p">)</span>
         <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 2&#39;</span><span class="p">)</span>
         <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement of test_obs 2&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_fastfit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># dummy observables</span>
+        <span class="n">o1</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs 1&#39;</span> <span class="p">)</span>
+        <span class="n">o2</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs 2&#39;</span> <span class="p">)</span>
+        <span class="c1"># dummy predictions</span>
+        <span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mf">5.9</span>
+        <span class="k">def</span> <span class="nf">f2</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mf">2.5</span>
+        <span class="n">Prediction</span><span class="p">(</span> <span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="n">f1</span> <span class="p">)</span>
+        <span class="n">Prediction</span><span class="p">(</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">,</span> <span class="n">f2</span> <span class="p">)</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="n">cov2</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">*</span><span class="mf">0.1</span><span class="o">*</span><span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="o">*</span><span class="mf">0.1</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="o">**</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="n">d2</span> <span class="o">=</span> <span class="n">MultivariateNormalDistribution</span><span class="p">([</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">cov2</span><span class="p">)</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement 1 of test_obs 1&#39;</span> <span class="p">)</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement 2 of test_obs 1 and test_obs 2&#39;</span> <span class="p">)</span>
+        <span class="n">m1</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span> <span class="n">d1</span><span class="p">)</span>
+        <span class="n">m2</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">],</span> <span class="n">d2</span><span class="p">)</span>
+        <span class="n">fit</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">])</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">()</span>
+        <span class="n">cov_weighted</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.008</span><span class="p">,</span> <span class="mf">0.012</span><span class="p">],[</span><span class="mf">0.012</span><span class="p">,</span><span class="mf">0.0855</span><span class="p">]]</span>
+        <span class="n">mean_weighted</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5.8</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">]</span>
+        <span class="n">exact_log_likelihood</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="mf">5.9</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="n">mean_weighted</span><span class="p">,</span> <span class="n">cov_weighted</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">exact_log_likelihood</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="c1"># removing dummy instances</span>
+        <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 2&#39;</span><span class="p">)</span>
+        <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 1 of test_obs 1&#39;</span><span class="p">)</span>
+        <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 2 of test_obs 1 and test_obs 2&#39;</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3592,6 +3671,55 @@ block, allowing further test code to be executed.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="flavio.statistics.test_fits.TestClasses.test_fastfit">
+    <p>def <span class="ident">test_fastfit</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_fits.TestClasses.test_fastfit', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.test_fits.TestClasses.test_fastfit" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_fastfit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># dummy observables</span>
+    <span class="n">o1</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs 1&#39;</span> <span class="p">)</span>
+    <span class="n">o2</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs 2&#39;</span> <span class="p">)</span>
+    <span class="c1"># dummy predictions</span>
+    <span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">5.9</span>
+    <span class="k">def</span> <span class="nf">f2</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">2.5</span>
+    <span class="n">Prediction</span><span class="p">(</span> <span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="n">f1</span> <span class="p">)</span>
+    <span class="n">Prediction</span><span class="p">(</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">,</span> <span class="n">f2</span> <span class="p">)</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">cov2</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">*</span><span class="mf">0.1</span><span class="o">*</span><span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="o">*</span><span class="mf">0.1</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="o">**</span><span class="mi">2</span><span class="p">]]</span>
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">MultivariateNormalDistribution</span><span class="p">([</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">cov2</span><span class="p">)</span>
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement 1 of test_obs 1&#39;</span> <span class="p">)</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement 2 of test_obs 1 and test_obs 2&#39;</span> <span class="p">)</span>
+    <span class="n">m1</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span> <span class="n">d1</span><span class="p">)</span>
+    <span class="n">m2</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">],</span> <span class="n">d2</span><span class="p">)</span>
+    <span class="n">fit</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">])</span>
+    <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">()</span>
+    <span class="n">cov_weighted</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.008</span><span class="p">,</span> <span class="mf">0.012</span><span class="p">],[</span><span class="mf">0.012</span><span class="p">,</span><span class="mf">0.0855</span><span class="p">]]</span>
+    <span class="n">mean_weighted</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5.8</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">]</span>
+    <span class="n">exact_log_likelihood</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="mf">5.9</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="n">mean_weighted</span><span class="p">,</span> <span class="n">cov_weighted</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">exact_log_likelihood</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="c1"># removing dummy instances</span>
+    <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">)</span>
+    <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">)</span>
+    <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 2&#39;</span><span class="p">)</span>
+    <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 1 of test_obs 1&#39;</span><span class="p">)</span>
+    <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 2 of test_obs 1 and test_obs 2&#39;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.statistics.test_fits.TestClasses.test_fit_class">
     <p>def <span class="ident">test_fit_class</span>(</p><p>self)</p>
     </div>
@@ -3605,11 +3733,14 @@ block, allowing further test code to be executed.</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_fit_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs&#39;</span> <span class="p">)</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="mf">4.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement of test_obs&#39;</span> <span class="p">)</span>
-    <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs&#39;</span><span class="p">],</span> <span class="n">d</span><span class="p">)</span>
     <span class="n">par</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">)</span>
     <span class="n">par</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;m_b&#39;</span><span class="p">,</span> <span class="s1">&#39;4.2+-0.2&#39;</span><span class="p">)</span>
     <span class="n">par</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;m_c&#39;</span><span class="p">,</span> <span class="s1">&#39;1.2+-0.1&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
+        <span class="c1"># unconstrained observable</span>
+        <span class="n">Fit</span><span class="p">(</span><span class="s1">&#39;test_fit_1&#39;</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[</span><span class="s1">&#39;m_c&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;test_obs&#39;</span><span class="p">])</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement of test_obs&#39;</span> <span class="p">)</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs&#39;</span><span class="p">],</span> <span class="n">d</span><span class="p">)</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
         <span class="c1"># same parameter as fit and nuisance</span>
         <span class="n">Fit</span><span class="p">(</span><span class="s1">&#39;test_fit_1&#39;</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;test_obs&#39;</span><span class="p">])</span>

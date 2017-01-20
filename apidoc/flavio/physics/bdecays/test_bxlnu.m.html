@@ -1127,6 +1127,7 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.test_bxlnu.TestBXlnu.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bxlnu.TestBXlnu.tearDown">tearDown</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bxlnu.TestBXlnu.test_bxclnu">test_bxclnu</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.test_bxlnu.TestBXlnu.test_bxclnu_np">test_bxclnu_np</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bxlnu.TestBXlnu.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bxlnu.TestBXlnu.tearDownClass">tearDownClass</a></li>
   </ul>
@@ -1157,15 +1158,38 @@ table {
 
 <span class="n">par</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
 <span class="n">wc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+<span class="n">par</span><span class="p">[</span><span class="s1">&#39;Vcb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.04221</span> <span class="c1"># inclusive Vcb: see 1411.6560</span>
 
 <span class="k">class</span> <span class="nc">TestBXlnu</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">test_bxclnu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># check that the total BR roughly agrees with the experimental value</span>
-        <span class="c1"># (that is present as a parameter needed for B-&gt;Xsgamma)</span>
+        <span class="c1"># check that the NLO and NNLO functions reproduce the correct numbers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
-            <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;BR(B-&gt;Xcenu)_exp&#39;</span><span class="p">],</span>
-            <span class="mi">1</span><span class="p">,</span>
-            <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.02</span><span class="p">)</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">pc1</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">(</span><span class="mf">0.986</span><span class="o">/</span><span class="mf">4.6</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mb</span><span class="o">=</span><span class="mf">4.6</span><span class="p">),</span>
+            <span class="o">-</span><span class="mf">1.65019</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">pc2</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">(</span><span class="mf">0.986</span><span class="o">/</span><span class="mf">4.6</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mb</span><span class="o">=</span><span class="mf">4.6</span><span class="p">),</span>
+            <span class="o">-</span><span class="mf">1.91556</span> <span class="o">-</span><span class="mf">0.4519</span> <span class="o">*</span> <span class="mi">9</span> <span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+        <span class="c1"># check that the total BR roughly agrees with the experimental value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B-&gt;Xcenu)&#39;</span><span class="p">),</span>
+            <span class="mf">0.1065</span><span class="p">,</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.0005</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B-&gt;Xcmunu)&#39;</span><span class="p">),</span>
+            <span class="mf">0.1065</span><span class="p">,</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.0005</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B-&gt;Xclnu)&#39;</span><span class="p">),</span>
+            <span class="mf">0.1065</span><span class="p">,</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.0005</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_bxclnu_np</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">wc_np</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVp_bcenu&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> <span class="n">scale</span><span class="o">=</span><span class="mf">4.6</span><span class="p">)</span>
+        <span class="n">br_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span>
+        <span class="n">br_np</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_np</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span>
+        <span class="c1"># compare to the unnumbered eq. between (13) and (14) in 1407.1320</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_np</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.34</span><span class="o">*</span><span class="mf">0.1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1228,12 +1252,34 @@ in order to be run.</p>
   <div id="source-flavio.physics.bdecays.test_bxlnu.TestBXlnu" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TestBXlnu</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">test_bxclnu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># check that the total BR roughly agrees with the experimental value</span>
-        <span class="c1"># (that is present as a parameter needed for B-&gt;Xsgamma)</span>
+        <span class="c1"># check that the NLO and NNLO functions reproduce the correct numbers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
-            <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;BR(B-&gt;Xcenu)_exp&#39;</span><span class="p">],</span>
-            <span class="mi">1</span><span class="p">,</span>
-            <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.02</span><span class="p">)</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">pc1</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">(</span><span class="mf">0.986</span><span class="o">/</span><span class="mf">4.6</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mb</span><span class="o">=</span><span class="mf">4.6</span><span class="p">),</span>
+            <span class="o">-</span><span class="mf">1.65019</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">pc2</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">(</span><span class="mf">0.986</span><span class="o">/</span><span class="mf">4.6</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mb</span><span class="o">=</span><span class="mf">4.6</span><span class="p">),</span>
+            <span class="o">-</span><span class="mf">1.91556</span> <span class="o">-</span><span class="mf">0.4519</span> <span class="o">*</span> <span class="mi">9</span> <span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+        <span class="c1"># check that the total BR roughly agrees with the experimental value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B-&gt;Xcenu)&#39;</span><span class="p">),</span>
+            <span class="mf">0.1065</span><span class="p">,</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.0005</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B-&gt;Xcmunu)&#39;</span><span class="p">),</span>
+            <span class="mf">0.1065</span><span class="p">,</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.0005</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B-&gt;Xclnu)&#39;</span><span class="p">),</span>
+            <span class="mf">0.1065</span><span class="p">,</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.0005</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_bxclnu_np</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">wc_np</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVp_bcenu&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> <span class="n">scale</span><span class="o">=</span><span class="mf">4.6</span><span class="p">)</span>
+        <span class="n">br_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span>
+        <span class="n">br_np</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_np</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span>
+        <span class="c1"># compare to the unnumbered eq. between (13) and (14) in 1407.1320</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_np</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.34</span><span class="o">*</span><span class="mf">0.1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1414,7 +1460,7 @@ difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
 between the two objects is more than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
-as significant digits (measured from the most signficant digit).</p>
+as significant digits (measured from the most significant digit).</p>
 <p>If the two objects compare equal then they will automatically
 compare almost equal.</p></div>
   <div class="source_cont">
@@ -1427,7 +1473,7 @@ compare almost equal.</p></div>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
 <span class="sd">       between the two objects is more than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
-<span class="sd">       as significant digits (measured from the most signficant digit).</span>
+<span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       If the two objects compare equal then they will automatically</span>
 <span class="sd">       compare almost equal.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2083,7 +2129,7 @@ difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
 between the two objects is less than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
-as significant digits (measured from the most signficant digit).</p>
+as significant digits (measured from the most significant digit).</p>
 <p>Objects that are equal automatically fail.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_bxlnu.TestBXlnu.assertNotAlmostEqual', this);">Show source &equiv;</a></p>
@@ -2095,7 +2141,7 @@ as significant digits (measured from the most signficant digit).</p>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
 <span class="sd">       between the two objects is less than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
-<span class="sd">       as significant digits (measured from the most signficant digit).</span>
+<span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       Objects that are equal automatically fail.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">delta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">places</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -3364,7 +3410,7 @@ block, allowing further test code to be executed.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_bxlnu.TestBXlnu.subTest', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.test_bxlnu.TestBXlnu.subTest" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@contextlib.contextmanager</span>
-<span class="k">def</span> <span class="nf">subTest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">subTest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">_subtest_msg_sentinel</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a context manager that will return the enclosed block</span>
 <span class="sd">    of code in a subtest identified by the optional message and</span>
 <span class="sd">    keyword parameters.  A failure in the subtest marks the test</span>
@@ -3436,12 +3482,52 @@ block, allowing further test code to be executed.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_bxlnu.TestBXlnu.test_bxclnu', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.test_bxlnu.TestBXlnu.test_bxclnu" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_bxclnu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="c1"># check that the total BR roughly agrees with the experimental value</span>
-    <span class="c1"># (that is present as a parameter needed for B-&gt;Xsgamma)</span>
+    <span class="c1"># check that the NLO and NNLO functions reproduce the correct numbers</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
-        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;BR(B-&gt;Xcenu)_exp&#39;</span><span class="p">],</span>
-        <span class="mi">1</span><span class="p">,</span>
-        <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.02</span><span class="p">)</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">pc1</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">(</span><span class="mf">0.986</span><span class="o">/</span><span class="mf">4.6</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mb</span><span class="o">=</span><span class="mf">4.6</span><span class="p">),</span>
+        <span class="o">-</span><span class="mf">1.65019</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">pc2</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">(</span><span class="mf">0.986</span><span class="o">/</span><span class="mf">4.6</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mb</span><span class="o">=</span><span class="mf">4.6</span><span class="p">),</span>
+        <span class="o">-</span><span class="mf">1.91556</span> <span class="o">-</span><span class="mf">0.4519</span> <span class="o">*</span> <span class="mi">9</span> <span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+    <span class="c1"># check that the total BR roughly agrees with the experimental value</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B-&gt;Xcenu)&#39;</span><span class="p">),</span>
+        <span class="mf">0.1065</span><span class="p">,</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.0005</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B-&gt;Xcmunu)&#39;</span><span class="p">),</span>
+        <span class="mf">0.1065</span><span class="p">,</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.0005</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(B-&gt;Xclnu)&#39;</span><span class="p">),</span>
+        <span class="mf">0.1065</span><span class="p">,</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.0005</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.test_bxlnu.TestBXlnu.test_bxclnu_np">
+    <p>def <span class="ident">test_bxclnu_np</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_bxlnu.TestBXlnu.test_bxclnu_np', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.test_bxlnu.TestBXlnu.test_bxclnu_np" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_bxclnu_np</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">wc_np</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+    <span class="n">wc_np</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVp_bcenu&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> <span class="n">scale</span><span class="o">=</span><span class="mf">4.6</span><span class="p">)</span>
+    <span class="n">br_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span>
+    <span class="n">br_np</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bxlnu</span><span class="o">.</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_np</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span>
+    <span class="c1"># compare to the unnumbered eq. between (13) and (14) in 1407.1320</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_np</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.34</span><span class="o">*</span><span class="mf">0.1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 
   </div>

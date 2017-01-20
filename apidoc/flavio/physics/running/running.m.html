@@ -1059,8 +1059,10 @@ table {
   <ul>
     <li class="mono"><a href="#flavio.physics.running.running.get_alpha">get_alpha</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_mb">get_mb</a></li>
+    <li class="mono"><a href="#flavio.physics.running.running.get_mb_KS">get_mb_KS</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_mb_pole">get_mb_pole</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_mc">get_mc</a></li>
+    <li class="mono"><a href="#flavio.physics.running.running.get_mc_KS">get_mc_KS</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_mc_pole">get_mc_pole</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_md">get_md</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_mq">get_mq</a></li>
@@ -1218,6 +1220,17 @@ table {
 <span class="k">def</span> <span class="nf">_get_mc_pole</span><span class="p">(</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">nl</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">masses</span><span class="o">.</span><span class="n">mMS2mOS</span><span class="p">(</span><span class="n">MS</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">Nf</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">asmu</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">Mu</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="n">nl</span><span class="p">)</span>
 
+<span class="k">def</span> <span class="nf">get_mc_KS</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Get the $c$ quark mass in the kinetic scheme.&quot;&quot;&quot;</span>
+    <span class="n">mcmc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_c&#39;</span><span class="p">]</span>
+    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mcmc</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">_get_mb_KS</span><span class="p">(</span><span class="n">mbmb</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">alpha_s</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># cached version</span>
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_get_mc_KS</span><span class="p">(</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">masses</span><span class="o">.</span><span class="n">mMS2mKS</span><span class="p">(</span><span class="n">MS</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">Nf</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">asM</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">Mu</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="n">nl</span><span class="p">)</span>
+
 <span class="k">def</span> <span class="nf">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span> <span class="c1"># for mb, default to 2-loop conversion only due to renormalon ambiguity!</span>
     <span class="sd">r&quot;&quot;&quot;Get the $b$ quark pole mass, using the 2-loop conversion</span>
 <span class="sd">    formula from the $\overline{\mathrm{MS}}$ mass.&quot;&quot;&quot;</span>
@@ -1229,6 +1242,18 @@ table {
 <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_get_mb_pole</span><span class="p">(</span><span class="n">mbmb</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">nl</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">masses</span><span class="o">.</span><span class="n">mMS2mOS</span><span class="p">(</span><span class="n">MS</span><span class="o">=</span><span class="n">mbmb</span><span class="p">,</span> <span class="n">Nf</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">asmu</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">Mu</span><span class="o">=</span><span class="n">mbmb</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="n">nl</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">get_mb_KS</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Get the $b$ quark mass in the kinetic scheme.&quot;&quot;&quot;</span>
+    <span class="n">mbmb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">]</span>
+    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mbmb</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">_get_mb_KS</span><span class="p">(</span><span class="n">mbmb</span><span class="o">=</span><span class="n">mbmb</span><span class="p">,</span> <span class="n">alpha_s</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># cached version</span>
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_get_mb_KS</span><span class="p">(</span><span class="n">mbmb</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="p">):</span>
+    <span class="c1"># see 1107.3100 for why Nf=4</span>
+    <span class="k">return</span> <span class="n">masses</span><span class="o">.</span><span class="n">mMS2mKS</span><span class="p">(</span><span class="n">MS</span><span class="o">=</span><span class="n">mbmb</span><span class="p">,</span> <span class="n">Nf</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">asM</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">Mu</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="n">nl</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Get the running top quark mass at the specified scale.&quot;&quot;&quot;</span>
@@ -1338,6 +1363,31 @@ at the specified scale.</p></div>
   
       
   <div class="item">
+    <div class="name def" id="flavio.physics.running.running.get_mb_KS">
+    <p>def <span class="ident">get_mb_KS</span>(</p><p>par, scale)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the $b$ quark mass in the kinetic scheme.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_mb_KS', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.running.running.get_mb_KS" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_mb_KS</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Get the $b$ quark mass in the kinetic scheme.&quot;&quot;&quot;</span>
+    <span class="n">mbmb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">]</span>
+    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mbmb</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">_get_mb_KS</span><span class="p">(</span><span class="n">mbmb</span><span class="o">=</span><span class="n">mbmb</span><span class="p">,</span> <span class="n">alpha_s</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.physics.running.running.get_mb_pole">
     <p>def <span class="ident">get_mb_pole</span>(</p><p>par, nl=2)</p>
     </div>
@@ -1380,6 +1430,31 @@ formula from the $\overline{\mathrm{MS}}$ mass.</p></div>
     <span class="sd">r&quot;&quot;&quot;Get the running $c$ quark mass at the specified scale.&quot;&quot;&quot;</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_c&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">get_mq</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">m_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_in</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">scale_out</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="n">nf_out</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.running.running.get_mc_KS">
+    <p>def <span class="ident">get_mc_KS</span>(</p><p>par, scale)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the $c$ quark mass in the kinetic scheme.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_mc_KS', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.running.running.get_mc_KS" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_mc_KS</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Get the $c$ quark mass in the kinetic scheme.&quot;&quot;&quot;</span>
+    <span class="n">mcmc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_c&#39;</span><span class="p">]</span>
+    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mcmc</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">_get_mb_KS</span><span class="p">(</span><span class="n">mbmb</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">alpha_s</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
   </div>

@@ -1064,6 +1064,7 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.get_CVSM">get_CVSM</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.get_wceff">get_wceff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.get_wceff_fccc">get_wceff_fccc</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.get_wceff_fccc_std">get_wceff_fccc_std</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.get_wceff_lfv">get_wceff_lfv</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.get_wceff_nunu">get_wceff_nunu</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.wilsoncoefficients.wctot_dict">wctot_dict</a></li>
@@ -1270,6 +1271,21 @@ as tree-level $B$ decays</p>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CT_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;tp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="n">c</span>
+
+<span class="k">def</span> <span class="nf">get_wceff_fccc_std</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">qiqj</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">mqi</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Get a dictionary with the $d_i\to d_j$ Wilson coefficients</span>
+<span class="sd">    in the flavio default convention.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">qqlnu</span> <span class="o">=</span> <span class="n">qiqj</span> <span class="o">+</span> <span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39;nu&#39;</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">qqlnu</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="n">c_sm</span> <span class="o">=</span> <span class="n">get_CVSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">c_sm</span> <span class="o">+</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CV_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;Vp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVp_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CS_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;Sp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CT_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">c</span>
 </pre></div>
 
   </div>
@@ -1455,6 +1471,41 @@ in the convention appropriate for the generalized angular distributions.</p></di
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;pp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mqi</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CT_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;tp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">c</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.wilsoncoefficients.get_wceff_fccc_std">
+    <p>def <span class="ident">get_wceff_fccc_std</span>(</p><p>wc_obj, par, qiqj, lep, mqi, scale, nf=5)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get a dictionary with the $d_i\to d_j$ Wilson coefficients
+in the flavio default convention.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.wilsoncoefficients.get_wceff_fccc_std', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.wilsoncoefficients.get_wceff_fccc_std" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_wceff_fccc_std</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">qiqj</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">mqi</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Get a dictionary with the $d_i\to d_j$ Wilson coefficients</span>
+<span class="sd">    in the flavio default convention.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">qqlnu</span> <span class="o">=</span> <span class="n">qiqj</span> <span class="o">+</span> <span class="n">lep</span> <span class="o">+</span> <span class="s1">&#39;nu&#39;</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">qqlnu</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="n">c_sm</span> <span class="o">=</span> <span class="n">get_CVSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">c_sm</span> <span class="o">+</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CV_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;Vp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVp_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CS_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;Sp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CT_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">c</span>
 </pre></div>
 

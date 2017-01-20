@@ -1049,6 +1049,7 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.classes.class_from_string">class_from_string</a></li>
     <li class="mono"><a href="#flavio.classes.config">config</a></li>
   </ul>
 
@@ -1269,6 +1270,7 @@ table {
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">flavio._parse_errors</span> <span class="kn">import</span> <span class="n">constraints_from_string</span><span class="p">,</span> <span class="n">convolve_distributions</span><span class="p">,</span> <span class="n">errors_from_string</span>
+<span class="kn">from</span> <span class="nn">flavio.statistics.probability</span> <span class="kn">import</span> <span class="n">class_from_string</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
@@ -1392,11 +1394,46 @@ table {
             <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">constraint</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the constraints on a parameter/observable by specifying a string</span>
-<span class="sd">        that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing</span>
-<span class="sd">        constraints will be removed.&quot;&quot;&quot;</span>
-        <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                        <span class="n">constraint_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;Set the constraint on a parameter/observable by specifying a string</span>
+<span class="sd">        or a dictionary. If several constraints (e.g. several types of</span>
+<span class="sd">        unceretainty) are given, the total constraint will be the convolution</span>
+<span class="sd">        of the individual distributions. Existing constraints will be removed.</span>
+
+<span class="sd">        Arguments:</span>
+
+<span class="sd">        - parameter: parameter string (or tuple)</span>
+<span class="sd">        - constraint_string: string specifying the constraint that can be e.g.</span>
+<span class="sd">          of the form `&#39;1.55(3)(1)&#39;` or `&#39;4.0±0.1&#39;`.</span>
+<span class="sd">        - constraint_dict: dictionary or list of several dictionaries of the</span>
+<span class="sd">          form `{&#39;distribution&#39;: &#39;distribution_name&#39;, &#39;arg1&#39;: val1, ...}`, where</span>
+<span class="sd">          &#39;distribution_name&#39; is a string name associated to each probability</span>
+<span class="sd">          distribution (see `flavio.statistics.probability.class_from_string`)</span>
+<span class="sd">          and `&#39;arg1&#39;`, `val1` are argument/value pairs of the arguments of</span>
+<span class="sd">          the distribution class&#39;s constructor (e.g.`central_value`,</span>
+<span class="sd">          `standard_deviation` for a normal distribution).</span>
+
+<span class="sd">        `constraint_string` and `constraint_dict` must not be present</span>
+<span class="sd">        simultaneously.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;constraint_string and constraint_dict cannot&quot;</span>
+                             <span class="s2">&quot; be used at the same time.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">dict_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint_dict</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dict_list</span> <span class="o">=</span> <span class="n">constraint_dict</span>
+            <span class="n">pds</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dict_list</span><span class="p">:</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="n">class_from_string</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;distribution&#39;</span><span class="p">]]</span>
+                <span class="n">pds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">!=</span><span class="s1">&#39;distribution&#39;</span><span class="p">}))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Either constraint_string or constraint_dict have&quot;</span>
+                             <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
         <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 
@@ -1480,34 +1517,34 @@ table {
 <span class="sd">          is a string and value a float.</span>
 <span class="sd">        - exclude_parameters (optional)</span>
 <span class="sd">          An iterable of strings (default: empty) that specifies parameters</span>
-<span class="sd">          that should be ignored. In practice, this is done by setting these</span>
-<span class="sd">          parameters equal to their central values. This way, they contribute</span>
-<span class="sd">          a constant shift to the log probability, but their values in</span>
-<span class="sd">          par_dict play no role.</span>
+<span class="sd">          that should be ignored. Univariate constraints on this parameter</span>
+<span class="sd">          will be skipped, while for multivariate normally distributed</span>
+<span class="sd">          constraints, the parameter will be removed from the covariance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
-            <span class="k">def</span> <span class="nf">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
-                <span class="c1"># this function is required to get the central value for the</span>
-                <span class="c1"># excluded_parameters, consistently for univariate and multivariate</span>
-                <span class="c1"># distributions.</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="c1"># for univariate, it&#39;s trivial</span>
-                    <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># for multivariate, need to find the position of the parameter</span>
-                    <span class="c1"># in the vector and return the appropriate entry</span>
-                    <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parameter</span><span class="p">)]</span>
-            <span class="c1"># construct the vector of values from the par_dict, replaced by central values in the case of excluded_parameters</span>
+            <span class="c1"># list of constrained parameters except the excluded ones</span>
             <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span>
                 <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
-                    <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
-                <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>
+                <span class="c1"># nothing to constrain</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
-                <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># for multivariate distributions</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+                    <span class="c1"># no parameter has been excluded</span>
+                    <span class="n">exclude</span> <span class="o">=</span> <span class="bp">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span>
+                        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
+                            <span class="ow">or</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">]))</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">prob_dict</span>
 
     <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1702,6 +1739,14 @@ table {
 
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="flavio.classes.class_from_string" class="name">var <span class="ident">class_from_string</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
       <div class="item">
       <p id="flavio.classes.config" class="name">var <span class="ident">config</span></p>
       
@@ -2078,11 +2123,46 @@ documentation.</p></div>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">constraint</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the constraints on a parameter/observable by specifying a string</span>
-<span class="sd">        that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing</span>
-<span class="sd">        constraints will be removed.&quot;&quot;&quot;</span>
-        <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                        <span class="n">constraint_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;Set the constraint on a parameter/observable by specifying a string</span>
+<span class="sd">        or a dictionary. If several constraints (e.g. several types of</span>
+<span class="sd">        unceretainty) are given, the total constraint will be the convolution</span>
+<span class="sd">        of the individual distributions. Existing constraints will be removed.</span>
+
+<span class="sd">        Arguments:</span>
+
+<span class="sd">        - parameter: parameter string (or tuple)</span>
+<span class="sd">        - constraint_string: string specifying the constraint that can be e.g.</span>
+<span class="sd">          of the form `&#39;1.55(3)(1)&#39;` or `&#39;4.0±0.1&#39;`.</span>
+<span class="sd">        - constraint_dict: dictionary or list of several dictionaries of the</span>
+<span class="sd">          form `{&#39;distribution&#39;: &#39;distribution_name&#39;, &#39;arg1&#39;: val1, ...}`, where</span>
+<span class="sd">          &#39;distribution_name&#39; is a string name associated to each probability</span>
+<span class="sd">          distribution (see `flavio.statistics.probability.class_from_string`)</span>
+<span class="sd">          and `&#39;arg1&#39;`, `val1` are argument/value pairs of the arguments of</span>
+<span class="sd">          the distribution class&#39;s constructor (e.g.`central_value`,</span>
+<span class="sd">          `standard_deviation` for a normal distribution).</span>
+
+<span class="sd">        `constraint_string` and `constraint_dict` must not be present</span>
+<span class="sd">        simultaneously.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;constraint_string and constraint_dict cannot&quot;</span>
+                             <span class="s2">&quot; be used at the same time.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">dict_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint_dict</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dict_list</span> <span class="o">=</span> <span class="n">constraint_dict</span>
+            <span class="n">pds</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dict_list</span><span class="p">:</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="n">class_from_string</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;distribution&#39;</span><span class="p">]]</span>
+                <span class="n">pds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">!=</span><span class="s1">&#39;distribution&#39;</span><span class="p">}))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Either constraint_string or constraint_dict have&quot;</span>
+                             <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
         <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 
@@ -2166,34 +2246,34 @@ documentation.</p></div>
 <span class="sd">          is a string and value a float.</span>
 <span class="sd">        - exclude_parameters (optional)</span>
 <span class="sd">          An iterable of strings (default: empty) that specifies parameters</span>
-<span class="sd">          that should be ignored. In practice, this is done by setting these</span>
-<span class="sd">          parameters equal to their central values. This way, they contribute</span>
-<span class="sd">          a constant shift to the log probability, but their values in</span>
-<span class="sd">          par_dict play no role.</span>
+<span class="sd">          that should be ignored. Univariate constraints on this parameter</span>
+<span class="sd">          will be skipped, while for multivariate normally distributed</span>
+<span class="sd">          constraints, the parameter will be removed from the covariance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
-            <span class="k">def</span> <span class="nf">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
-                <span class="c1"># this function is required to get the central value for the</span>
-                <span class="c1"># excluded_parameters, consistently for univariate and multivariate</span>
-                <span class="c1"># distributions.</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="c1"># for univariate, it&#39;s trivial</span>
-                    <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># for multivariate, need to find the position of the parameter</span>
-                    <span class="c1"># in the vector and return the appropriate entry</span>
-                    <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parameter</span><span class="p">)]</span>
-            <span class="c1"># construct the vector of values from the par_dict, replaced by central values in the case of excluded_parameters</span>
+            <span class="c1"># list of constrained parameters except the excluded ones</span>
             <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span>
                 <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
-                    <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
-                <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>
+                <span class="c1"># nothing to constrain</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
-                <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># for multivariate distributions</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+                    <span class="c1"># no parameter has been excluded</span>
+                    <span class="n">exclude</span> <span class="o">=</span> <span class="bp">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span>
+                        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
+                            <span class="ow">or</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">]))</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">prob_dict</span>
 
     <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2463,10 +2543,9 @@ constraint/probability distribution.</p>
   is a string and value a float.</li>
 <li>exclude_parameters (optional)
   An iterable of strings (default: empty) that specifies parameters
-  that should be ignored. In practice, this is done by setting these
-  parameters equal to their central values. This way, they contribute
-  a constant shift to the log probability, but their values in
-  par_dict play no role.</li>
+  that should be ignored. Univariate constraints on this parameter
+  will be skipped, while for multivariate normally distributed
+  constraints, the parameter will be removed from the covariance.</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Constraints.get_logprobability_all', this);">Show source &equiv;</a></p>
@@ -2481,34 +2560,34 @@ constraint/probability distribution.</p>
 <span class="sd">      is a string and value a float.</span>
 <span class="sd">    - exclude_parameters (optional)</span>
 <span class="sd">      An iterable of strings (default: empty) that specifies parameters</span>
-<span class="sd">      that should be ignored. In practice, this is done by setting these</span>
-<span class="sd">      parameters equal to their central values. This way, they contribute</span>
-<span class="sd">      a constant shift to the log probability, but their values in</span>
-<span class="sd">      par_dict play no role.</span>
+<span class="sd">      that should be ignored. Univariate constraints on this parameter</span>
+<span class="sd">      will be skipped, while for multivariate normally distributed</span>
+<span class="sd">      constraints, the parameter will be removed from the covariance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
-            <span class="c1"># this function is required to get the central value for the</span>
-            <span class="c1"># excluded_parameters, consistently for univariate and multivariate</span>
-            <span class="c1"># distributions.</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># for univariate, it&#39;s trivial</span>
-                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># for multivariate, need to find the position of the parameter</span>
-                <span class="c1"># in the vector and return the appropriate entry</span>
-                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parameter</span><span class="p">)]</span>
-        <span class="c1"># construct the vector of values from the par_dict, replaced by central values in the case of excluded_parameters</span>
+        <span class="c1"># list of constrained parameters except the excluded ones</span>
         <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
-                <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
-            <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>
+            <span class="c1"># nothing to constrain</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># for multivariate distributions</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+                <span class="c1"># no parameter has been excluded</span>
+                <span class="n">exclude</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
+                        <span class="ow">or</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">]))</span>
+            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prob_dict</span>
 </pre></div>
 
@@ -2600,23 +2679,71 @@ distributed according to the probability distribution applied.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.Constraints.set_constraint">
-    <p>def <span class="ident">set_constraint</span>(</p><p>self, parameter, constraint_string)</p>
+    <p>def <span class="ident">set_constraint</span>(</p><p>self, parameter, constraint_string=None, constraint_dict=None)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Set the constraints on a parameter/observable by specifying a string
-that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing
-constraints will be removed.</p></div>
+    <div class="desc"><p>Set the constraint on a parameter/observable by specifying a string
+or a dictionary. If several constraints (e.g. several types of
+unceretainty) are given, the total constraint will be the convolution
+of the individual distributions. Existing constraints will be removed.</p>
+<p>Arguments:</p>
+<ul>
+<li>parameter: parameter string (or tuple)</li>
+<li>constraint_string: string specifying the constraint that can be e.g.
+  of the form <code>'1.55(3)(1)'</code> or <code>'4.0±0.1'</code>.</li>
+<li>constraint_dict: dictionary or list of several dictionaries of the
+  form <code>{'distribution': 'distribution_name', 'arg1': val1, ...}</code>, where
+  'distribution_name' is a string name associated to each probability
+  distribution (see <code>flavio.statistics.probability.class_from_string</code>)
+  and <code>'arg1'</code>, <code>val1</code> are argument/value pairs of the arguments of
+  the distribution class's constructor (e.g.<code>central_value</code>,
+  <code>standard_deviation</code> for a normal distribution).</li>
+</ul>
+<p><code>constraint_string</code> and <code>constraint_dict</code> must not be present
+simultaneously.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Constraints.set_constraint', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Constraints.set_constraint" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set the constraints on a parameter/observable by specifying a string</span>
-<span class="sd">    that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing</span>
-<span class="sd">    constraints will be removed.&quot;&quot;&quot;</span>
-    <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                    <span class="n">constraint_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Set the constraint on a parameter/observable by specifying a string</span>
+<span class="sd">    or a dictionary. If several constraints (e.g. several types of</span>
+<span class="sd">    unceretainty) are given, the total constraint will be the convolution</span>
+<span class="sd">    of the individual distributions. Existing constraints will be removed.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">    - parameter: parameter string (or tuple)</span>
+<span class="sd">    - constraint_string: string specifying the constraint that can be e.g.</span>
+<span class="sd">      of the form `&#39;1.55(3)(1)&#39;` or `&#39;4.0±0.1&#39;`.</span>
+<span class="sd">    - constraint_dict: dictionary or list of several dictionaries of the</span>
+<span class="sd">      form `{&#39;distribution&#39;: &#39;distribution_name&#39;, &#39;arg1&#39;: val1, ...}`, where</span>
+<span class="sd">      &#39;distribution_name&#39; is a string name associated to each probability</span>
+<span class="sd">      distribution (see `flavio.statistics.probability.class_from_string`)</span>
+<span class="sd">      and `&#39;arg1&#39;`, `val1` are argument/value pairs of the arguments of</span>
+<span class="sd">      the distribution class&#39;s constructor (e.g.`central_value`,</span>
+<span class="sd">      `standard_deviation` for a normal distribution).</span>
+<span class="sd">    `constraint_string` and `constraint_dict` must not be present</span>
+<span class="sd">    simultaneously.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;constraint_string and constraint_dict cannot&quot;</span>
+                         <span class="s2">&quot; be used at the same time.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">dict_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint_dict</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dict_list</span> <span class="o">=</span> <span class="n">constraint_dict</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dict_list</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">class_from_string</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;distribution&#39;</span><span class="p">]]</span>
+            <span class="n">pds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">!=</span><span class="s1">&#39;distribution&#39;</span><span class="p">}))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Either constraint_string or constraint_dict have&quot;</span>
+                         <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
     <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 </pre></div>
@@ -3267,10 +3394,9 @@ constraint/probability distribution.</p>
   is a string and value a float.</li>
 <li>exclude_parameters (optional)
   An iterable of strings (default: empty) that specifies parameters
-  that should be ignored. In practice, this is done by setting these
-  parameters equal to their central values. This way, they contribute
-  a constant shift to the log probability, but their values in
-  par_dict play no role.</li>
+  that should be ignored. Univariate constraints on this parameter
+  will be skipped, while for multivariate normally distributed
+  constraints, the parameter will be removed from the covariance.</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Measurement.get_logprobability_all', this);">Show source &equiv;</a></p>
@@ -3285,34 +3411,34 @@ constraint/probability distribution.</p>
 <span class="sd">      is a string and value a float.</span>
 <span class="sd">    - exclude_parameters (optional)</span>
 <span class="sd">      An iterable of strings (default: empty) that specifies parameters</span>
-<span class="sd">      that should be ignored. In practice, this is done by setting these</span>
-<span class="sd">      parameters equal to their central values. This way, they contribute</span>
-<span class="sd">      a constant shift to the log probability, but their values in</span>
-<span class="sd">      par_dict play no role.</span>
+<span class="sd">      that should be ignored. Univariate constraints on this parameter</span>
+<span class="sd">      will be skipped, while for multivariate normally distributed</span>
+<span class="sd">      constraints, the parameter will be removed from the covariance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
-            <span class="c1"># this function is required to get the central value for the</span>
-            <span class="c1"># excluded_parameters, consistently for univariate and multivariate</span>
-            <span class="c1"># distributions.</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># for univariate, it&#39;s trivial</span>
-                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># for multivariate, need to find the position of the parameter</span>
-                <span class="c1"># in the vector and return the appropriate entry</span>
-                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parameter</span><span class="p">)]</span>
-        <span class="c1"># construct the vector of values from the par_dict, replaced by central values in the case of excluded_parameters</span>
+        <span class="c1"># list of constrained parameters except the excluded ones</span>
         <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
-                <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
-            <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>
+            <span class="c1"># nothing to constrain</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># for multivariate distributions</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+                <span class="c1"># no parameter has been excluded</span>
+                <span class="n">exclude</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
+                        <span class="ow">or</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">]))</span>
+            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prob_dict</span>
 </pre></div>
 
@@ -3404,23 +3530,71 @@ distributed according to the probability distribution applied.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.Measurement.set_constraint">
-    <p>def <span class="ident">set_constraint</span>(</p><p>self, parameter, constraint_string)</p>
+    <p>def <span class="ident">set_constraint</span>(</p><p>self, parameter, constraint_string=None, constraint_dict=None)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Set the constraints on a parameter/observable by specifying a string
-that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing
-constraints will be removed.</p></div>
+    <div class="desc"><p>Set the constraint on a parameter/observable by specifying a string
+or a dictionary. If several constraints (e.g. several types of
+unceretainty) are given, the total constraint will be the convolution
+of the individual distributions. Existing constraints will be removed.</p>
+<p>Arguments:</p>
+<ul>
+<li>parameter: parameter string (or tuple)</li>
+<li>constraint_string: string specifying the constraint that can be e.g.
+  of the form <code>'1.55(3)(1)'</code> or <code>'4.0±0.1'</code>.</li>
+<li>constraint_dict: dictionary or list of several dictionaries of the
+  form <code>{'distribution': 'distribution_name', 'arg1': val1, ...}</code>, where
+  'distribution_name' is a string name associated to each probability
+  distribution (see <code>flavio.statistics.probability.class_from_string</code>)
+  and <code>'arg1'</code>, <code>val1</code> are argument/value pairs of the arguments of
+  the distribution class's constructor (e.g.<code>central_value</code>,
+  <code>standard_deviation</code> for a normal distribution).</li>
+</ul>
+<p><code>constraint_string</code> and <code>constraint_dict</code> must not be present
+simultaneously.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Measurement.set_constraint', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Measurement.set_constraint" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set the constraints on a parameter/observable by specifying a string</span>
-<span class="sd">    that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing</span>
-<span class="sd">    constraints will be removed.&quot;&quot;&quot;</span>
-    <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                    <span class="n">constraint_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Set the constraint on a parameter/observable by specifying a string</span>
+<span class="sd">    or a dictionary. If several constraints (e.g. several types of</span>
+<span class="sd">    unceretainty) are given, the total constraint will be the convolution</span>
+<span class="sd">    of the individual distributions. Existing constraints will be removed.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">    - parameter: parameter string (or tuple)</span>
+<span class="sd">    - constraint_string: string specifying the constraint that can be e.g.</span>
+<span class="sd">      of the form `&#39;1.55(3)(1)&#39;` or `&#39;4.0±0.1&#39;`.</span>
+<span class="sd">    - constraint_dict: dictionary or list of several dictionaries of the</span>
+<span class="sd">      form `{&#39;distribution&#39;: &#39;distribution_name&#39;, &#39;arg1&#39;: val1, ...}`, where</span>
+<span class="sd">      &#39;distribution_name&#39; is a string name associated to each probability</span>
+<span class="sd">      distribution (see `flavio.statistics.probability.class_from_string`)</span>
+<span class="sd">      and `&#39;arg1&#39;`, `val1` are argument/value pairs of the arguments of</span>
+<span class="sd">      the distribution class&#39;s constructor (e.g.`central_value`,</span>
+<span class="sd">      `standard_deviation` for a normal distribution).</span>
+<span class="sd">    `constraint_string` and `constraint_dict` must not be present</span>
+<span class="sd">    simultaneously.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;constraint_string and constraint_dict cannot&quot;</span>
+                         <span class="s2">&quot; be used at the same time.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">dict_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint_dict</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dict_list</span> <span class="o">=</span> <span class="n">constraint_dict</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dict_list</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">class_from_string</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;distribution&#39;</span><span class="p">]]</span>
+            <span class="n">pds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">!=</span><span class="s1">&#39;distribution&#39;</span><span class="p">}))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Either constraint_string or constraint_dict have&quot;</span>
+                         <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
     <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 </pre></div>
@@ -4593,10 +4767,9 @@ constraint/probability distribution.</p>
   is a string and value a float.</li>
 <li>exclude_parameters (optional)
   An iterable of strings (default: empty) that specifies parameters
-  that should be ignored. In practice, this is done by setting these
-  parameters equal to their central values. This way, they contribute
-  a constant shift to the log probability, but their values in
-  par_dict play no role.</li>
+  that should be ignored. Univariate constraints on this parameter
+  will be skipped, while for multivariate normally distributed
+  constraints, the parameter will be removed from the covariance.</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.ParameterConstraints.get_logprobability_all', this);">Show source &equiv;</a></p>
@@ -4611,34 +4784,34 @@ constraint/probability distribution.</p>
 <span class="sd">      is a string and value a float.</span>
 <span class="sd">    - exclude_parameters (optional)</span>
 <span class="sd">      An iterable of strings (default: empty) that specifies parameters</span>
-<span class="sd">      that should be ignored. In practice, this is done by setting these</span>
-<span class="sd">      parameters equal to their central values. This way, they contribute</span>
-<span class="sd">      a constant shift to the log probability, but their values in</span>
-<span class="sd">      par_dict play no role.</span>
+<span class="sd">      that should be ignored. Univariate constraints on this parameter</span>
+<span class="sd">      will be skipped, while for multivariate normally distributed</span>
+<span class="sd">      constraints, the parameter will be removed from the covariance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
-            <span class="c1"># this function is required to get the central value for the</span>
-            <span class="c1"># excluded_parameters, consistently for univariate and multivariate</span>
-            <span class="c1"># distributions.</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># for univariate, it&#39;s trivial</span>
-                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># for multivariate, need to find the position of the parameter</span>
-                <span class="c1"># in the vector and return the appropriate entry</span>
-                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parameter</span><span class="p">)]</span>
-        <span class="c1"># construct the vector of values from the par_dict, replaced by central values in the case of excluded_parameters</span>
+        <span class="c1"># list of constrained parameters except the excluded ones</span>
         <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
-                <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
-            <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>
+            <span class="c1"># nothing to constrain</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># for multivariate distributions</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+                <span class="c1"># no parameter has been excluded</span>
+                <span class="n">exclude</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
+                        <span class="ow">or</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">]))</span>
+            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prob_dict</span>
 </pre></div>
 
@@ -4730,23 +4903,71 @@ distributed according to the probability distribution applied.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.ParameterConstraints.set_constraint">
-    <p>def <span class="ident">set_constraint</span>(</p><p>self, parameter, constraint_string)</p>
+    <p>def <span class="ident">set_constraint</span>(</p><p>self, parameter, constraint_string=None, constraint_dict=None)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Set the constraints on a parameter/observable by specifying a string
-that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing
-constraints will be removed.</p></div>
+    <div class="desc"><p>Set the constraint on a parameter/observable by specifying a string
+or a dictionary. If several constraints (e.g. several types of
+unceretainty) are given, the total constraint will be the convolution
+of the individual distributions. Existing constraints will be removed.</p>
+<p>Arguments:</p>
+<ul>
+<li>parameter: parameter string (or tuple)</li>
+<li>constraint_string: string specifying the constraint that can be e.g.
+  of the form <code>'1.55(3)(1)'</code> or <code>'4.0±0.1'</code>.</li>
+<li>constraint_dict: dictionary or list of several dictionaries of the
+  form <code>{'distribution': 'distribution_name', 'arg1': val1, ...}</code>, where
+  'distribution_name' is a string name associated to each probability
+  distribution (see <code>flavio.statistics.probability.class_from_string</code>)
+  and <code>'arg1'</code>, <code>val1</code> are argument/value pairs of the arguments of
+  the distribution class's constructor (e.g.<code>central_value</code>,
+  <code>standard_deviation</code> for a normal distribution).</li>
+</ul>
+<p><code>constraint_string</code> and <code>constraint_dict</code> must not be present
+simultaneously.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.ParameterConstraints.set_constraint', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.ParameterConstraints.set_constraint" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set the constraints on a parameter/observable by specifying a string</span>
-<span class="sd">    that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing</span>
-<span class="sd">    constraints will be removed.&quot;&quot;&quot;</span>
-    <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                    <span class="n">constraint_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Set the constraint on a parameter/observable by specifying a string</span>
+<span class="sd">    or a dictionary. If several constraints (e.g. several types of</span>
+<span class="sd">    unceretainty) are given, the total constraint will be the convolution</span>
+<span class="sd">    of the individual distributions. Existing constraints will be removed.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">    - parameter: parameter string (or tuple)</span>
+<span class="sd">    - constraint_string: string specifying the constraint that can be e.g.</span>
+<span class="sd">      of the form `&#39;1.55(3)(1)&#39;` or `&#39;4.0±0.1&#39;`.</span>
+<span class="sd">    - constraint_dict: dictionary or list of several dictionaries of the</span>
+<span class="sd">      form `{&#39;distribution&#39;: &#39;distribution_name&#39;, &#39;arg1&#39;: val1, ...}`, where</span>
+<span class="sd">      &#39;distribution_name&#39; is a string name associated to each probability</span>
+<span class="sd">      distribution (see `flavio.statistics.probability.class_from_string`)</span>
+<span class="sd">      and `&#39;arg1&#39;`, `val1` are argument/value pairs of the arguments of</span>
+<span class="sd">      the distribution class&#39;s constructor (e.g.`central_value`,</span>
+<span class="sd">      `standard_deviation` for a normal distribution).</span>
+<span class="sd">    `constraint_string` and `constraint_dict` must not be present</span>
+<span class="sd">    simultaneously.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;constraint_string and constraint_dict cannot&quot;</span>
+                         <span class="s2">&quot; be used at the same time.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">dict_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint_dict</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dict_list</span> <span class="o">=</span> <span class="n">constraint_dict</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dict_list</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">class_from_string</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;distribution&#39;</span><span class="p">]]</span>
+            <span class="n">pds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">!=</span><span class="s1">&#39;distribution&#39;</span><span class="p">}))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Either constraint_string or constraint_dict have&quot;</span>
+                         <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
     <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 </pre></div>
@@ -5186,10 +5407,9 @@ constraint/probability distribution.</p>
   is a string and value a float.</li>
 <li>exclude_parameters (optional)
   An iterable of strings (default: empty) that specifies parameters
-  that should be ignored. In practice, this is done by setting these
-  parameters equal to their central values. This way, they contribute
-  a constant shift to the log probability, but their values in
-  par_dict play no role.</li>
+  that should be ignored. Univariate constraints on this parameter
+  will be skipped, while for multivariate normally distributed
+  constraints, the parameter will be removed from the covariance.</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.WilsonCoefficientPriors.get_logprobability_all', this);">Show source &equiv;</a></p>
@@ -5204,34 +5424,34 @@ constraint/probability distribution.</p>
 <span class="sd">      is a string and value a float.</span>
 <span class="sd">    - exclude_parameters (optional)</span>
 <span class="sd">      An iterable of strings (default: empty) that specifies parameters</span>
-<span class="sd">      that should be ignored. In practice, this is done by setting these</span>
-<span class="sd">      parameters equal to their central values. This way, they contribute</span>
-<span class="sd">      a constant shift to the log probability, but their values in</span>
-<span class="sd">      par_dict play no role.</span>
+<span class="sd">      that should be ignored. Univariate constraints on this parameter</span>
+<span class="sd">      will be skipped, while for multivariate normally distributed</span>
+<span class="sd">      constraints, the parameter will be removed from the covariance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
-            <span class="c1"># this function is required to get the central value for the</span>
-            <span class="c1"># excluded_parameters, consistently for univariate and multivariate</span>
-            <span class="c1"># distributions.</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># for univariate, it&#39;s trivial</span>
-                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># for multivariate, need to find the position of the parameter</span>
-                <span class="c1"># in the vector and return the appropriate entry</span>
-                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">[</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parameter</span><span class="p">)]</span>
-        <span class="c1"># construct the vector of values from the par_dict, replaced by central values in the case of excluded_parameters</span>
+        <span class="c1"># list of constrained parameters except the excluded ones</span>
         <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
-                <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
-            <span class="k">else</span> <span class="n">constraint_central_value</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">])]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>
+            <span class="c1"># nothing to constrain</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># for multivariate distributions</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+                <span class="c1"># no parameter has been excluded</span>
+                <span class="n">exclude</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">in</span> <span class="n">exclude_parameters</span>
+                        <span class="ow">or</span> <span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">constraint</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">]))</span>
+            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prob_dict</span>
 </pre></div>
 
@@ -5323,23 +5543,71 @@ distributed according to the probability distribution applied.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.WilsonCoefficientPriors.set_constraint">
-    <p>def <span class="ident">set_constraint</span>(</p><p>self, parameter, constraint_string)</p>
+    <p>def <span class="ident">set_constraint</span>(</p><p>self, parameter, constraint_string=None, constraint_dict=None)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Set the constraints on a parameter/observable by specifying a string
-that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing
-constraints will be removed.</p></div>
+    <div class="desc"><p>Set the constraint on a parameter/observable by specifying a string
+or a dictionary. If several constraints (e.g. several types of
+unceretainty) are given, the total constraint will be the convolution
+of the individual distributions. Existing constraints will be removed.</p>
+<p>Arguments:</p>
+<ul>
+<li>parameter: parameter string (or tuple)</li>
+<li>constraint_string: string specifying the constraint that can be e.g.
+  of the form <code>'1.55(3)(1)'</code> or <code>'4.0±0.1'</code>.</li>
+<li>constraint_dict: dictionary or list of several dictionaries of the
+  form <code>{'distribution': 'distribution_name', 'arg1': val1, ...}</code>, where
+  'distribution_name' is a string name associated to each probability
+  distribution (see <code>flavio.statistics.probability.class_from_string</code>)
+  and <code>'arg1'</code>, <code>val1</code> are argument/value pairs of the arguments of
+  the distribution class's constructor (e.g.<code>central_value</code>,
+  <code>standard_deviation</code> for a normal distribution).</li>
+</ul>
+<p><code>constraint_string</code> and <code>constraint_dict</code> must not be present
+simultaneously.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.WilsonCoefficientPriors.set_constraint', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.WilsonCoefficientPriors.set_constraint" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set the constraints on a parameter/observable by specifying a string</span>
-<span class="sd">    that can be e.g. of the form 1.55(3)(1) or 4.0±0.1. Existing</span>
-<span class="sd">    constraints will be removed.&quot;&quot;&quot;</span>
-    <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraint_string</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                    <span class="n">constraint_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Set the constraint on a parameter/observable by specifying a string</span>
+<span class="sd">    or a dictionary. If several constraints (e.g. several types of</span>
+<span class="sd">    unceretainty) are given, the total constraint will be the convolution</span>
+<span class="sd">    of the individual distributions. Existing constraints will be removed.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">    - parameter: parameter string (or tuple)</span>
+<span class="sd">    - constraint_string: string specifying the constraint that can be e.g.</span>
+<span class="sd">      of the form `&#39;1.55(3)(1)&#39;` or `&#39;4.0±0.1&#39;`.</span>
+<span class="sd">    - constraint_dict: dictionary or list of several dictionaries of the</span>
+<span class="sd">      form `{&#39;distribution&#39;: &#39;distribution_name&#39;, &#39;arg1&#39;: val1, ...}`, where</span>
+<span class="sd">      &#39;distribution_name&#39; is a string name associated to each probability</span>
+<span class="sd">      distribution (see `flavio.statistics.probability.class_from_string`)</span>
+<span class="sd">      and `&#39;arg1&#39;`, `val1` are argument/value pairs of the arguments of</span>
+<span class="sd">      the distribution class&#39;s constructor (e.g.`central_value`,</span>
+<span class="sd">      `standard_deviation` for a normal distribution).</span>
+<span class="sd">    `constraint_string` and `constraint_dict` must not be present</span>
+<span class="sd">    simultaneously.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;constraint_string and constraint_dict cannot&quot;</span>
+                         <span class="s2">&quot; be used at the same time.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">dict_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint_dict</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dict_list</span> <span class="o">=</span> <span class="n">constraint_dict</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dict_list</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">class_from_string</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;distribution&#39;</span><span class="p">]]</span>
+            <span class="n">pds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">!=</span><span class="s1">&#39;distribution&#39;</span><span class="p">}))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Either constraint_string or constraint_dict have&quot;</span>
+                         <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
     <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 </pre></div>

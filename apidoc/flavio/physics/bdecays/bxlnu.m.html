@@ -1051,6 +1051,7 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.physics.bdecays.bxlnu.l">l</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bxlnu.pi">pi</a></li>
   </ul>
 
@@ -1060,8 +1061,12 @@ table {
       
   <ul>
     <li class="mono"><a href="#flavio.physics.bdecays.bxlnu.BR_BXclnu">BR_BXclnu</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bxlnu.BR_tot_function">BR_tot_function</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bxlnu.d">d</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bxlnu.g">g</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bxlnu.gLR">gLR</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bxlnu.pc1">pc1</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bxlnu.pc2">pc2</a></li>
   </ul>
 
     </li>
@@ -1090,34 +1095,94 @@ table {
 
 
 <span class="kn">import</span> <span class="nn">flavio</span>
-<span class="kn">from</span> <span class="nn">flavio.physics.bdecays.wilsoncoefficients</span> <span class="kn">import</span> <span class="n">get_wceff_fccc</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">flavio.physics.bdecays.wilsoncoefficients</span> <span class="kn">import</span> <span class="n">get_wceff_fccc_std</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">sqrt</span>
+<span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">Observable</span><span class="p">,</span> <span class="n">Prediction</span>
 
 <span class="k">def</span> <span class="nf">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="sd">r&quot;&quot;&quot;Total branching ratio of $\bar B^0\to X_c \ell^- \bar\nu_\ell$&quot;&quot;&quot;</span>
     <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bxlnu&#39;</span><span class="p">]</span>
-    <span class="n">kinetic_cutoff</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># cutoff related to the kinetic definition of mb and mc in GeV</span>
+    <span class="n">kinetic_cutoff</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># cutoff related to the kinetic definition of mb in GeV</span>
+    <span class="c1"># mb in the kinetic scheme</span>
     <span class="n">mb</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mb_KS</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">kinetic_cutoff</span><span class="p">)</span>
-    <span class="n">mc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mc_KS</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">kinetic_cutoff</span><span class="p">)</span>
+    <span class="c1"># mc in MSbar at 3 GeV</span>
+    <span class="n">mc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mc</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
     <span class="n">mb_MSbar</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="n">rho</span> <span class="o">=</span> <span class="n">mc</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">mb</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">Vcb</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">ckm</span><span class="o">.</span><span class="n">get_ckm</span><span class="p">(</span><span class="n">par</span><span class="p">)[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="c1"># wc: NB this includes the EW correction already</span>
     <span class="c1"># the b quark mass is MSbar here as it comes from the definition</span>
     <span class="c1"># of the scalar operators</span>
-    <span class="n">wc</span> <span class="o">=</span> <span class="n">get_wceff_fccc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;bc&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">mb_MSbar</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">get_wceff_fccc_std</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;bc&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">mb_MSbar</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
     <span class="n">Gamma_LO</span> <span class="o">=</span> <span class="n">GF</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mb</span><span class="o">**</span><span class="mi">5</span> <span class="o">/</span> <span class="mf">192.</span> <span class="o">/</span> <span class="n">pi</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Vcb</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">g</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span>
-    <span class="c1"># FIXME NLO missing</span>
-    <span class="k">return</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_B0&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">Gamma_LO</span>
+    <span class="n">r_WC</span> <span class="o">=</span> <span class="p">(</span> <span class="nb">abs</span><span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Vp&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+                 <span class="o">-</span> <span class="n">gLR</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span><span class="o">/</span><span class="n">g</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Vp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">real</span>
+                 <span class="o">+</span> <span class="n">mb_MSbar</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">4.</span> <span class="o">*</span> <span class="p">(</span> <span class="nb">abs</span><span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Sp&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                 <span class="o">+</span> <span class="n">mb_MSbar</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">gLR</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span><span class="o">/</span><span class="n">g</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Sp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">real</span>
+                 <span class="o">+</span> <span class="mi">12</span><span class="o">*</span><span class="nb">abs</span><span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
+    <span class="c1"># eq. (26) of arXiv:1107.3100 + corrections (P. Gambino, private communication)</span>
+    <span class="n">r_BLO</span> <span class="o">=</span> <span class="p">(</span> <span class="mi">1</span>
+                 <span class="c1"># NLO QCD</span>
+                 <span class="o">+</span> <span class="n">alpha_s</span><span class="o">/</span><span class="n">pi</span> <span class="o">*</span> <span class="n">pc1</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">mb</span><span class="p">)</span>
+                 <span class="c1"># NNLO QCD</span>
+                 <span class="o">+</span> <span class="n">alpha_s</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pc2</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">mb</span><span class="p">)</span>
+                 <span class="c1"># power correction</span>
+                 <span class="o">-</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;mu_pi^2&#39;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">mb</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                 <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.</span> <span class="o">-</span>  <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">rho</span><span class="p">)</span><span class="o">**</span><span class="mi">4</span><span class="o">/</span><span class="n">g</span><span class="p">(</span><span class="n">rho</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;mu_G^2&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;rho_LS^3&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;rho_D^3&#39;</span><span class="p">])</span><span class="o">/</span><span class="n">mb</span><span class="p">)</span><span class="o">/</span><span class="n">mb</span><span class="o">**</span><span class="mi">2</span>
+                 <span class="o">+</span> <span class="n">d</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span><span class="o">/</span><span class="n">g</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;rho_D^3&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">mb</span><span class="o">**</span><span class="mi">3</span>
+                 <span class="c1"># O(alpha_s) power correction (only numerically)</span>
+                 <span class="o">+</span> <span class="n">alpha_s</span><span class="o">/</span><span class="n">pi</span> <span class="o">*</span>  <span class="n">par</span><span class="p">[</span><span class="s1">&#39;mu_pi^2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.071943</span>
+                 <span class="o">+</span> <span class="n">alpha_s</span><span class="o">/</span><span class="n">pi</span> <span class="o">*</span>  <span class="n">par</span><span class="p">[</span><span class="s1">&#39;mu_G^2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.114774</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="c1"># average of B0 and B+ lifetimes</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_B0&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_B+&#39;</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">Gamma_LO</span> <span class="o">*</span> <span class="n">r_WC</span> <span class="o">*</span> <span class="n">r_BLO</span>
+
+<span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">rho</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">8</span><span class="o">*</span><span class="n">rho</span> <span class="o">+</span> <span class="mi">8</span><span class="o">*</span><span class="n">rho</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="n">rho</span><span class="o">**</span><span class="mi">4</span> <span class="o">-</span> <span class="mi">12</span><span class="o">*</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">gLR</span><span class="p">(</span><span class="n">rho</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">9</span><span class="o">*</span><span class="n">rho</span> <span class="o">-</span> <span class="mi">9</span><span class="o">*</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">rho</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">6</span><span class="o">*</span><span class="n">rho</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rho</span><span class="p">)</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">rho</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">d</span><span class="p">(</span><span class="n">rho</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">8</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span><span class="o">*</span><span class="n">rho</span><span class="o">**</span><span class="mi">4</span><span class="o">/</span><span class="mf">3.</span> <span class="o">+</span> <span class="mi">32</span><span class="o">*</span><span class="n">rho</span><span class="o">**</span><span class="mi">3</span><span class="o">/</span><span class="mf">3.</span> <span class="o">-</span> <span class="mi">8</span><span class="o">*</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">32</span><span class="o">*</span><span class="n">rho</span><span class="o">/</span><span class="mf">3.</span> <span class="o">+</span> <span class="mi">34</span><span class="o">/</span><span class="mf">3.</span>
+
+<span class="k">def</span> <span class="nf">pc1</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">mb</span><span class="p">):</span>
+    <span class="c1"># this is an expansion to 2nd order in mb around 4.6 and in r around 0.05</span>
+    <span class="c1"># P. Gambino,  private communication</span>
+    <span class="c1"># kinetic scheme cutoff is set to 1 GeV</span>
+    <span class="k">return</span> <span class="p">(</span> <span class="mf">6.486085393242938</span> <span class="o">-</span> <span class="mf">80.16227770322831</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="mf">207.37836204469366</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span>
+            <span class="o">+</span> <span class="n">mb</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="mf">2.3090743981240274</span> <span class="o">+</span> <span class="mf">14.029509187000471</span><span class="o">*</span><span class="n">r</span> <span class="o">-</span> <span class="mf">36.61694487623083</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">mb</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mf">0.18126017716432158</span> <span class="o">-</span> <span class="mf">0.8813205571033417</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="mf">3.1906139935867635</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">pc2</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">mb</span><span class="p">):</span>
+    <span class="c1"># this is an expansion to 2nd order in mb around 4.6 and in r around 0.05</span>
+    <span class="c1"># P. Gambino,  private communication</span>
+    <span class="c1"># kinetic scheme cutoff is set to 1 GeV</span>
+    <span class="k">return</span>  <span class="p">(</span> <span class="mf">63.344451026174276</span> <span class="o">-</span> <span class="mf">1060.9791881246733</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="mf">4332.058337615373</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span>
+             <span class="o">+</span> <span class="n">mb</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="mf">21.760717863346223</span> <span class="o">+</span> <span class="mf">273.7460360545832</span><span class="o">*</span><span class="n">r</span> <span class="o">-</span> <span class="mf">1032.068345746423</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+             <span class="o">+</span> <span class="n">mb</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mf">1.8406501267881998</span> <span class="o">-</span> <span class="mf">20.26973707297946</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="mf">73.82649433414315</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">8</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="mi">8</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="n">r</span><span class="o">**</span><span class="mi">4</span> <span class="o">-</span> <span class="mi">12</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">BR_tot_function</span><span class="p">(</span><span class="n">lep</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">lep</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="p">(</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span><span class="o">+</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">d</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">8</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">4</span><span class="o">/</span><span class="mf">3.</span> <span class="o">+</span> <span class="mi">32</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">3</span><span class="o">/</span><span class="mf">3.</span> <span class="o">-</span> <span class="mi">8</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">32</span><span class="o">*</span><span class="n">r</span><span class="o">/</span><span class="mf">3.</span> <span class="o">+</span> <span class="mi">34</span><span class="o">/</span><span class="mf">3.</span>
+<span class="n">_process_taxonomy</span> <span class="o">=</span> <span class="s1">r&#39;Process :: $b$ hadron decays :: Semi-leptonic tree-level decays :: $B\to X\ell\nu$ :: $&#39;</span>
+
+<span class="n">_tex</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="s1">&#39;\mu&#39;</span><span class="p">,</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span> <span class="s1">r&#39;\ell&#39;</span><span class="p">}</span>
+
+<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;l&#39;</span><span class="p">]:</span>
+        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;BR(B-&gt;Xc&quot;</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;nu)&quot;</span>
+        <span class="n">_process_tex</span> <span class="o">=</span> <span class="s2">r&quot;B\to X_c&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+\nu_&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span>
+        <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Total branching ratio of $&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="s2">r&quot;$&quot;</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$\text{BR}(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="s2">r&quot;)$&quot;</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="s2">r&quot;$&quot;</span><span class="p">)</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BR_tot_function</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1126,6 +1191,14 @@ table {
 
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="flavio.physics.bdecays.bxlnu.l" class="name">var <span class="ident">l</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
       <div class="item">
       <p id="flavio.physics.bdecays.bxlnu.pi" class="name">var <span class="ident">pi</span></p>
       
@@ -1153,20 +1226,65 @@ table {
     <span class="sd">r&quot;&quot;&quot;Total branching ratio of $\bar B^0\to X_c \ell^- \bar\nu_\ell$&quot;&quot;&quot;</span>
     <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bxlnu&#39;</span><span class="p">]</span>
-    <span class="n">kinetic_cutoff</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># cutoff related to the kinetic definition of mb and mc in GeV</span>
+    <span class="n">kinetic_cutoff</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># cutoff related to the kinetic definition of mb in GeV</span>
+    <span class="c1"># mb in the kinetic scheme</span>
     <span class="n">mb</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mb_KS</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">kinetic_cutoff</span><span class="p">)</span>
-    <span class="n">mc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mc_KS</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">kinetic_cutoff</span><span class="p">)</span>
+    <span class="c1"># mc in MSbar at 3 GeV</span>
+    <span class="n">mc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mc</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
     <span class="n">mb_MSbar</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="n">rho</span> <span class="o">=</span> <span class="n">mc</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">mb</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">Vcb</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">ckm</span><span class="o">.</span><span class="n">get_ckm</span><span class="p">(</span><span class="n">par</span><span class="p">)[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="c1"># wc: NB this includes the EW correction already</span>
     <span class="c1"># the b quark mass is MSbar here as it comes from the definition</span>
     <span class="c1"># of the scalar operators</span>
-    <span class="n">wc</span> <span class="o">=</span> <span class="n">get_wceff_fccc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;bc&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">mb_MSbar</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">get_wceff_fccc_std</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;bc&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">mb_MSbar</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
     <span class="n">Gamma_LO</span> <span class="o">=</span> <span class="n">GF</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mb</span><span class="o">**</span><span class="mi">5</span> <span class="o">/</span> <span class="mf">192.</span> <span class="o">/</span> <span class="n">pi</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Vcb</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">g</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span>
-    <span class="c1"># FIXME NLO missing</span>
-    <span class="k">return</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_B0&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">Gamma_LO</span>
+    <span class="n">r_WC</span> <span class="o">=</span> <span class="p">(</span> <span class="nb">abs</span><span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Vp&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+                 <span class="o">-</span> <span class="n">gLR</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span><span class="o">/</span><span class="n">g</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Vp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">real</span>
+                 <span class="o">+</span> <span class="n">mb_MSbar</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">4.</span> <span class="o">*</span> <span class="p">(</span> <span class="nb">abs</span><span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Sp&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                 <span class="o">+</span> <span class="n">mb_MSbar</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">gLR</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span><span class="o">/</span><span class="n">g</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Sp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">real</span>
+                 <span class="o">+</span> <span class="mi">12</span><span class="o">*</span><span class="nb">abs</span><span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
+    <span class="c1"># eq. (26) of arXiv:1107.3100 + corrections (P. Gambino, private communication)</span>
+    <span class="n">r_BLO</span> <span class="o">=</span> <span class="p">(</span> <span class="mi">1</span>
+                 <span class="c1"># NLO QCD</span>
+                 <span class="o">+</span> <span class="n">alpha_s</span><span class="o">/</span><span class="n">pi</span> <span class="o">*</span> <span class="n">pc1</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">mb</span><span class="p">)</span>
+                 <span class="c1"># NNLO QCD</span>
+                 <span class="o">+</span> <span class="n">alpha_s</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pc2</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">mb</span><span class="p">)</span>
+                 <span class="c1"># power correction</span>
+                 <span class="o">-</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;mu_pi^2&#39;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">mb</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                 <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.</span> <span class="o">-</span>  <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">rho</span><span class="p">)</span><span class="o">**</span><span class="mi">4</span><span class="o">/</span><span class="n">g</span><span class="p">(</span><span class="n">rho</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;mu_G^2&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;rho_LS^3&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;rho_D^3&#39;</span><span class="p">])</span><span class="o">/</span><span class="n">mb</span><span class="p">)</span><span class="o">/</span><span class="n">mb</span><span class="o">**</span><span class="mi">2</span>
+                 <span class="o">+</span> <span class="n">d</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span><span class="o">/</span><span class="n">g</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;rho_D^3&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">mb</span><span class="o">**</span><span class="mi">3</span>
+                 <span class="c1"># O(alpha_s) power correction (only numerically)</span>
+                 <span class="o">+</span> <span class="n">alpha_s</span><span class="o">/</span><span class="n">pi</span> <span class="o">*</span>  <span class="n">par</span><span class="p">[</span><span class="s1">&#39;mu_pi^2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.071943</span>
+                 <span class="o">+</span> <span class="n">alpha_s</span><span class="o">/</span><span class="n">pi</span> <span class="o">*</span>  <span class="n">par</span><span class="p">[</span><span class="s1">&#39;mu_G^2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.114774</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="c1"># average of B0 and B+ lifetimes</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_B0&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_B+&#39;</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">Gamma_LO</span> <span class="o">*</span> <span class="n">r_WC</span> <span class="o">*</span> <span class="n">r_BLO</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bxlnu.BR_tot_function">
+    <p>def <span class="ident">BR_tot_function</span>(</p><p>lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bxlnu.BR_tot_function', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bxlnu.BR_tot_function" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR_tot_function</span><span class="p">(</span><span class="n">lep</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">lep</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="p">(</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span><span class="o">+</span><span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">BR_BXclnu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1177,7 +1295,7 @@ table {
       
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.bxlnu.d">
-    <p>def <span class="ident">d</span>(</p><p>r)</p>
+    <p>def <span class="ident">d</span>(</p><p>rho)</p>
     </div>
     
 
@@ -1186,8 +1304,8 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bxlnu.d', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bxlnu.d" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">d</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">8</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">4</span><span class="o">/</span><span class="mf">3.</span> <span class="o">+</span> <span class="mi">32</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">3</span><span class="o">/</span><span class="mf">3.</span> <span class="o">-</span> <span class="mi">8</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">32</span><span class="o">*</span><span class="n">r</span><span class="o">/</span><span class="mf">3.</span> <span class="o">+</span> <span class="mi">34</span><span class="o">/</span><span class="mf">3.</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">d</span><span class="p">(</span><span class="n">rho</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">8</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span><span class="o">*</span><span class="n">rho</span><span class="o">**</span><span class="mi">4</span><span class="o">/</span><span class="mf">3.</span> <span class="o">+</span> <span class="mi">32</span><span class="o">*</span><span class="n">rho</span><span class="o">**</span><span class="mi">3</span><span class="o">/</span><span class="mf">3.</span> <span class="o">-</span> <span class="mi">8</span><span class="o">*</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">32</span><span class="o">*</span><span class="n">rho</span><span class="o">/</span><span class="mf">3.</span> <span class="o">+</span> <span class="mi">34</span><span class="o">/</span><span class="mf">3.</span>
 </pre></div>
 
   </div>
@@ -1198,7 +1316,7 @@ table {
       
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.bxlnu.g">
-    <p>def <span class="ident">g</span>(</p><p>r)</p>
+    <p>def <span class="ident">g</span>(</p><p>rho)</p>
     </div>
     
 
@@ -1207,8 +1325,81 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bxlnu.g', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bxlnu.g" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">8</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="mi">8</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="n">r</span><span class="o">**</span><span class="mi">4</span> <span class="o">-</span> <span class="mi">12</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">rho</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">8</span><span class="o">*</span><span class="n">rho</span> <span class="o">+</span> <span class="mi">8</span><span class="o">*</span><span class="n">rho</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="n">rho</span><span class="o">**</span><span class="mi">4</span> <span class="o">-</span> <span class="mi">12</span><span class="o">*</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bxlnu.gLR">
+    <p>def <span class="ident">gLR</span>(</p><p>rho)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bxlnu.gLR', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bxlnu.gLR" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">gLR</span><span class="p">(</span><span class="n">rho</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">9</span><span class="o">*</span><span class="n">rho</span> <span class="o">-</span> <span class="mi">9</span><span class="o">*</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">rho</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">6</span><span class="o">*</span><span class="n">rho</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rho</span><span class="p">)</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">rho</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bxlnu.pc1">
+    <p>def <span class="ident">pc1</span>(</p><p>r, mb)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bxlnu.pc1', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bxlnu.pc1" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">pc1</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">mb</span><span class="p">):</span>
+    <span class="c1"># this is an expansion to 2nd order in mb around 4.6 and in r around 0.05</span>
+    <span class="c1"># P. Gambino,  private communication</span>
+    <span class="c1"># kinetic scheme cutoff is set to 1 GeV</span>
+    <span class="k">return</span> <span class="p">(</span> <span class="mf">6.486085393242938</span> <span class="o">-</span> <span class="mf">80.16227770322831</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="mf">207.37836204469366</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span>
+            <span class="o">+</span> <span class="n">mb</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="mf">2.3090743981240274</span> <span class="o">+</span> <span class="mf">14.029509187000471</span><span class="o">*</span><span class="n">r</span> <span class="o">-</span> <span class="mf">36.61694487623083</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">mb</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mf">0.18126017716432158</span> <span class="o">-</span> <span class="mf">0.8813205571033417</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="mf">3.1906139935867635</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bxlnu.pc2">
+    <p>def <span class="ident">pc2</span>(</p><p>r, mb)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bxlnu.pc2', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bxlnu.pc2" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">pc2</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">mb</span><span class="p">):</span>
+    <span class="c1"># this is an expansion to 2nd order in mb around 4.6 and in r around 0.05</span>
+    <span class="c1"># P. Gambino,  private communication</span>
+    <span class="c1"># kinetic scheme cutoff is set to 1 GeV</span>
+    <span class="k">return</span>  <span class="p">(</span> <span class="mf">63.344451026174276</span> <span class="o">-</span> <span class="mf">1060.9791881246733</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="mf">4332.058337615373</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span>
+             <span class="o">+</span> <span class="n">mb</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="mf">21.760717863346223</span> <span class="o">+</span> <span class="mf">273.7460360545832</span><span class="o">*</span><span class="n">r</span> <span class="o">-</span> <span class="mf">1032.068345746423</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+             <span class="o">+</span> <span class="n">mb</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mf">1.8406501267881998</span> <span class="o">-</span> <span class="mf">20.26973707297946</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="mf">73.82649433414315</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
 
   </div>

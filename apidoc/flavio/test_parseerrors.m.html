@@ -1119,6 +1119,7 @@ table {
     <li class="mono"><a href="#flavio.test_parseerrors.TestParseErrors.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.test_parseerrors.TestParseErrors.tearDown">tearDown</a></li>
     <li class="mono"><a href="#flavio.test_parseerrors.TestParseErrors.test_parse_limits">test_parse_limits</a></li>
+    <li class="mono"><a href="#flavio.test_parseerrors.TestParseErrors.test_parse_range">test_parse_range</a></li>
     <li class="mono"><a href="#flavio.test_parseerrors.TestParseErrors.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.test_parseerrors.TestParseErrors.tearDownClass">tearDownClass</a></li>
   </ul>
@@ -1168,6 +1169,21 @@ table {
         <span class="c1"># make sure a negative limit raises an error:</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
             <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;&lt; -3.6e-9 @90% CL&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_parse_range</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;[-1,5]&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pds</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">half_range</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;[-1 ,5 ] * 1e15&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="mf">2e15</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">half_range</span><span class="p">,</span> <span class="mf">3e15</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="c1"># max &lt; min</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;[1, -5]&#39;</span><span class="p">)</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;[ -1e-2,5e-2]e15&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="mf">2e13</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">half_range</span><span class="p">,</span> <span class="mf">3e13</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1233,6 +1249,21 @@ in order to be run.</p>
         <span class="c1"># make sure a negative limit raises an error:</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
             <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;&lt; -3.6e-9 @90% CL&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_parse_range</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;[-1,5]&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pds</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">half_range</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;[-1 ,5 ] * 1e15&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="mf">2e15</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">half_range</span><span class="p">,</span> <span class="mf">3e15</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="c1"># max &lt; min</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;[1, -5]&#39;</span><span class="p">)</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;[ -1e-2,5e-2]e15&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="mf">2e13</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">half_range</span><span class="p">,</span> <span class="mf">3e13</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3455,6 +3486,39 @@ block, allowing further test code to be executed.</p></div>
     <span class="c1"># make sure a negative limit raises an error:</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
         <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;&lt; -3.6e-9 @90% CL&#39;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.test_parseerrors.TestParseErrors.test_parse_range">
+    <p>def <span class="ident">test_parse_range</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.test_parseerrors.TestParseErrors.test_parse_range', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.test_parseerrors.TestParseErrors.test_parse_range" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_parse_range</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">pds</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;[-1,5]&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pds</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">half_range</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">pds</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;[-1 ,5 ] * 1e15&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="mf">2e15</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">half_range</span><span class="p">,</span> <span class="mf">3e15</span><span class="p">)</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="c1"># max &lt; min</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;[1, -5]&#39;</span><span class="p">)</span>
+    <span class="n">pds</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">_parse_errors</span><span class="o">.</span><span class="n">constraints_from_string</span><span class="p">(</span><span class="s1">&#39;[ -1e-2,5e-2]e15&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="mf">2e13</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">half_range</span><span class="p">,</span> <span class="mf">3e13</span><span class="p">)</span>
 </pre></div>
 
   </div>

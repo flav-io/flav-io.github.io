@@ -1050,9 +1050,11 @@ table {
       
   <ul>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.M">M</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.N">N</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.br">br</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.config">config</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.l">l</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.li">li</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.meson_ff">meson_ff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.meson_quark">meson_quark</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.pi">pi</a></li>
@@ -1065,8 +1067,12 @@ table {
   <ul>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.BR_binned">BR_binned</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.BR_binned_function">BR_binned_function</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.BR_binned_leptonflavour">BR_binned_leptonflavour</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.BR_binned_leptonflavour_function">BR_binned_leptonflavour_function</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.BR_tot">BR_tot</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.BR_tot_function">BR_tot_function</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.BR_tot_leptonflavour">BR_tot_leptonflavour</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.BR_tot_leptonflavour_function">BR_tot_leptonflavour_function</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.dBRdq2">dBRdq2</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.dBRdq2_function">dBRdq2_function</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.dBRdq2_lep">dBRdq2_lep</a></li>
@@ -1206,6 +1212,26 @@ table {
 <span class="k">def</span> <span class="nf">BR_tot_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">BR_tot</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
 
+<span class="k">def</span> <span class="nf">BR_binned_leptonflavour</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">):</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">BR_binned</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="n">BR_binned</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lden</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">den</span>
+
+<span class="k">def</span> <span class="nf">BR_tot_leptonflavour</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">):</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">BR_tot</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="n">BR_tot</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lden</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">den</span>
+
+<span class="k">def</span> <span class="nf">BR_tot_leptonflavour_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">BR_tot_leptonflavour</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">BR_binned_leptonflavour_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">:</span> <span class="n">BR_binned_leptonflavour</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">)</span>
+
 
 <span class="c1"># Observable and Prediction instances</span>
 
@@ -1222,6 +1248,16 @@ table {
 <span class="s1">&#39;B+-&gt;omega&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s2">r&quot;B^+\to \omega &quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="s1">&#39;omega&#39;</span><span class="p">,</span> <span class="p">},</span>
 <span class="s1">&#39;Bs-&gt;K*&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s2">r&quot;B_s\to K^{* -} &quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="s1">&#39;K*+&#39;</span><span class="p">,</span> <span class="p">},</span>
 <span class="p">}</span>
+<span class="c1"># for LF ratios we don&#39;t distinguish B+ and B0 (but take B0 because we have to choose sth)</span>
+<span class="n">_hadr_l</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s1">&#39;B-&gt;D*&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s2">r&quot;B\to D^{\ast}&quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="s1">&#39;D*+&#39;</span><span class="p">,</span> <span class="s1">&#39;decays&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;B0-&gt;D*&#39;</span><span class="p">,</span> <span class="s1">&#39;B+-&gt;D*&#39;</span><span class="p">],},</span>
+<span class="s1">&#39;B-&gt;rho&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s2">r&quot;B\to \rho&quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="s1">&#39;rho+&#39;</span><span class="p">,</span> <span class="s1">&#39;decays&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;B0-&gt;rho&#39;</span><span class="p">,</span> <span class="s1">&#39;B+-&gt;rho&#39;</span><span class="p">],},</span>
+<span class="s1">&#39;B+-&gt;omega&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s2">r&quot;B^+\to \omega &quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="s1">&#39;omega&#39;</span><span class="p">,</span> <span class="s1">&#39;decays&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;B+-&gt;omega&#39;</span><span class="p">],},</span>
+<span class="s1">&#39;Bs-&gt;K*&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="s2">r&quot;B_s\to K^{* -} &quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="s1">&#39;K*+&#39;</span><span class="p">,</span> <span class="s1">&#39;decays&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Bs-&gt;K*&#39;</span><span class="p">],},</span>
+<span class="p">}</span>
+
+<span class="n">_process_taxonomy</span> <span class="o">=</span> <span class="s1">r&#39;Process :: $b$ hadron decays :: Semi-leptonic tree-level decays :: $B\to V\ell\nu$ :: $&#39;</span>
+
 <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">,</span> <span class="s1">&#39;l&#39;</span><span class="p">]:</span>
     <span class="k">for</span> <span class="n">br</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dBR/dq2&#39;</span><span class="p">,</span> <span class="s1">&#39;BR&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;BR&gt;&#39;</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">M</span> <span class="ow">in</span> <span class="n">_hadr</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -1231,8 +1267,35 @@ table {
             <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">_desc</span><span class="p">[</span><span class="n">br</span><span class="p">]</span> <span class="o">+</span> <span class="s2">r&quot; branching ratio of $&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="s2">&quot;$&quot;</span><span class="p">)</span>
             <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s1">r&#39;$&#39;</span> <span class="o">+</span> <span class="n">_tex_br</span><span class="p">[</span><span class="n">br</span><span class="p">]</span> <span class="o">+</span> <span class="s2">r&quot;(&quot;</span> <span class="o">+</span><span class="n">_process_tex</span> <span class="o">+</span> <span class="s2">&quot;)$&quot;</span>
             <span class="n">_obs</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="n">_args</span><span class="p">[</span><span class="n">br</span><span class="p">]</span>
-            <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="s1">r&#39;Process :: $b$ hadron decays :: Semi-leptonic tree-level decays :: $B\to V\ell\nu$ :: $&#39;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span>  <span class="s1">r&#39;$&#39;</span><span class="p">)</span>
+            <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span>  <span class="s1">r&#39;$&#39;</span><span class="p">)</span>
             <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">_func</span><span class="p">[</span><span class="n">br</span><span class="p">](</span><span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;V&#39;</span><span class="p">],</span> <span class="n">l</span><span class="p">))</span>
+
+
+<span class="c1"># Lepton flavour ratios</span>
+<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;mu&#39;</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;tau&#39;</span><span class="p">,</span><span class="s1">&#39;mu&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;tau&#39;</span><span class="p">,</span> <span class="s1">&#39;l&#39;</span><span class="p">)]:</span>
+    <span class="k">for</span> <span class="n">M</span> <span class="ow">in</span> <span class="n">_hadr_l</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+        <span class="c1"># binned ratio of BRs</span>
+        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;&lt;R&quot;</span><span class="o">+</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;&gt;(&quot;</span><span class="o">+</span><span class="n">M</span><span class="o">+</span><span class="s2">&quot;lnu)&quot;</span>
+        <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">])</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Ratio of partial branching ratios of $&quot;</span> <span class="o">+</span> <span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span><span class="s2">r&quot;^+ \nu_&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span><span class="s2">r&quot;$&quot;</span> <span class="o">+</span> <span class="s2">&quot; and &quot;</span> <span class="o">+</span> <span class="s2">r&quot;$&quot;</span> <span class="o">+</span> <span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">+</span><span class="s2">r&quot;^+ \nu_&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">+</span><span class="s2">r&quot;$&quot;</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$\langle R_{&quot;</span> <span class="o">+</span> <span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="s2">r&quot;} \rangle(&quot;</span> <span class="o">+</span> <span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">r&quot;\ell^+\nu)$&quot;</span>
+        <span class="k">for</span> <span class="n">li</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">N</span> <span class="ow">in</span> <span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;decays&#39;</span><span class="p">]:</span>
+                <span class="c1"># add taxonomy for both processes (e.g. B-&gt;Venu and B-&gt;Vmunu) and for charged and neutral</span>
+                <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span> <span class="o">+</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">_tex</span><span class="p">[</span><span class="n">li</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+\nu_&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">li</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;$&quot;</span><span class="p">)</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BR_binned_leptonflavour_function</span><span class="p">(</span><span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;V&#39;</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="c1"># ratio of total BRs</span>
+        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;R&quot;</span><span class="o">+</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;(&quot;</span><span class="o">+</span><span class="n">M</span><span class="o">+</span><span class="s2">&quot;lnu)&quot;</span>
+        <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">])</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">r&quot;Ratio of total branching ratios of $&quot;</span> <span class="o">+</span> <span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span><span class="s2">r&quot;^+ \nu_&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span><span class="s2">r&quot;$&quot;</span> <span class="o">+</span> <span class="s2">&quot; and &quot;</span> <span class="o">+</span> <span class="s2">r&quot;$&quot;</span> <span class="o">+</span> <span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">+</span><span class="s2">r&quot;^+ \nu_&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">+</span><span class="s2">r&quot;$&quot;</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">r&quot;$R_{&quot;</span> <span class="o">+</span> <span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="s2">r&quot;}(&quot;</span> <span class="o">+</span> <span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">r&quot;\ell^+\nu)$&quot;</span>
+        <span class="k">for</span> <span class="n">li</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">N</span> <span class="ow">in</span> <span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;decays&#39;</span><span class="p">]:</span>
+                <span class="c1"># add taxonomy for both processes (e.g. B-&gt;Venu and B-&gt;Vmunu) and for charged and neutral</span>
+                <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span> <span class="o">+</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">li</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;^+\nu_&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">li</span><span class="p">]</span><span class="o">+</span><span class="s2">r&quot;$&quot;</span><span class="p">)</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BR_tot_leptonflavour_function</span><span class="p">(</span><span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;V&#39;</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 </pre></div>
 
   </div>
@@ -1243,6 +1306,14 @@ table {
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
       <p id="flavio.physics.bdecays.bvlnu.M" class="name">var <span class="ident">M</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.bvlnu.N" class="name">var <span class="ident">N</span></p>
       
   
   <div class="source_cont">
@@ -1267,6 +1338,14 @@ table {
       </div>
       <div class="item">
       <p id="flavio.physics.bdecays.bvlnu.l" class="name">var <span class="ident">l</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.bvlnu.li" class="name">var <span class="ident">li</span></p>
       
   
   <div class="source_cont">
@@ -1345,6 +1424,52 @@ table {
   
       
   <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvlnu.BR_binned_leptonflavour">
+    <p>def <span class="ident">BR_binned_leptonflavour</span>(</p><p>q2min, q2max, wc_obj, par, B, V, lnum, lden)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvlnu.BR_binned_leptonflavour', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvlnu.BR_binned_leptonflavour" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR_binned_leptonflavour</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">):</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">BR_binned</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="n">BR_binned</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lden</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">den</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvlnu.BR_binned_leptonflavour_function">
+    <p>def <span class="ident">BR_binned_leptonflavour_function</span>(</p><p>B, V, lnum, lden)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvlnu.BR_binned_leptonflavour_function', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvlnu.BR_binned_leptonflavour_function" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR_binned_leptonflavour_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">:</span> <span class="n">BR_binned_leptonflavour</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.physics.bdecays.bvlnu.BR_tot">
     <p>def <span class="ident">BR_tot</span>(</p><p>wc_obj, par, B, V, lep)</p>
     </div>
@@ -1382,6 +1507,52 @@ table {
   <div id="source-flavio.physics.bdecays.bvlnu.BR_tot_function" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR_tot_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">BR_tot</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvlnu.BR_tot_leptonflavour">
+    <p>def <span class="ident">BR_tot_leptonflavour</span>(</p><p>wc_obj, par, B, V, lnum, lden)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvlnu.BR_tot_leptonflavour', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvlnu.BR_tot_leptonflavour" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR_tot_leptonflavour</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">):</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">BR_tot</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="n">BR_tot</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lden</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">den</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvlnu.BR_tot_leptonflavour_function">
+    <p>def <span class="ident">BR_tot_leptonflavour_function</span>(</p><p>B, V, lnum, lden)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvlnu.BR_tot_leptonflavour_function', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvlnu.BR_tot_leptonflavour_function" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR_tot_leptonflavour_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">BR_tot_leptonflavour</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">)</span>
 </pre></div>
 
   </div>
