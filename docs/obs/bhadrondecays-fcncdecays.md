@@ -1082,7 +1082,9 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
+| `<AFB>(B->Xdll)` | $\langle A_\text{FB} \rangle(B\to X_d\ell^+\ell^-)$ | Binned normalized forward-backward asymmetry of $B\to X_d\ell^+\ell^-$ | `q2min`, `q2max` |
 | `<BR>(B->Xdll)` | $\langle \text{BR} \rangle(B\to X_d\ell^+\ell^-)$ | Binned branching ratio of $B\to X_d\ell^+\ell^-$ | `q2min`, `q2max` |
+| `AFB(B->Xdll)` | $A_\text{FB}(B\to X_d\ell^+\ell^-)$ | Normalized forward-backward asymmetry of $B\to X_d\ell^+\ell^-$ | `q2` |
 | `dBR/dq2(B->Xdll)` | $\frac{d\text{BR}}{dq^2}(B\to X_d\ell^+\ell^-)$ | Differential branching ratio of $B\to X_d\ell^+\ell^-$ | `q2` |
 
 
@@ -1091,9 +1093,11 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
+| `<AFB>(B->Xdmumu)` | $\langle A_\text{FB} \rangle(B\to X_d\mu^+\mu^-)$ | Binned normalized forward-backward asymmetry of $B\to X_d\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<BR>(B->Xdmumu)` | $\langle \text{BR} \rangle(B\to X_d\mu^+\mu^-)$ | Binned branching ratio of $B\to X_d\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<Rmue>(B->Xdll)` | $\langle R_{\mu e} \rangle(B\to X_d\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_d\mu^+\mu^-$ and $B\to X_de^+e^-$ | `q2min`, `q2max` |
 | `<Rtaumu>(B->Xdll)` | $\langle R_{\tau \mu} \rangle(B\to X_d\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_d\tau^+\tau^-$ and $B\to X_d\mu^+\mu^-$ | `q2min`, `q2max` |
+| `AFB(B->Xdmumu)` | $A_\text{FB}(B\to X_d\mu^+\mu^-)$ | Normalized forward-backward asymmetry of $B\to X_d\mu^+\mu^-$ | `q2` |
 | `dBR/dq2(B->Xdmumu)` | $\frac{d\text{BR}}{dq^2}(B\to X_d\mu^+\mu^-)$ | Differential branching ratio of $B\to X_d\mu^+\mu^-$ | `q2` |
 
 
@@ -1112,8 +1116,10 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
+| `<AFB>(B->Xdee)` | $\langle A_\text{FB} \rangle(B\to X_de^+e^-)$ | Binned normalized forward-backward asymmetry of $B\to X_de^+e^-$ | `q2min`, `q2max` |
 | `<BR>(B->Xdee)` | $\langle \text{BR} \rangle(B\to X_de^+e^-)$ | Binned branching ratio of $B\to X_de^+e^-$ | `q2min`, `q2max` |
 | `<Rmue>(B->Xdll)` | $\langle R_{\mu e} \rangle(B\to X_d\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_d\mu^+\mu^-$ and $B\to X_de^+e^-$ | `q2min`, `q2max` |
+| `AFB(B->Xdee)` | $A_\text{FB}(B\to X_de^+e^-)$ | Normalized forward-backward asymmetry of $B\to X_de^+e^-$ | `q2` |
 | `dBR/dq2(B->Xdee)` | $\frac{d\text{BR}}{dq^2}(B\to X_de^+e^-)$ | Differential branching ratio of $B\to X_de^+e^-$ | `q2` |
 
 
@@ -1122,7 +1128,9 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
+| `<AFB>(B->Xsll)` | $\langle A_\text{FB} \rangle(B\to X_s\ell^+\ell^-)$ | Binned normalized forward-backward asymmetry of $B\to X_s\ell^+\ell^-$ | `q2min`, `q2max` |
 | `<BR>(B->Xsll)` | $\langle \text{BR} \rangle(B\to X_s\ell^+\ell^-)$ | Binned branching ratio of $B\to X_s\ell^+\ell^-$ | `q2min`, `q2max` |
+| `AFB(B->Xsll)` | $A_\text{FB}(B\to X_s\ell^+\ell^-)$ | Normalized forward-backward asymmetry of $B\to X_s\ell^+\ell^-$ | `q2` |
 | `dBR/dq2(B->Xsll)` | $\frac{d\text{BR}}{dq^2}(B\to X_s\ell^+\ell^-)$ | Differential branching ratio of $B\to X_s\ell^+\ell^-$ | `q2` |
 
 
@@ -1131,9 +1139,11 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
+| `<AFB>(B->Xsmumu)` | $\langle A_\text{FB} \rangle(B\to X_s\mu^+\mu^-)$ | Binned normalized forward-backward asymmetry of $B\to X_s\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<BR>(B->Xsmumu)` | $\langle \text{BR} \rangle(B\to X_s\mu^+\mu^-)$ | Binned branching ratio of $B\to X_s\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<Rmue>(B->Xsll)` | $\langle R_{\mu e} \rangle(B\to X_s\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_s\mu^+\mu^-$ and $B\to X_se^+e^-$ | `q2min`, `q2max` |
 | `<Rtaumu>(B->Xsll)` | $\langle R_{\tau \mu} \rangle(B\to X_s\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_s\tau^+\tau^-$ and $B\to X_s\mu^+\mu^-$ | `q2min`, `q2max` |
+| `AFB(B->Xsmumu)` | $A_\text{FB}(B\to X_s\mu^+\mu^-)$ | Normalized forward-backward asymmetry of $B\to X_s\mu^+\mu^-$ | `q2` |
 | `dBR/dq2(B->Xsmumu)` | $\frac{d\text{BR}}{dq^2}(B\to X_s\mu^+\mu^-)$ | Differential branching ratio of $B\to X_s\mu^+\mu^-$ | `q2` |
 
 
@@ -1152,8 +1162,10 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
+| `<AFB>(B->Xsee)` | $\langle A_\text{FB} \rangle(B\to X_se^+e^-)$ | Binned normalized forward-backward asymmetry of $B\to X_se^+e^-$ | `q2min`, `q2max` |
 | `<BR>(B->Xsee)` | $\langle \text{BR} \rangle(B\to X_se^+e^-)$ | Binned branching ratio of $B\to X_se^+e^-$ | `q2min`, `q2max` |
 | `<Rmue>(B->Xsll)` | $\langle R_{\mu e} \rangle(B\to X_s\ell^+\ell^-)$ | Ratio of partial branching ratios of $B\to X_s\mu^+\mu^-$ and $B\to X_se^+e^-$ | `q2min`, `q2max` |
+| `AFB(B->Xsee)` | $A_\text{FB}(B\to X_se^+e^-)$ | Normalized forward-backward asymmetry of $B\to X_se^+e^-$ | `q2` |
 | `dBR/dq2(B->Xsee)` | $\frac{d\text{BR}}{dq^2}(B\to X_se^+e^-)$ | Differential branching ratio of $B\to X_se^+e^-$ | `q2` |
 
 
