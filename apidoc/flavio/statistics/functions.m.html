@@ -3,10 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>flavio.plots API documentation</title>
-    <meta name="description" content="Module for making pretty plots based on matplotlib.
-
-Currently, the following types of plots are sup..." />
+    <title>flavio.statistics.functions API documentation</title>
+    <meta name="description" content="" />
 
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400' rel='stylesheet' type='text/css'>
@@ -1048,17 +1046,23 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#flavio.statistics.functions.confidence_level">confidence_level</a></li>
+  </ul>
 
-
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
-      <ul>
-        <li class="mono"><a href="colors.m.html">flavio.plots.colors</a></li>
-        <li class="mono"><a href="config.m.html">flavio.plots.config</a></li>
-        <li class="mono"><a href="plotfunctions.m.html">flavio.plots.plotfunctions</a></li>
-        <li class="mono"><a href="test_plotfunctions.m.html">flavio.plots.test_plotfunctions</a></li>
-      </ul>
     </li>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#flavio.statistics.functions.delta_chi2">delta_chi2</a></li>
+  </ul>
+
+    </li>
+
+
     </ul>
   </div>
 
@@ -1070,43 +1074,34 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">flavio.plots</span> module</h1>
-  <p>Module for making pretty plots based on matplotlib.</p>
-<p>Currently, the following types of plots are supported:</p>
-<ul>
-<li>Plotting the error budget of a prediction (<code>error_budget_pie</code>)</li>
-<li>Plots of experimental measurements and theory predictions of $q^2$ dependent
-  observables, such as differential branching ratios
-  (<code>q2_plot_exp</code>, <code>q2_plot_th_bin</code>, <code>q2_plot_th_diff</code>)</li>
-<li>Plots for two-dimensional contours (e.g. frequentist confidence contours
-  or Bayesian credibility contours) that can be used standalone or in
-  conjunction with <code>flavio.statistics.Fit</code> instances to plot the fit results
-  (<code>density_contour</code>, <code>likelihood_countour</code>, <code>contours</code>)</li>
-<li>Plots for one-dimensional likelihoods and confidence/credibility intervals
-  (<code>smooth_histogram</code>)</li>
-</ul>
+  <h1 class="title"><span class="name">flavio.statistics.functions</span> module</h1>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.plots" class="source">
-    <div class="codehilite"><pre><span></span><span class="sd">r&quot;&quot;&quot;Module for making pretty plots based on matplotlib.</span>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.functions', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.functions" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 
-<span class="sd">Currently, the following types of plots are supported:</span>
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">confidence_level</span><span class="p">(</span><span class="n">nsigma</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Return the confidence level corresponding to a number of sigmas,</span>
+<span class="sd">    i.e. the probability contained in the normal distribution between $-n\sigma$</span>
+<span class="sd">    and $+n\sigma$.</span>
 
-<span class="sd">- Plotting the error budget of a prediction (`error_budget_pie`)</span>
-<span class="sd">- Plots of experimental measurements and theory predictions of $q^2$ dependent</span>
-<span class="sd">  observables, such as differential branching ratios</span>
-<span class="sd">  (`q2_plot_exp`, `q2_plot_th_bin`, `q2_plot_th_diff`)</span>
-<span class="sd">- Plots for two-dimensional contours (e.g. frequentist confidence contours</span>
-<span class="sd">  or Bayesian credibility contours) that can be used standalone or in</span>
-<span class="sd">  conjunction with `flavio.statistics.Fit` instances to plot the fit results</span>
-<span class="sd">  (`density_contour`, `likelihood_countour`, `contours`)</span>
-<span class="sd">- Plots for one-dimensional likelihoods and confidence/credibility intervals</span>
-<span class="sd">  (`smooth_histogram`)</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Example: `confidence_level(1)` returns approximately 0.68.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">nsigma</span><span class="p">)</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">colors</span>
-<span class="kn">from</span> <span class="nn">.plotfunctions</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="k">def</span> <span class="nf">delta_chi2</span><span class="p">(</span><span class="n">nsigma</span><span class="p">,</span> <span class="n">dof</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Compute the $\Delta\chi^2$ for `dof` degrees of freedom corresponding</span>
+<span class="sd">    to `nsigma` Gaussian standard deviations.</span>
+
+<span class="sd">    Example: For `dof=2` and `nsigma=1`, the result is roughly 2.3.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dof</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># that&#39;s trivial</span>
+        <span class="k">return</span> <span class="n">nsigma</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">chi2_ndof</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">dof</span><span class="p">)</span>
+    <span class="n">cl_nsigma</span> <span class="o">=</span> <span class="n">confidence_level</span><span class="p">(</span><span class="n">nsigma</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">chi2_ndof</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cl_nsigma</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1114,36 +1109,52 @@ table {
   </header>
 
   <section id="section-items">
-
-
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
+    <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p class="name"><a href="colors.m.html">flavio.plots.colors</a></p>
+      <p id="flavio.statistics.functions.confidence_level" class="name">var <span class="ident">confidence_level</span></p>
       
   
-    <div class="desc"><p>Colour schemes for plots.</p></div>
+  <div class="source_cont">
+</div>
 
       </div>
-      <div class="item">
-      <p class="name"><a href="config.m.html">flavio.plots.config</a></p>
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
       
-  
-    <div class="desc"><p>Default configuration options for <code>matplotlib</code></p></div>
+  <div class="item">
+    <div class="name def" id="flavio.statistics.functions.delta_chi2">
+    <p>def <span class="ident">delta_chi2</span>(</p><p>nsigma, dof)</p>
+    </div>
+    
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="plotfunctions.m.html">flavio.plots.plotfunctions</a></p>
-      
+    
+  
+    <div class="desc"><p>Compute the $\Delta\chi^2$ for <code>dof</code> degrees of freedom corresponding
+to <code>nsigma</code> Gaussian standard deviations.</p>
+<p>Example: For <code>dof=2</code> and <code>nsigma=1</code>, the result is roughly 2.3.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.functions.delta_chi2', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.functions.delta_chi2" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">delta_chi2</span><span class="p">(</span><span class="n">nsigma</span><span class="p">,</span> <span class="n">dof</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Compute the $\Delta\chi^2$ for `dof` degrees of freedom corresponding</span>
+<span class="sd">    to `nsigma` Gaussian standard deviations.</span>
+
+<span class="sd">    Example: For `dof=2` and `nsigma=1`, the result is roughly 2.3.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dof</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># that&#39;s trivial</span>
+        <span class="k">return</span> <span class="n">nsigma</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">chi2_ndof</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">dof</span><span class="p">)</span>
+    <span class="n">cl_nsigma</span> <span class="o">=</span> <span class="n">confidence_level</span><span class="p">(</span><span class="n">nsigma</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">chi2_ndof</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cl_nsigma</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
   
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="test_plotfunctions.m.html">flavio.plots.test_plotfunctions</a></p>
-      
-  
 
-      </div>
   </section>
 
     </article>
