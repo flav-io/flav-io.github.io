@@ -1501,6 +1501,7 @@ table {
               <span class="n">interpolation_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
               <span class="n">interpolation_order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
               <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">filled</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
               <span class="n">contour_args</span><span class="o">=</span><span class="p">{},</span> <span class="n">contourf_args</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">r&quot;&quot;&quot;Plot coloured confidence contours (or bands) given numerical input</span>
 <span class="sd">    arrays.</span>
@@ -1521,14 +1522,17 @@ table {
 <span class="sd">      from a predefined palette</span>
 <span class="sd">    - `label` (optional): label that will be added to a legend created with</span>
 <span class="sd">       maplotlib.pyplot.legend()</span>
+<span class="sd">    - `filled` (optional): if False, contours will be drawn without shading</span>
 <span class="sd">    - `contour_args`: dictionary of additional options that will be passed</span>
 <span class="sd">       to matplotlib.pyplot.contour() (that draws the contour lines)</span>
 <span class="sd">    - `contourf_args`: dictionary of additional options that will be passed</span>
-<span class="sd">       to matplotlib.pyplot.contourf() (that paints the contour filling)</span>
+<span class="sd">       to matplotlib.pyplot.contourf() (that paints the contour filling).</span>
+<span class="sd">       Ignored if `filled` is false.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">interpolation_order</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">interpolation_factor</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">interpolation_order</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">_col</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1536,6 +1540,10 @@ table {
     <span class="n">_contour_args</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">_contourf_args</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">_contour_args</span><span class="p">[</span><span class="s1">&#39;colors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">set1</span><span class="p">[</span><span class="n">_col</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="n">filled</span><span class="p">:</span>
+        <span class="n">_contour_args</span><span class="p">[</span><span class="s1">&#39;linewidths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.6</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_contour_args</span><span class="p">[</span><span class="s1">&#39;linewidths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.8</span>
     <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span>
     <span class="n">_contourf_args</span><span class="p">[</span><span class="s1">&#39;colors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">[</span><span class="n">_col</span><span class="p">]</span> <span class="c1"># RGB</span>
                                        <span class="o">+</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">n</span><span class="o">/</span><span class="n">N</span><span class="p">,</span> <span class="mi">0</span><span class="p">),)</span> <span class="c1"># alpha, decreasing for contours</span>
@@ -1546,7 +1554,8 @@ table {
     <span class="c1"># for the filling, need to add zero contour</span>
     <span class="n">levelsf</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)]</span> <span class="o">+</span> <span class="n">levels</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levelsf</span><span class="p">,</span> <span class="o">**</span><span class="n">_contourf_args</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">filled</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levelsf</span><span class="p">,</span> <span class="o">**</span><span class="n">_contourf_args</span><span class="p">)</span>
     <span class="n">CS</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="o">**</span><span class="n">_contour_args</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">CS</span><span class="o">.</span><span class="n">collections</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
@@ -1565,7 +1574,7 @@ table {
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">x_min</span><span class="p">,</span> <span class="n">y_min</span><span class="p">),</span> <span class="n">x_max</span><span class="o">-</span><span class="n">x_min</span><span class="p">,</span> <span class="n">y_max</span><span class="o">-</span><span class="n">y_min</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;#666666&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.7</span><span class="p">))</span>
 
-<span class="k">def</span> <span class="nf">smooth_histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fillargs</span><span class="o">=</span><span class="p">{}):</span>
+<span class="k">def</span> <span class="nf">smooth_histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fillargs</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;A smooth histogram based on a Gaussian kernel density estimate.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1584,6 +1593,9 @@ table {
     <span class="n">_plotargs</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">_fillargs</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># default values</span>
+    <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;linewidth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.6</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
     <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">set1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">_fillargs</span><span class="p">[</span><span class="s1">&#39;facecolor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1659,7 +1671,7 @@ backward compatibility.</p></div>
       
   <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.contour">
-    <p>def <span class="ident">contour</span>(</p><p>x, y, z, levels, interpolation_factor=1, interpolation_order=2, col=0, label=None, contour_args={}, contourf_args={})</p>
+    <p>def <span class="ident">contour</span>(</p><p>x, y, z, levels, interpolation_factor=1, interpolation_order=2, col=0, label=None, filled=True, contour_args={}, contourf_args={})</p>
     </div>
     
 
@@ -1683,10 +1695,12 @@ arrays.</p>
   from a predefined palette</li>
 <li><code>label</code> (optional): label that will be added to a legend created with
    maplotlib.pyplot.legend()</li>
+<li><code>filled</code> (optional): if False, contours will be drawn without shading</li>
 <li><code>contour_args</code>: dictionary of additional options that will be passed
    to matplotlib.pyplot.contour() (that draws the contour lines)</li>
 <li><code>contourf_args</code>: dictionary of additional options that will be passed
-   to matplotlib.pyplot.contourf() (that paints the contour filling)</li>
+   to matplotlib.pyplot.contourf() (that paints the contour filling).
+   Ignored if <code>filled</code> is false.</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.contour', this);">Show source &equiv;</a></p>
@@ -1695,6 +1709,7 @@ arrays.</p>
               <span class="n">interpolation_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
               <span class="n">interpolation_order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
               <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">filled</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
               <span class="n">contour_args</span><span class="o">=</span><span class="p">{},</span> <span class="n">contourf_args</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">r&quot;&quot;&quot;Plot coloured confidence contours (or bands) given numerical input</span>
 <span class="sd">    arrays.</span>
@@ -1715,14 +1730,17 @@ arrays.</p>
 <span class="sd">      from a predefined palette</span>
 <span class="sd">    - `label` (optional): label that will be added to a legend created with</span>
 <span class="sd">       maplotlib.pyplot.legend()</span>
+<span class="sd">    - `filled` (optional): if False, contours will be drawn without shading</span>
 <span class="sd">    - `contour_args`: dictionary of additional options that will be passed</span>
 <span class="sd">       to matplotlib.pyplot.contour() (that draws the contour lines)</span>
 <span class="sd">    - `contourf_args`: dictionary of additional options that will be passed</span>
-<span class="sd">       to matplotlib.pyplot.contourf() (that paints the contour filling)</span>
+<span class="sd">       to matplotlib.pyplot.contourf() (that paints the contour filling).</span>
+<span class="sd">       Ignored if `filled` is false.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">interpolation_order</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">interpolation_factor</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">interpolation_factor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">interpolation_order</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">_col</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1730,6 +1748,10 @@ arrays.</p>
     <span class="n">_contour_args</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">_contourf_args</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">_contour_args</span><span class="p">[</span><span class="s1">&#39;colors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">set1</span><span class="p">[</span><span class="n">_col</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="n">filled</span><span class="p">:</span>
+        <span class="n">_contour_args</span><span class="p">[</span><span class="s1">&#39;linewidths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.6</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_contour_args</span><span class="p">[</span><span class="s1">&#39;linewidths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.8</span>
     <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span>
     <span class="n">_contourf_args</span><span class="p">[</span><span class="s1">&#39;colors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">[</span><span class="n">_col</span><span class="p">]</span> <span class="c1"># RGB</span>
                                        <span class="o">+</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">n</span><span class="o">/</span><span class="n">N</span><span class="p">,</span> <span class="mi">0</span><span class="p">),)</span> <span class="c1"># alpha, decreasing for contours</span>
@@ -1740,7 +1762,8 @@ arrays.</p>
     <span class="c1"># for the filling, need to add zero contour</span>
     <span class="n">levelsf</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)]</span> <span class="o">+</span> <span class="n">levels</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levelsf</span><span class="p">,</span> <span class="o">**</span><span class="n">_contourf_args</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">filled</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levelsf</span><span class="p">,</span> <span class="o">**</span><span class="n">_contourf_args</span><span class="p">)</span>
     <span class="n">CS</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="o">**</span><span class="n">_contour_args</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">CS</span><span class="o">.</span><span class="n">collections</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
@@ -2444,7 +2467,7 @@ e.g. 'c' for colour.</p></div>
       
   <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.smooth_histogram">
-    <p>def <span class="ident">smooth_histogram</span>(</p><p>data, bandwidth=None, col=None, plotargs={}, fillargs={})</p>
+    <p>def <span class="ident">smooth_histogram</span>(</p><p>data, bandwidth=None, col=None, label=None, plotargs={}, fillargs={})</p>
     </div>
     
 
@@ -2463,7 +2486,7 @@ e.g. 'c' for colour.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.smooth_histogram', this);">Show source &equiv;</a></p>
   <div id="source-flavio.plots.plotfunctions.smooth_histogram" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">smooth_histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fillargs</span><span class="o">=</span><span class="p">{}):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">smooth_histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fillargs</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;A smooth histogram based on a Gaussian kernel density estimate.</span>
 
 <span class="sd">    Parameters:</span>
@@ -2482,6 +2505,9 @@ e.g. 'c' for colour.</p></div>
     <span class="n">_plotargs</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">_fillargs</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># default values</span>
+    <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;linewidth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.6</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
     <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">set1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">_fillargs</span><span class="p">[</span><span class="s1">&#39;facecolor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
