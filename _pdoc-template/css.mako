@@ -6,7 +6,7 @@
   }
   body {
     background: #fff;
-    font-family: "Noto Sans", "Helvetica Neueue", Helvetica, sans;
+    font-family: "Noto Sans", "Helvetica Neue", Helvetica, sans;
     font-weight: 400;
     font-size: 16px;
     line-height: 1.6em;
