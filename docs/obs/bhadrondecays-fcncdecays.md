@@ -1202,7 +1202,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bd->mumu)` | $\text{BR}(B^0\to \mu^+\mu^-)$. | Branching ratio of $B^0\to \mu^+\mu^-$ |  |
+| `BR(Bd->mumu)` | $\text{BR}(B^0\to \mu^+\mu^-)$ | Branching ratio of $B^0\to \mu^+\mu^-$ |  |
 
 
 ### $B^0\to \tau^+\tau^-$
@@ -1210,7 +1210,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bd->tautau)` | $\text{BR}(B^0\to \tau^+\tau^-)$. | Branching ratio of $B^0\to \tau^+\tau^-$ |  |
+| `BR(Bd->tautau)` | $\text{BR}(B^0\to \tau^+\tau^-)$ | Branching ratio of $B^0\to \tau^+\tau^-$ |  |
 
 
 ### $B^0\to e^+e^-$
@@ -1218,7 +1218,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bd->ee)` | $\text{BR}(B^0\to e^+e^-)$. | Branching ratio of $B^0\to e^+e^-$ |  |
+| `BR(Bd->ee)` | $\text{BR}(B^0\to e^+e^-)$ | Branching ratio of $B^0\to e^+e^-$ |  |
 
 
 ### $B_s\to \mu^+\mu^-$
@@ -1226,8 +1226,8 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bs->mumu)` | $\overline{\text{BR}}(B_s\to \mu^+\mu^-)$. | Time-integrated branching ratio of $B_s\to \mu^+\mu^-$. |  |
-| `tau_mumu` | $\tau_{B_s \to \mu\mu}$. | Effective lifetime for $B_s\to \mu^+\mu^-$. |  |
+| `BR(Bs->mumu)` | $\overline{\text{BR}}(B_s\to \mu^+\mu^-)$ | Time-integrated branching ratio of $B_s\to \mu^+\mu^-$. |  |
+| `tau_mumu` | $\tau_{B_s \to \mu\mu}$ | Effective lifetime for $B_s\to \mu^+\mu^-$. |  |
 
 
 ### $B_s\to \tau^+\tau^-$
@@ -1235,8 +1235,8 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bs->tautau)` | $\overline{\text{BR}}(B_s\to \tau^+\tau^-)$. | Time-integrated branching ratio of $B_s\to \tau^+\tau^-$. |  |
-| `tau_tautau` | $\tau_{B_s \to \tau\tau}$. | Effective lifetime for $B_s\to \tau^+\tau^-$. |  |
+| `BR(Bs->tautau)` | $\overline{\text{BR}}(B_s\to \tau^+\tau^-)$ | Time-integrated branching ratio of $B_s\to \tau^+\tau^-$. |  |
+| `tau_tautau` | $\tau_{B_s \to \tau\tau}$ | Effective lifetime for $B_s\to \tau^+\tau^-$. |  |
 
 
 ### $B_s\to e^+e^-$
@@ -1244,8 +1244,8 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bs->ee)` | $\overline{\text{BR}}(B_s\to e^+e^-)$. | Time-integrated branching ratio of $B_s\to e^+e^-$. |  |
-| `tau_ee` | $\tau_{B_s \to ee}$. | Effective lifetime for $B_s\to e^+e^-$. |  |
+| `BR(Bs->ee)` | $\overline{\text{BR}}(B_s\to e^+e^-)$ | Time-integrated branching ratio of $B_s\to e^+e^-$. |  |
+| `tau_ee` | $\tau_{B_s \to ee}$ | Effective lifetime for $B_s\to e^+e^-$. |  |
 
 
 ### $\bar B^0\to \mu^+\tau^-$
