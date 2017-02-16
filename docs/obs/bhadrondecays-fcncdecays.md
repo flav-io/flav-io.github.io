@@ -384,6 +384,7 @@ a scalar observable).
 | `<S3>(B+->K*mumu)` | $\langle S_3\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S4>(B+->K*mumu)` | $\langle S_4\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S5>(B+->K*mumu)` | $\langle S_5\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S6c>(B+->K*mumu)` | $\langle S_6^c\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S7>(B+->K*mumu)` | $\langle S_7\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S8>(B+->K*mumu)` | $\langle S_8\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S9>(B+->K*mumu)` | $\langle S_9\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
@@ -409,6 +410,7 @@ a scalar observable).
 | `S3(B+->K*mumu)` | $S_3(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `S4(B+->K*mumu)` | $S_4(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `S5(B+->K*mumu)` | $S_5(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
+| `S6c(B+->K*mumu)` | $S_6^c(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `S7(B+->K*mumu)` | $S_7(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `S8(B+->K*mumu)` | $S_8(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `S9(B+->K*mumu)` | $S_9(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
@@ -442,6 +444,7 @@ a scalar observable).
 | `<S3>(B+->K*tautau)` | $\langle S_3\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S4>(B+->K*tautau)` | $\langle S_4\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S5>(B+->K*tautau)` | $\langle S_5\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
+| `<S6c>(B+->K*tautau)` | $\langle S_6^c\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S7>(B+->K*tautau)` | $\langle S_7\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S8>(B+->K*tautau)` | $\langle S_8\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S9>(B+->K*tautau)` | $\langle S_9\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
@@ -467,6 +470,7 @@ a scalar observable).
 | `S3(B+->K*tautau)` | $S_3(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `S4(B+->K*tautau)` | $S_4(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `S5(B+->K*tautau)` | $S_5(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
+| `S6c(B+->K*tautau)` | $S_6^c(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `S7(B+->K*tautau)` | $S_7(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `S8(B+->K*tautau)` | $S_8(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `S9(B+->K*tautau)` | $S_9(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
@@ -500,6 +504,7 @@ a scalar observable).
 | `<S3>(B+->K*ee)` | $\langle S_3\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<S4>(B+->K*ee)` | $\langle S_4\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<S5>(B+->K*ee)` | $\langle S_5\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
+| `<S6c>(B+->K*ee)` | $\langle S_6^c\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<S7>(B+->K*ee)` | $\langle S_7\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<S8>(B+->K*ee)` | $\langle S_8\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<S9>(B+->K*ee)` | $\langle S_9\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
@@ -525,6 +530,7 @@ a scalar observable).
 | `S3(B+->K*ee)` | $S_3(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `S4(B+->K*ee)` | $S_4(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `S5(B+->K*ee)` | $S_5(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
+| `S6c(B+->K*ee)` | $S_6^c(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `S7(B+->K*ee)` | $S_7(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `S8(B+->K*ee)` | $S_8(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `S9(B+->K*ee)` | $S_9(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
@@ -655,6 +661,7 @@ a scalar observable).
 | `<S3>(B0->K*mumu)` | $\langle S_3\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S4>(B0->K*mumu)` | $\langle S_4\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S5>(B0->K*mumu)` | $\langle S_5\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S6c>(B0->K*mumu)` | $\langle S_6^c\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S7>(B0->K*mumu)` | $\langle S_7\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S8>(B0->K*mumu)` | $\langle S_8\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<S9>(B0->K*mumu)` | $\langle S_9\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
@@ -680,6 +687,7 @@ a scalar observable).
 | `S3(B0->K*mumu)` | $S_3(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `S4(B0->K*mumu)` | $S_4(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `S5(B0->K*mumu)` | $S_5(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
+| `S6c(B0->K*mumu)` | $S_6^c(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `S7(B0->K*mumu)` | $S_7(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `S8(B0->K*mumu)` | $S_8(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `S9(B0->K*mumu)` | $S_9(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
@@ -713,6 +721,7 @@ a scalar observable).
 | `<S3>(B0->K*tautau)` | $\langle S_3\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S4>(B0->K*tautau)` | $\langle S_4\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S5>(B0->K*tautau)` | $\langle S_5\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
+| `<S6c>(B0->K*tautau)` | $\langle S_6^c\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S7>(B0->K*tautau)` | $\langle S_7\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S8>(B0->K*tautau)` | $\langle S_8\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<S9>(B0->K*tautau)` | $\langle S_9\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
@@ -738,6 +747,7 @@ a scalar observable).
 | `S3(B0->K*tautau)` | $S_3(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `S4(B0->K*tautau)` | $S_4(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `S5(B0->K*tautau)` | $S_5(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
+| `S6c(B0->K*tautau)` | $S_6^c(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `S7(B0->K*tautau)` | $S_7(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `S8(B0->K*tautau)` | $S_8(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `S9(B0->K*tautau)` | $S_9(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
@@ -771,6 +781,7 @@ a scalar observable).
 | `<S3>(B0->K*ee)` | $\langle S_3\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<S4>(B0->K*ee)` | $\langle S_4\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<S5>(B0->K*ee)` | $\langle S_5\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
+| `<S6c>(B0->K*ee)` | $\langle S_6^c\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<S7>(B0->K*ee)` | $\langle S_7\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<S8>(B0->K*ee)` | $\langle S_8\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<S9>(B0->K*ee)` | $\langle S_9\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
@@ -796,6 +807,7 @@ a scalar observable).
 | `S3(B0->K*ee)` | $S_3(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `S4(B0->K*ee)` | $S_4(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `S5(B0->K*ee)` | $S_5(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
+| `S6c(B0->K*ee)` | $S_6^c(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `S7(B0->K*ee)` | $S_7(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `S8(B0->K*ee)` | $S_8(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `S9(B0->K*ee)` | $S_9(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
@@ -1226,6 +1238,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
+| `ADeltaGamma(Bs->mumu)` | $A_{\Delta\Gamma}(B_s\to \mu^+\mu^-)$ | Mass-eigenstate rate asymmetry in $B_s\to \mu^+\mu^-$. |  |
 | `BR(Bs->mumu)` | $\overline{\text{BR}}(B_s\to \mu^+\mu^-)$ | Time-integrated branching ratio of $B_s\to \mu^+\mu^-$. |  |
 | `tau_mumu` | $\tau_{B_s \to \mu\mu}$ | Effective lifetime for $B_s\to \mu^+\mu^-$. |  |
 
@@ -1235,6 +1248,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
+| `ADeltaGamma(Bs->tautau)` | $A_{\Delta\Gamma}(B_s\to \tau^+\tau^-)$ | Mass-eigenstate rate asymmetry in $B_s\to \tau^+\tau^-$. |  |
 | `BR(Bs->tautau)` | $\overline{\text{BR}}(B_s\to \tau^+\tau^-)$ | Time-integrated branching ratio of $B_s\to \tau^+\tau^-$. |  |
 | `tau_tautau` | $\tau_{B_s \to \tau\tau}$ | Effective lifetime for $B_s\to \tau^+\tau^-$. |  |
 
@@ -1244,6 +1258,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
+| `ADeltaGamma(Bs->ee)` | $A_{\Delta\Gamma}(B_s\to e^+e^-)$ | Mass-eigenstate rate asymmetry in $B_s\to e^+e^-$. |  |
 | `BR(Bs->ee)` | $\overline{\text{BR}}(B_s\to e^+e^-)$ | Time-integrated branching ratio of $B_s\to e^+e^-$. |  |
 | `tau_ee` | $\tau_{B_s \to ee}$ | Effective lifetime for $B_s\to e^+e^-$. |  |
 
