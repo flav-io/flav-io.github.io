@@ -566,7 +566,7 @@ table {
   }
   body {
     background: #fff;
-    font-family: "Noto Sans", "Helvetica Neueue", Helvetica, sans;
+    font-family: "Noto Sans", "Helvetica Neue", Helvetica, sans;
     font-weight: 400;
     font-size: 16px;
     line-height: 1.6em;
@@ -1122,10 +1122,14 @@ table {
           
   <ul>
     <li class="mono"><a href="#flavio.statistics.probability.GaussianKDE.__init__">__init__</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.GaussianKDE.cdf">cdf</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.GaussianKDE.get_central">get_central</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.GaussianKDE.get_error_left">get_error_left</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.GaussianKDE.get_error_right">get_error_right</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.GaussianKDE.get_random">get_random</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.GaussianKDE.logpdf">logpdf</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.GaussianKDE.pdf">pdf</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.GaussianKDE.ppf">ppf</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.GaussianKDE.from_pd">from_pd</a></li>
   </ul>
 
@@ -1163,10 +1167,14 @@ table {
           
   <ul>
     <li class="mono"><a href="#flavio.statistics.probability.KernelDensityEstimate.__init__">__init__</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.KernelDensityEstimate.cdf">cdf</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.KernelDensityEstimate.get_central">get_central</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.KernelDensityEstimate.get_error_left">get_error_left</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.KernelDensityEstimate.get_error_right">get_error_right</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.KernelDensityEstimate.get_random">get_random</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.KernelDensityEstimate.logpdf">logpdf</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.KernelDensityEstimate.pdf">pdf</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.KernelDensityEstimate.ppf">ppf</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.KernelDensityEstimate.from_pd">from_pd</a></li>
   </ul>
 
@@ -1214,10 +1222,14 @@ table {
           
   <ul>
     <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.__init__">__init__</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.cdf">cdf</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.get_central">get_central</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.get_error_left">get_error_left</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.get_error_right">get_error_right</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.get_random">get_random</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.logpdf">logpdf</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.pdf">pdf</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.ppf">ppf</a></li>
     <li class="mono"><a href="#flavio.statistics.probability.NumericalDistribution.from_pd">from_pd</a></li>
   </ul>
 
@@ -1731,6 +1743,7 @@ table {
             <span class="n">mode</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span>  <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># normalize PDF to 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pdf_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span><span class="p">,</span>
                                         <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         <span class="n">_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
@@ -1746,6 +1759,12 @@ table {
         <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
@@ -1754,19 +1773,87 @@ table {
         <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
+    <span class="k">def</span> <span class="nf">_find_error_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">):</span>
+        <span class="c1"># find the value of the CDF at the position of the left boundary</span>
+        <span class="c1"># of the `confidence_level`% CL range by demanding that the value</span>
+        <span class="c1"># of the PDF is the same at the two boundaries</span>
+        <span class="k">def</span> <span class="nf">x_left</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">x_right</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">confidence_level</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">diff_logpdf</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="n">logpdf_x_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x_left</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+            <span class="n">logpdf_x_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x_right</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">logpdf_x_left</span> <span class="o">-</span> <span class="n">logpdf_x_right</span>
+        <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">brentq</span><span class="p">(</span><span class="n">diff_logpdf</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span> <span class="o">-</span> <span class="n">confidence_level</span><span class="o">-</span><span class="mf">1e-6</span><span class="p">)</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the lower error defined such that it contains 68% of the</span>
-<span class="sd">        probability below the central value&quot;&quot;&quot;</span>
-        <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">))</span>
+        <span class="sd">&quot;&quot;&quot;Return the lower error (defined as a central interval).</span>
+
+<span class="sd">        Use get_error_left for more options.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the upper error defined such that it contains 68% of the</span>
-<span class="sd">        probability above the central value&quot;&quot;&quot;</span>
-        <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cdf_central</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="sd">&quot;&quot;&quot;Return the upper error (defined as a central interval).</span>
+
+<span class="sd">        Use get_error_right for more options.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the lower error.</span>
+
+<span class="sd">        &#39;method&#39; should be one of:</span>
+
+<span class="sd">        - &#39;central&#39; for a central interval (same probability on both sides of</span>
+<span class="sd">          the central value)</span>
+<span class="sd">        - &#39;hpd&#39; for highest posterior density, i.e. probability is larger inside</span>
+<span class="sd">          the interval than outside</span>
+<span class="sd">        - &#39;limit&#39; for a one-sided error, i.e. a lower limit&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;limit&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+        <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+        <span class="n">err_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;central&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">err_left</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hpd&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="n">err_left</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">err_left</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_error_cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; unknown&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the upper error</span>
+
+<span class="sd">        &#39;method&#39; should be one of:</span>
+
+<span class="sd">        - &#39;central&#39; for a central interval (same probability on both sides of</span>
+<span class="sd">          the central value)</span>
+<span class="sd">        - &#39;hpd&#39; for highest posterior density, i.e. probability is larger inside</span>
+<span class="sd">          the interval than outside</span>
+<span class="sd">        - &#39;limit&#39; for a one-sided error, i.e. an upper limit&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;limit&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+        <span class="n">err_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cdf_central</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;central&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">err_right</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hpd&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="n">err_right</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">err_right</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_error_cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; unknown&quot;</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_pd</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
@@ -1922,7 +2009,10 @@ table {
 <span class="sd">        - `xi`: for an N-dimensional distribution, a list of N 1D arrays</span>
 <span class="sd">          specifiying the grid in N dimensions. The 1D arrays must contain</span>
 <span class="sd">          real, evenly spaced values in strictly ascending order (but the</span>
-<span class="sd">          spacing can be different for different dimensions).</span>
+<span class="sd">          spacing can be different for different dimensions). Any of the 1D</span>
+<span class="sd">          arrays can also be given alternatively as a list of two numbers, which</span>
+<span class="sd">          will be assumed to be the upper and lower boundaries, while the</span>
+<span class="sd">          spacing will be determined from the shape of `y`.</span>
 <span class="sd">        - `y`: PDF values on the grid defined by the `xi`. If the N `xi` have</span>
 <span class="sd">          length M1, ..., MN, `y` has dimension (M1, ..., MN). This is the same</span>
 <span class="sd">          shape as the grid obtained from `numpy.meshgrid(*xi, indexing=&#39;ij&#39;)`.</span>
@@ -1935,24 +2025,27 @@ table {
             <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Grid must be evenly spaced per dimension&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="n">xi</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">central_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">central_value</span><span class="p">,</span>
-                             <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                             <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># if no central value is specified, set it to the mode</span>
-            <span class="n">mode_index</span> <span class="o">=</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="bp">None</span><span class="p">),)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">argmax</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-            <span class="n">mode</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">xi</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">))[</span><span class="n">mode_index</span><span class="p">]</span>
+            <span class="n">mode_index</span> <span class="o">=</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="bp">None</span><span class="p">),)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">argmax</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">))[</span><span class="n">mode_index</span><span class="p">]</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-        <span class="n">_bin_volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xi</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">_bin_volume</span>  <span class="c1"># normalize PDF to 1</span>
+        <span class="n">_bin_volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">_bin_volume</span>  <span class="c1"># normalize PDF to 1</span>
         <span class="c1"># ignore warning from log(0)=-np.inf</span>
         <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
             <span class="c1"># logy = np.nan_to_num(np.log(self.y_norm))</span>
             <span class="n">logy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span><span class="p">)</span>
             <span class="n">logy</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isneginf</span><span class="p">(</span><span class="n">logy</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e100</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span> <span class="o">=</span> <span class="n">RegularGridInterpolator</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">logy</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span> <span class="o">=</span> <span class="n">RegularGridInterpolator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="n">logy</span><span class="p">,</span>
                                         <span class="n">fill_value</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         <span class="c1"># the following is needed for get_random: initialize to None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_y_flat</span> <span class="o">=</span> <span class="bp">None</span>
@@ -2177,6 +2270,9 @@ table {
 
 
 <span class="k">def</span> <span class="nf">_convolve_gaussians</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">,</span> <span class="n">central_values</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">):</span>
+    <span class="c1"># if there&#39;s just one: return it immediately</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">probability_distributions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">NormalDistribution</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">),</span> \
         <span class="s2">&quot;Distributions should all be instances of NormalDistribution&quot;</span>
     <span class="k">if</span> <span class="n">central_values</span> <span class="o">==</span> <span class="s1">&#39;same&#39;</span><span class="p">:</span>
@@ -2192,6 +2288,9 @@ table {
 
 
 <span class="k">def</span> <span class="nf">_convolve_multivariate_gaussians</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">,</span> <span class="n">central_values</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">):</span>
+    <span class="c1"># if there&#39;s just one: return it immediately</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">probability_distributions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">MultivariateNormalDistribution</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">),</span> \
         <span class="s2">&quot;Distributions should all be instances of MultivariateNormalDistribution&quot;</span>
     <span class="k">if</span> <span class="n">central_values</span> <span class="o">==</span> <span class="s1">&#39;same&#39;</span><span class="p">:</span>
@@ -2205,6 +2304,9 @@ table {
 
 
 <span class="k">def</span> <span class="nf">_convolve_numerical</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">central_values</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">):</span>
+    <span class="c1"># if there&#39;s just one: return it immediately</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">probability_distributions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">probability_distributions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">NumericalDistribution</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probability_distributions</span><span class="p">),</span> \
         <span class="s2">&quot;Distributions should all be instances of NumericalDistribution&quot;</span>
     <span class="k">if</span> <span class="n">central_values</span> <span class="o">==</span> <span class="s1">&#39;same&#39;</span><span class="p">:</span>
@@ -3543,6 +3645,10 @@ e.g. a rare decay rate, given an upper limit on x.</p></div>
     <p>def <span class="ident">__init__</span>(</p><p>self, data, bandwidth=None, n_bins=None)</p>
     </div>
     
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.__init__">__init__</a></code>
+    </p>
 
     
   
@@ -3577,6 +3683,27 @@ e.g. a rare decay rate, given an upper limit on x.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="flavio.statistics.probability.GaussianKDE.cdf">
+    <p>def <span class="ident">cdf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GaussianKDE.cdf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.GaussianKDE.cdf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.statistics.probability.GaussianKDE.get_central">
     <p>def <span class="ident">get_central</span>(</p><p>self)</p>
     </div>
@@ -3589,6 +3716,110 @@ e.g. a rare decay rate, given an upper limit on x.</p></div>
   <div id="source-flavio.statistics.probability.GaussianKDE.get_central" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.GaussianKDE.get_error_left">
+    <p>def <span class="ident">get_error_left</span>(</p><p>self, method=&#39;central&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the lower error.</p>
+<p>'method' should be one of:</p>
+<ul>
+<li>'central' for a central interval (same probability on both sides of
+  the central value)</li>
+<li>'hpd' for highest posterior density, i.e. probability is larger inside
+  the interval than outside</li>
+<li>'limit' for a one-sided error, i.e. a lower limit</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GaussianKDE.get_error_left', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.GaussianKDE.get_error_left" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the lower error.</span>
+<span class="sd">    &#39;method&#39; should be one of:</span>
+<span class="sd">    - &#39;central&#39; for a central interval (same probability on both sides of</span>
+<span class="sd">      the central value)</span>
+<span class="sd">    - &#39;hpd&#39; for highest posterior density, i.e. probability is larger inside</span>
+<span class="sd">      the interval than outside</span>
+<span class="sd">    - &#39;limit&#39; for a one-sided error, i.e. a lower limit&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;limit&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+    <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+    <span class="n">err_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;central&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">err_left</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hpd&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="n">err_left</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">err_left</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_error_cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; unknown&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.GaussianKDE.get_error_right">
+    <p>def <span class="ident">get_error_right</span>(</p><p>self, method=&#39;central&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the upper error</p>
+<p>'method' should be one of:</p>
+<ul>
+<li>'central' for a central interval (same probability on both sides of
+  the central value)</li>
+<li>'hpd' for highest posterior density, i.e. probability is larger inside
+  the interval than outside</li>
+<li>'limit' for a one-sided error, i.e. an upper limit</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GaussianKDE.get_error_right', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.GaussianKDE.get_error_right" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the upper error</span>
+<span class="sd">    &#39;method&#39; should be one of:</span>
+<span class="sd">    - &#39;central&#39; for a central interval (same probability on both sides of</span>
+<span class="sd">      the central value)</span>
+<span class="sd">    - &#39;hpd&#39; for highest posterior density, i.e. probability is larger inside</span>
+<span class="sd">      the interval than outside</span>
+<span class="sd">    - &#39;limit&#39; for a one-sided error, i.e. an upper limit&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;limit&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+    <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+    <span class="n">err_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cdf_central</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;central&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">err_right</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hpd&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="n">err_right</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">err_right</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_error_cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; unknown&quot;</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3666,6 +3897,27 @@ e.g. a rare decay rate, given an upper limit on x.</p></div>
 
   </div>
   
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.GaussianKDE.ppf">
+    <p>def <span class="ident">ppf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GaussianKDE.ppf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.GaussianKDE.ppf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
           <h3>Instance variables</h3>
             <div class="item">
             <p id="flavio.statistics.probability.GaussianKDE.error_left" class="name">var <span class="ident">error_left</span></p>
@@ -3677,8 +3929,8 @@ e.g. a rare decay rate, given an upper limit on x.</p></div>
 
             
   
-    <div class="desc inherited"><p>Return the lower error defined such that it contains 68% of the
-probability below the central value</p></div>
+    <div class="desc inherited"><p>Return the lower error (defined as a central interval).</p>
+<p>Use get_error_left for more options.</p></div>
   <div class="source_cont">
 </div>
 
@@ -3693,8 +3945,8 @@ probability below the central value</p></div>
 
             
   
-    <div class="desc inherited"><p>Return the upper error defined such that it contains 68% of the
-probability above the central value</p></div>
+    <div class="desc inherited"><p>Return the upper error (defined as a central interval).</p>
+<p>Use get_error_right for more options.</p></div>
   <div class="source_cont">
 </div>
 
@@ -3947,10 +4199,14 @@ probability above the central value</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.GaussianUpperLimit.error_left" class="name">var <span class="ident">error_left</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.probability.HalfNormalDistribution">HalfNormalDistribution</a></code>.<code><a href="#flavio.statistics.probability.HalfNormalDistribution.error_left">error_left</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return the lower error</p></div>
+    <div class="desc inherited"><p>Return the lower error</p></div>
   <div class="source_cont">
 </div>
 
@@ -3958,14 +4214,10 @@ probability above the central value</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.GaussianUpperLimit.error_right" class="name">var <span class="ident">error_right</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.HalfNormalDistribution">HalfNormalDistribution</a></code>.<code><a href="#flavio.statistics.probability.HalfNormalDistribution.error_right">error_right</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the upper error</p></div>
+    <div class="desc"><p>Return the upper error</p></div>
   <div class="source_cont">
 </div>
 
@@ -4348,6 +4600,27 @@ probability above the central value</p></div>
   
             
   <div class="item">
+    <div class="name def" id="flavio.statistics.probability.KernelDensityEstimate.cdf">
+    <p>def <span class="ident">cdf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.KernelDensityEstimate.cdf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.KernelDensityEstimate.cdf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.statistics.probability.KernelDensityEstimate.get_central">
     <p>def <span class="ident">get_central</span>(</p><p>self)</p>
     </div>
@@ -4360,6 +4633,110 @@ probability above the central value</p></div>
   <div id="source-flavio.statistics.probability.KernelDensityEstimate.get_central" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.KernelDensityEstimate.get_error_left">
+    <p>def <span class="ident">get_error_left</span>(</p><p>self, method=&#39;central&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the lower error.</p>
+<p>'method' should be one of:</p>
+<ul>
+<li>'central' for a central interval (same probability on both sides of
+  the central value)</li>
+<li>'hpd' for highest posterior density, i.e. probability is larger inside
+  the interval than outside</li>
+<li>'limit' for a one-sided error, i.e. a lower limit</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.KernelDensityEstimate.get_error_left', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.KernelDensityEstimate.get_error_left" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the lower error.</span>
+<span class="sd">    &#39;method&#39; should be one of:</span>
+<span class="sd">    - &#39;central&#39; for a central interval (same probability on both sides of</span>
+<span class="sd">      the central value)</span>
+<span class="sd">    - &#39;hpd&#39; for highest posterior density, i.e. probability is larger inside</span>
+<span class="sd">      the interval than outside</span>
+<span class="sd">    - &#39;limit&#39; for a one-sided error, i.e. a lower limit&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;limit&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+    <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+    <span class="n">err_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;central&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">err_left</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hpd&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="n">err_left</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">err_left</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_error_cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; unknown&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.KernelDensityEstimate.get_error_right">
+    <p>def <span class="ident">get_error_right</span>(</p><p>self, method=&#39;central&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the upper error</p>
+<p>'method' should be one of:</p>
+<ul>
+<li>'central' for a central interval (same probability on both sides of
+  the central value)</li>
+<li>'hpd' for highest posterior density, i.e. probability is larger inside
+  the interval than outside</li>
+<li>'limit' for a one-sided error, i.e. an upper limit</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.KernelDensityEstimate.get_error_right', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.KernelDensityEstimate.get_error_right" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the upper error</span>
+<span class="sd">    &#39;method&#39; should be one of:</span>
+<span class="sd">    - &#39;central&#39; for a central interval (same probability on both sides of</span>
+<span class="sd">      the central value)</span>
+<span class="sd">    - &#39;hpd&#39; for highest posterior density, i.e. probability is larger inside</span>
+<span class="sd">      the interval than outside</span>
+<span class="sd">    - &#39;limit&#39; for a one-sided error, i.e. an upper limit&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;limit&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+    <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+    <span class="n">err_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cdf_central</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;central&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">err_right</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hpd&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="n">err_right</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">err_right</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_error_cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; unknown&quot;</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -4437,6 +4814,27 @@ probability above the central value</p></div>
 
   </div>
   
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.KernelDensityEstimate.ppf">
+    <p>def <span class="ident">ppf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.KernelDensityEstimate.ppf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.KernelDensityEstimate.ppf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
           <h3>Instance variables</h3>
             <div class="item">
             <p id="flavio.statistics.probability.KernelDensityEstimate.data" class="name">var <span class="ident">data</span></p>
@@ -4454,8 +4852,8 @@ probability above the central value</p></div>
 
             
   
-    <div class="desc"><p>Return the lower error defined such that it contains 68% of the
-probability below the central value</p></div>
+    <div class="desc"><p>Return the lower error (defined as a central interval).</p>
+<p>Use get_error_left for more options.</p></div>
   <div class="source_cont">
 </div>
 
@@ -4466,8 +4864,8 @@ probability below the central value</p></div>
 
             
   
-    <div class="desc"><p>Return the upper error defined such that it contains 68% of the
-probability above the central value</p></div>
+    <div class="desc"><p>Return the upper error (defined as a central interval).</p>
+<p>Use get_error_right for more options.</p></div>
   <div class="source_cont">
 </div>
 
@@ -4878,7 +5276,10 @@ probability above the central value</p></div>
 <span class="sd">        - `xi`: for an N-dimensional distribution, a list of N 1D arrays</span>
 <span class="sd">          specifiying the grid in N dimensions. The 1D arrays must contain</span>
 <span class="sd">          real, evenly spaced values in strictly ascending order (but the</span>
-<span class="sd">          spacing can be different for different dimensions).</span>
+<span class="sd">          spacing can be different for different dimensions). Any of the 1D</span>
+<span class="sd">          arrays can also be given alternatively as a list of two numbers, which</span>
+<span class="sd">          will be assumed to be the upper and lower boundaries, while the</span>
+<span class="sd">          spacing will be determined from the shape of `y`.</span>
 <span class="sd">        - `y`: PDF values on the grid defined by the `xi`. If the N `xi` have</span>
 <span class="sd">          length M1, ..., MN, `y` has dimension (M1, ..., MN). This is the same</span>
 <span class="sd">          shape as the grid obtained from `numpy.meshgrid(*xi, indexing=&#39;ij&#39;)`.</span>
@@ -4891,24 +5292,27 @@ probability above the central value</p></div>
             <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Grid must be evenly spaced per dimension&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="n">xi</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">central_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">central_value</span><span class="p">,</span>
-                             <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                             <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># if no central value is specified, set it to the mode</span>
-            <span class="n">mode_index</span> <span class="o">=</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="bp">None</span><span class="p">),)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">argmax</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-            <span class="n">mode</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">xi</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">))[</span><span class="n">mode_index</span><span class="p">]</span>
+            <span class="n">mode_index</span> <span class="o">=</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="bp">None</span><span class="p">),)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">argmax</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">))[</span><span class="n">mode_index</span><span class="p">]</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-        <span class="n">_bin_volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xi</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">_bin_volume</span>  <span class="c1"># normalize PDF to 1</span>
+        <span class="n">_bin_volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">_bin_volume</span>  <span class="c1"># normalize PDF to 1</span>
         <span class="c1"># ignore warning from log(0)=-np.inf</span>
         <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
             <span class="c1"># logy = np.nan_to_num(np.log(self.y_norm))</span>
             <span class="n">logy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span><span class="p">)</span>
             <span class="n">logy</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isneginf</span><span class="p">(</span><span class="n">logy</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e100</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span> <span class="o">=</span> <span class="n">RegularGridInterpolator</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">logy</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span> <span class="o">=</span> <span class="n">RegularGridInterpolator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="n">logy</span><span class="p">,</span>
                                         <span class="n">fill_value</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         <span class="c1"># the following is needed for get_random: initialize to None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_y_flat</span> <span class="o">=</span> <span class="bp">None</span>
@@ -5031,7 +5435,10 @@ probability above the central value</p></div>
 <li><code>xi</code>: for an N-dimensional distribution, a list of N 1D arrays
   specifiying the grid in N dimensions. The 1D arrays must contain
   real, evenly spaced values in strictly ascending order (but the
-  spacing can be different for different dimensions).</li>
+  spacing can be different for different dimensions). Any of the 1D
+  arrays can also be given alternatively as a list of two numbers, which
+  will be assumed to be the upper and lower boundaries, while the
+  spacing will be determined from the shape of <code>y</code>.</li>
 <li><code>y</code>: PDF values on the grid defined by the <code>xi</code>. If the N <code>xi</code> have
   length M1, ..., MN, <code>y</code> has dimension (M1, ..., MN). This is the same
   shape as the grid obtained from <code>numpy.meshgrid(*xi, indexing='ij')</code>.</li>
@@ -5048,7 +5455,10 @@ probability above the central value</p></div>
 <span class="sd">    - `xi`: for an N-dimensional distribution, a list of N 1D arrays</span>
 <span class="sd">      specifiying the grid in N dimensions. The 1D arrays must contain</span>
 <span class="sd">      real, evenly spaced values in strictly ascending order (but the</span>
-<span class="sd">      spacing can be different for different dimensions).</span>
+<span class="sd">      spacing can be different for different dimensions). Any of the 1D</span>
+<span class="sd">      arrays can also be given alternatively as a list of two numbers, which</span>
+<span class="sd">      will be assumed to be the upper and lower boundaries, while the</span>
+<span class="sd">      spacing will be determined from the shape of `y`.</span>
 <span class="sd">    - `y`: PDF values on the grid defined by the `xi`. If the N `xi` have</span>
 <span class="sd">      length M1, ..., MN, `y` has dimension (M1, ..., MN). This is the same</span>
 <span class="sd">      shape as the grid obtained from `numpy.meshgrid(*xi, indexing=&#39;ij&#39;)`.</span>
@@ -5061,24 +5471,27 @@ probability above the central value</p></div>
         <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Grid must be evenly spaced per dimension&quot;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="n">xi</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">central_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">central_value</span><span class="p">,</span>
-                         <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                         <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># if no central value is specified, set it to the mode</span>
-        <span class="n">mode_index</span> <span class="o">=</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="bp">None</span><span class="p">),)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">argmax</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-        <span class="n">mode</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">xi</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">))[</span><span class="n">mode_index</span><span class="p">]</span>
+        <span class="n">mode_index</span> <span class="o">=</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="bp">None</span><span class="p">),)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">argmax</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">))[</span><span class="n">mode_index</span><span class="p">]</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-    <span class="n">_bin_volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xi</span><span class="p">])</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">_bin_volume</span>  <span class="c1"># normalize PDF to 1</span>
+    <span class="n">_bin_volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">_bin_volume</span>  <span class="c1"># normalize PDF to 1</span>
     <span class="c1"># ignore warning from log(0)=-np.inf</span>
     <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
         <span class="c1"># logy = np.nan_to_num(np.log(self.y_norm))</span>
         <span class="n">logy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span><span class="p">)</span>
         <span class="n">logy</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isneginf</span><span class="p">(</span><span class="n">logy</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e100</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span> <span class="o">=</span> <span class="n">RegularGridInterpolator</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">logy</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_interp</span> <span class="o">=</span> <span class="n">RegularGridInterpolator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="n">logy</span><span class="p">,</span>
                                     <span class="n">fill_value</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
     <span class="c1"># the following is needed for get_random: initialize to None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_y_flat</span> <span class="o">=</span> <span class="bp">None</span>
@@ -5516,6 +5929,7 @@ PDF.</p></div>
             <span class="n">mode</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span>  <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># normalize PDF to 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pdf_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span><span class="p">,</span>
                                         <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         <span class="n">_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
@@ -5531,6 +5945,12 @@ PDF.</p></div>
         <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
@@ -5539,19 +5959,87 @@ PDF.</p></div>
         <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
+    <span class="k">def</span> <span class="nf">_find_error_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">):</span>
+        <span class="c1"># find the value of the CDF at the position of the left boundary</span>
+        <span class="c1"># of the `confidence_level`% CL range by demanding that the value</span>
+        <span class="c1"># of the PDF is the same at the two boundaries</span>
+        <span class="k">def</span> <span class="nf">x_left</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">x_right</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">confidence_level</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">diff_logpdf</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="n">logpdf_x_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x_left</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+            <span class="n">logpdf_x_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x_right</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">logpdf_x_left</span> <span class="o">-</span> <span class="n">logpdf_x_right</span>
+        <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">brentq</span><span class="p">(</span><span class="n">diff_logpdf</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span> <span class="o">-</span> <span class="n">confidence_level</span><span class="o">-</span><span class="mf">1e-6</span><span class="p">)</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the lower error defined such that it contains 68% of the</span>
-<span class="sd">        probability below the central value&quot;&quot;&quot;</span>
-        <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">))</span>
+        <span class="sd">&quot;&quot;&quot;Return the lower error (defined as a central interval).</span>
+
+<span class="sd">        Use get_error_left for more options.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the upper error defined such that it contains 68% of the</span>
-<span class="sd">        probability above the central value&quot;&quot;&quot;</span>
-        <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cdf_central</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="sd">&quot;&quot;&quot;Return the upper error (defined as a central interval).</span>
+
+<span class="sd">        Use get_error_right for more options.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the lower error.</span>
+
+<span class="sd">        &#39;method&#39; should be one of:</span>
+
+<span class="sd">        - &#39;central&#39; for a central interval (same probability on both sides of</span>
+<span class="sd">          the central value)</span>
+<span class="sd">        - &#39;hpd&#39; for highest posterior density, i.e. probability is larger inside</span>
+<span class="sd">          the interval than outside</span>
+<span class="sd">        - &#39;limit&#39; for a one-sided error, i.e. a lower limit&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;limit&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+        <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+        <span class="n">err_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;central&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">err_left</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hpd&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="n">err_left</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">err_left</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_error_cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; unknown&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the upper error</span>
+
+<span class="sd">        &#39;method&#39; should be one of:</span>
+
+<span class="sd">        - &#39;central&#39; for a central interval (same probability on both sides of</span>
+<span class="sd">          the central value)</span>
+<span class="sd">        - &#39;hpd&#39; for highest posterior density, i.e. probability is larger inside</span>
+<span class="sd">          the interval than outside</span>
+<span class="sd">        - &#39;limit&#39; for a one-sided error, i.e. an upper limit&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;limit&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+        <span class="n">err_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cdf_central</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;central&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">err_right</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hpd&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="n">err_right</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">err_right</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_error_cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; unknown&quot;</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_pd</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
@@ -5620,6 +6108,7 @@ PDF.</p></div>
         <span class="n">mode</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span>  <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># normalize PDF to 1</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">pdf_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_norm</span><span class="p">,</span>
                                     <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
     <span class="n">_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
@@ -5627,6 +6116,27 @@ PDF.</p></div>
     <span class="n">_cdf</span> <span class="o">=</span> <span class="n">_cdf</span><span class="o">/</span><span class="n">_cdf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># normalize CDF to 1</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">_cdf</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">_cdf</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.NumericalDistribution.cdf">
+    <p>def <span class="ident">cdf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NumericalDistribution.cdf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.NumericalDistribution.cdf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -5648,6 +6158,110 @@ PDF.</p></div>
   <div id="source-flavio.statistics.probability.NumericalDistribution.get_central" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.NumericalDistribution.get_error_left">
+    <p>def <span class="ident">get_error_left</span>(</p><p>self, method=&#39;central&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the lower error.</p>
+<p>'method' should be one of:</p>
+<ul>
+<li>'central' for a central interval (same probability on both sides of
+  the central value)</li>
+<li>'hpd' for highest posterior density, i.e. probability is larger inside
+  the interval than outside</li>
+<li>'limit' for a one-sided error, i.e. a lower limit</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NumericalDistribution.get_error_left', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.NumericalDistribution.get_error_left" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the lower error.</span>
+<span class="sd">    &#39;method&#39; should be one of:</span>
+<span class="sd">    - &#39;central&#39; for a central interval (same probability on both sides of</span>
+<span class="sd">      the central value)</span>
+<span class="sd">    - &#39;hpd&#39; for highest posterior density, i.e. probability is larger inside</span>
+<span class="sd">      the interval than outside</span>
+<span class="sd">    - &#39;limit&#39; for a one-sided error, i.e. a lower limit&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;limit&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+    <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+    <span class="n">err_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;central&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">err_left</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hpd&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="n">err_left</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">err_left</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_error_cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; unknown&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.NumericalDistribution.get_error_right">
+    <p>def <span class="ident">get_error_right</span>(</p><p>self, method=&#39;central&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the upper error</p>
+<p>'method' should be one of:</p>
+<ul>
+<li>'central' for a central interval (same probability on both sides of
+  the central value)</li>
+<li>'hpd' for highest posterior density, i.e. probability is larger inside
+  the interval than outside</li>
+<li>'limit' for a one-sided error, i.e. an upper limit</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NumericalDistribution.get_error_right', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.NumericalDistribution.get_error_right" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the upper error</span>
+<span class="sd">    &#39;method&#39; should be one of:</span>
+<span class="sd">    - &#39;central&#39; for a central interval (same probability on both sides of</span>
+<span class="sd">      the central value)</span>
+<span class="sd">    - &#39;hpd&#39; for highest posterior density, i.e. probability is larger inside</span>
+<span class="sd">      the interval than outside</span>
+<span class="sd">    - &#39;limit&#39; for a one-sided error, i.e. an upper limit&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;limit&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+    <span class="n">cdf_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+    <span class="n">err_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cdf_central</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cdf_central</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;central&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">err_right</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hpd&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;central&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">+</span> <span class="n">err_right</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">err_right</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_error_cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x68</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; unknown&quot;</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -5725,6 +6339,27 @@ PDF.</p></div>
 
   </div>
   
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.NumericalDistribution.ppf">
+    <p>def <span class="ident">ppf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NumericalDistribution.ppf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.NumericalDistribution.ppf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_interp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
           <h3>Instance variables</h3>
             <div class="item">
             <p id="flavio.statistics.probability.NumericalDistribution.cdf_interp" class="name">var <span class="ident">cdf_interp</span></p>
@@ -5742,8 +6377,8 @@ PDF.</p></div>
 
             
   
-    <div class="desc"><p>Return the lower error defined such that it contains 68% of the
-probability below the central value</p></div>
+    <div class="desc"><p>Return the lower error (defined as a central interval).</p>
+<p>Use get_error_left for more options.</p></div>
   <div class="source_cont">
 </div>
 
@@ -5754,8 +6389,8 @@ probability below the central value</p></div>
 
             
   
-    <div class="desc"><p>Return the upper error defined such that it contains 68% of the
-probability above the central value</p></div>
+    <div class="desc"><p>Return the upper error (defined as a central interval).</p>
+<p>Use get_error_right for more options.</p></div>
   <div class="source_cont">
 </div>
 

@@ -567,7 +567,7 @@ table {
   }
   body {
     background: #fff;
-    font-family: "Noto Sans", "Helvetica Neueue", Helvetica, sans;
+    font-family: "Noto Sans", "Helvetica Neue", Helvetica, sans;
     font-weight: 400;
     font-size: 16px;
     line-height: 1.6em;
@@ -1149,17 +1149,27 @@ to be used directly).</p>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">name</span><span class="p">,</span>
-                 <span class="n">par_obj</span><span class="p">,</span>
-                 <span class="n">fit_parameters</span><span class="p">,</span>
-                 <span class="n">nuisance_parameters</span><span class="p">,</span>
-                 <span class="n">observables</span><span class="p">,</span>
-                 <span class="n">fit_wc_names</span><span class="o">=</span><span class="p">[],</span>
+                 <span class="n">par_obj</span><span class="o">=</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span>
+                 <span class="n">fit_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">nuisance_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">fit_wc_names</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">fit_wc_function</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">fit_wc_priors</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">input_scale</span><span class="o">=</span><span class="mf">160.</span><span class="p">,</span>
                  <span class="n">exclude_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                 <span class="p">):</span>
+        <span class="k">if</span> <span class="n">fit_parameters</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">fit_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">nuisance_parameters</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">nuisance_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">observables</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;observables&#39; is empty: you must specify at least one fit observable&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fit_wc_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The &#39;fit_wc_names&#39; argument is no longer necessary &quot;</span>
+            <span class="s2">&quot;as of flavio v0.19 and might be removed in the future.&quot;</span><span class="p">,</span>
+            <span class="ne">FutureWarning</span><span class="p">)</span>
         <span class="c1"># some checks to make sure the input is sane</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">fit_parameters</span> <span class="o">+</span> <span class="n">nuisance_parameters</span><span class="p">:</span>
             <span class="c1"># check that fit and nuisance parameters exist</span>
@@ -1176,6 +1186,9 @@ to be used directly).</p>
         <span class="n">_obs_measured</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="c1"># check that observables are constrained</span>
         <span class="k">for</span> <span class="n">m_name</span><span class="p">,</span> <span class="n">m_obj</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">m_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Pseudo-measurement&#39;</span><span class="p">:</span>
+                <span class="c1"># skip pseudo measurements generated by FastFit instances</span>
+                <span class="k">continue</span>
             <span class="n">_obs_measured</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">)</span>
         <span class="n">missing_obs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">observables</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">_obs_measured</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">observables</span><span class="p">))</span>
         <span class="k">assert</span> <span class="n">missing_obs</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(),</span> <span class="s2">&quot;No measurement found for the observables: &quot;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_obs</span><span class="p">)</span>
@@ -1185,11 +1198,14 @@ to be used directly).</p>
         <span class="n">intersect</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">nuisance_parameters</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">intersect</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(),</span> <span class="s2">&quot;Parameters appearing as fit_parameters and nuisance_parameters: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">intersect</span><span class="p">)</span>
         <span class="c1"># check that the Wilson coefficient function works</span>
-        <span class="k">if</span> <span class="n">fit_wc_names</span><span class="p">:</span> <span class="c1"># if list of WC names not empty</span>
+        <span class="k">if</span> <span class="n">fit_wc_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> <span class="c1"># if list of WC names not empty</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="n">fit_wc_names</span><span class="p">})</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="n">fit_wc_function</span><span class="o">.</span><span class="n">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+                <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">})</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error in calling the Wilson coefficient function&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># now that everything seems fine, we can call the init of the parent class</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span> <span class="o">=</span> <span class="n">par_obj</span>
@@ -1198,7 +1214,6 @@ to be used directly).</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span> <span class="o">=</span> <span class="n">nuisance_parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="o">=</span> <span class="n">exclude_measurements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="o">=</span> <span class="n">include_measurements</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="n">fit_wc_names</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span> <span class="o">=</span> <span class="n">fit_wc_function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_priors</span> <span class="o">=</span> <span class="n">fit_wc_priors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observables</span> <span class="o">=</span> <span class="n">observables</span>
@@ -1314,8 +1329,8 @@ to be used directly).</p>
 <span class="sd">    the fit. By default, all existing measurements are included.</span>
 <span class="sd">    - `fit_wc_names`: optional; a list of string names of arguments of the Wilson</span>
 <span class="sd">      coefficient function below</span>
-<span class="sd">    - `fit_wc_function`: optional; a function that has exactly the arguements listed</span>
-<span class="sd">      in `fit_wc_names` and returns a dictionary that can be fed to the `set_initial`</span>
+<span class="sd">    - `fit_wc_function`: optional; a function that</span>
+<span class="sd">      returns a dictionary that can be fed to the `set_initial`</span>
 <span class="sd">      method of the Wilson coefficient class. Example: fit the real and imaginary</span>
 <span class="sd">      parts of $C_{10}$ in $b\to s\mu^+\mu^-$.</span>
 <span class="sd">    ```</span>
@@ -1323,11 +1338,19 @@ to be used directly).</p>
 <span class="sd">        return {&#39;C10_bsmmumu&#39;: Re_C10 + 1j*Im_C10}</span>
 <span class="sd">    ```</span>
 <span class="sd">    - `input_scale`: input scale for the Wilson coeffficients. Defaults to 160.</span>
+<span class="sd">    - `fit_wc_priors`: optional; an instance of WilsonCoefficientPriors</span>
+<span class="sd">      containing prior constraints on the Wilson coefficients</span>
+<span class="sd">    - `start_wc_priors`: optional; an instance of WilsonCoefficientPriors</span>
+<span class="sd">      that will not be used during a scan, but only for finding starting values</span>
+<span class="sd">      for Wilson coefficients in MCMC analyses. This can be useful if no</span>
+<span class="sd">      actual priors are used or if they are too loose to provide good starting</span>
+<span class="sd">      points.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">start_wc_priors</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_wc_priors</span> <span class="o">=</span> <span class="n">start_wc_priors</span>
 
     <span class="k">def</span> <span class="nf">array_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a 1D numpy array of floats to a dictionary of fit parameters,</span>
@@ -1357,13 +1380,34 @@ to be used directly).</p>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get an array with random values for all the fit and nuisance</span>
-<span class="sd">        parameters&quot;&quot;&quot;</span>
+<span class="sd">        parameters and Wilson coefficients&quot;&quot;&quot;</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span>
         <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
         <span class="n">n_nui_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
         <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_fit_parameters</span>
         <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_nuisance_parameters</span>
         <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_wilson_coeffs</span>
+        <span class="k">return</span> <span class="n">arr</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_random_wilson_coeffs_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a numpy array with random values for all Wilson coefficients</span>
+<span class="sd">        sampling the start_wc_priors distribution.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_wc_priors</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">all_random</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_wc_priors</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">all_random</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_random_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an array with random values for all the fit and nuisance</span>
+<span class="sd">        parameters with Wilson coefficients set to their SM values&quot;&quot;&quot;</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span>
+        <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
+        <span class="n">n_nui_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
+        <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_fit_parameters</span>
+        <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_nuisance_parameters</span>
+        <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_wilson_coeffs_start</span>
         <span class="k">return</span> <span class="n">arr</span>
 
     <span class="k">def</span> <span class="nf">get_par_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
@@ -1443,17 +1487,17 @@ to be used directly).</p>
 <span class="sd">    uncertainties stemming from the nuisance parameters. This is done by</span>
 <span class="sd">    generating random samples of the nuisance parameters and evaluating all</span>
 <span class="sd">    observables within the Standard Model many times (100 by default).</span>
-<span class="sd">    Then, the covariance of all predictions is extracted. The probability</span>
-<span class="sd">    distributions of the experimental measurements are then convolved with</span>
-<span class="sd">    the appropriate (and correlated) theoretical uncertainties.</span>
+<span class="sd">    Then, the covariance of all predictions is extracted. Similarly, a covariance</span>
+<span class="sd">    matrix for all experimental measurements is determined. Both covariance</span>
+<span class="sd">    matrices are added and the resulting multivariate Gaussian treated as a</span>
+<span class="sd">    single measurement.</span>
 
 <span class="sd">    This approach has the advantage that two-dimensional plots of the likelihood</span>
 <span class="sd">    can be produced without the need for sampling or profiling the other</span>
 <span class="sd">    dimensions. However, several strong assumptions go into this method, most</span>
 <span class="sd">    importantly,</span>
 
-<span class="sd">    - theoretical uncertainties are treated as Gaussian</span>
-<span class="sd">      (experimental uncertainties are instead treated exactly!)</span>
+<span class="sd">    - all uncertainties - experimental and theoretical - are treated as Gaussian</span>
 <span class="sd">    - the theoretical uncertainties in the presence of new physics are assumed</span>
 <span class="sd">      to be similar to the ones in the SM</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1461,6 +1505,67 @@ to be used directly).</p>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+    <span class="c1"># a method to get the mean and covariance of all measurements of all</span>
+    <span class="c1"># observables of interest</span>
+    <span class="k">def</span> <span class="nf">_get_central_covariance_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+        <span class="n">means</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">covariances</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">measurement</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Pseudo-measurement&#39;</span><span class="p">:</span>
+                <span class="c1"># skip pseudo measurements generated by FastFit instances</span>
+                <span class="k">continue</span>
+            <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">measurement</span><span class="p">)</span>
+            <span class="c1"># obs. included in the fit and constrained by this measurement</span>
+            <span class="n">our_obs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span>
+            <span class="c1"># construct a dict. containing a vector of N random values for</span>
+            <span class="c1"># each of these observables</span>
+            <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">our_obs</span><span class="p">:</span>
+                <span class="n">random_dict</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+                <span class="n">m_random</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">our_obs</span><span class="p">:</span>
+                    <span class="n">random_dict</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_random</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
+            <span class="c1"># mean = np.zeros(len(self.observables))</span>
+            <span class="n">random_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> <span class="n">N</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">obs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">):</span>
+                <span class="c1">#     n = len(random_dict[obs])</span>
+                <span class="k">if</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">our_obs</span><span class="p">:</span>
+                    <span class="n">random_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_dict</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">random_arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">random_arr</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">obs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">obs</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">our_obs</span><span class="p">:</span>
+                    <span class="n">covariance</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">covariance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">covariance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+            <span class="n">means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+            <span class="n">covariances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
+        <span class="c1"># if there is only a single measuement</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># if there are severeal measurements, perform a weighted average</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># covariances: [Sigma_1, Sigma_2, ...]</span>
+            <span class="c1"># means: [x_1, x_2, ...]</span>
+            <span class="c1"># weights_ [W_1, W_2, ...] where W_i = (Sigma_i)^(-1)</span>
+            <span class="c1"># weighted covariance is  (W_1 + W_2 + ...)^(-1) = Sigma</span>
+            <span class="c1"># weigted mean is  Sigma.(W_1.x_1 + W_2.x_2 + ...) = x</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">/</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">covariances</span><span class="p">])</span>
+                <span class="n">weighted_covariance</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">weighted_mean</span> <span class="o">=</span> <span class="n">weighted_covariance</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                                <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">means</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">))])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">covariances</span><span class="p">]</span>
+                <span class="n">weighted_covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">weighted_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">weighted_covariance</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                                <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">means</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">))],</span>
+                                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">weighted_mean</span><span class="p">,</span> <span class="n">weighted_covariance</span>
+
 
     <span class="c1"># a method to get the covariance of the SM prediction of all observables</span>
     <span class="c1"># of interest</span>
@@ -1492,39 +1597,17 @@ to be used directly).</p>
         <span class="sd">&quot;&quot;&quot;Initialize the fit by producing a pseudo-measurement containing both</span>
 <span class="sd">        experimental uncertainties as well as theory uncertainties stemming</span>
 <span class="sd">        from nuisance parameters.&quot;&quot;&quot;</span>
+        <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">Nexp</span><span class="p">)</span>
         <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance_sm</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
-        <span class="c1"># add the Pseudo-measurements</span>
-        <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">:</span>
-            <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">measurement</span><span class="p">)</span>
-            <span class="n">pm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">PseudoMeasurement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="n">measurement</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
-                <span class="n">ppos</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-                <span class="c1"># construct the theory covariance</span>
-                <span class="n">cov_sm_p</span> <span class="o">=</span> <span class="n">cov_sm</span><span class="p">[</span><span class="n">ppos</span><span class="p">][:,</span><span class="n">ppos</span><span class="p">]</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ppos</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="c1"># if there is only one observable: univariate Gaussian</span>
-                    <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov_sm_p</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-                    <span class="k">if</span> <span class="n">std</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">constraint_th</span> <span class="o">=</span> <span class="n">DeltaDistribution</span><span class="p">(</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">constraint_th</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span>
-                                    <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># if there is more than one observable: multivariate Gaussian</span>
-                    <span class="c1"># now here&#39;s a challenge: for some observables, the theory</span>
-                    <span class="c1"># uncertainty might be zero. To fix this, we can replace it</span>
-                    <span class="c1"># by a Gaussian with a very small std deviation. To get an</span>
-                    <span class="c1"># idea what &quot;small&quot; is, we look at the support of the</span>
-                    <span class="c1"># experimental constraint.</span>
-                    <span class="n">index_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov_sm_p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">cov_sm_p_fixed</span> <span class="o">=</span> <span class="n">cov_sm_p</span>
-                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index_zero</span><span class="p">:</span>
-                        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">constraint</span><span class="o">.</span><span class="n">support</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="n">cov_sm_p_fixed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span><span class="o">/</span><span class="mf">100000.</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="c1"># small</span>
-                    <span class="n">constraint_th</span> <span class="o">=</span> <span class="n">MultivariateNormalDistribution</span><span class="p">(</span>
-                                    <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="n">cov_sm_p_fixed</span><span class="p">)</span>
-                <span class="n">constraint_comb</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">([</span><span class="n">constraint</span><span class="p">,</span> <span class="n">constraint_th</span><span class="p">])</span>
-                <span class="n">pm</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">constraint_comb</span><span class="p">)</span>
+        <span class="n">covariance</span> <span class="o">=</span> <span class="n">cov_exp</span> <span class="o">+</span> <span class="n">cov_sm</span>
+        <span class="c1"># add the Pseudo-measurement</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">central_exp</span><span class="p">)</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">central_exp</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># for a 1D (or 0D) array</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">,</span>
+                    <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">central_exp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">covariance</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">,</span>
+                    <span class="n">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">central_exp</span><span class="p">,</span> <span class="n">covariance</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">array_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a 1D numpy array of floats to a dictionary of fit parameters,</span>
@@ -1557,13 +1640,10 @@ to be used directly).</p>
 <span class="sd">        probability for nuisance parameters, which have been integrated out.</span>
 <span class="sd">        Priors for fit parameters are ignored.&quot;&quot;&quot;</span>
         <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">ll</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">:</span>
-            <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">PseudoMeasurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="n">measurement</span><span class="p">)</span>
-            <span class="n">m_obs</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
-            <span class="n">exclude_observables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">m_obs</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span>
-            <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">)</span>
-            <span class="n">ll</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">prob_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">m_obs</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
+        <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+        <span class="n">ll</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">prob_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">ll</span>
 </pre></div>
 
@@ -1596,13 +1676,20 @@ the fit. By default, all existing measurements are included.</li>
 the fit. By default, all existing measurements are included.</li>
 <li><code>fit_wc_names</code>: optional; a list of string names of arguments of the Wilson
   coefficient function below</li>
-<li><code>fit_wc_function</code>: optional; a function that has exactly the arguements listed
-  in <code>fit_wc_names</code> and returns a dictionary that can be fed to the <code>set_initial</code>
+<li><code>fit_wc_function</code>: optional; a function that
+  returns a dictionary that can be fed to the <code>set_initial</code>
   method of the Wilson coefficient class. Example: fit the real and imaginary
   parts of $C_{10}$ in $b   o s\mu^+\mu^-$.
 <code>def fit_wc_function(Re_C10, Im_C10):
     return {'C10_bsmmumu': Re_C10 + 1j*Im_C10}</code></li>
 <li><code>input_scale</code>: input scale for the Wilson coeffficients. Defaults to 160.</li>
+<li><code>fit_wc_priors</code>: optional; an instance of WilsonCoefficientPriors
+  containing prior constraints on the Wilson coefficients</li>
+<li><code>start_wc_priors</code>: optional; an instance of WilsonCoefficientPriors
+  that will not be used during a scan, but only for finding starting values
+  for Wilson coefficients in MCMC analyses. This can be useful if no
+  actual priors are used or if they are too loose to provide good starting
+  points.</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.BayesianFit', this);">Show source &equiv;</a></p>
@@ -1626,8 +1713,8 @@ the fit. By default, all existing measurements are included.</li>
 <span class="sd">    the fit. By default, all existing measurements are included.</span>
 <span class="sd">    - `fit_wc_names`: optional; a list of string names of arguments of the Wilson</span>
 <span class="sd">      coefficient function below</span>
-<span class="sd">    - `fit_wc_function`: optional; a function that has exactly the arguements listed</span>
-<span class="sd">      in `fit_wc_names` and returns a dictionary that can be fed to the `set_initial`</span>
+<span class="sd">    - `fit_wc_function`: optional; a function that</span>
+<span class="sd">      returns a dictionary that can be fed to the `set_initial`</span>
 <span class="sd">      method of the Wilson coefficient class. Example: fit the real and imaginary</span>
 <span class="sd">      parts of $C_{10}$ in $b\to s\mu^+\mu^-$.</span>
 <span class="sd">    ```</span>
@@ -1635,11 +1722,19 @@ the fit. By default, all existing measurements are included.</li>
 <span class="sd">        return {&#39;C10_bsmmumu&#39;: Re_C10 + 1j*Im_C10}</span>
 <span class="sd">    ```</span>
 <span class="sd">    - `input_scale`: input scale for the Wilson coeffficients. Defaults to 160.</span>
+<span class="sd">    - `fit_wc_priors`: optional; an instance of WilsonCoefficientPriors</span>
+<span class="sd">      containing prior constraints on the Wilson coefficients</span>
+<span class="sd">    - `start_wc_priors`: optional; an instance of WilsonCoefficientPriors</span>
+<span class="sd">      that will not be used during a scan, but only for finding starting values</span>
+<span class="sd">      for Wilson coefficients in MCMC analyses. This can be useful if no</span>
+<span class="sd">      actual priors are used or if they are too loose to provide good starting</span>
+<span class="sd">      points.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">start_wc_priors</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_wc_priors</span> <span class="o">=</span> <span class="n">start_wc_priors</span>
 
     <span class="k">def</span> <span class="nf">array_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a 1D numpy array of floats to a dictionary of fit parameters,</span>
@@ -1669,13 +1764,34 @@ the fit. By default, all existing measurements are included.</li>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get an array with random values for all the fit and nuisance</span>
-<span class="sd">        parameters&quot;&quot;&quot;</span>
+<span class="sd">        parameters and Wilson coefficients&quot;&quot;&quot;</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span>
         <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
         <span class="n">n_nui_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
         <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_fit_parameters</span>
         <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_nuisance_parameters</span>
         <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_wilson_coeffs</span>
+        <span class="k">return</span> <span class="n">arr</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_random_wilson_coeffs_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a numpy array with random values for all Wilson coefficients</span>
+<span class="sd">        sampling the start_wc_priors distribution.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_wc_priors</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">all_random</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_wc_priors</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">all_random</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_random_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an array with random values for all the fit and nuisance</span>
+<span class="sd">        parameters with Wilson coefficients set to their SM values&quot;&quot;&quot;</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span>
+        <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
+        <span class="n">n_nui_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
+        <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_fit_parameters</span>
+        <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_nuisance_parameters</span>
+        <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_wilson_coeffs_start</span>
         <span class="k">return</span> <span class="n">arr</span>
 
     <span class="k">def</span> <span class="nf">get_par_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
@@ -1772,9 +1888,10 @@ the fit. By default, all existing measurements are included.</li>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.BayesianFit.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits.BayesianFit.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">start_wc_priors</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">start_wc_priors</span> <span class="o">=</span> <span class="n">start_wc_priors</span>
 </pre></div>
 
   </div>
@@ -2097,10 +2214,14 @@ given an input array</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.BayesianFit.get_central_nuisance_parameters" class="name">var <span class="ident">get_central_nuisance_parameters</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_central_nuisance_parameters">get_central_nuisance_parameters</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return a numpy array with the central values of all nuisance parameters.</p></div>
+    <div class="desc inherited"><p>Return a numpy array with the central values of all nuisance parameters.</p></div>
   <div class="source_cont">
 </div>
 
@@ -2108,14 +2229,10 @@ given an input array</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.BayesianFit.get_measurements" class="name">var <span class="ident">get_measurements</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_measurements">get_measurements</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return a list of all the measurements currently defined that
+    <div class="desc"><p>Return a list of all the measurements currently defined that
 constrain any of the fit observables.</p></div>
   <div class="source_cont">
 </div>
@@ -2128,7 +2245,7 @@ constrain any of the fit observables.</p></div>
             
   
     <div class="desc"><p>Get an array with random values for all the fit and nuisance
-parameters</p></div>
+parameters and Wilson coefficients</p></div>
   <div class="source_cont">
 </div>
 
@@ -2156,12 +2273,46 @@ parameters</p></div>
 
             </div>
             <div class="item">
+            <p id="flavio.statistics.fits.BayesianFit.get_random_start" class="name">var <span class="ident">get_random_start</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Get an array with random values for all the fit and nuisance
+parameters with Wilson coefficients set to their SM values</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="flavio.statistics.fits.BayesianFit.get_random_wilson_coeffs" class="name">var <span class="ident">get_random_wilson_coeffs</span></p>
             
 
             
   
     <div class="desc"><p>Return a numpy array with random values for all Wilson coefficients.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.fits.BayesianFit.get_random_wilson_coeffs_start" class="name">var <span class="ident">get_random_wilson_coeffs_start</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return a numpy array with random values for all Wilson coefficients
+sampling the start_wc_priors distribution.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.fits.BayesianFit.start_wc_priors" class="name">var <span class="ident">start_wc_priors</span></p>
+            
+
+            
+  
   <div class="source_cont">
 </div>
 
@@ -2249,16 +2400,16 @@ that combines the actual experimental measurements with the theoretical
 uncertainties stemming from the nuisance parameters. This is done by
 generating random samples of the nuisance parameters and evaluating all
 observables within the Standard Model many times (100 by default).
-Then, the covariance of all predictions is extracted. The probability
-distributions of the experimental measurements are then convolved with
-the appropriate (and correlated) theoretical uncertainties.</p>
+Then, the covariance of all predictions is extracted. Similarly, a covariance
+matrix for all experimental measurements is determined. Both covariance
+matrices are added and the resulting multivariate Gaussian treated as a
+single measurement.</p>
 <p>This approach has the advantage that two-dimensional plots of the likelihood
 can be produced without the need for sampling or profiling the other
 dimensions. However, several strong assumptions go into this method, most
 importantly,</p>
 <ul>
-<li>theoretical uncertainties are treated as Gaussian
-  (experimental uncertainties are instead treated exactly!)</li>
+<li>all uncertainties - experimental and theoretical - are treated as Gaussian</li>
 <li>the theoretical uncertainties in the presence of new physics are assumed
   to be similar to the ones in the SM</li>
 </ul></div>
@@ -2274,17 +2425,17 @@ importantly,</p>
 <span class="sd">    uncertainties stemming from the nuisance parameters. This is done by</span>
 <span class="sd">    generating random samples of the nuisance parameters and evaluating all</span>
 <span class="sd">    observables within the Standard Model many times (100 by default).</span>
-<span class="sd">    Then, the covariance of all predictions is extracted. The probability</span>
-<span class="sd">    distributions of the experimental measurements are then convolved with</span>
-<span class="sd">    the appropriate (and correlated) theoretical uncertainties.</span>
+<span class="sd">    Then, the covariance of all predictions is extracted. Similarly, a covariance</span>
+<span class="sd">    matrix for all experimental measurements is determined. Both covariance</span>
+<span class="sd">    matrices are added and the resulting multivariate Gaussian treated as a</span>
+<span class="sd">    single measurement.</span>
 
 <span class="sd">    This approach has the advantage that two-dimensional plots of the likelihood</span>
 <span class="sd">    can be produced without the need for sampling or profiling the other</span>
 <span class="sd">    dimensions. However, several strong assumptions go into this method, most</span>
 <span class="sd">    importantly,</span>
 
-<span class="sd">    - theoretical uncertainties are treated as Gaussian</span>
-<span class="sd">      (experimental uncertainties are instead treated exactly!)</span>
+<span class="sd">    - all uncertainties - experimental and theoretical - are treated as Gaussian</span>
 <span class="sd">    - the theoretical uncertainties in the presence of new physics are assumed</span>
 <span class="sd">      to be similar to the ones in the SM</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2292,6 +2443,67 @@ importantly,</p>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+    <span class="c1"># a method to get the mean and covariance of all measurements of all</span>
+    <span class="c1"># observables of interest</span>
+    <span class="k">def</span> <span class="nf">_get_central_covariance_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+        <span class="n">means</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">covariances</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">measurement</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Pseudo-measurement&#39;</span><span class="p">:</span>
+                <span class="c1"># skip pseudo measurements generated by FastFit instances</span>
+                <span class="k">continue</span>
+            <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">measurement</span><span class="p">)</span>
+            <span class="c1"># obs. included in the fit and constrained by this measurement</span>
+            <span class="n">our_obs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span>
+            <span class="c1"># construct a dict. containing a vector of N random values for</span>
+            <span class="c1"># each of these observables</span>
+            <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">our_obs</span><span class="p">:</span>
+                <span class="n">random_dict</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+                <span class="n">m_random</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">our_obs</span><span class="p">:</span>
+                    <span class="n">random_dict</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_random</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
+            <span class="c1"># mean = np.zeros(len(self.observables))</span>
+            <span class="n">random_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> <span class="n">N</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">obs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">):</span>
+                <span class="c1">#     n = len(random_dict[obs])</span>
+                <span class="k">if</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">our_obs</span><span class="p">:</span>
+                    <span class="n">random_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_dict</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">random_arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">random_arr</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">obs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">obs</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">our_obs</span><span class="p">:</span>
+                    <span class="n">covariance</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">covariance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">covariance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+            <span class="n">means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+            <span class="n">covariances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
+        <span class="c1"># if there is only a single measuement</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># if there are severeal measurements, perform a weighted average</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># covariances: [Sigma_1, Sigma_2, ...]</span>
+            <span class="c1"># means: [x_1, x_2, ...]</span>
+            <span class="c1"># weights_ [W_1, W_2, ...] where W_i = (Sigma_i)^(-1)</span>
+            <span class="c1"># weighted covariance is  (W_1 + W_2 + ...)^(-1) = Sigma</span>
+            <span class="c1"># weigted mean is  Sigma.(W_1.x_1 + W_2.x_2 + ...) = x</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">/</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">covariances</span><span class="p">])</span>
+                <span class="n">weighted_covariance</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">weighted_mean</span> <span class="o">=</span> <span class="n">weighted_covariance</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                                <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">means</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">))])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">covariances</span><span class="p">]</span>
+                <span class="n">weighted_covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">weighted_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">weighted_covariance</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                                <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">means</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">))],</span>
+                                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">weighted_mean</span><span class="p">,</span> <span class="n">weighted_covariance</span>
+
 
     <span class="c1"># a method to get the covariance of the SM prediction of all observables</span>
     <span class="c1"># of interest</span>
@@ -2323,39 +2535,17 @@ importantly,</p>
         <span class="sd">&quot;&quot;&quot;Initialize the fit by producing a pseudo-measurement containing both</span>
 <span class="sd">        experimental uncertainties as well as theory uncertainties stemming</span>
 <span class="sd">        from nuisance parameters.&quot;&quot;&quot;</span>
+        <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">Nexp</span><span class="p">)</span>
         <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance_sm</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
-        <span class="c1"># add the Pseudo-measurements</span>
-        <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">:</span>
-            <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">measurement</span><span class="p">)</span>
-            <span class="n">pm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">PseudoMeasurement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="n">measurement</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
-                <span class="n">ppos</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-                <span class="c1"># construct the theory covariance</span>
-                <span class="n">cov_sm_p</span> <span class="o">=</span> <span class="n">cov_sm</span><span class="p">[</span><span class="n">ppos</span><span class="p">][:,</span><span class="n">ppos</span><span class="p">]</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ppos</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="c1"># if there is only one observable: univariate Gaussian</span>
-                    <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov_sm_p</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-                    <span class="k">if</span> <span class="n">std</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">constraint_th</span> <span class="o">=</span> <span class="n">DeltaDistribution</span><span class="p">(</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">constraint_th</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span>
-                                    <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># if there is more than one observable: multivariate Gaussian</span>
-                    <span class="c1"># now here&#39;s a challenge: for some observables, the theory</span>
-                    <span class="c1"># uncertainty might be zero. To fix this, we can replace it</span>
-                    <span class="c1"># by a Gaussian with a very small std deviation. To get an</span>
-                    <span class="c1"># idea what &quot;small&quot; is, we look at the support of the</span>
-                    <span class="c1"># experimental constraint.</span>
-                    <span class="n">index_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov_sm_p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">cov_sm_p_fixed</span> <span class="o">=</span> <span class="n">cov_sm_p</span>
-                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index_zero</span><span class="p">:</span>
-                        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">constraint</span><span class="o">.</span><span class="n">support</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="n">cov_sm_p_fixed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span><span class="o">/</span><span class="mf">100000.</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="c1"># small</span>
-                    <span class="n">constraint_th</span> <span class="o">=</span> <span class="n">MultivariateNormalDistribution</span><span class="p">(</span>
-                                    <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="n">cov_sm_p_fixed</span><span class="p">)</span>
-                <span class="n">constraint_comb</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">([</span><span class="n">constraint</span><span class="p">,</span> <span class="n">constraint_th</span><span class="p">])</span>
-                <span class="n">pm</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">constraint_comb</span><span class="p">)</span>
+        <span class="n">covariance</span> <span class="o">=</span> <span class="n">cov_exp</span> <span class="o">+</span> <span class="n">cov_sm</span>
+        <span class="c1"># add the Pseudo-measurement</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">central_exp</span><span class="p">)</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">central_exp</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># for a 1D (or 0D) array</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">,</span>
+                    <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">central_exp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">covariance</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">,</span>
+                    <span class="n">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">central_exp</span><span class="p">,</span> <span class="n">covariance</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">array_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a 1D numpy array of floats to a dictionary of fit parameters,</span>
@@ -2388,13 +2578,10 @@ importantly,</p>
 <span class="sd">        probability for nuisance parameters, which have been integrated out.</span>
 <span class="sd">        Priors for fit parameters are ignored.&quot;&quot;&quot;</span>
         <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">ll</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">:</span>
-            <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">PseudoMeasurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="n">measurement</span><span class="p">)</span>
-            <span class="n">m_obs</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
-            <span class="n">exclude_observables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">m_obs</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span>
-            <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">)</span>
-            <span class="n">ll</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">prob_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">m_obs</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
+        <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+        <span class="n">ll</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">prob_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">ll</span>
 </pre></div>
 
@@ -2603,13 +2790,10 @@ Priors for fit parameters are ignored.</p></div>
 <span class="sd">    probability for nuisance parameters, which have been integrated out.</span>
 <span class="sd">    Priors for fit parameters are ignored.&quot;&quot;&quot;</span>
     <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">ll</span> <span class="o">=</span> <span class="mf">0.</span>
-    <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">:</span>
-        <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">PseudoMeasurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="n">measurement</span><span class="p">)</span>
-        <span class="n">m_obs</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
-        <span class="n">exclude_observables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">m_obs</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span>
-        <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">)</span>
-        <span class="n">ll</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">prob_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">m_obs</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
+    <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+    <span class="n">ll</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">prob_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">ll</span>
 </pre></div>
 
@@ -2717,39 +2901,17 @@ from nuisance parameters.</p></div>
     <span class="sd">&quot;&quot;&quot;Initialize the fit by producing a pseudo-measurement containing both</span>
 <span class="sd">    experimental uncertainties as well as theory uncertainties stemming</span>
 <span class="sd">    from nuisance parameters.&quot;&quot;&quot;</span>
+    <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">Nexp</span><span class="p">)</span>
     <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance_sm</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
-    <span class="c1"># add the Pseudo-measurements</span>
-    <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">:</span>
-        <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">measurement</span><span class="p">)</span>
-        <span class="n">pm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">PseudoMeasurement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="n">measurement</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">_constraints</span><span class="p">:</span>
-            <span class="n">ppos</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
-            <span class="c1"># construct the theory covariance</span>
-            <span class="n">cov_sm_p</span> <span class="o">=</span> <span class="n">cov_sm</span><span class="p">[</span><span class="n">ppos</span><span class="p">][:,</span><span class="n">ppos</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ppos</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># if there is only one observable: univariate Gaussian</span>
-                <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov_sm_p</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">std</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">constraint_th</span> <span class="o">=</span> <span class="n">DeltaDistribution</span><span class="p">(</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">constraint_th</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span>
-                                <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># if there is more than one observable: multivariate Gaussian</span>
-                <span class="c1"># now here&#39;s a challenge: for some observables, the theory</span>
-                <span class="c1"># uncertainty might be zero. To fix this, we can replace it</span>
-                <span class="c1"># by a Gaussian with a very small std deviation. To get an</span>
-                <span class="c1"># idea what &quot;small&quot; is, we look at the support of the</span>
-                <span class="c1"># experimental constraint.</span>
-                <span class="n">index_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov_sm_p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">cov_sm_p_fixed</span> <span class="o">=</span> <span class="n">cov_sm_p</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index_zero</span><span class="p">:</span>
-                    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">constraint</span><span class="o">.</span><span class="n">support</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">cov_sm_p_fixed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span><span class="o">/</span><span class="mf">100000.</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="c1"># small</span>
-                <span class="n">constraint_th</span> <span class="o">=</span> <span class="n">MultivariateNormalDistribution</span><span class="p">(</span>
-                                <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="n">cov_sm_p_fixed</span><span class="p">)</span>
-            <span class="n">constraint_comb</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">([</span><span class="n">constraint</span><span class="p">,</span> <span class="n">constraint_th</span><span class="p">])</span>
-            <span class="n">pm</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">constraint_comb</span><span class="p">)</span>
+    <span class="n">covariance</span> <span class="o">=</span> <span class="n">cov_exp</span> <span class="o">+</span> <span class="n">cov_sm</span>
+    <span class="c1"># add the Pseudo-measurement</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">central_exp</span><span class="p">)</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">central_exp</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># for a 1D (or 0D) array</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">,</span>
+                <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">central_exp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">covariance</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">,</span>
+                <span class="n">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">central_exp</span><span class="p">,</span> <span class="n">covariance</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -2782,14 +2944,10 @@ from nuisance parameters.</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.FastFit.get_central_fit_parameters" class="name">var <span class="ident">get_central_fit_parameters</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_central_fit_parameters">get_central_fit_parameters</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return a numpy array with the central values of all fit parameters.</p></div>
+    <div class="desc"><p>Return a numpy array with the central values of all fit parameters.</p></div>
   <div class="source_cont">
 </div>
 
@@ -2808,14 +2966,10 @@ from nuisance parameters.</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.FastFit.get_measurements" class="name">var <span class="ident">get_measurements</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.fits.BayesianFit">BayesianFit</a></code>.<code><a href="#flavio.statistics.fits.BayesianFit.get_measurements">get_measurements</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return a list of all the measurements currently defined that
+    <div class="desc"><p>Return a list of all the measurements currently defined that
 constrain any of the fit observables.</p></div>
   <div class="source_cont">
 </div>
@@ -2828,7 +2982,7 @@ constrain any of the fit observables.</p></div>
             
   
     <div class="desc"><p>Get an array with random values for all the fit and nuisance
-parameters</p></div>
+parameters and Wilson coefficients</p></div>
   <div class="source_cont">
 </div>
 
@@ -2856,12 +3010,36 @@ parameters</p></div>
 
             </div>
             <div class="item">
+            <p id="flavio.statistics.fits.FastFit.get_random_start" class="name">var <span class="ident">get_random_start</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Get an array with random values for all the fit and nuisance
+parameters with Wilson coefficients set to their SM values</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="flavio.statistics.fits.FastFit.get_random_wilson_coeffs" class="name">var <span class="ident">get_random_wilson_coeffs</span></p>
             
 
             
   
     <div class="desc"><p>Return a numpy array with random values for all Wilson coefficients.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.fits.FastFit.get_random_wilson_coeffs_start" class="name">var <span class="ident">get_random_wilson_coeffs_start</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return a numpy array with random values for all Wilson coefficients
+sampling the start_wc_priors distribution.</p></div>
   <div class="source_cont">
 </div>
 
@@ -2961,17 +3139,27 @@ parameters</p></div>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">name</span><span class="p">,</span>
-                 <span class="n">par_obj</span><span class="p">,</span>
-                 <span class="n">fit_parameters</span><span class="p">,</span>
-                 <span class="n">nuisance_parameters</span><span class="p">,</span>
-                 <span class="n">observables</span><span class="p">,</span>
-                 <span class="n">fit_wc_names</span><span class="o">=</span><span class="p">[],</span>
+                 <span class="n">par_obj</span><span class="o">=</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span>
+                 <span class="n">fit_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">nuisance_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">fit_wc_names</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">fit_wc_function</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">fit_wc_priors</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">input_scale</span><span class="o">=</span><span class="mf">160.</span><span class="p">,</span>
                  <span class="n">exclude_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                 <span class="p">):</span>
+        <span class="k">if</span> <span class="n">fit_parameters</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">fit_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">nuisance_parameters</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">nuisance_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">observables</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;observables&#39; is empty: you must specify at least one fit observable&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fit_wc_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The &#39;fit_wc_names&#39; argument is no longer necessary &quot;</span>
+            <span class="s2">&quot;as of flavio v0.19 and might be removed in the future.&quot;</span><span class="p">,</span>
+            <span class="ne">FutureWarning</span><span class="p">)</span>
         <span class="c1"># some checks to make sure the input is sane</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">fit_parameters</span> <span class="o">+</span> <span class="n">nuisance_parameters</span><span class="p">:</span>
             <span class="c1"># check that fit and nuisance parameters exist</span>
@@ -2988,6 +3176,9 @@ parameters</p></div>
         <span class="n">_obs_measured</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="c1"># check that observables are constrained</span>
         <span class="k">for</span> <span class="n">m_name</span><span class="p">,</span> <span class="n">m_obj</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">m_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Pseudo-measurement&#39;</span><span class="p">:</span>
+                <span class="c1"># skip pseudo measurements generated by FastFit instances</span>
+                <span class="k">continue</span>
             <span class="n">_obs_measured</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">)</span>
         <span class="n">missing_obs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">observables</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">_obs_measured</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">observables</span><span class="p">))</span>
         <span class="k">assert</span> <span class="n">missing_obs</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(),</span> <span class="s2">&quot;No measurement found for the observables: &quot;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_obs</span><span class="p">)</span>
@@ -2997,11 +3188,14 @@ parameters</p></div>
         <span class="n">intersect</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">nuisance_parameters</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">intersect</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(),</span> <span class="s2">&quot;Parameters appearing as fit_parameters and nuisance_parameters: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">intersect</span><span class="p">)</span>
         <span class="c1"># check that the Wilson coefficient function works</span>
-        <span class="k">if</span> <span class="n">fit_wc_names</span><span class="p">:</span> <span class="c1"># if list of WC names not empty</span>
+        <span class="k">if</span> <span class="n">fit_wc_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> <span class="c1"># if list of WC names not empty</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="n">fit_wc_names</span><span class="p">})</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="n">fit_wc_function</span><span class="o">.</span><span class="n">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+                <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">})</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error in calling the Wilson coefficient function&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># now that everything seems fine, we can call the init of the parent class</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span> <span class="o">=</span> <span class="n">par_obj</span>
@@ -3010,7 +3204,6 @@ parameters</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span> <span class="o">=</span> <span class="n">nuisance_parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="o">=</span> <span class="n">exclude_measurements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="o">=</span> <span class="n">include_measurements</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="n">fit_wc_names</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span> <span class="o">=</span> <span class="n">fit_wc_function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_priors</span> <span class="o">=</span> <span class="n">fit_wc_priors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observables</span> <span class="o">=</span> <span class="n">observables</span>
@@ -3122,7 +3315,7 @@ parameters</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.Fit.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj, fit_parameters, nuisance_parameters, observables, fit_wc_names=[], fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7f1f504af080&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None)</p>
     </div>
     
 
@@ -3134,17 +3327,27 @@ parameters</p></div>
   <div id="source-flavio.statistics.fits.Fit.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
              <span class="n">name</span><span class="p">,</span>
-             <span class="n">par_obj</span><span class="p">,</span>
-             <span class="n">fit_parameters</span><span class="p">,</span>
-             <span class="n">nuisance_parameters</span><span class="p">,</span>
-             <span class="n">observables</span><span class="p">,</span>
-             <span class="n">fit_wc_names</span><span class="o">=</span><span class="p">[],</span>
+             <span class="n">par_obj</span><span class="o">=</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span>
+             <span class="n">fit_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">nuisance_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">fit_wc_names</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
              <span class="n">fit_wc_function</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
              <span class="n">fit_wc_priors</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
              <span class="n">input_scale</span><span class="o">=</span><span class="mf">160.</span><span class="p">,</span>
              <span class="n">exclude_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
              <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
             <span class="p">):</span>
+    <span class="k">if</span> <span class="n">fit_parameters</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">fit_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">nuisance_parameters</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">nuisance_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">observables</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;observables&#39; is empty: you must specify at least one fit observable&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fit_wc_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The &#39;fit_wc_names&#39; argument is no longer necessary &quot;</span>
+        <span class="s2">&quot;as of flavio v0.19 and might be removed in the future.&quot;</span><span class="p">,</span>
+        <span class="ne">FutureWarning</span><span class="p">)</span>
     <span class="c1"># some checks to make sure the input is sane</span>
     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">fit_parameters</span> <span class="o">+</span> <span class="n">nuisance_parameters</span><span class="p">:</span>
         <span class="c1"># check that fit and nuisance parameters exist</span>
@@ -3161,6 +3364,9 @@ parameters</p></div>
     <span class="n">_obs_measured</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="c1"># check that observables are constrained</span>
     <span class="k">for</span> <span class="n">m_name</span><span class="p">,</span> <span class="n">m_obj</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">m_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Pseudo-measurement&#39;</span><span class="p">:</span>
+            <span class="c1"># skip pseudo measurements generated by FastFit instances</span>
+            <span class="k">continue</span>
         <span class="n">_obs_measured</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">)</span>
     <span class="n">missing_obs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">observables</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">_obs_measured</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">observables</span><span class="p">))</span>
     <span class="k">assert</span> <span class="n">missing_obs</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(),</span> <span class="s2">&quot;No measurement found for the observables: &quot;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_obs</span><span class="p">)</span>
@@ -3170,11 +3376,14 @@ parameters</p></div>
     <span class="n">intersect</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">nuisance_parameters</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">intersect</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(),</span> <span class="s2">&quot;Parameters appearing as fit_parameters and nuisance_parameters: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">intersect</span><span class="p">)</span>
     <span class="c1"># check that the Wilson coefficient function works</span>
-    <span class="k">if</span> <span class="n">fit_wc_names</span><span class="p">:</span> <span class="c1"># if list of WC names not empty</span>
+    <span class="k">if</span> <span class="n">fit_wc_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> <span class="c1"># if list of WC names not empty</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="n">fit_wc_names</span><span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="n">fit_wc_function</span><span class="o">.</span><span class="n">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+            <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">})</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error in calling the Wilson coefficient function&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c1"># now that everything seems fine, we can call the init of the parent class</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span> <span class="o">=</span> <span class="n">par_obj</span>
@@ -3183,7 +3392,6 @@ parameters</p></div>
     <span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span> <span class="o">=</span> <span class="n">nuisance_parameters</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="o">=</span> <span class="n">exclude_measurements</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="o">=</span> <span class="n">include_measurements</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="n">fit_wc_names</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span> <span class="o">=</span> <span class="n">fit_wc_function</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_priors</span> <span class="o">=</span> <span class="n">fit_wc_priors</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">observables</span> <span class="o">=</span> <span class="n">observables</span>
@@ -3240,16 +3448,6 @@ parameters</p></div>
             </div>
             <div class="item">
             <p id="flavio.statistics.fits.Fit.fit_wc_function" class="name">var <span class="ident">fit_wc_function</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="flavio.statistics.fits.Fit.fit_wc_names" class="name">var <span class="ident">fit_wc_names</span></p>
             
 
             
