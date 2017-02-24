@@ -1058,6 +1058,7 @@ table {
     <li class="mono"><a href="#flavio.plots.plotfunctions.contour">contour</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.density_contour">density_contour</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.density_contour_data">density_contour_data</a></li>
+    <li class="mono"><a href="#flavio.plots.plotfunctions.density_contour_joint">density_contour_joint</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.error_budget_pie">error_budget_pie</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.flavio_box">flavio_box</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.flavio_branding">flavio_branding</a></li>
@@ -1091,6 +1092,7 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions', this);">Show source &equiv;</a></p>
   <div id="source-flavio.plots.plotfunctions" class="source">
     <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="kn">as</span> <span class="nn">patches</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -1102,6 +1104,9 @@ table {
 <span class="kn">from</span> <span class="nn">numbers</span> <span class="kn">import</span> <span class="n">Number</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">from</span> <span class="nn">pickle</span> <span class="kn">import</span> <span class="n">PicklingError</span>
 
 <span class="k">def</span> <span class="nf">error_budget_pie</span><span class="p">(</span><span class="n">err_dict</span><span class="p">,</span> <span class="n">other_cutoff</span><span class="o">=</span><span class="mf">0.03</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Pie chart of an observable&#39;s error budget.</span>
@@ -1162,7 +1167,7 @@ table {
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Only observables that depend on $q^2$ (and nothing else) are allowed&quot;</span><span class="p">)</span>
     <span class="n">q2_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">q2steps</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">wc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span> <span class="c1"># SM Wilson coefficients</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span> <span class="c1"># SM Wilson coefficients</span>
         <span class="n">obs_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span> <span class="k">for</span> <span class="n">q2</span> <span class="ow">in</span> <span class="n">q2_arr</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">obs_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span> <span class="k">for</span> <span class="n">q2</span> <span class="ow">in</span> <span class="n">q2_arr</span><span class="p">]</span>
@@ -1198,7 +1203,7 @@ table {
     <span class="k">if</span> <span class="n">obs</span><span class="o">.</span><span class="n">arguments</span> <span class="o">!=</span> <span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Only observables that depend on q2min and q2max (and nothing else) are allowed&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span> <span class="c1"># SM Wilson coefficients</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span> <span class="c1"># SM Wilson coefficients</span>
         <span class="n">obs_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">bin_</span><span class="p">:</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">bin_</span><span class="p">)</span> <span class="k">for</span> <span class="n">bin_</span> <span class="ow">in</span> <span class="n">bin_list</span><span class="p">}</span>
         <span class="n">obs_err_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">bin_</span><span class="p">:</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">bin_</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">)</span> <span class="k">for</span> <span class="n">bin_</span> <span class="ow">in</span> <span class="n">bin_list</span><span class="p">}</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1408,7 +1413,7 @@ table {
 
 
 <span class="k">def</span> <span class="nf">likelihood_contour_data</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span>
-              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Generate data required to plot coloured confidence contours (or bands)</span>
 <span class="sd">    given a log likelihood function.</span>
 
@@ -1422,14 +1427,26 @@ table {
 <span class="sd">      contours.</span>
 <span class="sd">    - `steps`: number of grid steps in each dimension (total computing time is</span>
 <span class="sd">      this number squared times the computing time of one `log_likelihood` call!)</span>
-<span class="sd">     &quot;&quot;&quot;</span>
+<span class="sd">    - `threads`: number of threads, defaults to 1. If greater than one,</span>
+<span class="sd">      computation of z values will be done in parallel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
     <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">)</span>
-    <span class="nd">@np.vectorize</span>
-    <span class="k">def</span> <span class="nf">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span> <span class="c1"># needed for evaluation on meshgrid</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">log_likelihood</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="n">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nd">@np.vectorize</span>
+        <span class="k">def</span> <span class="nf">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span> <span class="c1"># needed for evaluation on meshgrid</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">log_likelihood</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">xy</span> <span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">steps</span><span class="p">,</span> <span class="n">steps</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">PicklingError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PicklingError</span><span class="p">(</span><span class="s2">&quot;When using more than 1 thread, the &quot;</span>
+                                <span class="s2">&quot;log_likelihood function must be picklable; &quot;</span>
+                                <span class="s2">&quot;in particular, you cannot use lambda expressions.&quot;</span><span class="p">)</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="c1"># subtract the best fit point (on the grid)</span>
 
     <span class="c1"># get the correct values for 2D confidence/credibility contours for n sigma</span>
@@ -1441,7 +1458,7 @@ table {
 
 
 <span class="k">def</span> <span class="nf">likelihood_contour</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span>
-              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
               <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot coloured confidence contours (or bands) given a log likelihood</span>
 <span class="sd">    function.</span>
@@ -1464,7 +1481,7 @@ table {
     <span class="n">data</span> <span class="o">=</span> <span class="n">likelihood_contour_data</span><span class="p">(</span><span class="n">log_likelihood</span><span class="o">=</span><span class="n">log_likelihood</span><span class="p">,</span>
                                 <span class="n">x_min</span><span class="o">=</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="n">x_max</span><span class="p">,</span>
                                 <span class="n">y_min</span><span class="o">=</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="n">y_max</span><span class="p">,</span>
-                                <span class="n">n_sigma</span><span class="o">=</span><span class="n">n_sigma</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">)</span>
+                                <span class="n">n_sigma</span><span class="o">=</span><span class="n">n_sigma</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span>
     <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1">#  since we cannot do **data, **kwargs in Python &lt;3.5</span>
     <span class="k">return</span> <span class="n">contour</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
 
@@ -1478,7 +1495,7 @@ table {
                   <span class="s2">&quot;`likelihood_contour_data` in conjunction with `contour`) &quot;</span>
                   <span class="s2">&quot;and might be removed in the future. &quot;</span>
                   <span class="s2">&quot;Please update your code.&quot;</span><span class="p">,</span> <span class="ne">FutureWarning</span><span class="p">)</span>
-    <span class="n">valid_args</span> <span class="o">=</span> <span class="n">likelihood_contour_data</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+    <span class="n">valid_args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">likelihood_contour_data</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">data_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">valid_args</span><span class="p">}</span>
     <span class="k">if</span> <span class="s1">&#39;pre_calculated_z&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">contour_kwargs</span> <span class="o">=</span> <span class="n">likelihood_contour_data</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span>
@@ -1497,7 +1514,7 @@ table {
             <span class="n">contour_kwargs</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">delta_chi2</span><span class="p">(</span><span class="n">n_sigma</span><span class="p">,</span> <span class="n">dof</span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">contour_kwargs</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">delta_chi2</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dof</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">n_sigma</span><span class="p">]</span>
-    <span class="n">valid_args</span> <span class="o">=</span> <span class="n">contour</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+    <span class="n">valid_args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">contour_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">valid_args</span><span class="p">})</span>
     <span class="n">contour</span><span class="p">(</span><span class="o">**</span><span class="n">contour_kwargs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">contour_kwargs</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">contour_kwargs</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">contour_kwargs</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span>
@@ -1593,14 +1610,14 @@ table {
     <span class="n">kde</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">probability</span><span class="o">.</span><span class="n">GaussianKDE</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="n">bandwidth</span><span class="p">)</span>
     <span class="n">pdf_plot</span><span class="p">(</span><span class="n">kde</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">pdf_plot</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">x_min</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">pdf_plot</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">x_min</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plot of a 1D probability density function.</span>
 
 <span class="sd">    Parameters:</span>
 
 <span class="sd">    - `dist`: an instance of ProbabilityDistribution</span>
 <span class="sd">    - `x_min`, `x_max`: plot boundaries</span>
-<span class="sd">    - steps: optional, number of points (default: 200)</span>
+<span class="sd">    - `steps`: optional, number of points (default: 200)</span>
 
 <span class="sd">    The remaining parameters will be passed to `likelihood_plot`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1623,7 +1640,8 @@ table {
         <span class="n">fill_x</span><span class="o">=</span><span class="bp">None</span>
     <span class="n">likelihood_plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fill_x</span><span class="o">=</span><span class="n">fill_x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">likelihood_plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fill_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fillargs</span><span class="o">=</span><span class="p">{}):</span>
+<span class="k">def</span> <span class="nf">likelihood_plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fill_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fillargs</span><span class="o">=</span><span class="p">{},</span>
+                    <span class="n">flipped</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plot of a 1D probability density function.</span>
 
 <span class="sd">    Parameters:</span>
@@ -1650,11 +1668,86 @@ table {
         <span class="n">_fillargs</span><span class="p">[</span><span class="s1">&#39;facecolor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
     <span class="n">_fillargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fillargs</span><span class="p">)</span>
     <span class="n">_plotargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plotargs</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">_plotargs</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">fill_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
-            <span class="n">where</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">fill_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">fill_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-            <span class="o">**</span><span class="n">_fillargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">flipped</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">_plotargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fill_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                <span class="n">where</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">fill_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">fill_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="o">**</span><span class="n">_fillargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">_plotargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fill_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">fill_betweenx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                <span class="n">where</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">fill_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">fill_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="o">**</span><span class="n">_fillargs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">density_contour_joint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                          <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                          <span class="n">bandwidth_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bandwidth_y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                          <span class="n">hist_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                          <span class="n">ax_2d</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ax_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ax_y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                          <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A density contour plot that additionally has the 1D marginals for</span>
+<span class="sd">    the x and y dsitribution plotted as smooth histograms along the axes.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    - `x`, `y`: lists or numpy arrays with the x and y coordinates of the points</span>
+<span class="sd">    - `covariance_factor`: optional, numerical factor to tweak the smoothness</span>
+<span class="sd">       of the 2D contours (see `density_contour_data`)</span>
+<span class="sd">    - `col`: optional, integer specifying the colour, will be applied to both</span>
+<span class="sd">      contour plot and marginals</span>
+<span class="sd">    - `bandwidth_x`: optional, smoothing bandwidth for the Gaussian kernel of the</span>
+<span class="sd">      x marginal distribution</span>
+<span class="sd">    - `bandwidth_y`: optional, smoothing bandwidth for the Gaussian kernel of the</span>
+<span class="sd">      y marginal distribution</span>
+
+<span class="sd">    Additional options can be passed as follows:</span>
+
+<span class="sd">    - `hist_args`: dictionary with keyword arguments passed to the 1D</span>
+<span class="sd">      `smooth_histogram` for both the x and y distribution</span>
+<span class="sd">    - Additional keyword arguments will be passed to `density_contour`</span>
+
+<span class="sd">    To plot multiple distributions in one figure, the function returns a</span>
+<span class="sd">    dictionary with the three axis instances that can then be passed into</span>
+<span class="sd">    another call of the function, e.g.</span>
+
+<span class="sd">    ```</span>
+<span class="sd">    axes1 = density_contour_joint(x1, y1, col=0)</span>
+<span class="sd">    axes2 = density_contour_joint(x2, y2, col=1, **axes1)</span>
+<span class="sd">    ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># define the plot grid</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">height_ratios</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+    <span class="n">gs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># set up axes (unless they are already given)</span>
+    <span class="k">if</span> <span class="n">ax_2d</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">ax_2d</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="c1"># make the 2D density contour plot</span>
+    <span class="n">density_contour</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># x axis histogram</span>
+    <span class="k">if</span> <span class="n">hist_args</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">hist_args</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">ax_x</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">ax_x</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax_2d</span><span class="p">,</span> <span class="n">yticks</span><span class="o">=</span><span class="p">[],</span> <span class="n">frameon</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax_x</span><span class="p">)</span>
+    <span class="n">smooth_histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="n">bandwidth_x</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="o">**</span><span class="n">hist_args</span><span class="p">)</span>
+
+    <span class="c1"># y axis histogram</span>
+    <span class="k">if</span> <span class="n">ax_y</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">ax_y</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">sharey</span><span class="o">=</span><span class="n">ax_2d</span><span class="p">,</span> <span class="n">xticks</span><span class="o">=</span><span class="p">[],</span> <span class="n">frameon</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax_y</span><span class="p">)</span>
+    <span class="n">smooth_histogram</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">flipped</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="n">bandwidth_y</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="o">**</span><span class="n">hist_args</span><span class="p">)</span>
+
+    <span class="c1"># remove x and y histogram tick labels</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax_x</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="bp">False</span><span class="p">);</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax_y</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="bp">False</span><span class="p">);</span>
+
+    <span class="c1"># set 2D plot as active axis for adding legends etc.</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax_2d</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;ax_2d&#39;</span><span class="p">:</span> <span class="n">ax_2d</span><span class="p">,</span> <span class="s1">&#39;ax_x&#39;</span><span class="p">:</span> <span class="n">ax_x</span><span class="p">,</span> <span class="s1">&#39;ax_y&#39;</span><span class="p">:</span> <span class="n">ax_y</span><span class="p">}</span>
 </pre></div>
 
   </div>
@@ -1687,7 +1780,7 @@ backward compatibility.</p></div>
                   <span class="s2">&quot;`likelihood_contour_data` in conjunction with `contour`) &quot;</span>
                   <span class="s2">&quot;and might be removed in the future. &quot;</span>
                   <span class="s2">&quot;Please update your code.&quot;</span><span class="p">,</span> <span class="ne">FutureWarning</span><span class="p">)</span>
-    <span class="n">valid_args</span> <span class="o">=</span> <span class="n">likelihood_contour_data</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+    <span class="n">valid_args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">likelihood_contour_data</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">data_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">valid_args</span><span class="p">}</span>
     <span class="k">if</span> <span class="s1">&#39;pre_calculated_z&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">contour_kwargs</span> <span class="o">=</span> <span class="n">likelihood_contour_data</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span>
@@ -1706,7 +1799,7 @@ backward compatibility.</p></div>
             <span class="n">contour_kwargs</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">delta_chi2</span><span class="p">(</span><span class="n">n_sigma</span><span class="p">,</span> <span class="n">dof</span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">contour_kwargs</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">delta_chi2</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dof</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">n_sigma</span><span class="p">]</span>
-    <span class="n">valid_args</span> <span class="o">=</span> <span class="n">contour</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+    <span class="n">valid_args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">contour_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">valid_args</span><span class="p">})</span>
     <span class="n">contour</span><span class="p">(</span><span class="o">**</span><span class="n">contour_kwargs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">contour_kwargs</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">contour_kwargs</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">contour_kwargs</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span>
@@ -1991,6 +2084,117 @@ applied.</li>
   
       
   <div class="item">
+    <div class="name def" id="flavio.plots.plotfunctions.density_contour_joint">
+    <p>def <span class="ident">density_contour_joint</span>(</p><p>x, y, col=None, bandwidth_x=None, bandwidth_y=None, hist_args=None, ax_2d=None, ax_x=None, ax_y=None, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>A density contour plot that additionally has the 1D marginals for
+the x and y dsitribution plotted as smooth histograms along the axes.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>x</code>, <code>y</code>: lists or numpy arrays with the x and y coordinates of the points</li>
+<li><code>covariance_factor</code>: optional, numerical factor to tweak the smoothness
+   of the 2D contours (see <code>density_contour_data</code>)</li>
+<li><code>col</code>: optional, integer specifying the colour, will be applied to both
+  contour plot and marginals</li>
+<li><code>bandwidth_x</code>: optional, smoothing bandwidth for the Gaussian kernel of the
+  x marginal distribution</li>
+<li><code>bandwidth_y</code>: optional, smoothing bandwidth for the Gaussian kernel of the
+  y marginal distribution</li>
+</ul>
+<p>Additional options can be passed as follows:</p>
+<ul>
+<li><code>hist_args</code>: dictionary with keyword arguments passed to the 1D
+  <code>smooth_histogram</code> for both the x and y distribution</li>
+<li>Additional keyword arguments will be passed to <code>density_contour</code></li>
+</ul>
+<p>To plot multiple distributions in one figure, the function returns a
+dictionary with the three axis instances that can then be passed into
+another call of the function, e.g.</p>
+<p><code>axes1 = density_contour_joint(x1, y1, col=0)
+axes2 = density_contour_joint(x2, y2, col=1, **axes1)</code></p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.density_contour_joint', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.plots.plotfunctions.density_contour_joint" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">density_contour_joint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                          <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                          <span class="n">bandwidth_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bandwidth_y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                          <span class="n">hist_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                          <span class="n">ax_2d</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ax_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ax_y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                          <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A density contour plot that additionally has the 1D marginals for</span>
+<span class="sd">    the x and y dsitribution plotted as smooth histograms along the axes.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    - `x`, `y`: lists or numpy arrays with the x and y coordinates of the points</span>
+<span class="sd">    - `covariance_factor`: optional, numerical factor to tweak the smoothness</span>
+<span class="sd">       of the 2D contours (see `density_contour_data`)</span>
+<span class="sd">    - `col`: optional, integer specifying the colour, will be applied to both</span>
+<span class="sd">      contour plot and marginals</span>
+<span class="sd">    - `bandwidth_x`: optional, smoothing bandwidth for the Gaussian kernel of the</span>
+<span class="sd">      x marginal distribution</span>
+<span class="sd">    - `bandwidth_y`: optional, smoothing bandwidth for the Gaussian kernel of the</span>
+<span class="sd">      y marginal distribution</span>
+
+<span class="sd">    Additional options can be passed as follows:</span>
+
+<span class="sd">    - `hist_args`: dictionary with keyword arguments passed to the 1D</span>
+<span class="sd">      `smooth_histogram` for both the x and y distribution</span>
+<span class="sd">    - Additional keyword arguments will be passed to `density_contour`</span>
+
+<span class="sd">    To plot multiple distributions in one figure, the function returns a</span>
+<span class="sd">    dictionary with the three axis instances that can then be passed into</span>
+<span class="sd">    another call of the function, e.g.</span>
+
+<span class="sd">    ```</span>
+<span class="sd">    axes1 = density_contour_joint(x1, y1, col=0)</span>
+<span class="sd">    axes2 = density_contour_joint(x2, y2, col=1, **axes1)</span>
+<span class="sd">    ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># define the plot grid</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">height_ratios</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+    <span class="n">gs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># set up axes (unless they are already given)</span>
+    <span class="k">if</span> <span class="n">ax_2d</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">ax_2d</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="c1"># make the 2D density contour plot</span>
+    <span class="n">density_contour</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># x axis histogram</span>
+    <span class="k">if</span> <span class="n">hist_args</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">hist_args</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">ax_x</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">ax_x</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax_2d</span><span class="p">,</span> <span class="n">yticks</span><span class="o">=</span><span class="p">[],</span> <span class="n">frameon</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax_x</span><span class="p">)</span>
+    <span class="n">smooth_histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="n">bandwidth_x</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="o">**</span><span class="n">hist_args</span><span class="p">)</span>
+
+    <span class="c1"># y axis histogram</span>
+    <span class="k">if</span> <span class="n">ax_y</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">ax_y</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">sharey</span><span class="o">=</span><span class="n">ax_2d</span><span class="p">,</span> <span class="n">xticks</span><span class="o">=</span><span class="p">[],</span> <span class="n">frameon</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax_y</span><span class="p">)</span>
+    <span class="n">smooth_histogram</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">flipped</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="n">bandwidth_y</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="o">**</span><span class="n">hist_args</span><span class="p">)</span>
+
+    <span class="c1"># remove x and y histogram tick labels</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax_x</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="bp">False</span><span class="p">);</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax_y</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="bp">False</span><span class="p">);</span>
+
+    <span class="c1"># set 2D plot as active axis for adding legends etc.</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax_2d</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;ax_2d&#39;</span><span class="p">:</span> <span class="n">ax_2d</span><span class="p">,</span> <span class="s1">&#39;ax_x&#39;</span><span class="p">:</span> <span class="n">ax_x</span><span class="p">,</span> <span class="s1">&#39;ax_y&#39;</span><span class="p">:</span> <span class="n">ax_y</span><span class="p">}</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.error_budget_pie">
     <p>def <span class="ident">error_budget_pie</span>(</p><p>err_dict, other_cutoff=0.03)</p>
     </div>
@@ -2112,7 +2316,7 @@ uncertainties, so the representation can be misleading.</p></div>
       
   <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.likelihood_contour">
-    <p>def <span class="ident">likelihood_contour</span>(</p><p>log_likelihood, x_min, x_max, y_min, y_max, n_sigma=1, steps=20, **kwargs)</p>
+    <p>def <span class="ident">likelihood_contour</span>(</p><p>log_likelihood, x_min, x_max, y_min, y_max, n_sigma=1, steps=20, threads=1, **kwargs)</p>
     </div>
     
 
@@ -2138,7 +2342,7 @@ and allow to control the presentation of the plot (see docstring of
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.likelihood_contour', this);">Show source &equiv;</a></p>
   <div id="source-flavio.plots.plotfunctions.likelihood_contour" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">likelihood_contour</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span>
-              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
               <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot coloured confidence contours (or bands) given a log likelihood</span>
 <span class="sd">    function.</span>
@@ -2161,7 +2365,7 @@ and allow to control the presentation of the plot (see docstring of
     <span class="n">data</span> <span class="o">=</span> <span class="n">likelihood_contour_data</span><span class="p">(</span><span class="n">log_likelihood</span><span class="o">=</span><span class="n">log_likelihood</span><span class="p">,</span>
                                 <span class="n">x_min</span><span class="o">=</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="n">x_max</span><span class="p">,</span>
                                 <span class="n">y_min</span><span class="o">=</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="n">y_max</span><span class="p">,</span>
-                                <span class="n">n_sigma</span><span class="o">=</span><span class="n">n_sigma</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">)</span>
+                                <span class="n">n_sigma</span><span class="o">=</span><span class="n">n_sigma</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span>
     <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1">#  since we cannot do **data, **kwargs in Python &lt;3.5</span>
     <span class="k">return</span> <span class="n">contour</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
@@ -2174,7 +2378,7 @@ and allow to control the presentation of the plot (see docstring of
       
   <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.likelihood_contour_data">
-    <p>def <span class="ident">likelihood_contour_data</span>(</p><p>log_likelihood, x_min, x_max, y_min, y_max, n_sigma=1, steps=20)</p>
+    <p>def <span class="ident">likelihood_contour_data</span>(</p><p>log_likelihood, x_min, x_max, y_min, y_max, n_sigma=1, steps=20, threads=1)</p>
     </div>
     
 
@@ -2192,12 +2396,14 @@ given a log likelihood function.</p>
   contours.</li>
 <li><code>steps</code>: number of grid steps in each dimension (total computing time is
   this number squared times the computing time of one <code>log_likelihood</code> call!)</li>
+<li><code>threads</code>: number of threads, defaults to 1. If greater than one,
+  computation of z values will be done in parallel.</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.likelihood_contour_data', this);">Show source &equiv;</a></p>
   <div id="source-flavio.plots.plotfunctions.likelihood_contour_data" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">likelihood_contour_data</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span>
-              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Generate data required to plot coloured confidence contours (or bands)</span>
 <span class="sd">    given a log likelihood function.</span>
 
@@ -2211,14 +2417,26 @@ given a log likelihood function.</p>
 <span class="sd">      contours.</span>
 <span class="sd">    - `steps`: number of grid steps in each dimension (total computing time is</span>
 <span class="sd">      this number squared times the computing time of one `log_likelihood` call!)</span>
-<span class="sd">     &quot;&quot;&quot;</span>
+<span class="sd">    - `threads`: number of threads, defaults to 1. If greater than one,</span>
+<span class="sd">      computation of z values will be done in parallel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
     <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">)</span>
-    <span class="nd">@np.vectorize</span>
-    <span class="k">def</span> <span class="nf">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span> <span class="c1"># needed for evaluation on meshgrid</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">log_likelihood</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="n">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nd">@np.vectorize</span>
+        <span class="k">def</span> <span class="nf">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span> <span class="c1"># needed for evaluation on meshgrid</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">log_likelihood</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">xy</span> <span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">steps</span><span class="p">,</span> <span class="n">steps</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">PicklingError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PicklingError</span><span class="p">(</span><span class="s2">&quot;When using more than 1 thread, the &quot;</span>
+                                <span class="s2">&quot;log_likelihood function must be picklable; &quot;</span>
+                                <span class="s2">&quot;in particular, you cannot use lambda expressions.&quot;</span><span class="p">)</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="c1"># subtract the best fit point (on the grid)</span>
 
     <span class="c1"># get the correct values for 2D confidence/credibility contours for n sigma</span>
@@ -2237,7 +2455,7 @@ given a log likelihood function.</p>
       
   <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.likelihood_plot">
-    <p>def <span class="ident">likelihood_plot</span>(</p><p>x, y, fill_x=None, col=None, label=None, plotargs={}, fillargs={})</p>
+    <p>def <span class="ident">likelihood_plot</span>(</p><p>x, y, fill_x=None, col=None, label=None, plotargs={}, fillargs={}, flipped=False)</p>
     </div>
     
 
@@ -2256,7 +2474,8 @@ given a log likelihood function.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.likelihood_plot', this);">Show source &equiv;</a></p>
   <div id="source-flavio.plots.plotfunctions.likelihood_plot" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">likelihood_plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fill_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fillargs</span><span class="o">=</span><span class="p">{}):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">likelihood_plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fill_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fillargs</span><span class="o">=</span><span class="p">{},</span>
+                    <span class="n">flipped</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plot of a 1D probability density function.</span>
 
 <span class="sd">    Parameters:</span>
@@ -2283,11 +2502,18 @@ given a log likelihood function.</p>
         <span class="n">_fillargs</span><span class="p">[</span><span class="s1">&#39;facecolor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
     <span class="n">_fillargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fillargs</span><span class="p">)</span>
     <span class="n">_plotargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plotargs</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">_plotargs</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">fill_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
-            <span class="n">where</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">fill_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">fill_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-            <span class="o">**</span><span class="n">_fillargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">flipped</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">_plotargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fill_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                <span class="n">where</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">fill_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">fill_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="o">**</span><span class="n">_fillargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">_plotargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fill_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">fill_betweenx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                <span class="n">where</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">fill_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">fill_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="o">**</span><span class="n">_fillargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2298,7 +2524,7 @@ given a log likelihood function.</p>
       
   <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.pdf_plot">
-    <p>def <span class="ident">pdf_plot</span>(</p><p>dist, x_min=None, x_max=None, fill=True, steps=200, normed=True, **kwargs)</p>
+    <p>def <span class="ident">pdf_plot</span>(</p><p>dist, x_min=None, x_max=None, fill=True, steps=500, normed=True, **kwargs)</p>
     </div>
     
 
@@ -2309,20 +2535,20 @@ given a log likelihood function.</p>
 <ul>
 <li><code>dist</code>: an instance of ProbabilityDistribution</li>
 <li><code>x_min</code>, <code>x_max</code>: plot boundaries</li>
-<li>steps: optional, number of points (default: 200)</li>
+<li><code>steps</code>: optional, number of points (default: 200)</li>
 </ul>
 <p>The remaining parameters will be passed to <code>likelihood_plot</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.pdf_plot', this);">Show source &equiv;</a></p>
   <div id="source-flavio.plots.plotfunctions.pdf_plot" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">pdf_plot</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">x_min</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">pdf_plot</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">x_min</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plot of a 1D probability density function.</span>
 
 <span class="sd">    Parameters:</span>
 
 <span class="sd">    - `dist`: an instance of ProbabilityDistribution</span>
 <span class="sd">    - `x_min`, `x_max`: plot boundaries</span>
-<span class="sd">    - steps: optional, number of points (default: 200)</span>
+<span class="sd">    - `steps`: optional, number of points (default: 200)</span>
 
 <span class="sd">    The remaining parameters will be passed to `likelihood_plot`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2540,7 +2766,7 @@ e.g. 'fc' for face colour.</p></div>
     <span class="k">if</span> <span class="n">obs</span><span class="o">.</span><span class="n">arguments</span> <span class="o">!=</span> <span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Only observables that depend on q2min and q2max (and nothing else) are allowed&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span> <span class="c1"># SM Wilson coefficients</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span> <span class="c1"># SM Wilson coefficients</span>
         <span class="n">obs_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">bin_</span><span class="p">:</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">bin_</span><span class="p">)</span> <span class="k">for</span> <span class="n">bin_</span> <span class="ow">in</span> <span class="n">bin_list</span><span class="p">}</span>
         <span class="n">obs_err_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">bin_</span><span class="p">:</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">bin_</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">)</span> <span class="k">for</span> <span class="n">bin_</span> <span class="ow">in</span> <span class="n">bin_list</span><span class="p">}</span>
     <span class="k">else</span><span class="p">:</span>
@@ -2615,7 +2841,7 @@ e.g. 'c' for colour.</p></div>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Only observables that depend on $q^2$ (and nothing else) are allowed&quot;</span><span class="p">)</span>
     <span class="n">q2_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">q2steps</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">wc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span> <span class="c1"># SM Wilson coefficients</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span> <span class="c1"># SM Wilson coefficients</span>
         <span class="n">obs_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span> <span class="k">for</span> <span class="n">q2</span> <span class="ow">in</span> <span class="n">q2_arr</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">obs_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span> <span class="k">for</span> <span class="n">q2</span> <span class="ow">in</span> <span class="n">q2_arr</span><span class="p">]</span>

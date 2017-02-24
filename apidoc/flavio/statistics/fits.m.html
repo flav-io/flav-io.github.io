@@ -1065,6 +1065,7 @@ table {
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.dict_to_array">dict_to_array</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.get_par_dict">get_par_dict</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.get_predictions">get_predictions</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.get_predictions_array">get_predictions_array</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.get_wc_obj">get_wc_obj</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.log_likelihood">log_likelihood</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.log_prior_parameters">log_prior_parameters</a></li>
@@ -1085,8 +1086,10 @@ table {
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.__init__">__init__</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.array_to_dict">array_to_dict</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.dict_to_array">dict_to_array</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.FastFit.dict_to_shortarray">dict_to_shortarray</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_par_dict">get_par_dict</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_predictions">get_predictions</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_predictions_array">get_predictions_array</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_wc_obj">get_wc_obj</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.log_likelihood">log_likelihood</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.log_prior_parameters">log_prior_parameters</a></li>
@@ -1094,6 +1097,8 @@ table {
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.log_target">log_target</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.make_measurement">make_measurement</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.set_description">set_description</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.FastFit.shortarray_to_array">shortarray_to_array</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.FastFit.shortarray_to_dict">shortarray_to_dict</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_instance">get_instance</a></li>
@@ -1147,6 +1152,8 @@ to be used directly).</p>
 <span class="kn">from</span> <span class="nn">flavio.statistics.probability</span> <span class="kn">import</span> <span class="n">NormalDistribution</span><span class="p">,</span> <span class="n">MultivariateNormalDistribution</span><span class="p">,</span> <span class="n">convolve_distributions</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 
 <span class="k">class</span> <span class="nc">Fit</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">NamedInstanceClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for fits. Not meant to be used directly.&quot;&quot;&quot;</span>
@@ -1210,7 +1217,7 @@ to be used directly).</p>
         <span class="c1"># check that the Wilson coefficient function works</span>
         <span class="k">if</span> <span class="n">fit_wc_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> <span class="c1"># if list of WC names not empty</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="n">fit_wc_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fit_wc_function</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
                 <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">})</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error in calling the Wilson coefficient function&quot;</span><span class="p">)</span>
@@ -1392,13 +1399,29 @@ to be used directly).</p>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get an array with random values for all the fit and nuisance</span>
-<span class="sd">        parameters and Wilson coefficients&quot;&quot;&quot;</span>
+<span class="sd">        parameters and Wilson coefficients.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an array with random values for all the fit and nuisance</span>
+<span class="sd">        parameters and Wilson coefficients.</span>
+
+<span class="sd">        If par is False, fit parameters are set to their central values.</span>
+<span class="sd">        If nuisance is False, nuisance parameters are set to their central values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span>
         <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
         <span class="n">n_nui_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
-        <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_fit_parameters</span>
-        <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_nuisance_parameters</span>
-        <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_wilson_coeffs</span>
+        <span class="k">if</span> <span class="n">par</span><span class="p">:</span>
+            <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_fit_parameters</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_central_fit_parameters</span>
+        <span class="k">if</span> <span class="n">nuisance</span><span class="p">:</span>
+            <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_nuisance_parameters</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_central_nuisance_parameters</span>
+        <span class="k">if</span> <span class="n">wc</span><span class="p">:</span>
+            <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_wilson_coeffs</span>
         <span class="k">return</span> <span class="n">arr</span>
 
     <span class="nd">@property</span>
@@ -1406,7 +1429,11 @@ to be used directly).</p>
         <span class="sd">&quot;&quot;&quot;Return a numpy array with random values for all Wilson coefficients</span>
 <span class="sd">        sampling the start_wc_priors distribution.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_wc_priors</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">None</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_priors</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Starting values can only be generated if&quot;</span>
+                        <span class="s2">&quot; either fit_wc_priors or start_wc_priors is defined&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_wilson_coeffs</span>
         <span class="n">all_random</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_wc_priors</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">all_random</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">])</span>
 
@@ -1422,12 +1449,18 @@ to be used directly).</p>
         <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_wilson_coeffs_start</span>
         <span class="k">return</span> <span class="n">arr</span>
 
-    <span class="k">def</span> <span class="nf">get_par_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get a dictionary of fit and nuisance parameters from an input array&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">get_par_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a dictionary of fit and nuisance parameters from an input array</span>
+
+<span class="sd">        If par is False, fit parameters are set to their central values.</span>
+<span class="sd">        If nuisance is False, nuisance parameters are set to their central values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">])</span>
-        <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;nuisance_parameters&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">par</span><span class="p">:</span>
+            <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">nuisance</span><span class="p">:</span>
+            <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;nuisance_parameters&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">par_dict</span>
 
     <span class="k">def</span> <span class="nf">get_wc_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
@@ -1456,11 +1489,19 @@ to be used directly).</p>
         <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_priors</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">wc_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prob_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
 
-    <span class="k">def</span> <span class="nf">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get a dictionary with predictions for all observables given an input</span>
-<span class="sd">        array&quot;&quot;&quot;</span>
-        <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">wc_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wc_obj</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="sd">        array.</span>
+
+<span class="sd">        If par is False, fit parameters are set to their central values.</span>
+<span class="sd">        If nuisance is False, nuisance parameters are set to their central values.</span>
+<span class="sd">        If wc is False, Wilson coefficients are set to their SM values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="n">nuisance</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">wc</span><span class="p">:</span>
+            <span class="n">wc_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wc_obj</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
         <span class="n">all_predictions</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
@@ -1471,6 +1512,10 @@ to be used directly).</p>
                 <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
                 <span class="n">all_predictions</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">all_predictions</span>
+
+    <span class="k">def</span> <span class="nf">get_predictions_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">pred</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the logarithm of the likelihood function (not including the</span>
@@ -1579,38 +1624,30 @@ to be used directly).</p>
             <span class="k">return</span> <span class="n">weighted_mean</span><span class="p">,</span> <span class="n">weighted_covariance</span>
 
 
+    <span class="k">def</span> <span class="nf">_get_random_nuisance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
     <span class="c1"># a method to get the covariance of the SM prediction of all observables</span>
     <span class="c1"># of interest</span>
-    <span class="k">def</span> <span class="nf">_get_covariance_sm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-        <span class="n">par_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-        <span class="k">def</span> <span class="nf">random_nuisance_dict</span><span class="p">():</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_nuisance_parameters</span>
-            <span class="n">nuis_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">par</span><span class="p">:</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">par</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)}</span>
-            <span class="n">par</span> <span class="o">=</span> <span class="n">par_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">par</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">nuis_dict</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">par</span>
-        <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">random_nuisance_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
-
-        <span class="n">pred_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> <span class="n">N</span><span class="p">))</span>
-        <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">observable</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                <span class="n">obs_name</span> <span class="o">=</span> <span class="n">observable</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs_name</span><span class="p">)</span>
-                <span class="n">pred_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">observable</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
-                                        <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
-                <span class="n">pred_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">)</span>
-                                        <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">_get_covariance_sm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">pred_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> <span class="n">N</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                <span class="n">pred_arr</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># X = [get_random_nuisance_arr() for j in range(N)]</span>
+            <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_random_nuisance</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span>
+            <span class="n">pred_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_array</span><span class="p">,</span> <span class="n">X</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">pred_arr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize the fit by producing a pseudo-measurement containing both</span>
 <span class="sd">        experimental uncertainties as well as theory uncertainties stemming</span>
 <span class="sd">        from nuisance parameters.&quot;&quot;&quot;</span>
         <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">Nexp</span><span class="p">)</span>
-        <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance_sm</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+        <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance_sm</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span>
         <span class="n">covariance</span> <span class="o">=</span> <span class="n">cov_exp</span> <span class="o">+</span> <span class="n">cov_sm</span>
         <span class="c1"># add the Pseudo-measurement</span>
         <span class="n">m</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -1621,9 +1658,9 @@ to be used directly).</p>
             <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">,</span>
                     <span class="n">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">central_exp</span><span class="p">,</span> <span class="n">covariance</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">array_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Convert a 1D numpy array of floats to a dictionary of fit parameters,</span>
-<span class="sd">        nuisance parameters, and Wilson coefficients.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">shortarray_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert a 1D numpy array of floats to a dictionary of fit parameters</span>
+<span class="sd">        and Wilson coefficients.&quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
         <span class="n">n_wc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
@@ -1631,7 +1668,7 @@ to be used directly).</p>
         <span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">p</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">n_fit_p</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span> <span class="p">}</span>
         <span class="k">return</span> <span class="n">d</span>
 
-    <span class="k">def</span> <span class="nf">dict_to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">dict_to_shortarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a dictionary of fit parameters and Wilson coefficients to a</span>
 <span class="sd">        1D numpy array of floats.&quot;&quot;&quot;</span>
         <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
@@ -1641,17 +1678,25 @@ to be used directly).</p>
         <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:]</span>   <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">arr</span>
 
-    <span class="k">def</span> <span class="nf">get_par_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">par_dict</span>
+    <span class="k">def</span> <span class="nf">shortarray_to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert an array of fit parameters and Wilson coefficients to an</span>
+<span class="sd">        array of fit parameters, nuisance parameters, and Wilson coefficients</span>
+<span class="sd">        (setting nuisance parameters to their central values).&quot;&quot;&quot;</span>
+        <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
+        <span class="n">n_nui_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
+        <span class="n">n_wc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_fit_p</span> <span class="o">+</span> <span class="n">n_nui_p</span> <span class="o">+</span> <span class="n">n_wc</span><span class="p">)</span>
+        <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span>
+        <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_central_nuisance_parameters</span>
+        <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">arr</span>
 
     <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the logarithm of the likelihood. Note that there is no prior</span>
 <span class="sd">        probability for nuisance parameters, which have been integrated out.</span>
 <span class="sd">        Priors for fit parameters are ignored.&quot;&quot;&quot;</span>
-        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+         <span class="c1"># set nuisance parameters to their central values!</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shortarray_to_array</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="n">m_obs</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
         <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
@@ -1784,13 +1829,29 @@ the fit. By default, all existing measurements are included.</li>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get an array with random values for all the fit and nuisance</span>
-<span class="sd">        parameters and Wilson coefficients&quot;&quot;&quot;</span>
+<span class="sd">        parameters and Wilson coefficients.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an array with random values for all the fit and nuisance</span>
+<span class="sd">        parameters and Wilson coefficients.</span>
+
+<span class="sd">        If par is False, fit parameters are set to their central values.</span>
+<span class="sd">        If nuisance is False, nuisance parameters are set to their central values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span>
         <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
         <span class="n">n_nui_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
-        <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_fit_parameters</span>
-        <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_nuisance_parameters</span>
-        <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_wilson_coeffs</span>
+        <span class="k">if</span> <span class="n">par</span><span class="p">:</span>
+            <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_fit_parameters</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_central_fit_parameters</span>
+        <span class="k">if</span> <span class="n">nuisance</span><span class="p">:</span>
+            <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_nuisance_parameters</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_central_nuisance_parameters</span>
+        <span class="k">if</span> <span class="n">wc</span><span class="p">:</span>
+            <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_wilson_coeffs</span>
         <span class="k">return</span> <span class="n">arr</span>
 
     <span class="nd">@property</span>
@@ -1798,7 +1859,11 @@ the fit. By default, all existing measurements are included.</li>
         <span class="sd">&quot;&quot;&quot;Return a numpy array with random values for all Wilson coefficients</span>
 <span class="sd">        sampling the start_wc_priors distribution.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_wc_priors</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">None</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_priors</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Starting values can only be generated if&quot;</span>
+                        <span class="s2">&quot; either fit_wc_priors or start_wc_priors is defined&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_wilson_coeffs</span>
         <span class="n">all_random</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_wc_priors</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">all_random</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">])</span>
 
@@ -1814,12 +1879,18 @@ the fit. By default, all existing measurements are included.</li>
         <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_wilson_coeffs_start</span>
         <span class="k">return</span> <span class="n">arr</span>
 
-    <span class="k">def</span> <span class="nf">get_par_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get a dictionary of fit and nuisance parameters from an input array&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">get_par_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a dictionary of fit and nuisance parameters from an input array</span>
+
+<span class="sd">        If par is False, fit parameters are set to their central values.</span>
+<span class="sd">        If nuisance is False, nuisance parameters are set to their central values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">])</span>
-        <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;nuisance_parameters&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">par</span><span class="p">:</span>
+            <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">nuisance</span><span class="p">:</span>
+            <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;nuisance_parameters&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">par_dict</span>
 
     <span class="k">def</span> <span class="nf">get_wc_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
@@ -1848,11 +1919,19 @@ the fit. By default, all existing measurements are included.</li>
         <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_priors</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">wc_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prob_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
 
-    <span class="k">def</span> <span class="nf">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get a dictionary with predictions for all observables given an input</span>
-<span class="sd">        array&quot;&quot;&quot;</span>
-        <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">wc_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wc_obj</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="sd">        array.</span>
+
+<span class="sd">        If par is False, fit parameters are set to their central values.</span>
+<span class="sd">        If nuisance is False, nuisance parameters are set to their central values.</span>
+<span class="sd">        If wc is False, Wilson coefficients are set to their SM values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="n">nuisance</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">wc</span><span class="p">:</span>
+            <span class="n">wc_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wc_obj</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
         <span class="n">all_predictions</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
@@ -1863,6 +1942,10 @@ the fit. By default, all existing measurements are included.</li>
                 <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
                 <span class="n">all_predictions</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">all_predictions</span>
+
+    <span class="k">def</span> <span class="nf">get_predictions_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">pred</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the logarithm of the likelihood function (not including the</span>
@@ -1988,22 +2071,29 @@ floats.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.BayesianFit.get_par_dict">
-    <p>def <span class="ident">get_par_dict</span>(</p><p>self, x)</p>
+    <p>def <span class="ident">get_par_dict</span>(</p><p>self, x, par=True, nuisance=True)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Get a dictionary of fit and nuisance parameters from an input array</p></div>
+    <div class="desc"><p>Get a dictionary of fit and nuisance parameters from an input array</p>
+<p>If par is False, fit parameters are set to their central values.
+If nuisance is False, nuisance parameters are set to their central values.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.BayesianFit.get_par_dict', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits.BayesianFit.get_par_dict" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_par_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get a dictionary of fit and nuisance parameters from an input array&quot;&quot;&quot;</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_par_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get a dictionary of fit and nuisance parameters from an input array</span>
+<span class="sd">    If par is False, fit parameters are set to their central values.</span>
+<span class="sd">    If nuisance is False, nuisance parameters are set to their central values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">])</span>
-    <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;nuisance_parameters&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">par</span><span class="p">:</span>
+        <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">nuisance</span><span class="p">:</span>
+        <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;nuisance_parameters&#39;</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">par_dict</span>
 </pre></div>
 
@@ -2015,22 +2105,32 @@ floats.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.BayesianFit.get_predictions">
-    <p>def <span class="ident">get_predictions</span>(</p><p>self, x)</p>
+    <p>def <span class="ident">get_predictions</span>(</p><p>self, x, par=True, nuisance=True, wc=True)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a dictionary with predictions for all observables given an input
-array</p></div>
+array.</p>
+<p>If par is False, fit parameters are set to their central values.
+If nuisance is False, nuisance parameters are set to their central values.
+If wc is False, Wilson coefficients are set to their SM values.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.BayesianFit.get_predictions', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits.BayesianFit.get_predictions" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a dictionary with predictions for all observables given an input</span>
-<span class="sd">    array&quot;&quot;&quot;</span>
-    <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">wc_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wc_obj</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="sd">    array.</span>
+<span class="sd">    If par is False, fit parameters are set to their central values.</span>
+<span class="sd">    If nuisance is False, nuisance parameters are set to their central values.</span>
+<span class="sd">    If wc is False, Wilson coefficients are set to their SM values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="n">nuisance</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">wc</span><span class="p">:</span>
+        <span class="n">wc_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wc_obj</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
     <span class="n">all_predictions</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
@@ -2041,6 +2141,28 @@ array</p></div>
             <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
             <span class="n">all_predictions</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">all_predictions</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.fits.BayesianFit.get_predictions_array">
+    <p>def <span class="ident">get_predictions_array</span>(</p><p>self, x, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.BayesianFit.get_predictions_array', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.BayesianFit.get_predictions_array" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_predictions_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">pred</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">])</span>
 </pre></div>
 
   </div>
@@ -2245,10 +2367,14 @@ given an input array</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.BayesianFit.get_measurements" class="name">var <span class="ident">get_measurements</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_measurements">get_measurements</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return a list of all the measurements currently defined that
+    <div class="desc inherited"><p>Return a list of all the measurements currently defined that
 constrain any of the fit observables.</p></div>
   <div class="source_cont">
 </div>
@@ -2261,7 +2387,7 @@ constrain any of the fit observables.</p></div>
             
   
     <div class="desc"><p>Get an array with random values for all the fit and nuisance
-parameters and Wilson coefficients</p></div>
+parameters and Wilson coefficients.</p></div>
   <div class="source_cont">
 </div>
 
@@ -2521,38 +2647,30 @@ importantly,</p>
             <span class="k">return</span> <span class="n">weighted_mean</span><span class="p">,</span> <span class="n">weighted_covariance</span>
 
 
+    <span class="k">def</span> <span class="nf">_get_random_nuisance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
     <span class="c1"># a method to get the covariance of the SM prediction of all observables</span>
     <span class="c1"># of interest</span>
-    <span class="k">def</span> <span class="nf">_get_covariance_sm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-        <span class="n">par_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-        <span class="k">def</span> <span class="nf">random_nuisance_dict</span><span class="p">():</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_nuisance_parameters</span>
-            <span class="n">nuis_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">par</span><span class="p">:</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">par</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)}</span>
-            <span class="n">par</span> <span class="o">=</span> <span class="n">par_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">par</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">nuis_dict</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">par</span>
-        <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">random_nuisance_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
-
-        <span class="n">pred_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> <span class="n">N</span><span class="p">))</span>
-        <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">observable</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                <span class="n">obs_name</span> <span class="o">=</span> <span class="n">observable</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs_name</span><span class="p">)</span>
-                <span class="n">pred_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">observable</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
-                                        <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
-                <span class="n">pred_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">)</span>
-                                        <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">_get_covariance_sm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">pred_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> <span class="n">N</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                <span class="n">pred_arr</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># X = [get_random_nuisance_arr() for j in range(N)]</span>
+            <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_random_nuisance</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span>
+            <span class="n">pred_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_array</span><span class="p">,</span> <span class="n">X</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">pred_arr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize the fit by producing a pseudo-measurement containing both</span>
 <span class="sd">        experimental uncertainties as well as theory uncertainties stemming</span>
 <span class="sd">        from nuisance parameters.&quot;&quot;&quot;</span>
         <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">Nexp</span><span class="p">)</span>
-        <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance_sm</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+        <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance_sm</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span>
         <span class="n">covariance</span> <span class="o">=</span> <span class="n">cov_exp</span> <span class="o">+</span> <span class="n">cov_sm</span>
         <span class="c1"># add the Pseudo-measurement</span>
         <span class="n">m</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -2563,9 +2681,9 @@ importantly,</p>
             <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">,</span>
                     <span class="n">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">central_exp</span><span class="p">,</span> <span class="n">covariance</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">array_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Convert a 1D numpy array of floats to a dictionary of fit parameters,</span>
-<span class="sd">        nuisance parameters, and Wilson coefficients.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">shortarray_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert a 1D numpy array of floats to a dictionary of fit parameters</span>
+<span class="sd">        and Wilson coefficients.&quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
         <span class="n">n_wc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
@@ -2573,7 +2691,7 @@ importantly,</p>
         <span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">p</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">n_fit_p</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span> <span class="p">}</span>
         <span class="k">return</span> <span class="n">d</span>
 
-    <span class="k">def</span> <span class="nf">dict_to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">dict_to_shortarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a dictionary of fit parameters and Wilson coefficients to a</span>
 <span class="sd">        1D numpy array of floats.&quot;&quot;&quot;</span>
         <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
@@ -2583,17 +2701,25 @@ importantly,</p>
         <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:]</span>   <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">arr</span>
 
-    <span class="k">def</span> <span class="nf">get_par_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">par_dict</span>
+    <span class="k">def</span> <span class="nf">shortarray_to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert an array of fit parameters and Wilson coefficients to an</span>
+<span class="sd">        array of fit parameters, nuisance parameters, and Wilson coefficients</span>
+<span class="sd">        (setting nuisance parameters to their central values).&quot;&quot;&quot;</span>
+        <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
+        <span class="n">n_nui_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
+        <span class="n">n_wc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_fit_p</span> <span class="o">+</span> <span class="n">n_nui_p</span> <span class="o">+</span> <span class="n">n_wc</span><span class="p">)</span>
+        <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span>
+        <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_central_nuisance_parameters</span>
+        <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">arr</span>
 
     <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the logarithm of the likelihood. Note that there is no prior</span>
 <span class="sd">        probability for nuisance parameters, which have been integrated out.</span>
 <span class="sd">        Priors for fit parameters are ignored.&quot;&quot;&quot;</span>
-        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+         <span class="c1"># set nuisance parameters to their central values!</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shortarray_to_array</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="n">m_obs</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
         <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
@@ -2657,9 +2783,11 @@ nuisance parameters, and Wilson coefficients.</p></div>
 <span class="sd">    nuisance parameters, and Wilson coefficients.&quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
+    <span class="n">n_nui_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
     <span class="n">n_wc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
     <span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">p</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span> <span class="p">}</span>
-    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">p</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">n_fit_p</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span> <span class="p">}</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;nuisance_parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">p</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">n_fit_p</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span> <span class="p">}</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">p</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">n_fit_p</span> <span class="o">+</span> <span class="n">n_nui_p</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span> <span class="p">}</span>
     <span class="k">return</span> <span class="n">d</span>
 </pre></div>
 
@@ -2677,12 +2805,46 @@ nuisance parameters, and Wilson coefficients.</p></div>
 
     
   
-    <div class="desc"><p>Convert a dictionary of fit parameters and Wilson coefficients to a
-1D numpy array of floats.</p></div>
+    <div class="desc"><p>Convert a dictionary of fit parameters,
+nuisance parameters, and Wilson coefficients to a 1D numpy array of
+floats.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.dict_to_array', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits.FastFit.dict_to_array" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">dict_to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a dictionary of fit parameters,</span>
+<span class="sd">    nuisance parameters, and Wilson coefficients to a 1D numpy array of</span>
+<span class="sd">    floats.&quot;&quot;&quot;</span>
+    <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
+    <span class="n">n_nui_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
+    <span class="n">n_wc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_fit_p</span> <span class="o">+</span> <span class="n">n_nui_p</span> <span class="o">+</span> <span class="n">n_wc</span><span class="p">)</span>
+    <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">][</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">]</span>
+    <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;nuisance_parameters&#39;</span><span class="p">][</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">]</span>
+    <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span>   <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">arr</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.fits.FastFit.dict_to_shortarray">
+    <p>def <span class="ident">dict_to_shortarray</span>(</p><p>self, d)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Convert a dictionary of fit parameters and Wilson coefficients to a
+1D numpy array of floats.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.dict_to_shortarray', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.FastFit.dict_to_shortarray" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">dict_to_shortarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert a dictionary of fit parameters and Wilson coefficients to a</span>
 <span class="sd">    1D numpy array of floats.&quot;&quot;&quot;</span>
     <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
@@ -2701,20 +2863,29 @@ nuisance parameters, and Wilson coefficients.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.FastFit.get_par_dict">
-    <p>def <span class="ident">get_par_dict</span>(</p><p>self, x)</p>
+    <p>def <span class="ident">get_par_dict</span>(</p><p>self, x, par=True, nuisance=True)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Get a dictionary of fit and nuisance parameters from an input array</p></div>
+    <div class="desc"><p>Get a dictionary of fit and nuisance parameters from an input array</p>
+<p>If par is False, fit parameters are set to their central values.
+If nuisance is False, nuisance parameters are set to their central values.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.get_par_dict', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits.FastFit.get_par_dict" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_par_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_par_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get a dictionary of fit and nuisance parameters from an input array</span>
+<span class="sd">    If par is False, fit parameters are set to their central values.</span>
+<span class="sd">    If nuisance is False, nuisance parameters are set to their central values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">par</span><span class="p">:</span>
+        <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">nuisance</span><span class="p">:</span>
+        <span class="n">par_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;nuisance_parameters&#39;</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">par_dict</span>
 </pre></div>
 
@@ -2726,22 +2897,32 @@ nuisance parameters, and Wilson coefficients.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.FastFit.get_predictions">
-    <p>def <span class="ident">get_predictions</span>(</p><p>self, x)</p>
+    <p>def <span class="ident">get_predictions</span>(</p><p>self, x, par=True, nuisance=True, wc=True)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a dictionary with predictions for all observables given an input
-array</p></div>
+array.</p>
+<p>If par is False, fit parameters are set to their central values.
+If nuisance is False, nuisance parameters are set to their central values.
+If wc is False, Wilson coefficients are set to their SM values.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.get_predictions', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits.FastFit.get_predictions" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a dictionary with predictions for all observables given an input</span>
-<span class="sd">    array&quot;&quot;&quot;</span>
-    <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">wc_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wc_obj</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="sd">    array.</span>
+<span class="sd">    If par is False, fit parameters are set to their central values.</span>
+<span class="sd">    If nuisance is False, nuisance parameters are set to their central values.</span>
+<span class="sd">    If wc is False, Wilson coefficients are set to their SM values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="n">nuisance</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">wc</span><span class="p">:</span>
+        <span class="n">wc_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wc_obj</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
     <span class="n">all_predictions</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
@@ -2752,6 +2933,28 @@ array</p></div>
             <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
             <span class="n">all_predictions</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">all_predictions</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.fits.FastFit.get_predictions_array">
+    <p>def <span class="ident">get_predictions_array</span>(</p><p>self, x, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.get_predictions_array', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.FastFit.get_predictions_array" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_predictions_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">pred</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">])</span>
 </pre></div>
 
   </div>
@@ -2805,7 +3008,8 @@ Priors for fit parameters are ignored.</p></div>
     <span class="sd">&quot;&quot;&quot;Return the logarithm of the likelihood. Note that there is no prior</span>
 <span class="sd">    probability for nuisance parameters, which have been integrated out.</span>
 <span class="sd">    Priors for fit parameters are ignored.&quot;&quot;&quot;</span>
-    <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+     <span class="c1"># set nuisance parameters to their central values!</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shortarray_to_array</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
     <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="n">m_obs</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
@@ -2901,7 +3105,7 @@ given an input array</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.FastFit.make_measurement">
-    <p>def <span class="ident">make_measurement</span>(</p><p>self, N=100, Nexp=5000)</p>
+    <p>def <span class="ident">make_measurement</span>(</p><p>self, N=100, Nexp=5000, threads=1)</p>
     </div>
     
 
@@ -2913,12 +3117,12 @@ from nuisance parameters.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.make_measurement', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits.FastFit.make_measurement" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Initialize the fit by producing a pseudo-measurement containing both</span>
 <span class="sd">    experimental uncertainties as well as theory uncertainties stemming</span>
 <span class="sd">    from nuisance parameters.&quot;&quot;&quot;</span>
     <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">Nexp</span><span class="p">)</span>
-    <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance_sm</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_covariance_sm</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span>
     <span class="n">covariance</span> <span class="o">=</span> <span class="n">cov_exp</span> <span class="o">+</span> <span class="n">cov_sm</span>
     <span class="c1"># add the Pseudo-measurement</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Measurement</span><span class="p">(</span><span class="s1">&#39;Pseudo-measurement for FastFit instance: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -2956,6 +3160,70 @@ from nuisance parameters.</p></div>
 
   </div>
   
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.fits.FastFit.shortarray_to_array">
+    <p>def <span class="ident">shortarray_to_array</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Convert an array of fit parameters and Wilson coefficients to an
+array of fit parameters, nuisance parameters, and Wilson coefficients
+(setting nuisance parameters to their central values).</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.shortarray_to_array', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.FastFit.shortarray_to_array" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">shortarray_to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert an array of fit parameters and Wilson coefficients to an</span>
+<span class="sd">    array of fit parameters, nuisance parameters, and Wilson coefficients</span>
+<span class="sd">    (setting nuisance parameters to their central values).&quot;&quot;&quot;</span>
+    <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
+    <span class="n">n_nui_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
+    <span class="n">n_wc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_fit_p</span> <span class="o">+</span> <span class="n">n_nui_p</span> <span class="o">+</span> <span class="n">n_wc</span><span class="p">)</span>
+    <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span>
+    <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_central_nuisance_parameters</span>
+    <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="o">+</span><span class="n">n_nui_p</span><span class="p">:]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">arr</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.fits.FastFit.shortarray_to_dict">
+    <p>def <span class="ident">shortarray_to_dict</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Convert a 1D numpy array of floats to a dictionary of fit parameters
+and Wilson coefficients.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.shortarray_to_dict', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.FastFit.shortarray_to_dict" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">shortarray_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a 1D numpy array of floats to a dictionary of fit parameters</span>
+<span class="sd">    and Wilson coefficients.&quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">n_fit_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span>
+    <span class="n">n_wc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">p</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span> <span class="p">}</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">p</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">n_fit_p</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">return</span> <span class="n">d</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
           <h3>Instance variables</h3>
             <div class="item">
             <p id="flavio.statistics.fits.FastFit.get_central_fit_parameters" class="name">var <span class="ident">get_central_fit_parameters</span></p>
@@ -2982,10 +3250,14 @@ from nuisance parameters.</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.FastFit.get_measurements" class="name">var <span class="ident">get_measurements</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.fits.BayesianFit">BayesianFit</a></code>.<code><a href="#flavio.statistics.fits.BayesianFit.get_measurements">get_measurements</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return a list of all the measurements currently defined that
+    <div class="desc inherited"><p>Return a list of all the measurements currently defined that
 constrain any of the fit observables.</p></div>
   <div class="source_cont">
 </div>
@@ -2998,7 +3270,7 @@ constrain any of the fit observables.</p></div>
             
   
     <div class="desc"><p>Get an array with random values for all the fit and nuisance
-parameters and Wilson coefficients</p></div>
+parameters and Wilson coefficients.</p></div>
   <div class="source_cont">
 </div>
 
@@ -3006,10 +3278,14 @@ parameters and Wilson coefficients</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.FastFit.get_random_fit_parameters" class="name">var <span class="ident">get_random_fit_parameters</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_random_fit_parameters">get_random_fit_parameters</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return a numpy array with random values for all fit parameters.</p></div>
+    <div class="desc inherited"><p>Return a numpy array with random values for all fit parameters.</p></div>
   <div class="source_cont">
 </div>
 
@@ -3017,14 +3293,10 @@ parameters and Wilson coefficients</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.FastFit.get_random_nuisance_parameters" class="name">var <span class="ident">get_random_nuisance_parameters</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.fits.BayesianFit">BayesianFit</a></code>.<code><a href="#flavio.statistics.fits.BayesianFit.get_random_nuisance_parameters">get_random_nuisance_parameters</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return a numpy array with random values for all nuisance parameters.</p></div>
+    <div class="desc"><p>Return a numpy array with random values for all nuisance parameters.</p></div>
   <div class="source_cont">
 </div>
 
@@ -3216,7 +3488,7 @@ sampling the start_wc_priors distribution.</p></div>
         <span class="c1"># check that the Wilson coefficient function works</span>
         <span class="k">if</span> <span class="n">fit_wc_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> <span class="c1"># if list of WC names not empty</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="n">fit_wc_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fit_wc_function</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
                 <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">})</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error in calling the Wilson coefficient function&quot;</span><span class="p">)</span>
@@ -3339,7 +3611,7 @@ sampling the start_wc_priors distribution.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.Fit.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7f1524ce1be0&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fab19a82630&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None)</p>
     </div>
     
 
@@ -3408,7 +3680,7 @@ sampling the start_wc_priors distribution.</p></div>
     <span class="c1"># check that the Wilson coefficient function works</span>
     <span class="k">if</span> <span class="n">fit_wc_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> <span class="c1"># if list of WC names not empty</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="n">fit_wc_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fit_wc_function</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
             <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">})</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error in calling the Wilson coefficient function&quot;</span><span class="p">)</span>
