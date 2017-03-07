@@ -1163,6 +1163,10 @@ table {
 
         </li>
         <li class="mono">
+        <span class="class_name"><a href="#flavio.classes.NamedInstanceMetaclass">NamedInstanceMetaclass</a></span>
+        
+        </li>
+        <li class="mono">
         <span class="class_name"><a href="#flavio.classes.Observable">Observable</a></span>
         
           
@@ -1278,15 +1282,18 @@ table {
 <span class="kn">import</span> <span class="nn">scipy.stats</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="k">def</span> <span class="nf">_is_number</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">True</span>
-    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">False</span>
+<span class="k">class</span> <span class="nc">NamedInstanceMetaclass</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="c1"># this is just needed to implement the getitem method on NamedInstanceClass</span>
+    <span class="c1"># to allow the syntax MyClass[&#39;instancename&#39;] as shorthand for</span>
+    <span class="c1"># MyClass.get_instance(&#39;instancename&#39;); same for</span>
+    <span class="c1"># del MyClass[&#39;instancename&#39;] instead of MyClass.del_instance(&#39;instancename&#39;)</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
-<span class="k">class</span> <span class="nc">NamedInstanceClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">NamedInstanceClass</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">NamedInstanceMetaclass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for classes that have named instances that can be accessed</span>
 <span class="sd">    by their name.</span>
 
@@ -1638,7 +1645,7 @@ table {
             <span class="n">implementation_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;implementation&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;No implementation specified for auxiliary quantity &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Implementation</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">implementation_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Implementation</span><span class="p">[</span><span class="n">implementation_name</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">prediction_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">implementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_implementation</span><span class="p">()</span>
@@ -1656,12 +1663,12 @@ table {
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observable</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
+            <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The observable &quot;</span> <span class="o">+</span> <span class="n">observable</span> <span class="o">+</span> <span class="s2">&quot; does not exist&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observable</span> <span class="o">=</span> <span class="n">observable</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span> <span class="o">=</span> <span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span><span class="o">.</span><span class="n">set_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1681,7 +1688,7 @@ table {
     <span class="k">def</span> <span class="nf">show_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="n">all_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instances</span><span class="p">:</span>
-            <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
             <span class="n">quant</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">quantity</span>
             <span class="n">descr</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">description</span>
             <span class="n">all_dict</span><span class="p">[</span><span class="n">quant</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">descr</span><span class="p">}</span>
@@ -1690,12 +1697,12 @@ table {
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">quantity</span><span class="p">)</span>
+            <span class="n">AuxiliaryQuantity</span><span class="p">[</span><span class="n">quantity</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The quantity &quot;</span> <span class="o">+</span> <span class="n">quantity</span> <span class="o">+</span> <span class="s2">&quot; does not exist&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quantity</span> <span class="o">=</span> <span class="n">quantity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">quantity_obj</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">quantity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quantity_obj</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="p">[</span><span class="n">quantity</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
@@ -1837,7 +1844,7 @@ factor.</p></div>
             <span class="n">implementation_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;implementation&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;No implementation specified for auxiliary quantity &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Implementation</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">implementation_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Implementation</span><span class="p">[</span><span class="n">implementation_name</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">prediction_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">implementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_implementation</span><span class="p">()</span>
@@ -1911,7 +1918,7 @@ factor.</p></div>
         <span class="n">implementation_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;implementation&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;No implementation specified for auxiliary quantity &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">Implementation</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">implementation_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Implementation</span><span class="p">[</span><span class="n">implementation_name</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -2789,7 +2796,7 @@ quantity.</p></div>
     <span class="k">def</span> <span class="nf">show_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="n">all_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instances</span><span class="p">:</span>
-            <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
             <span class="n">quant</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">quantity</span>
             <span class="n">descr</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">description</span>
             <span class="n">all_dict</span><span class="p">[</span><span class="n">quant</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">descr</span><span class="p">}</span>
@@ -2798,12 +2805,12 @@ quantity.</p></div>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">quantity</span><span class="p">)</span>
+            <span class="n">AuxiliaryQuantity</span><span class="p">[</span><span class="n">quantity</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The quantity &quot;</span> <span class="o">+</span> <span class="n">quantity</span> <span class="o">+</span> <span class="s2">&quot; does not exist&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quantity</span> <span class="o">=</span> <span class="n">quantity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">quantity_obj</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">quantity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quantity_obj</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="p">[</span><span class="n">quantity</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
@@ -2856,12 +2863,12 @@ quantity.</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">quantity</span><span class="p">)</span>
+        <span class="n">AuxiliaryQuantity</span><span class="p">[</span><span class="n">quantity</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The quantity &quot;</span> <span class="o">+</span> <span class="n">quantity</span> <span class="o">+</span> <span class="s2">&quot; does not exist&quot;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">quantity</span> <span class="o">=</span> <span class="n">quantity</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">quantity_obj</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">quantity</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">quantity_obj</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="p">[</span><span class="n">quantity</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -3071,7 +3078,7 @@ quantity.</p></div>
 <span class="k">def</span> <span class="nf">show_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
     <span class="n">all_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instances</span><span class="p">:</span>
-        <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="n">quant</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">quantity</span>
         <span class="n">descr</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">description</span>
         <span class="n">all_dict</span><span class="p">[</span><span class="n">quant</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">descr</span><span class="p">}</span>
@@ -3765,7 +3772,7 @@ by their name.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.NamedInstanceClass', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.NamedInstanceClass" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">NamedInstanceClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">NamedInstanceClass</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">NamedInstanceMetaclass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for classes that have named instances that can be accessed</span>
 <span class="sd">    by their name.</span>
 
@@ -3955,6 +3962,42 @@ by their name.</p>
 
   </div>
   
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="flavio.classes.NamedInstanceMetaclass" class="name">class <span class="ident">NamedInstanceMetaclass</span></p>
+      
+  
+    <div class="desc"><p>type(object_or_name, bases, dict)
+type(object) -&gt; the object's type
+type(name, bases, dict) -&gt; a new type</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.NamedInstanceMetaclass', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.NamedInstanceMetaclass" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">NamedInstanceMetaclass</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="c1"># this is just needed to implement the getitem method on NamedInstanceClass</span>
+    <span class="c1"># to allow the syntax MyClass[&#39;instancename&#39;] as shorthand for</span>
+    <span class="c1"># MyClass.get_instance(&#39;instancename&#39;); same for</span>
+    <span class="c1"># del MyClass[&#39;instancename&#39;] instead of MyClass.del_instance(&#39;instancename&#39;)</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#flavio.classes.NamedInstanceMetaclass">NamedInstanceMetaclass</a></li>
+          <li>builtins.type</li>
+          <li>builtins.object</li>
+          </ul>
       </div>
       </div>
       
@@ -5009,12 +5052,12 @@ simultaneously.</p></div>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observable</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
+            <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The observable &quot;</span> <span class="o">+</span> <span class="n">observable</span> <span class="o">+</span> <span class="s2">&quot; does not exist&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observable</span> <span class="o">=</span> <span class="n">observable</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span> <span class="o">=</span> <span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span><span class="o">.</span><span class="n">set_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -5051,12 +5094,12 @@ simultaneously.</p></div>
   <div id="source-flavio.classes.Prediction.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observable</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The observable &quot;</span> <span class="o">+</span> <span class="n">observable</span> <span class="o">+</span> <span class="s2">&quot; does not exist&quot;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">observable</span> <span class="o">=</span> <span class="n">observable</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span> <span class="o">=</span> <span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span><span class="o">.</span><span class="n">set_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </pre></div>
 

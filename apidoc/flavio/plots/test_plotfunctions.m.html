@@ -1134,6 +1134,9 @@ table {
     <li class="mono"><a href="#flavio.plots.test_plotfunctions.TestPlots.test_density_contour_data">test_density_contour_data</a></li>
     <li class="mono"><a href="#flavio.plots.test_plotfunctions.TestPlots.test_error_budget_pie">test_error_budget_pie</a></li>
     <li class="mono"><a href="#flavio.plots.test_plotfunctions.TestPlots.test_likelihood_contour">test_likelihood_contour</a></li>
+    <li class="mono"><a href="#flavio.plots.test_plotfunctions.TestPlots.test_q2_plot_exp">test_q2_plot_exp</a></li>
+    <li class="mono"><a href="#flavio.plots.test_plotfunctions.TestPlots.test_q2_th_bin">test_q2_th_bin</a></li>
+    <li class="mono"><a href="#flavio.plots.test_plotfunctions.TestPlots.test_q2_th_diff">test_q2_th_diff</a></li>
     <li class="mono"><a href="#flavio.plots.test_plotfunctions.TestPlots.test_smooth_histogram">test_smooth_histogram</a></li>
     <li class="mono"><a href="#flavio.plots.test_plotfunctions.TestPlots.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.plots.test_plotfunctions.TestPlots.tearDownClass">tearDownClass</a></li>
@@ -1191,6 +1194,37 @@ table {
              <span class="s1">&#39;m_mu&#39;</span><span class="p">:</span> <span class="mf">3.89716785433222e-08</span><span class="p">,</span>
              <span class="s1">&#39;tau_Bs&#39;</span><span class="p">:</span> <span class="mf">0.003286868163723475</span><span class="p">}</span>
         <span class="n">error_budget_pie</span><span class="p">(</span><span class="n">err_budget_bsmumu</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_q2_th_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># without specifying WCs</span>
+        <span class="n">q2_plot_th_diff</span><span class="p">(</span><span class="s1">&#39;dBR/dq2(B0-&gt;pienu)&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">q2steps</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="c1"># with WCs</span>
+        <span class="n">q2_plot_th_diff</span><span class="p">(</span><span class="s1">&#39;dBR/dq2(B+-&gt;pienu)&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span>
+                                   <span class="n">wc</span><span class="o">=</span><span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">(),</span> <span class="n">q2steps</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="c1"># check that observable not depending on q2 raises error</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">q2_plot_th_diff</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_q2_th_bin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]</span>
+        <span class="c1"># without specifying WCs</span>
+        <span class="n">q2_plot_th_bin</span><span class="p">(</span><span class="s1">&#39;&lt;BR&gt;(B0-&gt;pienu)&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="c1"># with WCs</span>
+        <span class="n">q2_plot_th_bin</span><span class="p">(</span><span class="s1">&#39;&lt;BR&gt;(B+-&gt;pienu)&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">divide_binwidth</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                          <span class="n">wc</span><span class="o">=</span><span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">(),</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="c1"># check that observable not depending on q2 raises error</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">q2_plot_th_bin</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_q2_plot_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># vanilla</span>
+        <span class="n">q2_plot_exp</span><span class="p">(</span><span class="s1">&#39;&lt;dBR/dq2&gt;(B0-&gt;K*mumu)&#39;</span><span class="p">)</span>
+        <span class="c1"># with options</span>
+        <span class="n">q2_plot_exp</span><span class="p">(</span><span class="s1">&#39;&lt;dBR/dq2&gt;(B0-&gt;K*mumu)&#39;</span><span class="p">,</span> <span class="n">col_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;LHCb&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span><span class="p">},</span>
+                                                        <span class="n">exclude_bins</span><span class="o">=</span><span class="p">[(</span><span class="mf">1.1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)])</span>
+        <span class="c1"># check that observable not depending on q2 raises error</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">q2_plot_exp</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_band_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># NB, this test only runs with matplotlib&gt;=1.5.3 due to a matplotlib bug</span>
@@ -1345,6 +1379,37 @@ in order to be run.</p>
              <span class="s1">&#39;m_mu&#39;</span><span class="p">:</span> <span class="mf">3.89716785433222e-08</span><span class="p">,</span>
              <span class="s1">&#39;tau_Bs&#39;</span><span class="p">:</span> <span class="mf">0.003286868163723475</span><span class="p">}</span>
         <span class="n">error_budget_pie</span><span class="p">(</span><span class="n">err_budget_bsmumu</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_q2_th_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># without specifying WCs</span>
+        <span class="n">q2_plot_th_diff</span><span class="p">(</span><span class="s1">&#39;dBR/dq2(B0-&gt;pienu)&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">q2steps</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="c1"># with WCs</span>
+        <span class="n">q2_plot_th_diff</span><span class="p">(</span><span class="s1">&#39;dBR/dq2(B+-&gt;pienu)&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span>
+                                   <span class="n">wc</span><span class="o">=</span><span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">(),</span> <span class="n">q2steps</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="c1"># check that observable not depending on q2 raises error</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">q2_plot_th_diff</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_q2_th_bin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]</span>
+        <span class="c1"># without specifying WCs</span>
+        <span class="n">q2_plot_th_bin</span><span class="p">(</span><span class="s1">&#39;&lt;BR&gt;(B0-&gt;pienu)&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="c1"># with WCs</span>
+        <span class="n">q2_plot_th_bin</span><span class="p">(</span><span class="s1">&#39;&lt;BR&gt;(B+-&gt;pienu)&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">divide_binwidth</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                          <span class="n">wc</span><span class="o">=</span><span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">(),</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="c1"># check that observable not depending on q2 raises error</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">q2_plot_th_bin</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_q2_plot_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># vanilla</span>
+        <span class="n">q2_plot_exp</span><span class="p">(</span><span class="s1">&#39;&lt;dBR/dq2&gt;(B0-&gt;K*mumu)&#39;</span><span class="p">)</span>
+        <span class="c1"># with options</span>
+        <span class="n">q2_plot_exp</span><span class="p">(</span><span class="s1">&#39;&lt;dBR/dq2&gt;(B0-&gt;K*mumu)&#39;</span><span class="p">,</span> <span class="n">col_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;LHCb&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span><span class="p">},</span>
+                                                        <span class="n">exclude_bins</span><span class="o">=</span><span class="p">[(</span><span class="mf">1.1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)])</span>
+        <span class="c1"># check that observable not depending on q2 raises error</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">q2_plot_exp</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_band_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># NB, this test only runs with matplotlib&gt;=1.5.3 due to a matplotlib bug</span>
@@ -3773,6 +3838,91 @@ block, allowing further test code to be executed.</p></div>
     <span class="n">data2</span> <span class="o">=</span> <span class="n">likelihood_contour_data</span><span class="p">(</span><span class="n">dummy_loglikelihood</span><span class="p">,</span>
                                     <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">data2</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">])</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.plots.test_plotfunctions.TestPlots.test_q2_plot_exp">
+    <p>def <span class="ident">test_q2_plot_exp</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.test_plotfunctions.TestPlots.test_q2_plot_exp', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.plots.test_plotfunctions.TestPlots.test_q2_plot_exp" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_q2_plot_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># vanilla</span>
+    <span class="n">q2_plot_exp</span><span class="p">(</span><span class="s1">&#39;&lt;dBR/dq2&gt;(B0-&gt;K*mumu)&#39;</span><span class="p">)</span>
+    <span class="c1"># with options</span>
+    <span class="n">q2_plot_exp</span><span class="p">(</span><span class="s1">&#39;&lt;dBR/dq2&gt;(B0-&gt;K*mumu)&#39;</span><span class="p">,</span> <span class="n">col_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;LHCb&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span><span class="p">},</span>
+                                                    <span class="n">exclude_bins</span><span class="o">=</span><span class="p">[(</span><span class="mf">1.1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)])</span>
+    <span class="c1"># check that observable not depending on q2 raises error</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">q2_plot_exp</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.plots.test_plotfunctions.TestPlots.test_q2_th_bin">
+    <p>def <span class="ident">test_q2_th_bin</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.test_plotfunctions.TestPlots.test_q2_th_bin', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.plots.test_plotfunctions.TestPlots.test_q2_th_bin" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_q2_th_bin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">bins</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]</span>
+    <span class="c1"># without specifying WCs</span>
+    <span class="n">q2_plot_th_bin</span><span class="p">(</span><span class="s1">&#39;&lt;BR&gt;(B0-&gt;pienu)&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1"># with WCs</span>
+    <span class="n">q2_plot_th_bin</span><span class="p">(</span><span class="s1">&#39;&lt;BR&gt;(B+-&gt;pienu)&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">divide_binwidth</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                      <span class="n">wc</span><span class="o">=</span><span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">(),</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1"># check that observable not depending on q2 raises error</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">q2_plot_th_bin</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.plots.test_plotfunctions.TestPlots.test_q2_th_diff">
+    <p>def <span class="ident">test_q2_th_diff</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.test_plotfunctions.TestPlots.test_q2_th_diff', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.plots.test_plotfunctions.TestPlots.test_q2_th_diff" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_q2_th_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># without specifying WCs</span>
+    <span class="n">q2_plot_th_diff</span><span class="p">(</span><span class="s1">&#39;dBR/dq2(B0-&gt;pienu)&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">q2steps</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1"># with WCs</span>
+    <span class="n">q2_plot_th_diff</span><span class="p">(</span><span class="s1">&#39;dBR/dq2(B+-&gt;pienu)&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span>
+                               <span class="n">wc</span><span class="o">=</span><span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">(),</span> <span class="n">q2steps</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1"># check that observable not depending on q2 raises error</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">q2_plot_th_diff</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
 </pre></div>
 
   </div>
