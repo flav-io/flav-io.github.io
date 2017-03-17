@@ -1214,7 +1214,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bd->mumu)` | $\text{BR}(B^0\to \mu^+\mu^-)$ | Branching ratio of $B^0\to \mu^+\mu^-$ |  |
+| `BR(B0->mumu)` | $\text{BR}(B^0\to \mu^+\mu^-)$ | Branching ratio of $B^0\to \mu^+\mu^-$ |  |
 
 
 ### $B^0\to \tau^+\tau^-$
@@ -1222,7 +1222,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bd->tautau)` | $\text{BR}(B^0\to \tau^+\tau^-)$ | Branching ratio of $B^0\to \tau^+\tau^-$ |  |
+| `BR(B0->tautau)` | $\text{BR}(B^0\to \tau^+\tau^-)$ | Branching ratio of $B^0\to \tau^+\tau^-$ |  |
 
 
 ### $B^0\to e^+e^-$
@@ -1230,7 +1230,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bd->ee)` | $\text{BR}(B^0\to e^+e^-)$ | Branching ratio of $B^0\to e^+e^-$ |  |
+| `BR(B0->ee)` | $\text{BR}(B^0\to e^+e^-)$ | Branching ratio of $B^0\to e^+e^-$ |  |
 
 
 ### $B_s\to \mu^+\mu^-$
@@ -1268,7 +1268,8 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(B0->mutau)` | $\text{BR}(\bar B^0\to \mu^+\tau^-$) | Branching ratio of $\bar B^0\to \mu^+\tau^-$ |  |
+| `BR(B0->mutau)` | $\text{BR}(\bar B^0\to \mu^+\tau^-)$ | Branching ratio of $\bar B^0\to \mu^+\tau^-$ |  |
+| `BR(B0->mutau,taumu)` | $\text{BR}(\bar B^0\to mu^\pm tau^\mp)$ | Branching ratio of $\bar B^0\to mu^\pm tau^\mp$ |  |
 
 
 ### $\bar B^0\to \mu^+e^-$
@@ -1276,7 +1277,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(B0->mue)` | $\text{BR}(\bar B^0\to \mu^+e^-$) | Branching ratio of $\bar B^0\to \mu^+e^-$ |  |
+| `BR(B0->mue)` | $\text{BR}(\bar B^0\to \mu^+e^-)$ | Branching ratio of $\bar B^0\to \mu^+e^-$ |  |
 
 
 ### $\bar B^0\to \tau^+\mu^-$
@@ -1284,7 +1285,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(B0->taumu)` | $\text{BR}(\bar B^0\to \tau^+\mu^-$) | Branching ratio of $\bar B^0\to \tau^+\mu^-$ |  |
+| `BR(B0->taumu)` | $\text{BR}(\bar B^0\to \tau^+\mu^-)$ | Branching ratio of $\bar B^0\to \tau^+\mu^-$ |  |
 
 
 ### $\bar B^0\to \tau^+e^-$
@@ -1292,7 +1293,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(B0->taue)` | $\text{BR}(\bar B^0\to \tau^+e^-$) | Branching ratio of $\bar B^0\to \tau^+e^-$ |  |
+| `BR(B0->taue)` | $\text{BR}(\bar B^0\to \tau^+e^-)$ | Branching ratio of $\bar B^0\to \tau^+e^-$ |  |
 
 
 ### $\bar B^0\to e^+\mu^-$
@@ -1300,7 +1301,8 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(B0->emu)` | $\text{BR}(\bar B^0\to e^+\mu^-$) | Branching ratio of $\bar B^0\to e^+\mu^-$ |  |
+| `BR(B0->emu)` | $\text{BR}(\bar B^0\to e^+\mu^-)$ | Branching ratio of $\bar B^0\to e^+\mu^-$ |  |
+| `BR(B0->emu,mue)` | $\text{BR}(\bar B^0\to e^\pm mu^\mp)$ | Branching ratio of $\bar B^0\to e^\pm mu^\mp$ |  |
 
 
 ### $\bar B^0\to e^+\tau^-$
@@ -1308,7 +1310,8 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(B0->etau)` | $\text{BR}(\bar B^0\to e^+\tau^-$) | Branching ratio of $\bar B^0\to e^+\tau^-$ |  |
+| `BR(B0->etau)` | $\text{BR}(\bar B^0\to e^+\tau^-)$ | Branching ratio of $\bar B^0\to e^+\tau^-$ |  |
+| `BR(B0->etau,taue)` | $\text{BR}(\bar B^0\to e^\pm tau^\mp)$ | Branching ratio of $\bar B^0\to e^\pm tau^\mp$ |  |
 
 
 ### $\bar B_s\to \mu^+\tau^-$
@@ -1316,7 +1319,8 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bs->mutau)` | $\text{BR}(\bar B_s\to \mu^+\tau^-$) | Branching ratio of $\bar B_s\to \mu^+\tau^-$ |  |
+| `BR(Bs->mutau)` | $\text{BR}(\bar B_s\to \mu^+\tau^-)$ | Branching ratio of $\bar B_s\to \mu^+\tau^-$ |  |
+| `BR(Bs->mutau,taumu)` | $\text{BR}(\bar B_s\to mu^\pm tau^\mp)$ | Branching ratio of $\bar B_s\to mu^\pm tau^\mp$ |  |
 
 
 ### $\bar B_s\to \mu^+e^-$
@@ -1324,7 +1328,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bs->mue)` | $\text{BR}(\bar B_s\to \mu^+e^-$) | Branching ratio of $\bar B_s\to \mu^+e^-$ |  |
+| `BR(Bs->mue)` | $\text{BR}(\bar B_s\to \mu^+e^-)$ | Branching ratio of $\bar B_s\to \mu^+e^-$ |  |
 
 
 ### $\bar B_s\to \tau^+\mu^-$
@@ -1332,7 +1336,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bs->taumu)` | $\text{BR}(\bar B_s\to \tau^+\mu^-$) | Branching ratio of $\bar B_s\to \tau^+\mu^-$ |  |
+| `BR(Bs->taumu)` | $\text{BR}(\bar B_s\to \tau^+\mu^-)$ | Branching ratio of $\bar B_s\to \tau^+\mu^-$ |  |
 
 
 ### $\bar B_s\to \tau^+e^-$
@@ -1340,7 +1344,7 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bs->taue)` | $\text{BR}(\bar B_s\to \tau^+e^-$) | Branching ratio of $\bar B_s\to \tau^+e^-$ |  |
+| `BR(Bs->taue)` | $\text{BR}(\bar B_s\to \tau^+e^-)$ | Branching ratio of $\bar B_s\to \tau^+e^-$ |  |
 
 
 ### $\bar B_s\to e^+\mu^-$
@@ -1348,7 +1352,8 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bs->emu)` | $\text{BR}(\bar B_s\to e^+\mu^-$) | Branching ratio of $\bar B_s\to e^+\mu^-$ |  |
+| `BR(Bs->emu)` | $\text{BR}(\bar B_s\to e^+\mu^-)$ | Branching ratio of $\bar B_s\to e^+\mu^-$ |  |
+| `BR(Bs->emu,mue)` | $\text{BR}(\bar B_s\to e^\pm mu^\mp)$ | Branching ratio of $\bar B_s\to e^\pm mu^\mp$ |  |
 
 
 ### $\bar B_s\to e^+\tau^-$
@@ -1356,7 +1361,8 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bs->etau)` | $\text{BR}(\bar B_s\to e^+\tau^-$) | Branching ratio of $\bar B_s\to e^+\tau^-$ |  |
+| `BR(Bs->etau)` | $\text{BR}(\bar B_s\to e^+\tau^-)$ | Branching ratio of $\bar B_s\to e^+\tau^-$ |  |
+| `BR(Bs->etau,taue)` | $\text{BR}(\bar B_s\to e^\pm tau^\mp)$ | Branching ratio of $\bar B_s\to e^\pm tau^\mp$ |  |
 
 
 ## $\Lambda_b\to \Lambda\ell^+\ell^-$
