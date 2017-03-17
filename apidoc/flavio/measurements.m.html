@@ -1058,6 +1058,7 @@ table {
     <li class="mono"><a href="#flavio.measurements.read_default">read_default</a></li>
     <li class="mono"><a href="#flavio.measurements.read_file">read_file</a></li>
     <li class="mono"><a href="#flavio.measurements.read_url">read_url</a></li>
+    <li class="mono"><a href="#flavio.measurements.write_file">write_file</a></li>
   </ul>
 
     </li>
@@ -1088,6 +1089,7 @@ table {
 <span class="kn">from</span> <span class="nn">flavio.statistics</span> <span class="kn">import</span> <span class="n">probability</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read measurements from a YAML stream or file.&quot;&quot;&quot;</span>
@@ -1098,9 +1100,19 @@ table {
             <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">m_data</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">m_data</span><span class="p">[</span><span class="n">arg</span><span class="p">])</span>
         <span class="k">if</span> <span class="s1">&#39;observables&#39;</span> <span class="ow">in</span> <span class="n">m_data</span><span class="p">:</span>
-            <span class="c1"># for multivariate numerical constraints</span>
-            <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">m_data</span><span class="p">[</span><span class="s1">&#39;observables&#39;</span><span class="p">],</span>
-                <span class="n">probability</span><span class="o">.</span><span class="n">MultivariateNumericalDistribution</span><span class="p">(</span><span class="o">**</span><span class="n">m_data</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]))</span>
+            <span class="c1"># for multivariate constraints</span>
+            <span class="n">pd</span> <span class="o">=</span> <span class="n">probability</span><span class="o">.</span><span class="n">dict2dist</span><span class="p">(</span><span class="n">m_data</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">])</span>
+            <span class="n">pd</span> <span class="o">=</span> <span class="n">probability</span><span class="o">.</span><span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pd</span><span class="p">)</span>
+            <span class="c1"># for observables without arguments (i.e. strings), this is trivial;</span>
+            <span class="n">obs_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="c1"># for obs. with arguments, need to convert dict of the form</span>
+            <span class="c1"># {&#39;name&#39;: myname, &#39;arg1&#39;: v1, ...} to a tuple of the form</span>
+            <span class="c1"># (myname, v1, ...)</span>
+                        <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span>
+                                <span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span>
+                              <span class="o">+</span> <span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span><span class="p">])</span>
+                        <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">m_data</span><span class="p">[</span><span class="s1">&#39;observables&#39;</span><span class="p">]]</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">obs_list</span><span class="p">,</span> <span class="n">pd</span><span class="p">)</span>
         <span class="k">elif</span> <span class="s1">&#39;correlation&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">m_data</span><span class="p">:</span>
             <span class="c1"># for univariate constraints</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m_data</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
@@ -1168,6 +1180,18 @@ table {
             <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">observables</span><span class="p">,</span> <span class="n">probability</span><span class="o">.</span><span class="n">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">central_values</span><span class="p">,</span> <span class="n">covariance</span><span class="p">))</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">measurements</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
+<span class="k">def</span> <span class="nf">_load_new</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read measurements from a YAML stream or file that are compatible</span>
+<span class="sd">    with the format generated by the `get_yaml` method of</span>
+<span class="sd">    `flavio.classes.Measurement`.&quot;&quot;&quot;</span>
+    <span class="n">measurements</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">measurements</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">measurements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Measurement</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">measurements</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;observables&#39;</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">measurements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Measurement</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;observables&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">measurements</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">measurements</span><span class="p">]</span>
+
+
 <span class="k">def</span> <span class="nf">_fix_correlation_matrix</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;In the input file, the correlation matrix can be specified as a list</span>
 <span class="sd">    of lists containing only the upper right of the symmetric correlation</span>
@@ -1206,11 +1230,25 @@ table {
         <span class="n">corr_out</span> <span class="o">=</span> <span class="n">corr_out</span> <span class="o">+</span> <span class="n">corr_out</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">corr_out</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">corr_out</span>
 
+<span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">measurements</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write measurements to a YAML file.</span>
+
+<span class="sd">    measurements can be a list of string names or a list of measurement</span>
+<span class="sd">    instances.&quot;&quot;&quot;</span>
+    <span class="n">measurement_instances</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Measurement</span><span class="p">)</span>
+                             <span class="k">else</span> <span class="n">Measurement</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">measurements</span><span class="p">]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">([</span><span class="n">m</span><span class="o">.</span><span class="n">get_yaml_dict</span><span class="p">(</span><span class="n">pname</span><span class="o">=</span><span class="s1">&#39;observables&#39;</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">measurement_instances</span><span class="p">],</span> <span class="n">f</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">read_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read measurements from a YAML file.&quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_load_new</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># rewind</span>
+            <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">read_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read measurements from a URL.&quot;&quot;&quot;</span>
@@ -1221,8 +1259,14 @@ table {
     <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
-<span class="c1"># alias for function name prior to v0.13</span>
-<span class="n">load</span> <span class="o">=</span> <span class="n">read_file</span>
+
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Alias for `read_file` for backwards compatibility. Don&#39;t use.&quot;&quot;&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The function `flavio.measurements.load` was replaced &quot;</span>
+                  <span class="s2">&quot;by `flavio.measurements.read_file` in v0.13 &quot;</span>
+                  <span class="s2">&quot;and might be removed in the future. &quot;</span>
+                  <span class="s2">&quot;Please update your code.&quot;</span><span class="p">,</span> <span class="ne">FutureWarning</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">read_file</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">read_default</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Read all measurements from `data/measurements.yml`.</span>
@@ -1243,20 +1287,23 @@ table {
       
   <div class="item">
     <div class="name def" id="flavio.measurements.load">
-    <p>def <span class="ident">load</span>(</p><p>filename)</p>
+    <p>def <span class="ident">load</span>(</p><p>obj)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Read measurements from a YAML file.</p></div>
+    <div class="desc"><p>Alias for <code>read_file</code> for backwards compatibility. Don't use.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.measurements.load', this);">Show source &equiv;</a></p>
   <div id="source-flavio.measurements.load" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">read_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read measurements from a YAML file.&quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Alias for `read_file` for backwards compatibility. Don&#39;t use.&quot;&quot;&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The function `flavio.measurements.load` was replaced &quot;</span>
+                  <span class="s2">&quot;by `flavio.measurements.read_file` in v0.13 &quot;</span>
+                  <span class="s2">&quot;and might be removed in the future. &quot;</span>
+                  <span class="s2">&quot;Please update your code.&quot;</span><span class="p">,</span> <span class="ne">FutureWarning</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">read_file</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1306,7 +1353,11 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">read_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read measurements from a YAML file.&quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_load_new</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># rewind</span>
+            <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1335,6 +1386,38 @@ table {
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;You need to install the python requests module to load measurements from a URL.&quot;</span><span class="p">)</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_load</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.measurements.write_file">
+    <p>def <span class="ident">write_file</span>(</p><p>filename, measurements)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Write measurements to a YAML file.</p>
+<p>measurements can be a list of string names or a list of measurement
+instances.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.measurements.write_file', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.measurements.write_file" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">measurements</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write measurements to a YAML file.</span>
+
+<span class="sd">    measurements can be a list of string names or a list of measurement</span>
+<span class="sd">    instances.&quot;&quot;&quot;</span>
+    <span class="n">measurement_instances</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Measurement</span><span class="p">)</span>
+                             <span class="k">else</span> <span class="n">Measurement</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">measurements</span><span class="p">]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">([</span><span class="n">m</span><span class="o">.</span><span class="n">get_yaml_dict</span><span class="p">(</span><span class="n">pname</span><span class="o">=</span><span class="s1">&#39;observables&#39;</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">measurement_instances</span><span class="p">],</span> <span class="n">f</span><span class="p">)</span>
 </pre></div>
 
   </div>

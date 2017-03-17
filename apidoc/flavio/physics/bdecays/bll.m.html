@@ -1058,6 +1058,8 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.bll.config">config</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bll.l">l</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bll.ll">ll</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bll.ll_1">ll_1</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bll.ll_2">ll_2</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bll.meson_quark">meson_quark</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bll.pi">pi</a></li>
   </ul>
@@ -1073,6 +1075,8 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.bll.amplitudes">amplitudes</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bll.bqll_obs">bqll_obs</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bll.bqll_obs_function">bqll_obs_function</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bll.bqll_obs_function_lsum">bqll_obs_function_lsum</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bll.bqll_obs_lsum">bqll_obs_lsum</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bll.br_inst">br_inst</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bll.br_lifetime_corr">br_lifetime_corr</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bll.br_timeint">br_timeint</a></li>
@@ -1229,8 +1233,19 @@ $\tau$.</p>
         <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
 
+<span class="k">def</span> <span class="nf">bqll_obs_lsum</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">l1</span> <span class="o">==</span> <span class="n">l2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This function is defined only for LFV decays&quot;</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bll&#39;</span><span class="p">]</span>
+    <span class="n">wc12</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">meson_quark</span><span class="p">[</span><span class="n">B</span><span class="p">]</span><span class="o">+</span><span class="n">l1</span><span class="o">+</span><span class="n">l2</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="n">wc21</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">meson_quark</span><span class="p">[</span><span class="n">B</span><span class="p">]</span><span class="o">+</span><span class="n">l2</span><span class="o">+</span><span class="n">l1</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc12</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span> <span class="o">+</span> <span class="n">function</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc21</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">l1</span><span class="p">)</span>
+
 <span class="k">def</span> <span class="nf">bqll_obs_function</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">bqll_obs</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">bqll_obs_function_lsum</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">bqll_obs_lsum</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
 
 
 <span class="c1"># Bs -&gt; l+l- effective lifetime</span>
@@ -1314,7 +1329,7 @@ $\tau$.</p>
     <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">ADeltaGamma_func</span><span class="p">(</span><span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="n">l</span><span class="p">))</span>
 
     <span class="c1"># For the B^0 decay, we take the prompt branching ratio since DeltaGamma is negligible</span>
-    <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;BR(Bd-&gt;&quot;</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
+    <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;BR(B0-&gt;&quot;</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
     <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
     <span class="n">_process_tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;B^0\to &quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;^-&quot;</span>
     <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Branching ratio of $&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
@@ -1327,15 +1342,30 @@ $\tau$.</p>
 <span class="n">_tex_lfv</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;emu&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;e^+\mu^-&#39;</span><span class="p">,</span> <span class="s1">&#39;mue&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\mu^+e^-&#39;</span><span class="p">,</span>
     <span class="s1">&#39;taue&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\tau^+e^-&#39;</span><span class="p">,</span> <span class="s1">&#39;etau&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;e^+\tau^-&#39;</span><span class="p">,</span>
     <span class="s1">&#39;taumu&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\tau^+\mu^-&#39;</span><span class="p">,</span> <span class="s1">&#39;mutau&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\mu^+\tau^-&#39;</span><span class="p">}</span>
-<span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span><span class="s1">&#39;mu&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;mu&#39;</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span><span class="s1">&#39;tau&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;tau&#39;</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;mu&#39;</span><span class="p">,</span><span class="s1">&#39;tau&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;tau&#39;</span><span class="p">,</span><span class="s1">&#39;mu&#39;</span><span class="p">)]:</span>
+<span class="k">for</span> <span class="n">ll_1</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span><span class="s1">&#39;mu&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span><span class="s1">&#39;tau&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;mu&#39;</span><span class="p">,</span><span class="s1">&#39;tau&#39;</span><span class="p">),]:</span>
     <span class="k">for</span> <span class="n">B</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="s1">&#39;B0&#39;</span><span class="p">]:</span>
-        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;BR(&quot;</span><span class="o">+</span><span class="n">B</span><span class="o">+</span><span class="s2">&quot;-&gt;&quot;</span><span class="o">+</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ll</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
+        <span class="n">ll_2</span> <span class="o">=</span> <span class="n">ll_1</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># now if ll_1 is (e, mu), ll_2 is (mu, e)</span>
+
+        <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="p">[</span><span class="n">ll_1</span><span class="p">,</span> <span class="n">ll_2</span><span class="p">]:</span>
+            <span class="c1"># the individual BRs</span>
+            <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;BR(&quot;</span><span class="o">+</span><span class="n">B</span><span class="o">+</span><span class="s2">&quot;-&gt;&quot;</span><span class="o">+</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ll</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
+            <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
+            <span class="n">_process_tex</span> <span class="o">=</span> <span class="n">_tex_B</span><span class="p">[</span><span class="n">B</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;\to &quot;</span><span class="o">+</span><span class="n">_tex_lfv</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ll</span><span class="p">)]</span>
+            <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Branching ratio of $&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
+            <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\text{BR}(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)$&quot;</span>
+            <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: $b$ hadron decays :: FCNC decays :: $B\to\ell^+\ell^-$ :: $&#39;</span>  <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span><span class="p">)</span>
+            <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">bqll_obs_function</span><span class="p">(</span><span class="n">br_inst</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">ll</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ll</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="c1"># the individual BR where ll&#39; and l&#39;l are added</span>
+        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;BR(&quot;</span><span class="o">+</span><span class="n">B</span><span class="o">+</span><span class="s2">&quot;-&gt;&quot;</span><span class="o">+</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ll_1</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;,&quot;</span><span class="o">+</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ll_2</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
         <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
-        <span class="n">_process_tex</span> <span class="o">=</span> <span class="n">_tex_B</span><span class="p">[</span><span class="n">B</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;\to &quot;</span><span class="o">+</span><span class="n">_tex_lfv</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ll</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="p">[</span><span class="n">ll_1</span><span class="p">,</span> <span class="n">ll_1</span><span class="p">]:</span>
+            <span class="n">_process_tex</span> <span class="o">=</span> <span class="n">_tex_B</span><span class="p">[</span><span class="n">B</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;\to &quot;</span><span class="o">+</span><span class="n">_tex_lfv</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ll</span><span class="p">)]</span>
+            <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: $b$ hadron decays :: FCNC decays :: $B\to\ell^+\ell^-$ :: $&#39;</span>  <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span><span class="p">)</span>
+        <span class="n">_process_tex</span> <span class="o">=</span> <span class="n">_tex_B</span><span class="p">[</span><span class="n">B</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;\to &quot;</span><span class="o">+</span><span class="n">ll_1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;^\pm &quot;</span><span class="o">+</span><span class="n">ll_1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;^\mp&quot;</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\text{BR}(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)$&quot;</span>
         <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Branching ratio of $&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
-        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\text{BR}(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$)&quot;</span>
-        <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: $b$ hadron decays :: FCNC decays :: $B\to\ell^+\ell^-$ :: $&#39;</span>  <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span><span class="p">)</span>
-        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">bqll_obs_function</span><span class="p">(</span><span class="n">br_inst</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">ll</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ll</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">bqll_obs_function_lsum</span><span class="p">(</span><span class="n">br_inst</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">ll_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ll_1</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 </pre></div>
 
   </div>
@@ -1370,6 +1400,22 @@ $\tau$.</p>
       </div>
       <div class="item">
       <p id="flavio.physics.bdecays.bll.ll" class="name">var <span class="ident">ll</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.bll.ll_1" class="name">var <span class="ident">ll_1</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.bll.ll_2" class="name">var <span class="ident">ll_2</span></p>
       
   
   <div class="source_cont">
@@ -1580,6 +1626,53 @@ $\tau$.</p>
   <div id="source-flavio.physics.bdecays.bll.bqll_obs_function" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bqll_obs_function</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">bqll_obs</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bll.bqll_obs_function_lsum">
+    <p>def <span class="ident">bqll_obs_function_lsum</span>(</p><p>function, B, l1, l2)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bll.bqll_obs_function_lsum', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bll.bqll_obs_function_lsum" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bqll_obs_function_lsum</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">bqll_obs_lsum</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bll.bqll_obs_lsum">
+    <p>def <span class="ident">bqll_obs_lsum</span>(</p><p>function, wc_obj, par, B, l1, l2)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bll.bqll_obs_lsum', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bll.bqll_obs_lsum" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bqll_obs_lsum</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">l1</span> <span class="o">==</span> <span class="n">l2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This function is defined only for LFV decays&quot;</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bll&#39;</span><span class="p">]</span>
+    <span class="n">wc12</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">meson_quark</span><span class="p">[</span><span class="n">B</span><span class="p">]</span><span class="o">+</span><span class="n">l1</span><span class="o">+</span><span class="n">l2</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="n">wc21</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">meson_quark</span><span class="p">[</span><span class="n">B</span><span class="p">]</span><span class="o">+</span><span class="n">l2</span><span class="o">+</span><span class="n">l1</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc12</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span> <span class="o">+</span> <span class="n">function</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc21</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">l1</span><span class="p">)</span>
 </pre></div>
 
   </div>

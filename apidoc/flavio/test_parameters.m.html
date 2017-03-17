@@ -1210,6 +1210,7 @@ table {
     <li class="mono"><a href="#flavio.test_parameters.TestParameters.tearDown">tearDown</a></li>
     <li class="mono"><a href="#flavio.test_parameters.TestParameters.test_constraints_from_string">test_constraints_from_string</a></li>
     <li class="mono"><a href="#flavio.test_parameters.TestParameters.test_parameters">test_parameters</a></li>
+    <li class="mono"><a href="#flavio.test_parameters.TestParameters.test_yaml_io_new">test_yaml_io_new</a></li>
     <li class="mono"><a href="#flavio.test_parameters.TestParameters.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.test_parameters.TestParameters.tearDownClass">tearDownClass</a></li>
   </ul>
@@ -1239,6 +1240,7 @@ table {
 <span class="kn">from</span> <span class="nn">.parameters</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">.classes</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">.parameters</span> <span class="kn">import</span> <span class="n">_read_pdg_masswidth</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
 
 <span class="n">s</span> <span class="o">=</span> <span class="mf">1.519267515435317e+24</span>
 <span class="n">ps</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="o">*</span><span class="n">s</span>
@@ -1314,6 +1316,14 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_yaml_io_new</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">flavio</span> <span class="kn">import</span> <span class="n">default_parameters</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tf</span><span class="p">:</span>
+            <span class="n">write_file</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">default_parameters</span><span class="p">)</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># rewind</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">read_file</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_yaml_dict</span><span class="p">(),</span> <span class="n">default_parameters</span><span class="o">.</span><span class="n">get_yaml_dict</span><span class="p">())</span>
 </pre></div>
 
   </div>
@@ -3785,6 +3795,14 @@ in order to be run.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">left_deviation</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">right_deviation</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_yaml_io_new</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">flavio</span> <span class="kn">import</span> <span class="n">default_parameters</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tf</span><span class="p">:</span>
+            <span class="n">write_file</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">default_parameters</span><span class="p">)</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># rewind</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">read_file</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_yaml_dict</span><span class="p">(),</span> <span class="n">default_parameters</span><span class="o">.</span><span class="n">get_yaml_dict</span><span class="p">())</span>
 </pre></div>
 
   </div>
@@ -6054,6 +6072,32 @@ block, allowing further test code to be executed.</p></div>
     <span class="c1"># just check if the random values are numbers</span>
     <span class="k">for</span> <span class="n">par_random</span> <span class="ow">in</span> <span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">(</span><span class="n">par_random</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.test_parameters.TestParameters.test_yaml_io_new">
+    <p>def <span class="ident">test_yaml_io_new</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.test_parameters.TestParameters.test_yaml_io_new', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.test_parameters.TestParameters.test_yaml_io_new" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_yaml_io_new</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">flavio</span> <span class="kn">import</span> <span class="n">default_parameters</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tf</span><span class="p">:</span>
+        <span class="n">write_file</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">default_parameters</span><span class="p">)</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># rewind</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">read_file</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_yaml_dict</span><span class="p">(),</span> <span class="n">default_parameters</span><span class="o">.</span><span class="n">get_yaml_dict</span><span class="p">())</span>
 </pre></div>
 
   </div>
