@@ -1062,6 +1062,7 @@ table {
       
   <ul>
     <li class="mono"><a href="#flavio.statistics.functions.delta_chi2">delta_chi2</a></li>
+    <li class="mono"><a href="#flavio.statistics.functions.pull">pull</a></li>
   </ul>
 
     </li>
@@ -1085,6 +1086,7 @@ table {
   <div id="source-flavio.statistics.functions" class="source">
     <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">scipy.stats</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
 
 <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">confidence_level</span><span class="p">(</span><span class="n">nsigma</span><span class="p">):</span>
@@ -1106,6 +1108,20 @@ table {
     <span class="n">chi2_ndof</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">dof</span><span class="p">)</span>
     <span class="n">cl_nsigma</span> <span class="o">=</span> <span class="n">confidence_level</span><span class="p">(</span><span class="n">nsigma</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">chi2_ndof</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cl_nsigma</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">pull</span><span class="p">(</span><span class="n">delta_chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the pull in Gaussian standard deviations correspondsing to</span>
+<span class="sd">    a $\Delta\chi^2$ with `dof` degrees of freedom.</span>
+
+<span class="sd">    Example: For `dof=2` and `delta_chi2=2.3`, the result is roughly 1.0.</span>
+
+<span class="sd">    This function is the inverse of the function `delta_chi2()`&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dof</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># that&#39;s trivial</span>
+        <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">delta_chi2</span><span class="p">))</span>
+    <span class="n">chi2_ndof</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">dof</span><span class="p">)</span>
+    <span class="n">cl_delta_chi2</span> <span class="o">=</span> <span class="n">chi2_ndof</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">delta_chi2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="n">cl_delta_chi2</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1150,6 +1166,42 @@ to <code>nsigma</code> Gaussian standard deviations.</p>
     <span class="n">chi2_ndof</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">dof</span><span class="p">)</span>
     <span class="n">cl_nsigma</span> <span class="o">=</span> <span class="n">confidence_level</span><span class="p">(</span><span class="n">nsigma</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">chi2_ndof</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cl_nsigma</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.statistics.functions.pull">
+    <p>def <span class="ident">pull</span>(</p><p>delta_chi2, dof)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Compute the pull in Gaussian standard deviations correspondsing to
+a $\Delta\chi^2$ with <code>dof</code> degrees of freedom.</p>
+<p>Example: For <code>dof=2</code> and <code>delta_chi2=2.3</code>, the result is roughly 1.0.</p>
+<p>This function is the inverse of the function <code>delta_chi2()</code></p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.functions.pull', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.functions.pull" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">pull</span><span class="p">(</span><span class="n">delta_chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the pull in Gaussian standard deviations correspondsing to</span>
+<span class="sd">    a $\Delta\chi^2$ with `dof` degrees of freedom.</span>
+
+<span class="sd">    Example: For `dof=2` and `delta_chi2=2.3`, the result is roughly 1.0.</span>
+
+<span class="sd">    This function is the inverse of the function `delta_chi2()`&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dof</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># that&#39;s trivial</span>
+        <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">delta_chi2</span><span class="p">))</span>
+    <span class="n">chi2_ndof</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">dof</span><span class="p">)</span>
+    <span class="n">cl_delta_chi2</span> <span class="o">=</span> <span class="n">chi2_ndof</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">delta_chi2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="n">cl_delta_chi2</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
   </div>

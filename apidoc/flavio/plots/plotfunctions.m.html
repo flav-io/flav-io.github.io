@@ -1444,9 +1444,12 @@ table {
         <span class="k">try</span><span class="p">:</span>
             <span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">xy</span> <span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">steps</span><span class="p">,</span> <span class="n">steps</span><span class="p">))</span>
         <span class="k">except</span> <span class="n">PicklingError</span><span class="p">:</span>
+            <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">PicklingError</span><span class="p">(</span><span class="s2">&quot;When using more than 1 thread, the &quot;</span>
                                 <span class="s2">&quot;log_likelihood function must be picklable; &quot;</span>
                                 <span class="s2">&quot;in particular, you cannot use lambda expressions.&quot;</span><span class="p">)</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="c1"># subtract the best fit point (on the grid)</span>
 
     <span class="c1"># get the correct values for 2D confidence/credibility contours for n sigma</span>
@@ -1575,7 +1578,7 @@ table {
     <span class="n">_contour_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">contour_args</span><span class="p">)</span>
     <span class="n">_contourf_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">contourf_args</span><span class="p">)</span>
     <span class="c1"># for the filling, need to add zero contour</span>
-    <span class="n">levelsf</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)]</span> <span class="o">+</span> <span class="n">levels</span>
+    <span class="n">levelsf</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">filled</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levelsf</span><span class="p">,</span> <span class="o">**</span><span class="n">_contourf_args</span><span class="p">)</span>
@@ -1900,7 +1903,7 @@ arrays.</p>
     <span class="n">_contour_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">contour_args</span><span class="p">)</span>
     <span class="n">_contourf_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">contourf_args</span><span class="p">)</span>
     <span class="c1"># for the filling, need to add zero contour</span>
-    <span class="n">levelsf</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)]</span> <span class="o">+</span> <span class="n">levels</span>
+    <span class="n">levelsf</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">filled</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levelsf</span><span class="p">,</span> <span class="o">**</span><span class="n">_contourf_args</span><span class="p">)</span>
@@ -2432,9 +2435,12 @@ given a log likelihood function.</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">xy</span> <span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">steps</span><span class="p">,</span> <span class="n">steps</span><span class="p">))</span>
         <span class="k">except</span> <span class="n">PicklingError</span><span class="p">:</span>
+            <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">PicklingError</span><span class="p">(</span><span class="s2">&quot;When using more than 1 thread, the &quot;</span>
                                 <span class="s2">&quot;log_likelihood function must be picklable; &quot;</span>
                                 <span class="s2">&quot;in particular, you cannot use lambda expressions.&quot;</span><span class="p">)</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="c1"># subtract the best fit point (on the grid)</span>
 
     <span class="c1"># get the correct values for 2D confidence/credibility contours for n sigma</span>

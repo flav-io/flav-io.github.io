@@ -1522,11 +1522,13 @@ table {
                         <span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">od</span>
 
-    <span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">        get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">        get_dict method.</span>
+
+<span class="sd">        Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
         <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">UniformDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Distribution with constant PDF in a range and zero otherwise.&quot;&quot;&quot;</span>
@@ -2499,7 +2501,7 @@ table {
             <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Grid must be evenly spaced per dimension&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xi</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -3392,22 +3394,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.AsymmetricNormalDistribution.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.AsymmetricNormalDistribution.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.AsymmetricNormalDistribution.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3452,14 +3456,10 @@ get_dict method.</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.AsymmetricNormalDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_right">error_right</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the upper error</p></div>
+    <div class="desc"><p>Return the upper error</p></div>
   <div class="source_cont">
 </div>
 
@@ -3820,22 +3820,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.DeltaDistribution.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.DeltaDistribution.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.DeltaDistribution.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3875,10 +3877,14 @@ get_dict method.</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.DeltaDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_left">error_left</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return the lower error</p></div>
+    <div class="desc inherited"><p>Return the lower error</p></div>
   <div class="source_cont">
 </div>
 
@@ -3886,14 +3892,10 @@ get_dict method.</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.DeltaDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_right">error_right</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the upper error</p></div>
+    <div class="desc"><p>Return the upper error</p></div>
   <div class="source_cont">
 </div>
 
@@ -4266,22 +4268,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.GammaDistribution.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GammaDistribution.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.GammaDistribution.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -4356,14 +4360,10 @@ get_dict method.</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.GammaDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_right">error_right</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the upper error</p></div>
+    <div class="desc"><p>Return the upper error</p></div>
   <div class="source_cont">
 </div>
 
@@ -4835,22 +4835,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.GammaDistributionPositive.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GammaDistributionPositive.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.GammaDistributionPositive.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -4928,14 +4930,10 @@ get_dict method.</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.GammaDistributionPositive.error_right" class="name">var <span class="ident">error_right</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_right">error_right</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the upper error</p></div>
+    <div class="desc"><p>Return the upper error</p></div>
   <div class="source_cont">
 </div>
 
@@ -5382,22 +5380,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.GammaUpperLimit.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GammaUpperLimit.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.GammaUpperLimit.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -5719,10 +5719,14 @@ get_dict method.</p></div>
     <p>def <span class="ident">get_dict</span>(</p><p>self, distribution=False, iterate=False, arraytolist=False)</p>
     </div>
     
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.get_dict">get_dict</a></code>
+    </p>
 
     
   
-    <div class="desc"><p>Get an ordered dictionary with arguments and values needed to
+    <div class="desc inherited"><p>Get an ordered dictionary with arguments and values needed to
 the instantiate the distribution.</p>
 <p>Optional arguments (default to False):</p>
 <ul>
@@ -5919,22 +5923,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.GaussianKDE.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GaussianKDE.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.GaussianKDE.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -6442,22 +6448,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.GaussianUpperLimit.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GaussianUpperLimit.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.GaussianUpperLimit.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -6501,10 +6509,14 @@ get_dict method.</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.GaussianUpperLimit.error_left" class="name">var <span class="ident">error_left</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.probability.HalfNormalDistribution">HalfNormalDistribution</a></code>.<code><a href="#flavio.statistics.probability.HalfNormalDistribution.error_left">error_left</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return the lower error</p></div>
+    <div class="desc inherited"><p>Return the lower error</p></div>
   <div class="source_cont">
 </div>
 
@@ -7092,22 +7104,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.GeneralGammaUpperLimit.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.GeneralGammaUpperLimit.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.GeneralGammaUpperLimit.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -7657,22 +7671,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.HalfNormalDistribution.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.HalfNormalDistribution.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.HalfNormalDistribution.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -8152,22 +8168,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.KernelDensityEstimate.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.KernelDensityEstimate.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.KernelDensityEstimate.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -8265,14 +8283,10 @@ get_dict method.</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.KernelDensityEstimate.error_right" class="name">var <span class="ident">error_right</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.NumericalDistribution">NumericalDistribution</a></code>.<code><a href="#flavio.statistics.probability.NumericalDistribution.error_right">error_right</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the upper error</p></div>
+    <div class="desc"><p>Return the upper error</p></div>
   <div class="source_cont">
 </div>
 
@@ -8786,22 +8800,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.MultivariateNormalDistribution.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.MultivariateNormalDistribution.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.MultivariateNormalDistribution.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -8881,10 +8897,14 @@ get_dict method.</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.MultivariateNormalDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_left">error_left</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return the lower error</p></div>
+    <div class="desc inherited"><p>Return the lower error</p></div>
   <div class="source_cont">
 </div>
 
@@ -8892,14 +8912,10 @@ get_dict method.</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.MultivariateNormalDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_right">error_right</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the upper error</p></div>
+    <div class="desc"><p>Return the upper error</p></div>
   <div class="source_cont">
 </div>
 
@@ -9013,7 +9029,7 @@ get_dict method.</p></div>
             <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Grid must be evenly spaced per dimension&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xi</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -9193,7 +9209,7 @@ get_dict method.</p></div>
         <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Grid must be evenly spaced per dimension&quot;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xi</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -9405,22 +9421,24 @@ lattice spacing will lead to a smoother distribution of random numbers
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.MultivariateNumericalDistribution.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.MultivariateNumericalDistribution.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.MultivariateNumericalDistribution.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -9497,14 +9515,10 @@ get_dict method.</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.MultivariateNumericalDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_right">error_right</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the upper error</p></div>
+    <div class="desc"><p>Return the upper error</p></div>
   <div class="source_cont">
 </div>
 
@@ -9919,22 +9933,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.NormalDistribution.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NormalDistribution.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.NormalDistribution.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -10572,22 +10588,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.NumericalDistribution.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.NumericalDistribution.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.NumericalDistribution.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -10685,14 +10703,10 @@ get_dict method.</p></div>
             <div class="item">
             <p id="flavio.statistics.probability.NumericalDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_right">error_right</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the upper error</p></div>
+    <div class="desc"><p>Return the upper error</p></div>
   <div class="source_cont">
 </div>
 
@@ -10930,11 +10944,13 @@ get_dict method.</p></div>
                         <span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">od</span>
 
-    <span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">        get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">        get_dict method.</span>
+
+<span class="sd">        Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
         <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -11068,22 +11084,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.ProbabilityDistribution.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.ProbabilityDistribution.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.ProbabilityDistribution.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -11467,22 +11485,24 @@ get_dict instead of the instance as value.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.probability.UniformDistribution.get_yaml">
-    <p>def <span class="ident">get_yaml</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get a YAML string representing the dictionary returned by the
-get_dict method.</p></div>
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.UniformDistribution.get_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.UniformDistribution.get_yaml" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
-<span class="sd">    get_dict method.&quot;&quot;&quot;</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
     <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
