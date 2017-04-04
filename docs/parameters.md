@@ -40,11 +40,11 @@ of the parameter.
 | `B+->K*+ deltaC9 c_0 Im` | $\text{Im}\,c^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at high $q^2$ |
 | `B+->K*+ deltaC9 c_0 Re` | $\text{Re}\,c^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B^+\to K^{*+}\ell^+\ell^-$ at high $q^2$ |
 | `B+->K+ deltaC9 a Im` | $\text{Im}\,a^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^+\to K^+\ell^+\ell^-$ at low $q^2$ |
-| `B+->K+ deltaC9 a Re` | $\text{Im}\,a^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^+\to K^+\ell^+\ell^-$ at low $q^2$ |
+| `B+->K+ deltaC9 a Re` | $\text{Re}\,a^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^+\to K^+\ell^+\ell^-$ at low $q^2$ |
 | `B+->K+ deltaC9 b Im` | $\text{Im}\,b^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^+\to K^+\ell^+\ell^-$ at low $q^2$ |
-| `B+->K+ deltaC9 b Re` | $\text{Im}\,b^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^+\to K^+\ell^+\ell^-$ at low $q^2$ |
+| `B+->K+ deltaC9 b Re` | $\text{Re}\,b^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^+\to K^+\ell^+\ell^-$ at low $q^2$ |
 | `B+->K+ deltaC9 c Im` | $\text{Im}\,c^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^+\to K^+\ell^+\ell^-$ at low $q^2$ |
-| `B+->K+ deltaC9 c Re` | $\text{Im}\,c^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^+\to K^+\ell^+\ell^-$ at high $q^2$ |
+| `B+->K+ deltaC9 c Re` | $\text{Re}\,c^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^+\to K^+\ell^+\ell^-$ at high $q^2$ |
 | `B->D BCL a0_f+` | $a_0^{(+)}$ | BCL $B\to D$ form factor parametrization coefficient $a_0$ of $f_+$ |
 | `B->D BCL a0_f0` | $a_0^{(0)}$ | BCL $B\to D$ form factor parametrization coefficient $a_0$ of $f_0$ |
 | `B->D BCL a1_f+` | $a_1^{(+)}$ | BCL $B\to D$ form factor parametrization coefficient $a_1$ of $f_+$ |
