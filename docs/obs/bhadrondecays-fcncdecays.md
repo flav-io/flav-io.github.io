@@ -132,6 +132,8 @@ a scalar observable).
 | `ACP(B0->Kmumu)` | $A_\text{CP}(B^0\to K^0\mu^+\mu^-)$ | Direct CP asymmetry in $B^0\to K^0\mu^+\mu^-$ | `q2` |
 | `AFB(B0->Kmumu)` | $A_\text{FB}(B^0\to K^0\mu^+\mu^-)$ | Forward-backward asymmetry in $B^0\to K^0\mu^+\mu^-$ | `q2` |
 | `FH(B0->Kmumu)` | $F_H(B^0\to K^0\mu^+\mu^-)$ | Flat term in $B^0\to K^0\mu^+\mu^-$ | `q2` |
+| `Rmue(B0->Kll)` | $R_{\mu e}(B^0\to K^0\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^0\to K^0\mu^+ \mu^-$ and $B^0\to K^0e^+ e^-$ | `q2` |
+| `Rtaumu(B0->Kll)` | $R_{\tau \mu}(B^0\to K^0\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^0\to K^0\tau^+ \tau^-$ and $B^0\to K^0\mu^+ \mu^-$ | `q2` |
 | `dBR/dq2(B0->Kmumu)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0\mu^+\mu^-)$ | Differential branching ratio of $B^0\to K^0\mu^+\mu^-$ | `q2` |
 
 
@@ -148,6 +150,7 @@ a scalar observable).
 | `ACP(B0->Ktautau)` | $A_\text{CP}(B^0\to K^0\tau^+\tau^-)$ | Direct CP asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2` |
 | `AFB(B0->Ktautau)` | $A_\text{FB}(B^0\to K^0\tau^+\tau^-)$ | Forward-backward asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2` |
 | `FH(B0->Ktautau)` | $F_H(B^0\to K^0\tau^+\tau^-)$ | Flat term in $B^0\to K^0\tau^+\tau^-$ | `q2` |
+| `Rtaumu(B0->Kll)` | $R_{\tau \mu}(B^0\to K^0\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^0\to K^0\tau^+ \tau^-$ and $B^0\to K^0\mu^+ \mu^-$ | `q2` |
 | `dBR/dq2(B0->Ktautau)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0\tau^+\tau^-)$ | Differential branching ratio of $B^0\to K^0\tau^+\tau^-$ | `q2` |
 
 
@@ -164,6 +167,7 @@ a scalar observable).
 | `ACP(B0->Kee)` | $A_\text{CP}(B^0\to K^0e^+e^-)$ | Direct CP asymmetry in $B^0\to K^0e^+e^-$ | `q2` |
 | `AFB(B0->Kee)` | $A_\text{FB}(B^0\to K^0e^+e^-)$ | Forward-backward asymmetry in $B^0\to K^0e^+e^-$ | `q2` |
 | `FH(B0->Kee)` | $F_H(B^0\to K^0e^+e^-)$ | Flat term in $B^0\to K^0e^+e^-$ | `q2` |
+| `Rmue(B0->Kll)` | $R_{\mu e}(B^0\to K^0\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^0\to K^0\mu^+ \mu^-$ and $B^0\to K^0e^+ e^-$ | `q2` |
 | `dBR/dq2(B0->Kee)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0e^+e^-)$ | Differential branching ratio of $B^0\to K^0e^+e^-$ | `q2` |
 
 
@@ -181,6 +185,8 @@ a scalar observable).
 | `ACP(B+->Kmumu)` | $A_\text{CP}(B^\pm\to K^\pm \mu^+\mu^-)$ | Direct CP asymmetry in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2` |
 | `AFB(B+->Kmumu)` | $A_\text{FB}(B^\pm\to K^\pm \mu^+\mu^-)$ | Forward-backward asymmetry in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2` |
 | `FH(B+->Kmumu)` | $F_H(B^\pm\to K^\pm \mu^+\mu^-)$ | Flat term in $B^\pm\to K^\pm \mu^+\mu^-$ | `q2` |
+| `Rmue(B+->Kll)` | $R_{\mu e}(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of differential branching ratios of $B^\pm\to K^\pm \mu^+ \mu^-$ and $B^\pm\to K^\pm e^+ e^-$ | `q2` |
+| `Rtaumu(B+->Kll)` | $R_{\tau \mu}(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of differential branching ratios of $B^\pm\to K^\pm \tau^+ \tau^-$ and $B^\pm\to K^\pm \mu^+ \mu^-$ | `q2` |
 | `dBR/dq2(B+->Kmumu)` | $\frac{d\text{BR}}{dq^2}(B^\pm\to K^\pm \mu^+\mu^-)$ | Differential branching ratio of $B^\pm\to K^\pm \mu^+\mu^-$ | `q2` |
 
 
@@ -197,6 +203,7 @@ a scalar observable).
 | `ACP(B+->Ktautau)` | $A_\text{CP}(B^\pm\to K^\pm \tau^+\tau^-)$ | Direct CP asymmetry in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
 | `AFB(B+->Ktautau)` | $A_\text{FB}(B^\pm\to K^\pm \tau^+\tau^-)$ | Forward-backward asymmetry in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
 | `FH(B+->Ktautau)` | $F_H(B^\pm\to K^\pm \tau^+\tau^-)$ | Flat term in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
+| `Rtaumu(B+->Kll)` | $R_{\tau \mu}(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of differential branching ratios of $B^\pm\to K^\pm \tau^+ \tau^-$ and $B^\pm\to K^\pm \mu^+ \mu^-$ | `q2` |
 | `dBR/dq2(B+->Ktautau)` | $\frac{d\text{BR}}{dq^2}(B^\pm\to K^\pm \tau^+\tau^-)$ | Differential branching ratio of $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
 
 
@@ -213,6 +220,7 @@ a scalar observable).
 | `ACP(B+->Kee)` | $A_\text{CP}(B^\pm\to K^\pm e^+e^-)$ | Direct CP asymmetry in $B^\pm\to K^\pm e^+e^-$ | `q2` |
 | `AFB(B+->Kee)` | $A_\text{FB}(B^\pm\to K^\pm e^+e^-)$ | Forward-backward asymmetry in $B^\pm\to K^\pm e^+e^-$ | `q2` |
 | `FH(B+->Kee)` | $F_H(B^\pm\to K^\pm e^+e^-)$ | Flat term in $B^\pm\to K^\pm e^+e^-$ | `q2` |
+| `Rmue(B+->Kll)` | $R_{\mu e}(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of differential branching ratios of $B^\pm\to K^\pm \mu^+ \mu^-$ and $B^\pm\to K^\pm e^+ e^-$ | `q2` |
 | `dBR/dq2(B+->Kee)` | $\frac{d\text{BR}}{dq^2}(B^\pm\to K^\pm e^+e^-)$ | Differential branching ratio of $B^\pm\to K^\pm e^+e^-$ | `q2` |
 
 
@@ -407,6 +415,8 @@ a scalar observable).
 | `P5p(B+->K*mumu)` | $P_5^\prime(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `P6p(B+->K*mumu)` | $P_6^\prime(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `P8p(B+->K*mumu)` | $P_8^\prime(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
+| `Rmue(B+->K*ll)` | $R_{\mu e} (B^+\to K^{\ast +}\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^+\to K^{\ast +}\mu^+ \mu^-$ and $B^+\to K^{\ast +}e^+ e^-$ | `q2` |
+| `Rtaumu(B+->K*ll)` | $R_{\tau \mu} (B^+\to K^{\ast +}\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^+\to K^{\ast +}\tau^+ \tau^-$ and $B^+\to K^{\ast +}\mu^+ \mu^-$ | `q2` |
 | `S3(B+->K*mumu)` | $S_3(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `S4(B+->K*mumu)` | $S_4(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `S5(B+->K*mumu)` | $S_5(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
@@ -467,6 +477,7 @@ a scalar observable).
 | `P5p(B+->K*tautau)` | $P_5^\prime(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `P6p(B+->K*tautau)` | $P_6^\prime(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `P8p(B+->K*tautau)` | $P_8^\prime(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
+| `Rtaumu(B+->K*ll)` | $R_{\tau \mu} (B^+\to K^{\ast +}\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^+\to K^{\ast +}\tau^+ \tau^-$ and $B^+\to K^{\ast +}\mu^+ \mu^-$ | `q2` |
 | `S3(B+->K*tautau)` | $S_3(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `S4(B+->K*tautau)` | $S_4(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `S5(B+->K*tautau)` | $S_5(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
@@ -527,6 +538,7 @@ a scalar observable).
 | `P5p(B+->K*ee)` | $P_5^\prime(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `P6p(B+->K*ee)` | $P_6^\prime(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `P8p(B+->K*ee)` | $P_8^\prime(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
+| `Rmue(B+->K*ll)` | $R_{\mu e} (B^+\to K^{\ast +}\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^+\to K^{\ast +}\mu^+ \mu^-$ and $B^+\to K^{\ast +}e^+ e^-$ | `q2` |
 | `S3(B+->K*ee)` | $S_3(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `S4(B+->K*ee)` | $S_4(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `S5(B+->K*ee)` | $S_5(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
@@ -684,6 +696,8 @@ a scalar observable).
 | `P5p(B0->K*mumu)` | $P_5^\prime(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `P6p(B0->K*mumu)` | $P_6^\prime(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `P8p(B0->K*mumu)` | $P_8^\prime(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
+| `Rmue(B0->K*ll)` | $R_{\mu e} (B^0\to K^{\ast 0}\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^0\to K^{\ast 0}\mu^+ \mu^-$ and $B^0\to K^{\ast 0}e^+ e^-$ | `q2` |
+| `Rtaumu(B0->K*ll)` | $R_{\tau \mu} (B^0\to K^{\ast 0}\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^0\to K^{\ast 0}\tau^+ \tau^-$ and $B^0\to K^{\ast 0}\mu^+ \mu^-$ | `q2` |
 | `S3(B0->K*mumu)` | $S_3(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `S4(B0->K*mumu)` | $S_4(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `S5(B0->K*mumu)` | $S_5(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
@@ -744,6 +758,7 @@ a scalar observable).
 | `P5p(B0->K*tautau)` | $P_5^\prime(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `P6p(B0->K*tautau)` | $P_6^\prime(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `P8p(B0->K*tautau)` | $P_8^\prime(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
+| `Rtaumu(B0->K*ll)` | $R_{\tau \mu} (B^0\to K^{\ast 0}\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^0\to K^{\ast 0}\tau^+ \tau^-$ and $B^0\to K^{\ast 0}\mu^+ \mu^-$ | `q2` |
 | `S3(B0->K*tautau)` | $S_3(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `S4(B0->K*tautau)` | $S_4(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `S5(B0->K*tautau)` | $S_5(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
@@ -804,6 +819,7 @@ a scalar observable).
 | `P5p(B0->K*ee)` | $P_5^\prime(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `P6p(B0->K*ee)` | $P_6^\prime(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `P8p(B0->K*ee)` | $P_8^\prime(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
+| `Rmue(B0->K*ll)` | $R_{\mu e} (B^0\to K^{\ast 0}\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^0\to K^{\ast 0}\mu^+ \mu^-$ and $B^0\to K^{\ast 0}e^+ e^-$ | `q2` |
 | `S3(B0->K*ee)` | $S_3(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `S4(B0->K*ee)` | $S_4(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `S5(B0->K*ee)` | $S_5(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
