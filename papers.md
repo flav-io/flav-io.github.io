@@ -11,6 +11,11 @@ This is a curated list of publications and preprints making use of the flavio pa
 {: class="table"}
 Authors | Title | arXiv | Code
 --------|-------|-------|------------
+Ashutosh Kumar Alok, Bhubanjyoti Bhattacharya, Alakabha Datta, Dinesh Kumar, Jacky Kumar, David London |
+New Physics in $b \rightarrow s \mu^+ \mu^-$ after the Measurement of $R_{K^*}$ | [1704.07397 |(https://arxiv.org/abs/1704.07397)
+Ashutosh Kumar Alok, Dinesh Kumar, Jacky Kumar, Ruchi Sharma | Lepton flavor non-universality in the B-sector: a global analyses of various new physics models | [1704.07347] |(https://arxiv.org/abs/1704.07347)
+Ashutosh Kumar Alok, Bhubanjyoti Bhattacharya, Dinesh Kumar, Jacky Kumar, David London, S. Uma Sankar|
+New Physics in $b \rightarrow s \mu^+ \mu^-$: Distinguishing Models through CP-Violating Effects | [1703.09247] | (https://arxiv.org/abs/1703.09247)
 S. Di Chiara, A. Fowlie, S. Fraser, C. Marzo, L. Marzola, M. Raidal, C. Spethmann | Minimal flavor-changing $Z^\prime$ models and muon $g-2$ after the $R_K^\ast$ measurement | [1704.06200](https://arxiv.org/abs/1704.06200)
 F. Sala, D. M. Straub | A New Light Particle in B Decays? | [1704.06188](https://www.arxiv.org/abs/1704.06188)
 G. D'Amico, M. Nardecchia, P. Panci, F. Sannino, A. Strumia, R. Torre, A. Urbano | Flavour anomalies after the $R_K^\ast$ measurement | [1704.05438](https://arxiv.org/abs/1704.05438)
