@@ -11,7 +11,7 @@ This is a curated list of publications and preprints making use of the flavio pa
 {: class="table"}
 Authors | Title | arXiv | Code
 --------|-------|-------|------------
-Alakabha Datta, Jacky Kumar, Jiajun Liao, Danny Marfatia | New light mediators for the $R_K$ and $R_K*$ puzzles | [1705.08423](https://arxiv.org/abs/1705.08423)
+A. Datta, J. Kumar, J. Liao, D. Marfatia | New light mediators for the $R_K$ and $R_K*$ puzzles | [1705.08423](https://arxiv.org/abs/1705.08423)
 A. K. Alok, B. Bhattacharya, A. Datta, D. Kumar, J. Kumar, D. London | New Physics in $b \rightarrow s \mu^+ \mu^-$ after the Measurement of $R_{K^*}$ | [1704.07397](https://arxiv.org/abs/1704.07397)
 A. K. Alok, D. Kumar, J. Kumar, R. Sharma | Lepton flavor non-universality in the B-sector: a global analyses of various new physics models | [1704.07347](https://arxiv.org/abs/1704.07347)
 S. Di Chiara, A. Fowlie, S. Fraser, C. Marzo, L. Marzola, M. Raidal, C. Spethmann | Minimal flavor-changing $Z^\prime$ models and muon $g-2$ after the $R_K^\ast$ measurement | [1704.06200](https://arxiv.org/abs/1704.06200)
