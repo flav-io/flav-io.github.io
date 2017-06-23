@@ -48,8 +48,8 @@ YAML files can be used to set the constraints on both parameters and
 measurements. Consult the following files,
 
 - [measurements.yml](https://github.com/flav-io/flavio/blob/master/flavio/data/measurements.yml),
-- [parameters_uncorrelated](https://github.com/flav-io/flavio/blob/master/flavio/data/parameters_uncorrelated.yml)
-- [parameters_correlated](https://github.com/flav-io/flavio/blob/master/flavio/data/parameters_correlated.yml)
+- [parameters_uncorrelated.yml](https://github.com/flav-io/flavio/blob/master/flavio/data/parameters_uncorrelated.yml)
+- [parameters_correlated.yml](https://github.com/flav-io/flavio/blob/master/flavio/data/parameters_correlated.yml)
 
 containing the default constraints, for examples. The following examples show
 in which format the constraints can be written for different choices of
