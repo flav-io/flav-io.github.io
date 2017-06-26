@@ -5,157 +5,100 @@ title: Fitting parameters or Wilson coefficients
 
 # Fitting parameters or Wilson coefficients
 
-Fitting Standard Model parameters or the allowed values of new physics
-contributions to the Wilson coefficicents to existing experimental data
-is one of the main purposes of flavio. Making this possible requires two
-ingredients:
+Fitting parameters or Wilson coefficicents from existing experimental data is one of the main purposes of flavio. The code is organized such as to allow the use of different statistical paradigms (frequentist vs. Bayesian) and arbitrary probability distributions.
 
-- experimental measurements of the observables,
-- statistical fitting routines.
+## Introduction: statistical inference
 
-Please note that this functionality is still in the early stages of
-development, so interfaces may change in the future.
+In general, we have a set $x_i^\text{exp}$ of $N$ measurements of $M$ observables, $i=1\ldots N$, and we can compute the theory prediction $x^\text{th}_i$ for each observable as a function of a set of theory parameters $\theta_j$ (for the moment, let us not distinguish between parameters and Wilson coefficients). Then, we can define the *likelihood function*
 
-## Experimental data
+$$\mathcal L_\text{exp}(\vec\theta)=\prod_{i=1}^N f_i\!\left(x_i^\text{exp}, x^\text{th}_i(\vec\theta)\right)$$
 
-All experimental measurements are included in the YAML file `measurements.yml`
+where $f_i$ is the *probability distribution function* of measurement $i$.
+
+The problem of  interest is in general to determine the values a subset of the parameters $\vec\theta$ preferred by the data, possibly using additional knowledge about these parameters from "direct" measurements or theoretical considerations. This leads to a splitting of $\vec\theta$ into "fit parameters" $\vec\xi$ and "nuisance parameters" $\vec\nu$.
+
+### Bayesian approach
+
+In the Bayesian approach, one defines  the *prior probability distribution* $\pi(\vec\theta)$
+of all (fit and nuisance) parameters, that contains the prior knowledge about the parameters from external measurements or theoretical considerations. In the case where all parameters are uncorrelated, one simply has $\pi(\vec\theta)=\prod_i f_i(\theta_i)$.
+
+The product of the likelihood with the prior is proportional to the *posterior probability distribution* via Bayes' theorem,
+
+$$P(\vec\theta) \propto \mathcal L_\text{exp}(\vec\theta)\pi(\vec\theta).$$
+
+To obtain the posterior distribution only for a subset of the parameters, the others have to be *marginalized*, i.e. integrated over:
+
+$$P(\vec\xi)=\int d\vec\nu ~ P(\vec\xi,\vec\nu).$$
+
+This can be done efficiently in high dimensions using Monte Carlo methods, e.g. using nested sampling or Markov chains.
+
+### Frequentist approach
+
+In the frequentist approach, the parameters do not have prior probabilities associated to them; however, they can be subject to external, direct measurements that enter the likelihood separately,
+
+$$\mathcal L_\text{tot}(\vec\theta) = \mathcal L_\text{exp}(\vec\theta) \mathcal L_\text{nuis}(\vec\nu).$$
+
+An example would be the top-quark mass entering the prediction of a rare decay, subject to a direct measurement from LHC. Theory uncertainties are less uniquely defined in this approach, as they are not amenable to a "frequentist" interpretation. Eventually, the ambiguity in how to define them is similar to the prior dependence in the Bayesian approach. In flavio, all nuisance parameters have a probability density function associated to them and the form of this PDF can be chosen to mimick different treatments of theory uncertainties. For instance, a normal distribution would correspond to treating the theory uncertainties like a statistical uncertainty, while a uniform distribution would lead to a treatment similar to the [Rfit](https://arxiv.org/abs/hep-ph/0104062) scheme.
+
+Finding confidence intervals for the parameters of interest $\vec\xi$ in the presence of nuisance parameters $\nu$ requires constructing the *profile likelihood*
+
+$$\mathcal L_\text{p}(\vec\xi) = \mathcal L_\text{tot}(\vec\xi, \hat{\hat{\vec\nu}}),$$
+
+where $\hat{\hat{\vec\nu}}$ corresponds to the set of nuisance parameter maximizing the likelihood for a fixed value of $\vec\theta$. In practice, it requires performing a numerical optimization in $\vec\nu$ space on a grid of points in $\vec\theta$ space.
+
+### "Fast fit" approach
+
+Since both Bayesian marginalization and frequentist likelihood profiling are computationally quite demanding, flavio additionally introduces a simplified concept called a "fast fit" that is based on the approximation of assuming the likelihood to be of the form $\mathcal L =e^{-\chi^2(\vec\xi)/2}$, where
+
+$$\chi^2(\vec\xi)=\vec\Delta^T C^{-1}(\vec\xi=\hat{\vec\xi}) \vec\Delta,
+\qquad\Delta_i = (x_i^\text{exp}- x^\text{th}_i(\vec\theta)).$$
+
+Here, $C(\vec\xi)=C_\text{exp}+C_\text{th}(\vec\xi)$ is the combined experimental and theoretical covariance matrix of the observables $x_i$, and a crucial point is that it is *evaluated for $\vec\xi$ at their central values* $\hat{\vec\xi}$. The theoretical covariance is obtained from randomly sampling the observables for nuisance parameters distributed according to their PDFs, while the experimental covariance is obtained from approximating the true experimental PDFs as (multivariate) Gaussians.
+
+This approach has the main advantage that it yields a likelihood independent of nuisance parameters, but the time-consuming step (namely evaluating the theoretical covariance $C_\text{th}$) is *independent of the data*. In particular, this makes this approach very powerful for fast inference after a change in experimental data.
+
+However, its validity relies on a number of assumptions,
+
+- the experimental uncertainties are approximated as Gaussian,
+- the theory uncertainties (at the level of observables) are approximated as Gaussian,
+- the covariances are assumed to be weakly dependent on $\vec\xi$.
+
+The last point is by far the strongest assumption and its validy has to be checked whenever the method is employed.
+
+## Inference in flavio
+
+In flavio, statistical inference is based on the following concepts,
+
+- **probability distributions** (represented by the `ProbabilityDistribution` class) that are the building blocks of likelihoods,
+- **measurements** (represented by the `Measurement` class), that associate probability distributions to observables,
+- **fits** (represented by the `Fit` class) that define a set of fit parameters $\vec\xi$, nuisance parameters $\nu$, and measurements $x_i$ of interest and assemble the corresponding likelihood,
+- **fitters** that sample the likelihood of a given fit to obtain confidence intervals, credibility regions, best-fit values, and so on. This includes in particular Bayesian marginalization and frequentist likelihood profiling.
+
+Example: we want to determine the value of the CKM element $V_{cb}$ from the total branching ratio of $B\to D\ell\nu$. We need
+
+- an existing **measurement**, consisting of a  **probability distribution** (e.g. a normal distribution with a central value and standard deviation) associated to the observable `BR(B0->Dlnu)`,
+- **probability distributions** for all the other parameters entering the prediction, like the $b$ quark mass (these reside in the `ParameterConstraints` class),
+- a **fit** simply defining we are interested in fitting the parameter $V_{cb}$ from the existing measurement of the observable `BR(B0->Dlnu)` with a set of nuisance parameters (namely the remaining parameters the prediction depends on),
+- a **fitter** (defined in the `flavio.statistics.fitters` module) to determine the frequentist likelihood or Bayesian posterior probability for $V_{cb}$.
+
+The first two points -- PDFs for measurements and input parameters -- are already included by default in flavio (but can be modified or extended by the user), while the last two points have to be specified by the user. The [Bayesian](bayesian.html), [frequentist](frequentist.html), and [fast fit](fastfit.html) approaches are discussed in more detail on seperate pages.
+
+### Experimental data
+
+flavio already comes with a database of existing  experimental measurements. They are defined in the YAML file `measurements.yml`
 ([view on Github](https://github.com/flav-io/flavio/blob/master/flavio/data/measurements.yml)).
 
-A "measurement" (represented internally as an instance of `flavio.Measurement`)
-is defined as one or more observables with a central value and uncertainties
-attached to it, with uncertainties between the observables possibly correlated.
-
-To add additional measurements not included in the above file, created your
-own file in the same format and add any measurements you like. You can then
-load the file by
+To add additional measurements not included in the above file, you can create your
+own file in the same format and add any measurements you like.
+The format for the various probability distributions is discussed in detail [on a separate page](probability.html).
+You can then load the file by
 
 {% highlight python %}
 flavio.measurements.load('my_measurements.yml')
 {% endhighlight %}
 
-Needless to say, you are welcome to add any missing measurements via a
-pull request on Github.
+Needless to say, you are welcome to add any missing measurements via a pull request on Github.
 
-## Fitting routines
+### Wilson coefficients
 
-Fitting parameters to data requires fixing a statistical approach (Bayesian
-vs. frequentist). While flavio is designed to accomodate different approaches,
-at present only two possibilities are implemented:
-
-- a Bayesian fit,
-- a "fast" version of the Bayesian fit not requiring marginalization.
-
-### Bayesian fits
-
-#### Fitting parameters
-
-To define a Bayesian fit of SM parameters (e.g. the CKM parameters) to
-experimental data, the following inputs have to be specified:
-
-- a unique name for the fit
-- input parameters with uncertainties in the form of a `flavio.ParameterConstraints`
-instance (you can simply use `flavio.default_parameters`)
-- a list of parameters of interest (see the [full list of parameters](parameters.html)),
-- a list of nuisance parameters (that are varied in the fit as well).
-
-For instance, a CKM fit could look like
-
-{% highlight python %}
-import flavio.statistics.fits
-
-ckmfit = flavio.statistics.fits.BayesianFit(
-  name = 'SM CKM fit',
-  par_obj = flavio.default_parameters,
-  fit_parameters = ['Vus', 'Vub', 'Vcb', 'gamma'],
-  nuisance_parameters = ['bag_B0_1', ...]
-  )
-{% endhighlight %}
-
-(not showing the full list  of nuisance parameters). Once defined, you can
-access the logarithm of the target distribution (likelihood times prior
-probability) via
-
-{% highlight python %}
-ckmfit.log_target(x)
-{% endhighlight %}
-
-where x is a list (or NumPy array) of real numbers, with the first four
-being the values of the fit parameters and the remaining ones the values of
-the nuisance parameters.
-
-To obtain the posterior probability distribution, Markov Chain Monte Carlo  (MCMC)
-techniques can be used. At present, simple interfaces to the
-[pypmc](https://github.com/fredRos/pypmc)
-and
-[emcee](http://dan.iel.fm/emcee)
-packages are implemented, acessible via
-`flavio.statistics.fits.fitters.pypmc`
-and
-`flavio.statistics.fits.fitters.emcee`.
-
-#### Fitting Wilson coefficients
-
-To fit Wilson coefficients in addition to (or instead of) parameters,
-the following four additional inputs have to be passed when defining the fit instance:
-
-- a list of names of coefficients (or functions of coefficients) to be fitted,
-- a function relating these coefficients to actual Wilson coefficients
-defined in the [flavio basis](operators.html),
-- an input scale where the Wilson coefficients are defined (defaults to 160 GeV),
-- optionally, a function returning the prior probability in the space of the
-coefficients (defaults to flat).
-
-The first two items are necessary as the quantities to be fitted need to be real
-numbers, while the Wilson coefficients are in general complex objects, so real
-and imaginary parts have to be treated as independent fit parameters.
-In addition, this allows to fit constrained scenarios such as MFV or models
-with lepton flavour universality.
-
-For details please consult the [API docs](https://flav-io.github.io/apidoc/flavio/statistics/fits.m.html).
-
-### "Fast" fits
-
-Bayesian fits with a large number of nuisance parameters are computationally
-intensive and thus time consuming. Sometimes, it can be useful to be able to
-directly evaluate the probability in the space of, say, two Wilson coefficients.
-This can be achieved by precomputing the uncertainties (and their correlations)
-of all observables
-within the SM and treating them like an experimental uncertainty (to be added
-in quadrature with the actual experimental uncertainty). This approach was
-used in [arXiv:1411.3161](http://arxiv.org/pdf/1411.3161.pdf)
-for a global analysis of $b\to s$ transitions -- see section 3.1 for a discussion.
-
-Another use case would be to plot the constraints from a single CKM observable
-in the $\bar\rho$-$\bar\eta$ plane as a band.
-
-Defining a FastFit is very similar to a BayesianFit, using the class
-`flavio.statistics.fits.FastFit`. The main differences are
-
-- when fitting SM parameters, the number of fit parameters should usually just be
-1 or 2 (for one- or two-dimensional plots),
-as the fit parameters are not marginalized over
-- the number of nuisance parameters does *not* impact on computation time and
-can be large.
-
-Having defined the fit instance (let's call it `my_fastfit`), the first step
-is to compute the uncertainties of all observables within the SM (varying
-all nuisance parameters). Since these theory uncertainties are combined with
-the existing experimental uncertainties, the command is called
-
-{% highlight python %}
-my_fastfit.make_measurement()
-{% endhighlight %}
-
-This part can be very time consuming! The function `make_measurement`
-has an optional argument `N` specifying the number of random parameter sets
-(default: $N=100$). Larger numbers lead to more accurate results, smaller numbers
-take less time.
-
-Once this is completed, the logarithm of the likelihood can be accessed via
-{% highlight python %}
-my_fastfit.log_likelihood(x)
-{% endhighlight %}
-where `x` is a  list (or NumPy array) *only* containing the values of the
-fit parameters (or Wilson coefficients). Note that there is no prior probability
-for the nuisance parameters (and non-flat priors for the fit parameters are
-currently not supported by `FastFit`).
+While the preceding discussion focused on fitting *parameters* $\vec\xi$, the equivalent applies also to fitting new physics contributions to Wilson coefficients. While parameters and Wilson coefficients are treated on a different footing in flavio, ...
