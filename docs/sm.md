@@ -88,16 +88,9 @@ flavio.plots.error_budget_pie(errors)
 
 It should look something like this:
 
-![](/images/pie.png)
+![](/images/pie.svg)
 
-Note however that the representation of uncertainties as a pie chart can be misleading
-in several respects.
-
-- For uncorrelated parameters, the total uncertainty is the squared sum of the
-individual uncertainties, so the relative size of the wedges does *not* correspond
-to the relative contribution to the total uncertainty
-- If the uncertainties of individual parameters are correlated, the total uncertainty
-can be larger or smaller than the squared sum of the individual uncertainties. This
-happens e.g. in $B\to V\ell^+\ell^-$ angular observables, where the form factor
-parameters lead to sizable uncertainties when varied individually, but due to their
-sizable correlations can lead to a small total uncertainty.
+*Correlated* parameters will be grouped into a single slice.
+Note that the *total* uncertainty is the *squared* sum of the
+individual uncertainties, so the relative size of the wedges does not correspond
+to the relative contribution to the total uncertainty.
