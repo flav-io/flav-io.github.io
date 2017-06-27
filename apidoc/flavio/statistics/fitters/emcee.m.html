@@ -4,7 +4,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>flavio.statistics.fitters.emcee API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="Interface to the `emcee` ensemble Monte Carlo sampler.
+
+See http://dan.iel.fm./emcee for details on ..." />
 
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400' rel='stylesheet' type='text/css'>
@@ -1080,11 +1082,18 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">flavio.statistics.fitters.emcee</span> module</h1>
-  
+  <p>Interface to the <code>emcee</code> ensemble Monte Carlo sampler.</p>
+<p>See http://dan.iel.fm./emcee for details on <code>emcee</code>.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.emcee', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.emcee" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Interface to the `emcee` ensemble Monte Carlo sampler.</span>
+
+<span class="sd">See http://dan.iel.fm./emcee for details on `emcee`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">flavio</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -1093,10 +1102,32 @@ table {
     <span class="k">pass</span>
 
 <span class="k">class</span> <span class="nc">emceeScan</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Ensemble Monte Carlo sampler using the `emcee` package.</span>
+
+<span class="sd">    Methods:</span>
+
+<span class="sd">    - run: run the sampler</span>
+<span class="sd">    - result: get a flat array of the sampled points of all walkers</span>
+<span class="sd">    - save_result: save the result to a `.npy` file</span>
+
+<span class="sd">    Important attributes:</span>
+
+<span class="sd">    - mc: the `emcee.EnsembleSampler` instance</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">nwalkers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the emceeScan.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - fit: an instance of `flavio.statistics.fits.BayesianFit`</span>
+<span class="sd">        - nwalkers (optional): number of walkers. Defaults to ten times the number</span>
+<span class="sd">          of dimensions.</span>
+
+<span class="sd">        Additional keyword argumements will be passed to</span>
+<span class="sd">        `emcee.EnsembleSampler`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">fits</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s2">&quot;emcee fit object must be an instance of BayesianFit&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span>
@@ -1127,6 +1158,16 @@ table {
                                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the sampler.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - steps: number of steps per walker</span>
+<span class="sd">        - burnin (optional): number of steps for burn-in (samples will not be</span>
+<span class="sd">          retained); defaults to 1000</span>
+
+<span class="sd">        Note that the total number of samples will be `steps * nwalkers`!</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span>
         <span class="k">if</span> <span class="n">burnin</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">burnin</span><span class="p">)</span>
@@ -1135,9 +1176,11 @@ table {
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a flat array of the samples.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">flatchain</span><span class="p">[:]</span>
 
     <span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the samples to a `.npy` file.&quot;&quot;&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
         <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
 </pre></div>
@@ -1155,14 +1198,47 @@ table {
       <p id="flavio.statistics.fitters.emcee.emceeScan" class="name">class <span class="ident">emceeScan</span></p>
       
   
+    <div class="desc"><p>Ensemble Monte Carlo sampler using the <code>emcee</code> package.</p>
+<p>Methods:</p>
+<ul>
+<li>run: run the sampler</li>
+<li>result: get a flat array of the sampled points of all walkers</li>
+<li>save_result: save the result to a <code>.npy</code> file</li>
+</ul>
+<p>Important attributes:</p>
+<ul>
+<li>mc: the <code>emcee.EnsembleSampler</code> instance</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.emcee.emceeScan', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.emcee.emceeScan" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">emceeScan</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Ensemble Monte Carlo sampler using the `emcee` package.</span>
+
+<span class="sd">    Methods:</span>
+
+<span class="sd">    - run: run the sampler</span>
+<span class="sd">    - result: get a flat array of the sampled points of all walkers</span>
+<span class="sd">    - save_result: save the result to a `.npy` file</span>
+
+<span class="sd">    Important attributes:</span>
+
+<span class="sd">    - mc: the `emcee.EnsembleSampler` instance</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">nwalkers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the emceeScan.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - fit: an instance of `flavio.statistics.fits.BayesianFit`</span>
+<span class="sd">        - nwalkers (optional): number of walkers. Defaults to ten times the number</span>
+<span class="sd">          of dimensions.</span>
+
+<span class="sd">        Additional keyword argumements will be passed to</span>
+<span class="sd">        `emcee.EnsembleSampler`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">fits</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s2">&quot;emcee fit object must be an instance of BayesianFit&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span>
@@ -1193,6 +1269,16 @@ table {
                                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the sampler.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - steps: number of steps per walker</span>
+<span class="sd">        - burnin (optional): number of steps for burn-in (samples will not be</span>
+<span class="sd">          retained); defaults to 1000</span>
+
+<span class="sd">        Note that the total number of samples will be `steps * nwalkers`!</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span>
         <span class="k">if</span> <span class="n">burnin</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">burnin</span><span class="p">)</span>
@@ -1201,9 +1287,11 @@ table {
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a flat array of the samples.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">flatchain</span><span class="p">[:]</span>
 
     <span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the samples to a `.npy` file.&quot;&quot;&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
         <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
 </pre></div>
@@ -1228,11 +1316,27 @@ table {
 
     
   
-    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+    <div class="desc"><p>Initialize the emceeScan.</p>
+<p>Parameters:</p>
+<ul>
+<li>fit: an instance of <code>flavio.statistics.fits.BayesianFit</code></li>
+<li>nwalkers (optional): number of walkers. Defaults to ten times the number
+  of dimensions.</li>
+</ul>
+<p>Additional keyword argumements will be passed to
+<code>emcee.EnsembleSampler</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.emcee.emceeScan.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.emcee.emceeScan.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">nwalkers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Initialize the emceeScan.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - fit: an instance of `flavio.statistics.fits.BayesianFit`</span>
+<span class="sd">    - nwalkers (optional): number of walkers. Defaults to ten times the number</span>
+<span class="sd">      of dimensions.</span>
+<span class="sd">    Additional keyword argumements will be passed to</span>
+<span class="sd">    `emcee.EnsembleSampler`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">fits</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s2">&quot;emcee fit object must be an instance of BayesianFit&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">get_random_start</span><span class="p">)</span>
@@ -1273,10 +1377,25 @@ table {
 
     
   
+    <div class="desc"><p>Run the sampler.</p>
+<p>Parameters:</p>
+<ul>
+<li>steps: number of steps per walker</li>
+<li>burnin (optional): number of steps for burn-in (samples will not be
+  retained); defaults to 1000</li>
+</ul>
+<p>Note that the total number of samples will be <code>steps * nwalkers</code>!</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.emcee.emceeScan.run', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.emcee.emceeScan.run" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run the sampler.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - steps: number of steps per walker</span>
+<span class="sd">    - burnin (optional): number of steps for burn-in (samples will not be</span>
+<span class="sd">      retained); defaults to 1000</span>
+<span class="sd">    Note that the total number of samples will be `steps * nwalkers`!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span>
     <span class="k">if</span> <span class="n">burnin</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">burnin</span><span class="p">)</span>
@@ -1298,10 +1417,12 @@ table {
 
     
   
+    <div class="desc"><p>Save the samples to a <code>.npy</code> file.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.emcee.emceeScan.save_result', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.emcee.emceeScan.save_result" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Save the samples to a `.npy` file.&quot;&quot;&quot;</span>
     <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
     <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
 </pre></div>
@@ -1348,6 +1469,7 @@ table {
 
             
   
+    <div class="desc"><p>Return a flat array of the samples.</p></div>
   <div class="source_cont">
 </div>
 

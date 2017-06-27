@@ -1136,6 +1136,7 @@ table {
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_measurement_class">test_measurement_class</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_measurements_yaml">test_measurements_yaml</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_observable_class">test_observable_class</a></li>
+    <li class="mono"><a href="#flavio.test_classes.TestClasses.test_observable_from_function">test_observable_from_function</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_observable_taxonomy">test_observable_taxonomy</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_parameter_class">test_parameter_class</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_parameter_constraints_yaml">test_parameter_constraints_yaml</a></li>
@@ -1362,6 +1363,39 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span> <span class="n">pd</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">eps</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">eps</span><span class="p">),</span> <span class="n">places</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
         <span class="c1"># check that the PDF is properly normalized</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">scipy</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_observable_from_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">o1</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a1&#39;</span><span class="p">])</span>
+        <span class="n">o2</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;test_obs_2&#39;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a2&#39;</span><span class="p">])</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="c1"># non-existent obs</span>
+            <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">,</span>
+                                     <span class="p">[</span><span class="s1">&#39;test_obs_x&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs_2&#39;</span><span class="p">],</span>
+                                     <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
+            <span class="c1"># depend on different arguments</span>
+            <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">,</span>
+                                     <span class="p">[</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs_2&#39;</span><span class="p">],</span>
+                                     <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">o2</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;test_obs_2&#39;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a1&#39;</span><span class="p">])</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
+            <span class="c1"># obs without prediction</span>
+            <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">,</span>
+                                     <span class="p">[</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs_2&#39;</span><span class="p">],</span>
+                                     <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;test_obs_2&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">,</span>
+                                 <span class="p">[</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs_2&#39;</span><span class="p">],</span>
+                                 <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+            <span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;a1&#39;</span><span class="p">])</span>
+        <span class="c1"># delete dummy instances</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs_2&#39;</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_observable_taxonomy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">o1</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs_1&#39;</span> <span class="p">)</span>
@@ -1638,6 +1672,39 @@ in order to be run.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span> <span class="n">pd</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">eps</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">eps</span><span class="p">),</span> <span class="n">places</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
         <span class="c1"># check that the PDF is properly normalized</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">scipy</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_observable_from_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">o1</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a1&#39;</span><span class="p">])</span>
+        <span class="n">o2</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;test_obs_2&#39;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a2&#39;</span><span class="p">])</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="c1"># non-existent obs</span>
+            <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">,</span>
+                                     <span class="p">[</span><span class="s1">&#39;test_obs_x&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs_2&#39;</span><span class="p">],</span>
+                                     <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
+            <span class="c1"># depend on different arguments</span>
+            <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">,</span>
+                                     <span class="p">[</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs_2&#39;</span><span class="p">],</span>
+                                     <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">o2</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;test_obs_2&#39;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a1&#39;</span><span class="p">])</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
+            <span class="c1"># obs without prediction</span>
+            <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">,</span>
+                                     <span class="p">[</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs_2&#39;</span><span class="p">],</span>
+                                     <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;test_obs_2&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">,</span>
+                                 <span class="p">[</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs_2&#39;</span><span class="p">],</span>
+                                 <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+            <span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;a1&#39;</span><span class="p">])</span>
+        <span class="c1"># delete dummy instances</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs_2&#39;</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_observable_taxonomy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">o1</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs_1&#39;</span> <span class="p">)</span>
@@ -4077,6 +4144,57 @@ block, allowing further test code to be executed.</p></div>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">o</span><span class="o">.</span><span class="n">description</span><span class="p">,</span> <span class="s1">&#39;some test observables&#39;</span> <span class="p">)</span>
     <span class="c1"># removing dummy instances</span>
     <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs&#39;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.test_classes.TestClasses.test_observable_from_function">
+    <p>def <span class="ident">test_observable_from_function</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.test_classes.TestClasses.test_observable_from_function', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.test_classes.TestClasses.test_observable_from_function" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_observable_from_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">o1</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a1&#39;</span><span class="p">])</span>
+    <span class="n">o2</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;test_obs_2&#39;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a2&#39;</span><span class="p">])</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="c1"># non-existent obs</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">,</span>
+                                 <span class="p">[</span><span class="s1">&#39;test_obs_x&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs_2&#39;</span><span class="p">],</span>
+                                 <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
+        <span class="c1"># depend on different arguments</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">,</span>
+                                 <span class="p">[</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs_2&#39;</span><span class="p">],</span>
+                                 <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">o2</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;test_obs_2&#39;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a1&#39;</span><span class="p">])</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
+        <span class="c1"># obs without prediction</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">,</span>
+                                 <span class="p">[</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs_2&#39;</span><span class="p">],</span>
+                                 <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;test_obs_2&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="mi">7</span><span class="p">)</span>
+    <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">,</span>
+                             <span class="p">[</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs_2&#39;</span><span class="p">],</span>
+                             <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+        <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+        <span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;a1&#39;</span><span class="p">])</span>
+    <span class="c1"># delete dummy instances</span>
+    <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs_1&#39;</span><span class="p">)</span>
+    <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs_2&#39;</span><span class="p">)</span>
+    <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs_12&#39;</span><span class="p">)</span>
 </pre></div>
 
   </div>

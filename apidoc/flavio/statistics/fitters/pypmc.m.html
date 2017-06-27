@@ -1093,10 +1093,27 @@ table {
     <span class="k">pass</span>
 
 <span class="k">class</span> <span class="nc">pypmcScan</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Interface to adaptive Markov Chain Monte Carlo using the `pypmc` package.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">    - run: run the sampler</span>
+<span class="sd">    - find_burnin: attempt to automatically determine the burn-in period by</span>
+<span class="sd">      excluding points at the beginning of the chain with much worse likelihood</span>
+<span class="sd">      than the end of the chain</span>
+<span class="sd">    - result: get a flat array of the sampled points</span>
+<span class="sd">    - save_result: save the result to a `.npy` file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the pypmcScan instance.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - fit: an instance of `flavio.statistics.fits.BayesianFit`</span>
+
+<span class="sd">        Additional keyword argumements will be passed to</span>
+<span class="sd">        `markov_chain.AdaptiveMarkovChain`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">fits</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s2">&quot;PyPMC fit object must be an instance of BayesianFit&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span>
@@ -1121,6 +1138,16 @@ table {
                                                                  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">adapt</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the sampler.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - steps: number of steps per walker</span>
+<span class="sd">        - burnin (optional): number of steps for burn-in (samples will not be</span>
+<span class="sd">          retained); defaults to 1000</span>
+<span class="sd">        - adapt (optional): number of steps after which to adapt the proposal</span>
+<span class="sd">          distribution. Defaults to 500.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">done</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run</span><span class="p">(</span> <span class="n">burnin</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -1132,6 +1159,9 @@ table {
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">find_burnin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the index of the first sample that has a log-likelihood</span>
+<span class="sd">        bigger than the mean minus three standard deviations of the distribution</span>
+<span class="sd">        of log-likelihoods in the last 10% of the chain.&quot;&quot;&quot;</span>
         <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">target_values</span><span class="p">[:]</span> <span class="c1"># this contains all log likelihood values of the chain</span>
         <span class="n">target_end</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">//</span><span class="mi">10</span><span class="p">:]</span> <span class="c1"># take the last 10% of the chain</span>
         <span class="n">target_end_mn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">target_end</span><span class="p">)</span> <span class="c1"># mean of the last 10%</span>
@@ -1143,9 +1173,13 @@ table {
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an array of the samples obtained, where points with low</span>
+<span class="sd">        likelihood at the beginning of the chain have been omitted (using the</span>
+<span class="sd">        `find_burnin` method).&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">samples</span><span class="p">[:][</span><span class="bp">self</span><span class="o">.</span><span class="n">find_burnin</span><span class="p">:]</span>
 
     <span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the samples obtained to a `.npy` file.&quot;&quot;&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
         <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
 </pre></div>
@@ -1163,14 +1197,39 @@ table {
       <p id="flavio.statistics.fitters.pypmc.pypmcScan" class="name">class <span class="ident">pypmcScan</span></p>
       
   
+    <div class="desc"><p>Interface to adaptive Markov Chain Monte Carlo using the <code>pypmc</code> package.</p>
+<p>Methods:
+- run: run the sampler
+- find_burnin: attempt to automatically determine the burn-in period by
+  excluding points at the beginning of the chain with much worse likelihood
+  than the end of the chain
+- result: get a flat array of the sampled points
+- save_result: save the result to a <code>.npy</code> file</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.pypmc.pypmcScan', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.pypmc.pypmcScan" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">pypmcScan</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Interface to adaptive Markov Chain Monte Carlo using the `pypmc` package.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">    - run: run the sampler</span>
+<span class="sd">    - find_burnin: attempt to automatically determine the burn-in period by</span>
+<span class="sd">      excluding points at the beginning of the chain with much worse likelihood</span>
+<span class="sd">      than the end of the chain</span>
+<span class="sd">    - result: get a flat array of the sampled points</span>
+<span class="sd">    - save_result: save the result to a `.npy` file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the pypmcScan instance.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - fit: an instance of `flavio.statistics.fits.BayesianFit`</span>
+
+<span class="sd">        Additional keyword argumements will be passed to</span>
+<span class="sd">        `markov_chain.AdaptiveMarkovChain`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">fits</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s2">&quot;PyPMC fit object must be an instance of BayesianFit&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span>
@@ -1195,6 +1254,16 @@ table {
                                                                  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">adapt</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the sampler.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - steps: number of steps per walker</span>
+<span class="sd">        - burnin (optional): number of steps for burn-in (samples will not be</span>
+<span class="sd">          retained); defaults to 1000</span>
+<span class="sd">        - adapt (optional): number of steps after which to adapt the proposal</span>
+<span class="sd">          distribution. Defaults to 500.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">done</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run</span><span class="p">(</span> <span class="n">burnin</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -1206,6 +1275,9 @@ table {
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">find_burnin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the index of the first sample that has a log-likelihood</span>
+<span class="sd">        bigger than the mean minus three standard deviations of the distribution</span>
+<span class="sd">        of log-likelihoods in the last 10% of the chain.&quot;&quot;&quot;</span>
         <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">target_values</span><span class="p">[:]</span> <span class="c1"># this contains all log likelihood values of the chain</span>
         <span class="n">target_end</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">//</span><span class="mi">10</span><span class="p">:]</span> <span class="c1"># take the last 10% of the chain</span>
         <span class="n">target_end_mn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">target_end</span><span class="p">)</span> <span class="c1"># mean of the last 10%</span>
@@ -1217,9 +1289,13 @@ table {
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an array of the samples obtained, where points with low</span>
+<span class="sd">        likelihood at the beginning of the chain have been omitted (using the</span>
+<span class="sd">        `find_burnin` method).&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">samples</span><span class="p">[:][</span><span class="bp">self</span><span class="o">.</span><span class="n">find_burnin</span><span class="p">:]</span>
 
     <span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the samples obtained to a `.npy` file.&quot;&quot;&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
         <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
 </pre></div>
@@ -1244,11 +1320,23 @@ table {
 
     
   
-    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+    <div class="desc"><p>Initialize the pypmcScan instance.</p>
+<p>Parameters:</p>
+<ul>
+<li>fit: an instance of <code>flavio.statistics.fits.BayesianFit</code></li>
+</ul>
+<p>Additional keyword argumements will be passed to
+<code>markov_chain.AdaptiveMarkovChain</code>.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.pypmc.pypmcScan.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.pypmc.pypmcScan.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Initialize the pypmcScan instance.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - fit: an instance of `flavio.statistics.fits.BayesianFit`</span>
+<span class="sd">    Additional keyword argumements will be passed to</span>
+<span class="sd">    `markov_chain.AdaptiveMarkovChain`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">fits</span><span class="o">.</span><span class="n">BayesianFit</span><span class="p">),</span> <span class="s2">&quot;PyPMC fit object must be an instance of BayesianFit&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span>
     <span class="c1"># start value is a random vector</span>
@@ -1285,10 +1373,27 @@ table {
 
     
   
+    <div class="desc"><p>Run the sampler.</p>
+<p>Parameters:</p>
+<ul>
+<li>steps: number of steps per walker</li>
+<li>burnin (optional): number of steps for burn-in (samples will not be
+  retained); defaults to 1000</li>
+<li>adapt (optional): number of steps after which to adapt the proposal
+  distribution. Defaults to 500.</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.pypmc.pypmcScan.run', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.pypmc.pypmcScan.run" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">adapt</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run the sampler.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - steps: number of steps per walker</span>
+<span class="sd">    - burnin (optional): number of steps for burn-in (samples will not be</span>
+<span class="sd">      retained); defaults to 1000</span>
+<span class="sd">    - adapt (optional): number of steps after which to adapt the proposal</span>
+<span class="sd">      distribution. Defaults to 500.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">done</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">run</span><span class="p">(</span> <span class="n">burnin</span> <span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -1313,10 +1418,12 @@ table {
 
     
   
+    <div class="desc"><p>Save the samples obtained to a <code>.npy</code> file.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fitters.pypmc.pypmcScan.save_result', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fitters.pypmc.pypmcScan.save_result" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Save the samples obtained to a `.npy` file.&quot;&quot;&quot;</span>
     <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
     <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
 </pre></div>
@@ -1343,6 +1450,9 @@ table {
 
             
   
+    <div class="desc"><p>Return the index of the first sample that has a log-likelihood
+bigger than the mean minus three standard deviations of the distribution
+of log-likelihoods in the last 10% of the chain.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1373,6 +1483,9 @@ table {
 
             
   
+    <div class="desc"><p>Return an array of the samples obtained, where points with low
+likelihood at the beginning of the chain have been omitted (using the
+<code>find_burnin</code> method).</p></div>
   <div class="source_cont">
 </div>
 

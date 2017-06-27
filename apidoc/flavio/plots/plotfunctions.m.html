@@ -1066,9 +1066,11 @@ table {
     <li class="mono"><a href="#flavio.plots.plotfunctions.likelihood_contour_data">likelihood_contour_data</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.likelihood_plot">likelihood_plot</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.pdf_plot">pdf_plot</a></li>
+    <li class="mono"><a href="#flavio.plots.plotfunctions.pvalue_plot">pvalue_plot</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.q2_plot_exp">q2_plot_exp</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.q2_plot_th_bin">q2_plot_th_bin</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.q2_plot_th_diff">q2_plot_th_diff</a></li>
+    <li class="mono"><a href="#flavio.plots.plotfunctions.q2_plot_th_diff_err">q2_plot_th_diff_err</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.smooth_histogram">smooth_histogram</a></li>
   </ul>
 
@@ -1126,23 +1128,37 @@ table {
 <span class="sd">    uncertainty can be larger or smaller than the squared sum of the individual</span>
 <span class="sd">    uncertainties, so the representation can be misleading.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">err_tot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">err_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="n">err_tot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">err_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="c1"># linear sum of individual errors</span>
     <span class="n">err_dict_sorted</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">err_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="o">-</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">fracs</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">small_frac</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">small_frac</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">err_dict_sorted</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">frac</span> <span class="o">=</span> <span class="n">value</span><span class="o">/</span><span class="n">err_tot</span>
         <span class="k">if</span> <span class="n">frac</span> <span class="o">&gt;</span> <span class="n">other_cutoff</span><span class="p">:</span>
-            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">Parameter</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">tex</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">Parameter</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">tex</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="c1"># if &#39;key&#39; is not actually a parameter (e.g. manually set by the user)</span>
+                    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">key_strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">Parameter</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">tex</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key_strings</span><span class="p">))</span>
             <span class="n">fracs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">small_frac</span> <span class="o">+=</span> <span class="n">frac</span>
-    <span class="k">if</span> <span class="n">small_frac</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">small_frac</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">small_frac</span><span class="p">:</span>
         <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;other&#39;</span><span class="p">)</span>
-        <span class="n">fracs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">small_frac</span><span class="p">)</span>
+        <span class="c1"># the fraction for the &quot;other&quot; errors is obtained by adding them in quadrature</span>
+        <span class="n">fracs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">small_frac</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+    <span class="c1"># initially, the fractions had been calculated assuming that they add to</span>
+    <span class="c1"># one, but adding the &quot;other&quot; errors in quadrature changed that - correct</span>
+    <span class="c1"># all the fractions to account for this</span>
+    <span class="n">corr</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fracs</span><span class="p">)</span>
+    <span class="n">fracs</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">/</span><span class="n">corr</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fracs</span><span class="p">]</span>
     <span class="k">def</span> <span class="nf">my_autopct</span><span class="p">(</span><span class="n">pct</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;{p:.1f}\%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">pct</span><span class="o">*</span><span class="n">err_tot</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;{p:.2g}\%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">pct</span><span class="o">*</span><span class="n">err_tot</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">fracs</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="n">my_autopct</span><span class="p">,</span> <span class="n">wedgeprops</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mf">0.5</span><span class="p">},</span> <span class="n">colors</span><span class="o">=</span><span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">)</span>
 
@@ -1175,6 +1191,70 @@ table {
     <span class="k">if</span> <span class="s1">&#39;c&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s1">&#39;color&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">q2_arr</span><span class="p">,</span> <span class="n">obs_arr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">q2_plot_th_diff_err</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">q2steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                        <span class="n">q2steps_err</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">plot_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fill_args</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot the theory prediction of a $q^2$-dependent observable</span>
+<span class="sd">    with uncertainties as a function of $q^2$.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    - `q2min`, `q2max`: minimum and maximum $q^2$ values in GeV^2</span>
+<span class="sd">    - `wc` (optional): `WilsonCoefficient` instance to define beyond-the-SM</span>
+<span class="sd">      Wilson coefficients</span>
+<span class="sd">    - `q2steps` (optional): number of $q^2$ steps for the computation of the</span>
+<span class="sd">      central value. Defaults to 100. Less is faster but less precise.</span>
+<span class="sd">    - `q2steps_err` (optional): number of $q^2$ steps for the computation of the</span>
+<span class="sd">      uncertainty. Defaults to 5 and should be at least 3. Larger is slower</span>
+<span class="sd">      but more precise. See caveat below.</span>
+<span class="sd">    - `N` (optional): number of random evaluations to determine the uncertainty.</span>
+<span class="sd">      Defaults to 100. Less is faster but less precise.</span>
+<span class="sd">    - `threads` (optional): if bigger than 1, number of threads to use for</span>
+<span class="sd">      parallel computation of uncertainties</span>
+<span class="sd">    - `plot_args` (optional): dictionary with keyword arguments to be passed</span>
+<span class="sd">      to the matplotlib plot function, e.g. &#39;c&#39; for colour.</span>
+<span class="sd">    - `fill_args` (optional): dictionary with keyword arguments to be passed</span>
+<span class="sd">      to the matplotlib fill_between function, e.g. &#39;facecolor&#39;</span>
+
+<span class="sd">    A word of caution regarding the `q2steps_err` option. By default, the</span>
+<span class="sd">    uncertainty is only computed at 10 steps in $q^2$ and is interpolated in</span>
+<span class="sd">    between. This can be enough if the uncertainty does not vary strongly</span>
+<span class="sd">    with $q^2$. However, when the starting point or end point of the plot range</span>
+<span class="sd">    is outside the physical phase space, the uncertainty will vanish at that</span>
+<span class="sd">    point and the interpolation might be inaccurate.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs_name</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">obs</span><span class="o">.</span><span class="n">arguments</span> <span class="o">!=</span> <span class="p">[</span><span class="s1">&#39;q2&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Only observables that depend on $q^2$ (and nothing else) are allowed&quot;</span><span class="p">)</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">q2steps</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">q2_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="o">+</span><span class="n">step</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">q2steps_err</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">q2_err_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="o">+</span><span class="n">step</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+    <span class="c1"># fix to avoid bounds_error in interp1d due to lack of numerical precision</span>
+    <span class="n">q2_err_arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">q2_arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">wc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span> <span class="c1"># SM Wilson coefficients</span>
+        <span class="n">obs_err_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">for</span> <span class="n">q2</span> <span class="ow">in</span> <span class="n">q2_err_arr</span><span class="p">]</span>
+        <span class="n">obs_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span> <span class="k">for</span> <span class="n">q2</span> <span class="ow">in</span> <span class="n">q2_arr</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">obs_err_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">for</span> <span class="n">q2</span> <span class="ow">in</span> <span class="n">q2_err_arr</span><span class="p">]</span>
+        <span class="n">obs_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span> <span class="k">for</span> <span class="n">q2</span> <span class="ow">in</span> <span class="n">q2_arr</span><span class="p">]</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">plot_args</span> <span class="o">=</span> <span class="n">plot_args</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">fill_args</span> <span class="o">=</span> <span class="n">fill_args</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="s1">&#39;alpha&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fill_args</span><span class="p">:</span>
+        <span class="n">fill_args</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">q2_arr</span><span class="p">,</span> <span class="n">obs_arr</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_args</span><span class="p">)</span>
+    <span class="n">interp_err</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">q2_err_arr</span><span class="p">,</span> <span class="n">obs_err_arr</span><span class="p">,</span>
+                                            <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;quadratic&#39;</span><span class="p">)</span>
+    <span class="n">obs_err_arr_int</span> <span class="o">=</span> <span class="n">interp_err</span><span class="p">(</span><span class="n">q2_arr</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">q2_arr</span><span class="p">,</span>
+                    <span class="n">obs_arr</span> <span class="o">-</span> <span class="n">obs_err_arr_int</span><span class="p">,</span>
+                    <span class="n">obs_arr</span> <span class="o">+</span> <span class="n">obs_err_arr_int</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">fill_args</span><span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">q2_plot_th_bin</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">bin_list</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">divide_binwidth</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot the binned theory prediction with uncertainties of a</span>
@@ -1649,10 +1729,12 @@ table {
 
 <span class="sd">    - `x`: x values</span>
 <span class="sd">    - `y`: y values</span>
+<span class="sd">    - `fill_x`: 2-tuple of x-values in between which the curve will be filled</span>
 <span class="sd">    - `col`: (optional) integer to select one of the colours from the default</span>
 <span class="sd">      palette</span>
 <span class="sd">    - `plotargs`: keyword arguments passed to the `plot` function</span>
 <span class="sd">    - `fillargs`: keyword arguments passed to the `fill_between` function</span>
+<span class="sd">    - `flipped`: exchange x and y axes (needed for `density_contour_joint`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
     <span class="n">_plotargs</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1681,6 +1763,45 @@ table {
             <span class="n">ax</span><span class="o">.</span><span class="n">fill_betweenx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
                 <span class="n">where</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">fill_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">fill_x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
                 <span class="o">**</span><span class="n">_fillargs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">pvalue_plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fill_y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">plotargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fillargs</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="sd">&quot;&quot;&quot;Plot of a 1D confidence level distribution, where the y axis is 1-CL.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    - `x`: x values</span>
+<span class="sd">    - `y`: y values</span>
+<span class="sd">    - `fill_y`: for x-values where y is larger than this number, the area</span>
+<span class="sd">      between the x-axis and the curve will be filled</span>
+<span class="sd">    - `col`: (optional) integer to select one of the colours from the default</span>
+<span class="sd">      palette</span>
+<span class="sd">    - `plotargs`: keyword arguments passed to the `plot` function</span>
+<span class="sd">    - `fillargs`: keyword arguments passed to the `fill_between` function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">_plotargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_fillargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># default values</span>
+    <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;linewidth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.6</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+    <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">set1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">_fillargs</span><span class="p">[</span><span class="s1">&#39;facecolor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">set1</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+        <span class="n">_fillargs</span><span class="p">[</span><span class="s1">&#39;facecolor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+    <span class="n">_fillargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fillargs</span><span class="p">)</span>
+    <span class="n">_plotargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plotargs</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">_plotargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fill_y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">x_zoom</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">y_zoom</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x_zoom</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y_zoom</span><span class="p">,</span>
+            <span class="n">where</span><span class="o">=</span><span class="n">y_zoom</span> <span class="o">&gt;</span> <span class="n">fill_y</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">_fillargs</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 
 <span class="k">def</span> <span class="nf">density_contour_joint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
                           <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -2238,23 +2359,37 @@ uncertainties, so the representation can be misleading.</p></div>
 <span class="sd">    uncertainty can be larger or smaller than the squared sum of the individual</span>
 <span class="sd">    uncertainties, so the representation can be misleading.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">err_tot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">err_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="n">err_tot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">err_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="c1"># linear sum of individual errors</span>
     <span class="n">err_dict_sorted</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">err_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="o">-</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">fracs</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">small_frac</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">small_frac</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">err_dict_sorted</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">frac</span> <span class="o">=</span> <span class="n">value</span><span class="o">/</span><span class="n">err_tot</span>
         <span class="k">if</span> <span class="n">frac</span> <span class="o">&gt;</span> <span class="n">other_cutoff</span><span class="p">:</span>
-            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">Parameter</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">tex</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">Parameter</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">tex</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="c1"># if &#39;key&#39; is not actually a parameter (e.g. manually set by the user)</span>
+                    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">key_strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">Parameter</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">tex</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key_strings</span><span class="p">))</span>
             <span class="n">fracs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">small_frac</span> <span class="o">+=</span> <span class="n">frac</span>
-    <span class="k">if</span> <span class="n">small_frac</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">small_frac</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">small_frac</span><span class="p">:</span>
         <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;other&#39;</span><span class="p">)</span>
-        <span class="n">fracs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">small_frac</span><span class="p">)</span>
+        <span class="c1"># the fraction for the &quot;other&quot; errors is obtained by adding them in quadrature</span>
+        <span class="n">fracs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">small_frac</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+    <span class="c1"># initially, the fractions had been calculated assuming that they add to</span>
+    <span class="c1"># one, but adding the &quot;other&quot; errors in quadrature changed that - correct</span>
+    <span class="c1"># all the fractions to account for this</span>
+    <span class="n">corr</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fracs</span><span class="p">)</span>
+    <span class="n">fracs</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">/</span><span class="n">corr</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fracs</span><span class="p">]</span>
     <span class="k">def</span> <span class="nf">my_autopct</span><span class="p">(</span><span class="n">pct</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;{p:.1f}\%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">pct</span><span class="o">*</span><span class="n">err_tot</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;{p:.2g}\%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">pct</span><span class="o">*</span><span class="n">err_tot</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">fracs</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="n">my_autopct</span><span class="p">,</span> <span class="n">wedgeprops</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mf">0.5</span><span class="p">},</span> <span class="n">colors</span><span class="o">=</span><span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">)</span>
 </pre></div>
@@ -2470,10 +2605,12 @@ given a log likelihood function.</p>
 <ul>
 <li><code>x</code>: x values</li>
 <li><code>y</code>: y values</li>
+<li><code>fill_x</code>: 2-tuple of x-values in between which the curve will be filled</li>
 <li><code>col</code>: (optional) integer to select one of the colours from the default
   palette</li>
 <li><code>plotargs</code>: keyword arguments passed to the <code>plot</code> function</li>
 <li><code>fillargs</code>: keyword arguments passed to the <code>fill_between</code> function</li>
+<li><code>flipped</code>: exchange x and y axes (needed for <code>density_contour_joint</code>)</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.likelihood_plot', this);">Show source &equiv;</a></p>
@@ -2486,10 +2623,12 @@ given a log likelihood function.</p>
 
 <span class="sd">    - `x`: x values</span>
 <span class="sd">    - `y`: y values</span>
+<span class="sd">    - `fill_x`: 2-tuple of x-values in between which the curve will be filled</span>
 <span class="sd">    - `col`: (optional) integer to select one of the colours from the default</span>
 <span class="sd">      palette</span>
 <span class="sd">    - `plotargs`: keyword arguments passed to the `plot` function</span>
 <span class="sd">    - `fillargs`: keyword arguments passed to the `fill_between` function</span>
+<span class="sd">    - `flipped`: exchange x and y axes (needed for `density_contour_joint`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
     <span class="n">_plotargs</span> <span class="o">=</span> <span class="p">{}</span>
@@ -2572,6 +2711,75 @@ given a log likelihood function.</p>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">fill_x</span><span class="o">=</span><span class="bp">None</span>
     <span class="n">likelihood_plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fill_x</span><span class="o">=</span><span class="n">fill_x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.plots.plotfunctions.pvalue_plot">
+    <p>def <span class="ident">pvalue_plot</span>(</p><p>x, y, fill_y=None, col=None, label=None, plotargs={}, fillargs={})</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Plot of a 1D confidence level distribution, where the y axis is 1-CL.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>x</code>: x values</li>
+<li><code>y</code>: y values</li>
+<li><code>fill_y</code>: for x-values where y is larger than this number, the area
+  between the x-axis and the curve will be filled</li>
+<li><code>col</code>: (optional) integer to select one of the colours from the default
+  palette</li>
+<li><code>plotargs</code>: keyword arguments passed to the <code>plot</code> function</li>
+<li><code>fillargs</code>: keyword arguments passed to the <code>fill_between</code> function</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.pvalue_plot', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.plots.plotfunctions.pvalue_plot" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">pvalue_plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fill_y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">plotargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fillargs</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="sd">&quot;&quot;&quot;Plot of a 1D confidence level distribution, where the y axis is 1-CL.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    - `x`: x values</span>
+<span class="sd">    - `y`: y values</span>
+<span class="sd">    - `fill_y`: for x-values where y is larger than this number, the area</span>
+<span class="sd">      between the x-axis and the curve will be filled</span>
+<span class="sd">    - `col`: (optional) integer to select one of the colours from the default</span>
+<span class="sd">      palette</span>
+<span class="sd">    - `plotargs`: keyword arguments passed to the `plot` function</span>
+<span class="sd">    - `fillargs`: keyword arguments passed to the `fill_between` function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">_plotargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_fillargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># default values</span>
+    <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;linewidth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.6</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+    <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">set1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">_fillargs</span><span class="p">[</span><span class="s1">&#39;facecolor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_plotargs</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">set1</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+        <span class="n">_fillargs</span><span class="p">[</span><span class="s1">&#39;facecolor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+    <span class="n">_fillargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fillargs</span><span class="p">)</span>
+    <span class="n">_plotargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plotargs</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">_plotargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fill_y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">x_zoom</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">y_zoom</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x_zoom</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y_zoom</span><span class="p">,</span>
+            <span class="n">where</span><span class="o">=</span><span class="n">y_zoom</span> <span class="o">&gt;</span> <span class="n">fill_y</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">_fillargs</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 </pre></div>
 
   </div>
@@ -2851,6 +3059,113 @@ e.g. 'c' for colour.</p></div>
     <span class="k">if</span> <span class="s1">&#39;c&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s1">&#39;color&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">q2_arr</span><span class="p">,</span> <span class="n">obs_arr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.plots.plotfunctions.q2_plot_th_diff_err">
+    <p>def <span class="ident">q2_plot_th_diff_err</span>(</p><p>obs_name, q2min, q2max, wc=None, q2steps=100, q2steps_err=5, N=100, threads=1, plot_args=None, fill_args=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Plot the theory prediction of a $q^2$-dependent observable
+with uncertainties as a function of $q^2$.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>q2min</code>, <code>q2max</code>: minimum and maximum $q^2$ values in GeV^2</li>
+<li><code>wc</code> (optional): <code>WilsonCoefficient</code> instance to define beyond-the-SM
+  Wilson coefficients</li>
+<li><code>q2steps</code> (optional): number of $q^2$ steps for the computation of the
+  central value. Defaults to 100. Less is faster but less precise.</li>
+<li><code>q2steps_err</code> (optional): number of $q^2$ steps for the computation of the
+  uncertainty. Defaults to 5 and should be at least 3. Larger is slower
+  but more precise. See caveat below.</li>
+<li><code>N</code> (optional): number of random evaluations to determine the uncertainty.
+  Defaults to 100. Less is faster but less precise.</li>
+<li><code>threads</code> (optional): if bigger than 1, number of threads to use for
+  parallel computation of uncertainties</li>
+<li><code>plot_args</code> (optional): dictionary with keyword arguments to be passed
+  to the matplotlib plot function, e.g. 'c' for colour.</li>
+<li><code>fill_args</code> (optional): dictionary with keyword arguments to be passed
+  to the matplotlib fill_between function, e.g. 'facecolor'</li>
+</ul>
+<p>A word of caution regarding the <code>q2steps_err</code> option. By default, the
+uncertainty is only computed at 10 steps in $q^2$ and is interpolated in
+between. This can be enough if the uncertainty does not vary strongly
+with $q^2$. However, when the starting point or end point of the plot range
+is outside the physical phase space, the uncertainty will vanish at that
+point and the interpolation might be inaccurate.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.q2_plot_th_diff_err', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.plots.plotfunctions.q2_plot_th_diff_err" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">q2_plot_th_diff_err</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">q2steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                        <span class="n">q2steps_err</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">plot_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fill_args</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot the theory prediction of a $q^2$-dependent observable</span>
+<span class="sd">    with uncertainties as a function of $q^2$.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    - `q2min`, `q2max`: minimum and maximum $q^2$ values in GeV^2</span>
+<span class="sd">    - `wc` (optional): `WilsonCoefficient` instance to define beyond-the-SM</span>
+<span class="sd">      Wilson coefficients</span>
+<span class="sd">    - `q2steps` (optional): number of $q^2$ steps for the computation of the</span>
+<span class="sd">      central value. Defaults to 100. Less is faster but less precise.</span>
+<span class="sd">    - `q2steps_err` (optional): number of $q^2$ steps for the computation of the</span>
+<span class="sd">      uncertainty. Defaults to 5 and should be at least 3. Larger is slower</span>
+<span class="sd">      but more precise. See caveat below.</span>
+<span class="sd">    - `N` (optional): number of random evaluations to determine the uncertainty.</span>
+<span class="sd">      Defaults to 100. Less is faster but less precise.</span>
+<span class="sd">    - `threads` (optional): if bigger than 1, number of threads to use for</span>
+<span class="sd">      parallel computation of uncertainties</span>
+<span class="sd">    - `plot_args` (optional): dictionary with keyword arguments to be passed</span>
+<span class="sd">      to the matplotlib plot function, e.g. &#39;c&#39; for colour.</span>
+<span class="sd">    - `fill_args` (optional): dictionary with keyword arguments to be passed</span>
+<span class="sd">      to the matplotlib fill_between function, e.g. &#39;facecolor&#39;</span>
+
+<span class="sd">    A word of caution regarding the `q2steps_err` option. By default, the</span>
+<span class="sd">    uncertainty is only computed at 10 steps in $q^2$ and is interpolated in</span>
+<span class="sd">    between. This can be enough if the uncertainty does not vary strongly</span>
+<span class="sd">    with $q^2$. However, when the starting point or end point of the plot range</span>
+<span class="sd">    is outside the physical phase space, the uncertainty will vanish at that</span>
+<span class="sd">    point and the interpolation might be inaccurate.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs_name</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">obs</span><span class="o">.</span><span class="n">arguments</span> <span class="o">!=</span> <span class="p">[</span><span class="s1">&#39;q2&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Only observables that depend on $q^2$ (and nothing else) are allowed&quot;</span><span class="p">)</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">q2steps</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">q2_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="o">+</span><span class="n">step</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">q2steps_err</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">q2_err_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="o">+</span><span class="n">step</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+    <span class="c1"># fix to avoid bounds_error in interp1d due to lack of numerical precision</span>
+    <span class="n">q2_err_arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">q2_arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">wc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span> <span class="c1"># SM Wilson coefficients</span>
+        <span class="n">obs_err_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">for</span> <span class="n">q2</span> <span class="ow">in</span> <span class="n">q2_err_arr</span><span class="p">]</span>
+        <span class="n">obs_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span> <span class="k">for</span> <span class="n">q2</span> <span class="ow">in</span> <span class="n">q2_arr</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">obs_err_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">for</span> <span class="n">q2</span> <span class="ow">in</span> <span class="n">q2_err_arr</span><span class="p">]</span>
+        <span class="n">obs_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span> <span class="k">for</span> <span class="n">q2</span> <span class="ow">in</span> <span class="n">q2_arr</span><span class="p">]</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">plot_args</span> <span class="o">=</span> <span class="n">plot_args</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">fill_args</span> <span class="o">=</span> <span class="n">fill_args</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="s1">&#39;alpha&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fill_args</span><span class="p">:</span>
+        <span class="n">fill_args</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">q2_arr</span><span class="p">,</span> <span class="n">obs_arr</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_args</span><span class="p">)</span>
+    <span class="n">interp_err</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">q2_err_arr</span><span class="p">,</span> <span class="n">obs_err_arr</span><span class="p">,</span>
+                                            <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;quadratic&#39;</span><span class="p">)</span>
+    <span class="n">obs_err_arr_int</span> <span class="o">=</span> <span class="n">interp_err</span><span class="p">(</span><span class="n">q2_arr</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">q2_arr</span><span class="p">,</span>
+                    <span class="n">obs_arr</span> <span class="o">-</span> <span class="n">obs_err_arr_int</span><span class="p">,</span>
+                    <span class="n">obs_arr</span> <span class="o">+</span> <span class="n">obs_err_arr_int</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">fill_args</span><span class="p">)</span>
 </pre></div>
 
   </div>

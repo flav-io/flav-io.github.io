@@ -1055,6 +1055,7 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.functions.get_dependent_parameters_sm">get_dependent_parameters_sm</a></li>
     <li class="mono"><a href="#flavio.functions.np_prediction">np_prediction</a></li>
     <li class="mono"><a href="#flavio.functions.np_uncertainty">np_uncertainty</a></li>
     <li class="mono"><a href="#flavio.functions.sm_covariance">sm_covariance</a></li>
@@ -1065,6 +1066,20 @@ table {
 
     </li>
 
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#flavio.functions.AwareDict">AwareDict</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#flavio.functions.AwareDict.__init__">__init__</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareDict.copy">copy</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
 
     </ul>
   </div>
@@ -1088,7 +1103,8 @@ top-level namespace.</p>
 
 <span class="kn">import</span> <span class="nn">flavio</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 
 <span class="k">def</span> <span class="nf">np_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the central value of the new physics prediction of an observable.</span>
@@ -1120,7 +1136,13 @@ top-level namespace.</p>
     <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
     <span class="k">return</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_obs_prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">obs_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="k">def</span> <span class="nf">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the uncertainty of the prediction of an observable in the presence</span>
 <span class="sd">    of new physics.</span>
 
@@ -1131,19 +1153,34 @@ top-level namespace.</p>
 <span class="sd">    - `wc_obj`: an instance of `flavio.WilsonCoefficients`</span>
 <span class="sd">    - `N` (optional): number of random evaluations of the observable.</span>
 <span class="sd">    The relative accuracy of the uncertainty returned is given by $1/\sqrt{2N}$.</span>
+<span class="sd">    - `threads` (optional): if bigger than one, number of threads for parallel</span>
+<span class="sd">    computation of the uncertainty.</span>
 
 <span class="sd">    Additional arguments are passed to the observable and are necessary,</span>
 <span class="sd">    depending on the observable (e.g. $q^2$-dependent observables).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs_name</span><span class="p">]</span>
     <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
-    <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-        <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span>
-    <span class="p">])</span>
+    <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># not parallel</span>
+        <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_obs_prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># parallel</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
+        <span class="c1"># convert args to kwargs</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">obs_args</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs_name</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+            <span class="n">_kwargs</span><span class="p">[</span><span class="n">obs_args</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">a</span>
+        <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                        <span class="n">partial</span><span class="p">(</span><span class="n">_obs_prediction_par</span><span class="p">,</span>
+                        <span class="n">obs_name</span><span class="o">=</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">),</span>
+                        <span class="n">par_random</span><span class="p">))</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the uncertainty of the Standard Model prediction of an observable.</span>
 
 <span class="sd">    Parameters</span>
@@ -1152,12 +1189,50 @@ top-level namespace.</p>
 <span class="sd">    - `obs_name`: name of the observable as a string</span>
 <span class="sd">    - `N` (optional): number of random evaluations of the observable.</span>
 <span class="sd">    The relative accuracy of the uncertainty returned is given by $1/\sqrt{2N}$.</span>
+<span class="sd">    - `threads` (optional): if bigger than one, number of threads for parallel</span>
+<span class="sd">    computation of the uncertainty.</span>
 
 <span class="sd">    Additional arguments are passed to the observable and are necessary,</span>
 <span class="sd">    depending on the observable (e.g. $q^2$-dependent observables).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
-    <span class="k">return</span> <span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">AwareDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generalization of dictionary that adds the key to the previously defined</span>
+<span class="sd">    set `pcalled` upon getting an item.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">akeys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">d</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an item, adding the key to the `pcalled` set.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">akeys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cp</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">cp</span><span class="o">.</span><span class="n">akeys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">akeys</span>
+        <span class="k">return</span> <span class="n">cp</span>
+
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__copy__</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">get_dependent_parameters_sm</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the set of parameters the SM prediction of the observable depends on.&quot;&quot;&quot;</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs_name</span><span class="p">]</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
+    <span class="n">par_central</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+    <span class="n">apar_central</span> <span class="o">=</span> <span class="n">AwareDict</span><span class="p">(</span><span class="n">par_central</span><span class="p">)</span>
+    <span class="n">pred_central</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">apar_central</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="c1"># return all observed keys except the ones that don&#39;t actually correspond</span>
+    <span class="c1"># to existing parameter names (this might happen by user functions modifying</span>
+    <span class="c1"># the dictionaries)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">apar_central</span><span class="o">.</span><span class="n">akeys</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
 
 <span class="k">def</span> <span class="nf">sm_error_budget</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the *relative* uncertainty of the Standard Model prediction due to</span>
@@ -1177,36 +1252,40 @@ top-level namespace.</p>
     <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
     <span class="n">par_central</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
     <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="n">pred_central</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_central</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="c1"># Step 1: determine the parameters the observable depends on at all.</span>
-    <span class="c1"># to this end, compute the observables once for each parameter with a</span>
-    <span class="c1"># random value for this parameter but central values for all other</span>
-    <span class="c1"># parameters. If the prediction is equal to the central prediction, the</span>
-    <span class="c1"># observable does not depend on the parameter!</span>
-    <span class="n">pred_central</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_central</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">dependent_par</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">par_central</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">par_tmp</span> <span class="o">=</span> <span class="n">par_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">par_tmp</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">par_random</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
-        <span class="n">pred_tmp</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_tmp</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">pred_tmp</span> <span class="o">!=</span> <span class="n">pred_central</span><span class="p">:</span>
-            <span class="n">dependent_par</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">dependent_par</span> <span class="o">=</span> <span class="n">get_dependent_parameters_sm</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="c1"># Step 2: for each of the dependent parameters, determine the error</span>
+    <span class="c1"># Step 2: group parameters if correlated</span>
+    <span class="n">par_constraint</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="nb">id</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">dependent_par</span><span class="p">}</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">par_constraint</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">v</span><span class="p">[</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">dependent_par_lists</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="c1"># Step 3: for each of the (groups of) dependent parameters, determine the error</span>
     <span class="c1"># analogous to the sm_uncertainty function. Normalize to the central</span>
     <span class="c1"># prediction (so relative errors are returned)</span>
     <span class="n">individual_errors</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">def</span> <span class="nf">make_par_random</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">par_random</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">make_par_random</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">par_random</span><span class="p">):</span>
         <span class="n">par_tmp</span> <span class="o">=</span> <span class="n">par_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">par_tmp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">par_random</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="n">par_tmp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">par_random</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">par_tmp</span>
-    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">dependent_par</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">dependent_par_lists</span><span class="p">:</span>
         <span class="n">par_random_p</span> <span class="o">=</span> <span class="p">[</span><span class="n">make_par_random</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">pr</span><span class="p">)</span> <span class="k">for</span> <span class="n">pr</span> <span class="ow">in</span> <span class="n">par_random</span><span class="p">]</span>
         <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
             <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random_p</span>
         <span class="p">])</span>
-        <span class="n">individual_errors</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span><span class="o">/</span><span class="nb">abs</span><span class="p">(</span><span class="n">pred_central</span><span class="p">)</span>
+        <span class="c1"># for the dictionary key, use the list element if there is only 1,</span>
+        <span class="c1"># otherwise use a tuple (which is hashable)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="n">individual_errors</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span><span class="o">/</span><span class="nb">abs</span><span class="p">(</span><span class="n">pred_central</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">individual_errors</span>
 
 <span class="k">def</span> <span class="nf">sm_covariance</span><span class="p">(</span><span class="n">obs_list</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">par_vary</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1262,6 +1341,38 @@ top-level namespace.</p>
   <section id="section-items">
 
     <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="flavio.functions.get_dependent_parameters_sm">
+    <p>def <span class="ident">get_dependent_parameters_sm</span>(</p><p>obs_name, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the set of parameters the SM prediction of the observable depends on.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.get_dependent_parameters_sm', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.get_dependent_parameters_sm" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_dependent_parameters_sm</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the set of parameters the SM prediction of the observable depends on.&quot;&quot;&quot;</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs_name</span><span class="p">]</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
+    <span class="n">par_central</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+    <span class="n">apar_central</span> <span class="o">=</span> <span class="n">AwareDict</span><span class="p">(</span><span class="n">par_central</span><span class="p">)</span>
+    <span class="n">pred_central</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">apar_central</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="c1"># return all observed keys except the ones that don&#39;t actually correspond</span>
+    <span class="c1"># to existing parameter names (this might happen by user functions modifying</span>
+    <span class="c1"># the dictionaries)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">apar_central</span><span class="o">.</span><span class="n">akeys</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       
   <div class="item">
     <div class="name def" id="flavio.functions.np_prediction">
@@ -1320,13 +1431,15 @@ of new physics.</p>
 <li><code>wc_obj</code>: an instance of <code>flavio.WilsonCoefficients</code></li>
 <li><code>N</code> (optional): number of random evaluations of the observable.
 The relative accuracy of the uncertainty returned is given by $1/\sqrt{2N}$.</li>
+<li><code>threads</code> (optional): if bigger than one, number of threads for parallel
+computation of the uncertainty.</li>
 </ul>
 <p>Additional arguments are passed to the observable and are necessary,
 depending on the observable (e.g. $q^2$-dependent observables).</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.np_uncertainty', this);">Show source &equiv;</a></p>
   <div id="source-flavio.functions.np_uncertainty" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the uncertainty of the prediction of an observable in the presence</span>
 <span class="sd">    of new physics.</span>
 
@@ -1337,16 +1450,31 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
 <span class="sd">    - `wc_obj`: an instance of `flavio.WilsonCoefficients`</span>
 <span class="sd">    - `N` (optional): number of random evaluations of the observable.</span>
 <span class="sd">    The relative accuracy of the uncertainty returned is given by $1/\sqrt{2N}$.</span>
+<span class="sd">    - `threads` (optional): if bigger than one, number of threads for parallel</span>
+<span class="sd">    computation of the uncertainty.</span>
 
 <span class="sd">    Additional arguments are passed to the observable and are necessary,</span>
 <span class="sd">    depending on the observable (e.g. $q^2$-dependent observables).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs_name</span><span class="p">]</span>
     <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
-    <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-        <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span>
-    <span class="p">])</span>
+    <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># not parallel</span>
+        <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_obs_prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># parallel</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
+        <span class="c1"># convert args to kwargs</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">obs_args</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs_name</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+            <span class="n">_kwargs</span><span class="p">[</span><span class="n">obs_args</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">a</span>
+        <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                        <span class="n">partial</span><span class="p">(</span><span class="n">_obs_prediction_par</span><span class="p">,</span>
+                        <span class="n">obs_name</span><span class="o">=</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">),</span>
+                        <span class="n">par_random</span><span class="p">))</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span>
 </pre></div>
 
@@ -1471,36 +1599,40 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
     <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
     <span class="n">par_central</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
     <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="n">pred_central</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_central</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="c1"># Step 1: determine the parameters the observable depends on at all.</span>
-    <span class="c1"># to this end, compute the observables once for each parameter with a</span>
-    <span class="c1"># random value for this parameter but central values for all other</span>
-    <span class="c1"># parameters. If the prediction is equal to the central prediction, the</span>
-    <span class="c1"># observable does not depend on the parameter!</span>
-    <span class="n">pred_central</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_central</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">dependent_par</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">par_central</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">par_tmp</span> <span class="o">=</span> <span class="n">par_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">par_tmp</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">par_random</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
-        <span class="n">pred_tmp</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_tmp</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">pred_tmp</span> <span class="o">!=</span> <span class="n">pred_central</span><span class="p">:</span>
-            <span class="n">dependent_par</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">dependent_par</span> <span class="o">=</span> <span class="n">get_dependent_parameters_sm</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="c1"># Step 2: for each of the dependent parameters, determine the error</span>
+    <span class="c1"># Step 2: group parameters if correlated</span>
+    <span class="n">par_constraint</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="nb">id</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">dependent_par</span><span class="p">}</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">par_constraint</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">v</span><span class="p">[</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">dependent_par_lists</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="c1"># Step 3: for each of the (groups of) dependent parameters, determine the error</span>
     <span class="c1"># analogous to the sm_uncertainty function. Normalize to the central</span>
     <span class="c1"># prediction (so relative errors are returned)</span>
     <span class="n">individual_errors</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">def</span> <span class="nf">make_par_random</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">par_random</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">make_par_random</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">par_random</span><span class="p">):</span>
         <span class="n">par_tmp</span> <span class="o">=</span> <span class="n">par_central</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">par_tmp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">par_random</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="n">par_tmp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">par_random</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">par_tmp</span>
-    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">dependent_par</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">dependent_par_lists</span><span class="p">:</span>
         <span class="n">par_random_p</span> <span class="o">=</span> <span class="p">[</span><span class="n">make_par_random</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">pr</span><span class="p">)</span> <span class="k">for</span> <span class="n">pr</span> <span class="ow">in</span> <span class="n">par_random</span><span class="p">]</span>
         <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
             <span class="n">obs</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random_p</span>
         <span class="p">])</span>
-        <span class="n">individual_errors</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span><span class="o">/</span><span class="nb">abs</span><span class="p">(</span><span class="n">pred_central</span><span class="p">)</span>
+        <span class="c1"># for the dictionary key, use the list element if there is only 1,</span>
+        <span class="c1"># otherwise use a tuple (which is hashable)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="n">individual_errors</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span><span class="o">/</span><span class="nb">abs</span><span class="p">(</span><span class="n">pred_central</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">individual_errors</span>
 </pre></div>
 
@@ -1564,13 +1696,15 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
 <li><code>obs_name</code>: name of the observable as a string</li>
 <li><code>N</code> (optional): number of random evaluations of the observable.
 The relative accuracy of the uncertainty returned is given by $1/\sqrt{2N}$.</li>
+<li><code>threads</code> (optional): if bigger than one, number of threads for parallel
+computation of the uncertainty.</li>
 </ul>
 <p>Additional arguments are passed to the observable and are necessary,
 depending on the observable (e.g. $q^2$-dependent observables).</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.sm_uncertainty', this);">Show source &equiv;</a></p>
   <div id="source-flavio.functions.sm_uncertainty" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the uncertainty of the Standard Model prediction of an observable.</span>
 
 <span class="sd">    Parameters</span>
@@ -1579,12 +1713,14 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
 <span class="sd">    - `obs_name`: name of the observable as a string</span>
 <span class="sd">    - `N` (optional): number of random evaluations of the observable.</span>
 <span class="sd">    The relative accuracy of the uncertainty returned is given by $1/\sqrt{2N}$.</span>
+<span class="sd">    - `threads` (optional): if bigger than one, number of threads for parallel</span>
+<span class="sd">    computation of the uncertainty.</span>
 
 <span class="sd">    Additional arguments are passed to the observable and are necessary,</span>
 <span class="sd">    depending on the observable (e.g. $q^2$-dependent observables).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
-    <span class="k">return</span> <span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1593,6 +1729,123 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
   </div>
   
 
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="flavio.functions.AwareDict" class="name">class <span class="ident">AwareDict</span></p>
+      
+  
+    <div class="desc"><p>Generalization of dictionary that adds the key to the previously defined
+set <code>pcalled</code> upon getting an item.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareDict', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareDict" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AwareDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generalization of dictionary that adds the key to the previously defined</span>
+<span class="sd">    set `pcalled` upon getting an item.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">akeys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">d</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an item, adding the key to the `pcalled` set.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">akeys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cp</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">cp</span><span class="o">.</span><span class="n">akeys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">akeys</span>
+        <span class="k">return</span> <span class="n">cp</span>
+
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__copy__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#flavio.functions.AwareDict">AwareDict</a></li>
+          <li>builtins.dict</li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareDict.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, d)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialize the instance.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareDict.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareDict.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Initialize the instance.&quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">akeys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">d</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareDict.copy">
+    <p>def <span class="ident">copy</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>D.copy() -&gt; a shallow copy of D</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareDict.copy', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareDict.copy" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__copy__</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="flavio.functions.AwareDict.akeys" class="name">var <span class="ident">akeys</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.functions.AwareDict.d" class="name">var <span class="ident">d</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
 
   </section>
 

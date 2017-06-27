@@ -1187,6 +1187,7 @@ table {
     <li class="mono"><a href="#flavio.classes.Observable.set_prediction">set_prediction</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.del_instance">del_instance</a></li>
+    <li class="mono"><a href="#flavio.classes.Observable.from_function">from_function</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.get_instance">get_instance</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.taxonomy_dict">taxonomy_dict</a></li>
   </ul>
@@ -1707,6 +1708,48 @@ table {
         <span class="sd">&quot;&quot;&quot;Return the hierarchical metadata taxonomy as a nested dictionary.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">dicts</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">taxonomy</span><span class="p">)</span>
 
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_function</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">observables</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Instantiate an observable object and the corresponding Prediction</span>
+<span class="sd">        object for an observable that is defined as a mathematical function</span>
+<span class="sd">        of two or more existing observables with existing predictions.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+
+<span class="sd">        - name: string name of the new observable</span>
+<span class="sd">        - observables: list of string names of the observables to be combined</span>
+<span class="sd">        - function: function of the observables. The number of arguments must</span>
+<span class="sd">          match the number of observables</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">        --------</span>
+
+<span class="sd">        For two existing observables &#39;my_obs_1&#39; and &#39;my_obs_2&#39;, a new observable</span>
+<span class="sd">        that is defined as the difference between the two can be defined as</span>
+
+<span class="sd">        ```</span>
+<span class="sd">        Observable.from_function(&#39;my_obs_1_2_diff&#39;,</span>
+<span class="sd">                                 [&#39;my_obs_1&#39;, &#39;my_obs_2&#39;],</span>
+<span class="sd">                                 lambda x, y: x - y)</span>
+<span class="sd">        ```</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="n">observables</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The observable &quot;</span> <span class="o">+</span> <span class="n">observable</span> <span class="o">+</span> <span class="s2">&quot; does not exist&quot;</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span> <span class="o">==</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observables</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span><span class="p">,</span> \
+                <span class="s2">&quot;Only observables depending on the same arguments can be combined&quot;</span>
+            <span class="k">assert</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">prediction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> \
+                <span class="s2">&quot;The observable {} does not have a prediction yet&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
+        <span class="n">obs_obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="n">Observable</span><span class="p">[</span><span class="n">observables</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
+        <span class="n">pfcts</span> <span class="o">=</span> <span class="p">[</span><span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">function</span>
+                <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="n">observables</span><span class="p">]</span>
+        <span class="k">def</span> <span class="nf">pfct</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">pfcts</span><span class="p">])</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pfct</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obs_obj</span>
 
 <span class="c1">########## AuxiliaryQuantity Class ##########</span>
 <span class="k">class</span> <span class="nc">AuxiliaryQuantity</span><span class="p">(</span><span class="n">NamedInstanceClass</span><span class="p">):</span>
@@ -1749,7 +1792,7 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span><span class="o">.</span><span class="n">set_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span>    <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -4461,6 +4504,49 @@ predicted theoretically.</p></div>
     <span class="k">def</span> <span class="nf">taxonomy_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the hierarchical metadata taxonomy as a nested dictionary.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">dicts</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">taxonomy</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_function</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">observables</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Instantiate an observable object and the corresponding Prediction</span>
+<span class="sd">        object for an observable that is defined as a mathematical function</span>
+<span class="sd">        of two or more existing observables with existing predictions.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+
+<span class="sd">        - name: string name of the new observable</span>
+<span class="sd">        - observables: list of string names of the observables to be combined</span>
+<span class="sd">        - function: function of the observables. The number of arguments must</span>
+<span class="sd">          match the number of observables</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">        --------</span>
+
+<span class="sd">        For two existing observables &#39;my_obs_1&#39; and &#39;my_obs_2&#39;, a new observable</span>
+<span class="sd">        that is defined as the difference between the two can be defined as</span>
+
+<span class="sd">        ```</span>
+<span class="sd">        Observable.from_function(&#39;my_obs_1_2_diff&#39;,</span>
+<span class="sd">                                 [&#39;my_obs_1&#39;, &#39;my_obs_2&#39;],</span>
+<span class="sd">                                 lambda x, y: x - y)</span>
+<span class="sd">        ```</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="n">observables</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The observable &quot;</span> <span class="o">+</span> <span class="n">observable</span> <span class="o">+</span> <span class="s2">&quot; does not exist&quot;</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span> <span class="o">==</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observables</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span><span class="p">,</span> \
+                <span class="s2">&quot;Only observables depending on the same arguments can be combined&quot;</span>
+            <span class="k">assert</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">prediction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> \
+                <span class="s2">&quot;The observable {} does not have a prediction yet&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
+        <span class="n">obs_obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="n">Observable</span><span class="p">[</span><span class="n">observables</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
+        <span class="n">pfcts</span> <span class="o">=</span> <span class="p">[</span><span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">function</span>
+                <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="n">observables</span><span class="p">]</span>
+        <span class="k">def</span> <span class="nf">pfct</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">pfcts</span><span class="p">])</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pfct</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obs_obj</span>
 </pre></div>
 
   </div>
@@ -4712,6 +4798,78 @@ taxonomies (e.g. 'Animal :: Cat' and 'Pet :: Favourite Pet')</p></div>
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">del_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
     <span class="k">del</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instances</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.classes.Observable.from_function">
+    <p>def <span class="ident">from_function</span>(</p><p>cls, name, observables, function)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Instantiate an observable object and the corresponding Prediction
+object for an observable that is defined as a mathematical function
+of two or more existing observables with existing predictions.</p>
+<h2>Parameters:</h2>
+<ul>
+<li>name: string name of the new observable</li>
+<li>observables: list of string names of the observables to be combined</li>
+<li>function: function of the observables. The number of arguments must
+  match the number of observables</li>
+</ul>
+<h2>Example:</h2>
+<p>For two existing observables 'my_obs_1' and 'my_obs_2', a new observable
+that is defined as the difference between the two can be defined as</p>
+<p><code>Observable.from_function('my_obs_1_2_diff',
+                         ['my_obs_1', 'my_obs_2'],
+                         lambda x, y: x - y)</code></p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Observable.from_function', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.Observable.from_function" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_function</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">observables</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Instantiate an observable object and the corresponding Prediction</span>
+<span class="sd">    object for an observable that is defined as a mathematical function</span>
+<span class="sd">    of two or more existing observables with existing predictions.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    - name: string name of the new observable</span>
+<span class="sd">    - observables: list of string names of the observables to be combined</span>
+<span class="sd">    - function: function of the observables. The number of arguments must</span>
+<span class="sd">      match the number of observables</span>
+<span class="sd">    Example:</span>
+<span class="sd">    --------</span>
+<span class="sd">    For two existing observables &#39;my_obs_1&#39; and &#39;my_obs_2&#39;, a new observable</span>
+<span class="sd">    that is defined as the difference between the two can be defined as</span>
+<span class="sd">    ```</span>
+<span class="sd">    Observable.from_function(&#39;my_obs_1_2_diff&#39;,</span>
+<span class="sd">                             [&#39;my_obs_1&#39;, &#39;my_obs_2&#39;],</span>
+<span class="sd">                             lambda x, y: x - y)</span>
+<span class="sd">    ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="n">observables</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The observable &quot;</span> <span class="o">+</span> <span class="n">observable</span> <span class="o">+</span> <span class="s2">&quot; does not exist&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span> <span class="o">==</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observables</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span><span class="p">,</span> \
+            <span class="s2">&quot;Only observables depending on the same arguments can be combined&quot;</span>
+        <span class="k">assert</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">prediction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> \
+            <span class="s2">&quot;The observable {} does not have a prediction yet&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
+    <span class="n">obs_obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="n">Observable</span><span class="p">[</span><span class="n">observables</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
+    <span class="n">pfcts</span> <span class="o">=</span> <span class="p">[</span><span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">function</span>
+            <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="n">observables</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">pfct</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">pfcts</span><span class="p">])</span>
+    <span class="n">Prediction</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pfct</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obs_obj</span>
 </pre></div>
 
   </div>
@@ -5613,7 +5771,7 @@ simultaneously.</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observable_obj</span><span class="o">.</span><span class="n">set_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span>    <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -5673,7 +5831,7 @@ simultaneously.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Prediction.get_central', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Prediction.get_central" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span>    <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
