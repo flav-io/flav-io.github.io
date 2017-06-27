@@ -138,6 +138,6 @@ Operator                                                                  | Wils
 --------------------------------------------------------------------------|-------
 $O_V = (\bar c_L \gamma^\mu b_L)(\bar \tau_L \gamma_\mu \nu_L)$           | `CV_bctaunu`
 $O_V^\prime = (\bar c_R \gamma^\mu b_R)(\bar \tau_L \gamma_\mu \nu_L)$    | `CVp_bctaunu`
-$O_S = m_b(\bar c_L b_R)(\bar \tau_R \tau \nu_L)$                                  | `CS_bctaunu`
+$O_S = m_b(\bar c_L b_R)(\bar \tau_R \nu_L)$                                  | `CS_bctaunu`
 $O_S^\prime = m_b(\bar c_R b_L)(\bar \tau_R \nu_L)$                       | `CSp_bctaunu`
 $O_T = (\bar c_R \sigma^{\mu\nu} b_L)(\bar \tau_R \sigma_{\mu\nu}\nu_L)$  | `CT_bctaunu`
