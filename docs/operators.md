@@ -131,7 +131,7 @@ $O_R = \frac{e^2}{16\pi^2}(\bar s_R \gamma^\mu b_R)(\bar \nu_e \gamma_\mu(1-\gam
 
 The following lists the operators for the case of $b\to c\tau^-\bar\nu$.
 
-$$\mathcal H_\text{eff} = - \frac{4 G_F}{\sqrt{2}} V_{cb} \sum_i C_i O_i$$
+$$\mathcal H_\text{eff} = \frac{4 G_F}{\sqrt{2}} V_{cb} \sum_i C_i O_i$$
 
 {: class="table"}
 Operator                                                                  | Wilson coefficient
