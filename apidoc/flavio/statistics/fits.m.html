@@ -1191,6 +1191,7 @@ to be used directly).</p>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">flavio.statistics.probability</span> <span class="kn">import</span> <span class="n">NormalDistribution</span><span class="p">,</span> <span class="n">MultivariateNormalDistribution</span><span class="p">,</span> <span class="n">convolve_distributions</span>
+<span class="kn">from</span> <span class="nn">flavio.math.optimize</span> <span class="kn">import</span> <span class="n">minimize_robust</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
@@ -1533,7 +1534,7 @@ to be used directly).</p>
         <span class="sd">&quot;&quot;&quot;Return the prior probability (or frequentist likelihood) for all</span>
 <span class="sd">        nuisance parameters given an input array&quot;&quot;&quot;</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">))</span>
+        <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">))</span>
         <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prob_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
 
@@ -1552,13 +1553,14 @@ to be used directly).</p>
 
 
 <span class="k">class</span> <span class="nc">BayesianFit</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Bayesian fit class. Instances of this class can then be fed to samplers.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Bayesian fit class. Instances of this class can then be fed to samplers.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 
 <span class="sd">    - `name`: a descriptive string name</span>
-<span class="sd">    - `par_obj`: an instance of `ParameterConstraints`, e.g. `flavio.default_parameters`</span>
+<span class="sd">    - `par_obj`: optional; an instance of `ParameterConstraints`.</span>
+<span class="sd">      Defaults to `flavio.default_parameters`</span>
 <span class="sd">    - `fit_parameters`: a list of string names of parameters of interest. The existing</span>
 <span class="sd">      constraints on the parameter will be taken as prior.</span>
 <span class="sd">    - `nuisance_parameters`: a list of string names of nuisance parameters. The existing</span>
@@ -1618,7 +1620,7 @@ to be used directly).</p>
 
 
 <span class="k">class</span> <span class="nc">FastFit</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A fit class that is meant for producing fast likelihood contour plots.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A fit class that is meant for producing fast likelihood contour plots.</span>
 
 <span class="sd">    Calling the method `make_measurement`, a pseudo-measurement is generated</span>
 <span class="sd">    that combines the actual experimental measurements with the theoretical</span>
@@ -1637,7 +1639,7 @@ to be used directly).</p>
 
 <span class="sd">    - all uncertainties - experimental and theoretical - are treated as Gaussian</span>
 <span class="sd">    - the theoretical uncertainties in the presence of new physics are assumed</span>
-<span class="sd">      to be similar to the ones in the SM</span>
+<span class="sd">      to be equal to the ones in the SM</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1857,8 +1859,8 @@ to be used directly).</p>
 <span class="sd">        coefficients.</span>
 
 <span class="sd">        Keyword arguments will be passed to `scipy.optimize.minimize_scalar` in</span>
-<span class="sd">        the case of a single fit variable and to `scipy.optimize.minimize` in</span>
-<span class="sd">        the case of multiple fit variables.</span>
+<span class="sd">        the case of a single fit variable and to `flavio.math.optimize.minimize_robust`</span>
+<span class="sd">        in the case of multiple fit variables.</span>
 
 <span class="sd">        Returns a dictionary with the following keys:</span>
 
@@ -1878,9 +1880,9 @@ to be used directly).</p>
                 <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_fit_p</span> <span class="o">+</span> <span class="n">n_wc</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">n_fit_p</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">x0</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_central_fit_parameters</span>
-                <span class="n">opt</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">opt</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">opt</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Optimization failed.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1888,8 +1890,36 @@ to be used directly).</p>
 
 
 <span class="k">class</span> <span class="nc">FrequentistFit</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Frequentist fit class. Instances of this class can then be fed to samplers.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Frequentist fit class.</span>
 
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    - `name`: a descriptive string name</span>
+<span class="sd">    - `par_obj`: optional; an instance of `ParameterConstraints`.</span>
+<span class="sd">      Defaults to `flavio.default_parameters`</span>
+<span class="sd">    - `fit_parameters`: a list of string names of parameters of interest.</span>
+<span class="sd">      Existing constraints on the parameter will be ignored.</span>
+<span class="sd">    - `nuisance_parameters`: a list of string names of nuisance parameters. The existing</span>
+<span class="sd">      constraints on the parameter will be interpreted as pseudo-measurement</span>
+<span class="sd">      entering the likelihood.</span>
+<span class="sd">    - `observables`: a list of observable names to be included in the fit</span>
+<span class="sd">    - `exclude_measurements`: optional; a list of measurement names *not* to be included in</span>
+<span class="sd">    the fit. By default, all existing measurements are included.</span>
+<span class="sd">    - `include_measurements`: optional; a list of measurement names to be included in</span>
+<span class="sd">    the fit. By default, all existing measurements are included.</span>
+<span class="sd">    - `fit_wc_names`: optional; a list of string names of arguments of the Wilson</span>
+<span class="sd">      coefficient function below</span>
+<span class="sd">    - `fit_wc_function`: optional; a function that</span>
+<span class="sd">      returns a dictionary that can be fed to the `set_initial`</span>
+<span class="sd">      method of the Wilson coefficient class. Example: fit the real and imaginary</span>
+<span class="sd">      parts of $C_{10}$ in $b\to s\mu^+\mu^-$.</span>
+<span class="sd">    ```</span>
+<span class="sd">    def fit_wc_function(Re_C10, Im_C10):</span>
+<span class="sd">        return {&#39;C10_bsmmumu&#39;: Re_C10 + 1j*Im_C10}</span>
+<span class="sd">    ```</span>
+<span class="sd">    - `input_scale`: input scale for the Wilson coeffficients. Defaults to 160.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1918,7 +1948,8 @@ to be used directly).</p>
 <h2>Parameters</h2>
 <ul>
 <li><code>name</code>: a descriptive string name</li>
-<li><code>par_obj</code>: an instance of <code>ParameterConstraints</code>, e.g. <code>flavio.default_parameters</code></li>
+<li><code>par_obj</code>: optional; an instance of <code>ParameterConstraints</code>.
+  Defaults to <code>flavio.default_parameters</code></li>
 <li><code>fit_parameters</code>: a list of string names of parameters of interest. The existing
   constraints on the parameter will be taken as prior.</li>
 <li><code>nuisance_parameters</code>: a list of string names of nuisance parameters. The existing
@@ -1937,7 +1968,7 @@ the fit. By default, all existing measurements are included.</li>
 <li><code>fit_wc_function</code>: optional; a function that
   returns a dictionary that can be fed to the <code>set_initial</code>
   method of the Wilson coefficient class. Example: fit the real and imaginary
-  parts of $C_{10}$ in $b   o s\mu^+\mu^-$.
+  parts of $C_{10}$ in $b\to s\mu^+\mu^-$.
 <code>def fit_wc_function(Re_C10, Im_C10):
     return {'C10_bsmmumu': Re_C10 + 1j*Im_C10}</code></li>
 <li><code>input_scale</code>: input scale for the Wilson coeffficients. Defaults to 160.</li>
@@ -1953,13 +1984,14 @@ the fit. By default, all existing measurements are included.</li>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.BayesianFit', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits.BayesianFit" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">BayesianFit</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Bayesian fit class. Instances of this class can then be fed to samplers.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Bayesian fit class. Instances of this class can then be fed to samplers.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 
 <span class="sd">    - `name`: a descriptive string name</span>
-<span class="sd">    - `par_obj`: an instance of `ParameterConstraints`, e.g. `flavio.default_parameters`</span>
+<span class="sd">    - `par_obj`: optional; an instance of `ParameterConstraints`.</span>
+<span class="sd">      Defaults to `flavio.default_parameters`</span>
 <span class="sd">    - `fit_parameters`: a list of string names of parameters of interest. The existing</span>
 <span class="sd">      constraints on the parameter will be taken as prior.</span>
 <span class="sd">    - `nuisance_parameters`: a list of string names of nuisance parameters. The existing</span>
@@ -2303,7 +2335,7 @@ nuisance parameters given an input array</p></div>
     <span class="sd">&quot;&quot;&quot;Return the prior probability (or frequentist likelihood) for all</span>
 <span class="sd">    nuisance parameters given an input array&quot;&quot;&quot;</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">))</span>
+    <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">))</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prob_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
 </pre></div>
@@ -2418,14 +2450,10 @@ given an input array</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.BayesianFit.get_central_fit_parameters" class="name">var <span class="ident">get_central_fit_parameters</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_central_fit_parameters">get_central_fit_parameters</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return a numpy array with the central values of all fit parameters.</p></div>
+    <div class="desc"><p>Return a numpy array with the central values of all fit parameters.</p></div>
   <div class="source_cont">
 </div>
 
@@ -2513,10 +2541,14 @@ parameters with Wilson coefficients set to their SM values</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.BayesianFit.get_random_wilson_coeffs_start" class="name">var <span class="ident">get_random_wilson_coeffs_start</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_random_wilson_coeffs_start">get_random_wilson_coeffs_start</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return a numpy array with random values for all Wilson coefficients
+    <div class="desc inherited"><p>Return a numpy array with random values for all Wilson coefficients
 sampling the start_wc_priors distribution.</p></div>
   <div class="source_cont">
 </div>
@@ -2625,13 +2657,13 @@ importantly,</p>
 <ul>
 <li>all uncertainties - experimental and theoretical - are treated as Gaussian</li>
 <li>the theoretical uncertainties in the presence of new physics are assumed
-  to be similar to the ones in the SM</li>
+  to be equal to the ones in the SM</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits.FastFit" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FastFit</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A fit class that is meant for producing fast likelihood contour plots.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A fit class that is meant for producing fast likelihood contour plots.</span>
 
 <span class="sd">    Calling the method `make_measurement`, a pseudo-measurement is generated</span>
 <span class="sd">    that combines the actual experimental measurements with the theoretical</span>
@@ -2650,7 +2682,7 @@ importantly,</p>
 
 <span class="sd">    - all uncertainties - experimental and theoretical - are treated as Gaussian</span>
 <span class="sd">    - the theoretical uncertainties in the presence of new physics are assumed</span>
-<span class="sd">      to be similar to the ones in the SM</span>
+<span class="sd">      to be equal to the ones in the SM</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -2870,8 +2902,8 @@ importantly,</p>
 <span class="sd">        coefficients.</span>
 
 <span class="sd">        Keyword arguments will be passed to `scipy.optimize.minimize_scalar` in</span>
-<span class="sd">        the case of a single fit variable and to `scipy.optimize.minimize` in</span>
-<span class="sd">        the case of multiple fit variables.</span>
+<span class="sd">        the case of a single fit variable and to `flavio.math.optimize.minimize_robust`</span>
+<span class="sd">        in the case of multiple fit variables.</span>
 
 <span class="sd">        Returns a dictionary with the following keys:</span>
 
@@ -2891,9 +2923,9 @@ importantly,</p>
                 <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_fit_p</span> <span class="o">+</span> <span class="n">n_wc</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">n_fit_p</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">x0</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_central_fit_parameters</span>
-                <span class="n">opt</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">opt</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">opt</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Optimization failed.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2981,8 +3013,8 @@ nuisance parameters, and Wilson coefficients.</p></div>
     <div class="desc"><p>Compute the best fit point in the space of fit parameters and Wilson
 coefficients.</p>
 <p>Keyword arguments will be passed to <code>scipy.optimize.minimize_scalar</code> in
-the case of a single fit variable and to <code>scipy.optimize.minimize</code> in
-the case of multiple fit variables.</p>
+the case of a single fit variable and to <code>flavio.math.optimize.minimize_robust</code>
+in the case of multiple fit variables.</p>
 <p>Returns a dictionary with the following keys:</p>
 <ul>
 <li>'x': position of the best fit point</li>
@@ -2995,8 +3027,8 @@ the case of multiple fit variables.</p>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the best fit point in the space of fit parameters and Wilson</span>
 <span class="sd">    coefficients.</span>
 <span class="sd">    Keyword arguments will be passed to `scipy.optimize.minimize_scalar` in</span>
-<span class="sd">    the case of a single fit variable and to `scipy.optimize.minimize` in</span>
-<span class="sd">    the case of multiple fit variables.</span>
+<span class="sd">    the case of a single fit variable and to `flavio.math.optimize.minimize_robust`</span>
+<span class="sd">    in the case of multiple fit variables.</span>
 <span class="sd">    Returns a dictionary with the following keys:</span>
 <span class="sd">    - &#39;x&#39;: position of the best fit point</span>
 <span class="sd">    - &#39;log_likelihood&#39;: logarithm of the likelihood at the best fit point</span>
@@ -3014,9 +3046,9 @@ the case of multiple fit variables.</p>
             <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_fit_p</span> <span class="o">+</span> <span class="n">n_wc</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">n_fit_p</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">x0</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_central_fit_parameters</span>
-            <span class="n">opt</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">opt</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">opt</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Optimization failed.&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -3418,7 +3450,7 @@ nuisance parameters given an input array</p></div>
     <span class="sd">&quot;&quot;&quot;Return the prior probability (or frequentist likelihood) for all</span>
 <span class="sd">    nuisance parameters given an input array&quot;&quot;&quot;</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">))</span>
+    <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">))</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prob_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
 </pre></div>
@@ -3666,14 +3698,10 @@ and Wilson coefficients.</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.FastFit.get_central_fit_parameters" class="name">var <span class="ident">get_central_fit_parameters</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_central_fit_parameters">get_central_fit_parameters</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return a numpy array with the central values of all fit parameters.</p></div>
+    <div class="desc"><p>Return a numpy array with the central values of all fit parameters.</p></div>
   <div class="source_cont">
 </div>
 
@@ -3761,10 +3789,14 @@ parameters with Wilson coefficients set to their SM values</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.FastFit.get_random_wilson_coeffs_start" class="name">var <span class="ident">get_random_wilson_coeffs_start</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_random_wilson_coeffs_start">get_random_wilson_coeffs_start</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return a numpy array with random values for all Wilson coefficients
+    <div class="desc inherited"><p>Return a numpy array with random values for all Wilson coefficients
 sampling the start_wc_priors distribution.</p></div>
   <div class="source_cont">
 </div>
@@ -4195,7 +4227,7 @@ sampling the start_wc_priors distribution.</p></div>
         <span class="sd">&quot;&quot;&quot;Return the prior probability (or frequentist likelihood) for all</span>
 <span class="sd">        nuisance parameters given an input array&quot;&quot;&quot;</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">))</span>
+        <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">))</span>
         <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prob_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
 
@@ -4228,7 +4260,7 @@ sampling the start_wc_priors distribution.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.Fit.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fa7ebd70080&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7f595990bf28&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None)</p>
     </div>
     
 
@@ -4566,7 +4598,7 @@ nuisance parameters given an input array</p></div>
     <span class="sd">&quot;&quot;&quot;Return the prior probability (or frequentist likelihood) for all</span>
 <span class="sd">    nuisance parameters given an input array&quot;&quot;&quot;</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">))</span>
+    <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">))</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prob_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
 </pre></div>
@@ -4924,13 +4956,66 @@ sampling the start_wc_priors distribution.</p></div>
       <p id="flavio.statistics.fits.FrequentistFit" class="name">class <span class="ident">FrequentistFit</span></p>
       
   
-    <div class="desc"><p>Frequentist fit class. Instances of this class can then be fed to samplers.</p></div>
+    <div class="desc"><p>Frequentist fit class.</p>
+<h2>Parameters</h2>
+<ul>
+<li><code>name</code>: a descriptive string name</li>
+<li><code>par_obj</code>: optional; an instance of <code>ParameterConstraints</code>.
+  Defaults to <code>flavio.default_parameters</code></li>
+<li><code>fit_parameters</code>: a list of string names of parameters of interest.
+  Existing constraints on the parameter will be ignored.</li>
+<li><code>nuisance_parameters</code>: a list of string names of nuisance parameters. The existing
+  constraints on the parameter will be interpreted as pseudo-measurement
+  entering the likelihood.</li>
+<li><code>observables</code>: a list of observable names to be included in the fit</li>
+<li><code>exclude_measurements</code>: optional; a list of measurement names <em>not</em> to be included in
+the fit. By default, all existing measurements are included.</li>
+<li><code>include_measurements</code>: optional; a list of measurement names to be included in
+the fit. By default, all existing measurements are included.</li>
+<li><code>fit_wc_names</code>: optional; a list of string names of arguments of the Wilson
+  coefficient function below</li>
+<li><code>fit_wc_function</code>: optional; a function that
+  returns a dictionary that can be fed to the <code>set_initial</code>
+  method of the Wilson coefficient class. Example: fit the real and imaginary
+  parts of $C_{10}$ in $b\to s\mu^+\mu^-$.
+<code>def fit_wc_function(Re_C10, Im_C10):
+    return {'C10_bsmmumu': Re_C10 + 1j*Im_C10}</code></li>
+<li><code>input_scale</code>: input scale for the Wilson coeffficients. Defaults to 160.</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FrequentistFit', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits.FrequentistFit" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FrequentistFit</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Frequentist fit class. Instances of this class can then be fed to samplers.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Frequentist fit class.</span>
 
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    - `name`: a descriptive string name</span>
+<span class="sd">    - `par_obj`: optional; an instance of `ParameterConstraints`.</span>
+<span class="sd">      Defaults to `flavio.default_parameters`</span>
+<span class="sd">    - `fit_parameters`: a list of string names of parameters of interest.</span>
+<span class="sd">      Existing constraints on the parameter will be ignored.</span>
+<span class="sd">    - `nuisance_parameters`: a list of string names of nuisance parameters. The existing</span>
+<span class="sd">      constraints on the parameter will be interpreted as pseudo-measurement</span>
+<span class="sd">      entering the likelihood.</span>
+<span class="sd">    - `observables`: a list of observable names to be included in the fit</span>
+<span class="sd">    - `exclude_measurements`: optional; a list of measurement names *not* to be included in</span>
+<span class="sd">    the fit. By default, all existing measurements are included.</span>
+<span class="sd">    - `include_measurements`: optional; a list of measurement names to be included in</span>
+<span class="sd">    the fit. By default, all existing measurements are included.</span>
+<span class="sd">    - `fit_wc_names`: optional; a list of string names of arguments of the Wilson</span>
+<span class="sd">      coefficient function below</span>
+<span class="sd">    - `fit_wc_function`: optional; a function that</span>
+<span class="sd">      returns a dictionary that can be fed to the `set_initial`</span>
+<span class="sd">      method of the Wilson coefficient class. Example: fit the real and imaginary</span>
+<span class="sd">      parts of $C_{10}$ in $b\to s\mu^+\mu^-$.</span>
+<span class="sd">    ```</span>
+<span class="sd">    def fit_wc_function(Re_C10, Im_C10):</span>
+<span class="sd">        return {&#39;C10_bsmmumu&#39;: Re_C10 + 1j*Im_C10}</span>
+<span class="sd">    ```</span>
+<span class="sd">    - `input_scale`: input scale for the Wilson coeffficients. Defaults to 160.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -5248,7 +5333,7 @@ nuisance parameters given an input array</p></div>
     <span class="sd">&quot;&quot;&quot;Return the prior probability (or frequentist likelihood) for all</span>
 <span class="sd">    nuisance parameters given an input array&quot;&quot;&quot;</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_par_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">))</span>
+    <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">))</span>
     <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prob_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
 </pre></div>
@@ -5340,14 +5425,10 @@ given an input array</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.FrequentistFit.get_central_fit_parameters" class="name">var <span class="ident">get_central_fit_parameters</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_central_fit_parameters">get_central_fit_parameters</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return a numpy array with the central values of all fit parameters.</p></div>
+    <div class="desc"><p>Return a numpy array with the central values of all fit parameters.</p></div>
   <div class="source_cont">
 </div>
 
@@ -5435,10 +5516,14 @@ parameters with Wilson coefficients set to their SM values</p></div>
             <div class="item">
             <p id="flavio.statistics.fits.FrequentistFit.get_random_wilson_coeffs_start" class="name">var <span class="ident">get_random_wilson_coeffs_start</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.fits.Fit">Fit</a></code>.<code><a href="#flavio.statistics.fits.Fit.get_random_wilson_coeffs_start">get_random_wilson_coeffs_start</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return a numpy array with random values for all Wilson coefficients
+    <div class="desc inherited"><p>Return a numpy array with random values for all Wilson coefficients
 sampling the start_wc_priors distribution.</p></div>
   <div class="source_cont">
 </div>

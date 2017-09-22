@@ -1105,8 +1105,11 @@ table {
             <span class="k">if</span> <span class="n">disp</span><span class="p">:</span>
                 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting try no. {} with method {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
                 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Current function value: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_val</span><span class="p">))</span>
-            <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">m</span><span class="p">,</span>
-                           <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;options&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">}</span>
+            <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">opt</span>
             <span class="k">elif</span> <span class="n">opt</span><span class="o">.</span><span class="n">fun</span> <span class="o">&lt;</span> <span class="n">_val</span><span class="p">:</span>
@@ -1125,9 +1128,11 @@ table {
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">mfun</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">return</span> <span class="o">-</span><span class="n">fun</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">minimize_robust</span><span class="p">(</span><span class="n">mfun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">minimize_robust</span><span class="p">(</span><span class="n">mfun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span>
                            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="n">methods</span><span class="p">,</span>
                            <span class="n">tries</span><span class="o">=</span><span class="n">tries</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="n">disp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">fun</span> <span class="o">=</span> <span class="o">-</span><span class="n">res</span><span class="o">.</span><span class="n">fun</span> <span class="c1"># change back sign for function value</span>
+    <span class="k">return</span> <span class="n">res</span>
 </pre></div>
 
   </div>
@@ -1158,9 +1163,11 @@ table {
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">mfun</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">return</span> <span class="o">-</span><span class="n">fun</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">minimize_robust</span><span class="p">(</span><span class="n">mfun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">minimize_robust</span><span class="p">(</span><span class="n">mfun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span>
                            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="n">methods</span><span class="p">,</span>
                            <span class="n">tries</span><span class="o">=</span><span class="n">tries</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="n">disp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">fun</span> <span class="o">=</span> <span class="o">-</span><span class="n">res</span><span class="o">.</span><span class="n">fun</span> <span class="c1"># change back sign for function value</span>
+    <span class="k">return</span> <span class="n">res</span>
 </pre></div>
 
   </div>
@@ -1216,8 +1223,11 @@ tries are used as starting points of new tries. Returns a scipy
             <span class="k">if</span> <span class="n">disp</span><span class="p">:</span>
                 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting try no. {} with method {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
                 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Current function value: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_val</span><span class="p">))</span>
-            <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">m</span><span class="p">,</span>
-                           <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;options&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">}</span>
+            <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">opt</span>
             <span class="k">elif</span> <span class="n">opt</span><span class="o">.</span><span class="n">fun</span> <span class="o">&lt;</span> <span class="n">_val</span><span class="p">:</span>

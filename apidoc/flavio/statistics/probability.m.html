@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>flavio.statistics.probability API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="Probability distributions and auxiliary functions to deal with them." />
 
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400' rel='stylesheet' type='text/css'>
@@ -1399,11 +1399,13 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">flavio.statistics.probability</span> module</h1>
-  
+  <p>Probability distributions and auxiliary functions to deal with them.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Probability distributions and auxiliary functions to deal with them.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span><span class="p">,</span> <span class="n">RegularGridInterpolator</span>
 <span class="kn">import</span> <span class="nn">scipy.signal</span>
@@ -2409,7 +2411,12 @@ table {
             <span class="k">if</span> <span class="n">correlation</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">correlation</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">correlation</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                    <span class="c1"># if it&#39;s a number, return delta_ij + (1-delta_ij)*x</span>
+                    <span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_dim</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">))</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">))</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">correlation</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">correlation</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">,</span>
                                        <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">correlation</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
@@ -3877,14 +3884,10 @@ get_dict method.</p>
             <div class="item">
             <p id="flavio.statistics.probability.DeltaDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_left">error_left</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the lower error</p></div>
+    <div class="desc"><p>Return the lower error</p></div>
   <div class="source_cont">
 </div>
 
@@ -3892,10 +3895,14 @@ get_dict method.</p>
             <div class="item">
             <p id="flavio.statistics.probability.DeltaDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_right">error_right</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return the upper error</p></div>
+    <div class="desc inherited"><p>Return the upper error</p></div>
   <div class="source_cont">
 </div>
 
@@ -5484,14 +5491,10 @@ get_dict method.</p>
             <div class="item">
             <p id="flavio.statistics.probability.GammaUpperLimit.error_left" class="name">var <span class="ident">error_left</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.GammaDistributionPositive">GammaDistributionPositive</a></code>.<code><a href="#flavio.statistics.probability.GammaDistributionPositive.error_left">error_left</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the lower error</p></div>
+    <div class="desc"><p>Return the lower error</p></div>
   <div class="source_cont">
 </div>
 
@@ -5643,6 +5646,10 @@ get_dict method.</p>
     <p>def <span class="ident">__init__</span>(</p><p>self, data, bandwidth=None, n_bins=None)</p>
     </div>
     
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.__init__">__init__</a></code>
+    </p>
 
     
   
@@ -6019,7 +6026,7 @@ get_dict method.</p>
             
     <p class="inheritance">
      <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.KernelDensityEstimate">KernelDensityEstimate</a></code>.<code><a href="#flavio.statistics.probability.KernelDensityEstimate.error_left">error_left</a></code>
+       <code><a href="#flavio.statistics.probability.NumericalDistribution">NumericalDistribution</a></code>.<code><a href="#flavio.statistics.probability.NumericalDistribution.error_left">error_left</a></code>
     </p>
 
             
@@ -6034,7 +6041,7 @@ get_dict method.</p>
             
     <p class="inheritance">
      <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.NumericalDistribution">NumericalDistribution</a></code>.<code><a href="#flavio.statistics.probability.NumericalDistribution.error_right">error_right</a></code>
+       <code><a href="#flavio.statistics.probability.KernelDensityEstimate">KernelDensityEstimate</a></code>.<code><a href="#flavio.statistics.probability.KernelDensityEstimate.error_right">error_right</a></code>
     </p>
 
             
@@ -7718,14 +7725,10 @@ get_dict method.</p>
             <div class="item">
             <p id="flavio.statistics.probability.HalfNormalDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_left">error_left</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the lower error</p></div>
+    <div class="desc"><p>Return the lower error</p></div>
   <div class="source_cont">
 </div>
 
@@ -8499,7 +8502,12 @@ correlation matrix have to be specified.</p>
             <span class="k">if</span> <span class="n">correlation</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">correlation</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">correlation</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                    <span class="c1"># if it&#39;s a number, return delta_ij + (1-delta_ij)*x</span>
+                    <span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_dim</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">))</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">))</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">correlation</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">correlation</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">,</span>
                                        <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">correlation</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
@@ -8614,7 +8622,12 @@ correlation matrix have to be specified.</p>
         <span class="k">if</span> <span class="n">correlation</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">correlation</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">correlation</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                <span class="c1"># if it&#39;s a number, return delta_ij + (1-delta_ij)*x</span>
+                <span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">central_value</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_dim</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">))</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">))</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">correlation</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">correlation</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">,</span>
                                    <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">correlation</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
@@ -8908,14 +8921,10 @@ get_dict method.</p>
             <div class="item">
             <p id="flavio.statistics.probability.MultivariateNormalDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_right">error_right</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the upper error</p></div>
+    <div class="desc"><p>Return the upper error</p></div>
   <div class="source_cont">
 </div>
 
@@ -9504,10 +9513,14 @@ get_dict method.</p>
             <div class="item">
             <p id="flavio.statistics.probability.MultivariateNumericalDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
             
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_left">error_left</a></code>
+    </p>
 
             
   
-    <div class="desc"><p>Return the lower error</p></div>
+    <div class="desc inherited"><p>Return the lower error</p></div>
   <div class="source_cont">
 </div>
 
@@ -10025,14 +10038,10 @@ get_dict method.</p>
             <div class="item">
             <p id="flavio.statistics.probability.NormalDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
             
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></code>.<code><a href="#flavio.statistics.probability.ProbabilityDistribution.error_left">error_left</a></code>
-    </p>
 
             
   
-    <div class="desc inherited"><p>Return the lower error</p></div>
+    <div class="desc"><p>Return the lower error</p></div>
   <div class="source_cont">
 </div>
 
