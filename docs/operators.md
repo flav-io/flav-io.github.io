@@ -31,6 +31,7 @@ $O_T^{RR} = (\bar s_L \sigma^{\mu\nu} b_R)(\bar s_L \sigma_{\mu\nu} b_R)$  | `CT
 $O_V^{LR} = (\bar s_L \gamma^\mu b_L)(\bar s_R \gamma_\mu b_R)$            | `CVLR_bsbs`
 $O_S^{LR} = (\bar s_R  b_L)(\bar s_L  b_R)$            | `CSLR_bsbs`
 
+Here and in the following, $\sigma^{\mu\nu}=\frac{i}{2}[\gamma_\mu, \gamma_\nu]$.
 
 ## Semi-leptonic FCNCs (`bsee`, `bdee`, `sdee`, `bsmumu`, ..., `bstautau`, ...)
 
