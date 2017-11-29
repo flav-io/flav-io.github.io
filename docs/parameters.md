@@ -51,6 +51,8 @@ of the parameter.
 | `B->D BCL a1_f0` | $a_1^{(0)}$ | BCL $B\to D$ form factor parametrization coefficient $a_1$ of $f_0$ |
 | `B->D BCL a2_f+` | $a_2^{(+)}$ | BCL $B\to D$ form factor parametrization coefficient $a_2$ of $f_+$ |
 | `B->D BCL a2_f0` | $a_2^{(0)}$ | BCL $B\to D$ form factor parametrization coefficient $a_2$ of $f_0$ |
+| `B->D BCL m+` | $m_{B^*}^{f_+}$ | Resonance mass for the $B\to D$ vector and tensor form factors in BCL parametrization |
+| `B->D BCL m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B\to D$ scalar form factor in BCL parametrization |
 | `B->D IW a_T` | $a_T^{B\to D}$ | Relative power correction to the $B\to D$ tensor form factor from the improved Isgur-Wise relation |
 | `B->D* CLN R_0(1)` | $R_0(1)$ | Ratio of CLN form factors at $w=1$ |
 | `B->D* CLN R_1(1)` | $R_1(1)$ | Ratio of CLN form factors at $w=1$ |
@@ -69,6 +71,8 @@ of the parameter.
 | `B->K BCL a2_f+` | $a_2^{(+)}$ | BCL $B\to K$ form factor parametrization coefficient $a_2$ of $f_+$ |
 | `B->K BCL a2_f0` | $a_2^{(0)}$ | BCL $B\to K$ form factor parametrization coefficient $a_2$ of $f_0$ |
 | `B->K BCL a2_fT` | $a_2^{(T)}$ | BCL $B\to K$ form factor parametrization coefficient $a_2$ of $f_T$ |
+| `B->K BCL m+` | $m_{B^*}^{f_+}$ | Resonance mass for the $B\to K$ vector and tensor form factors in BCL parametrization |
+| `B->K BCL m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B\to K$ scalar form factor in BCL parametrization |
 | `B->K* BSZ a0_A1` | $a_0^{A_1}$ | BSZ form factor parametrization coefficient $a_0$ of $A_1$ |
 | `B->K* BSZ a0_A12` | $a_0^{A_{12}}$ | BSZ form factor parametrization coefficient $a_0$ of $A_{12}$ |
 | `B->K* BSZ a0_T1` | $a_0^{T_1}$ | BSZ form factor parametrization coefficient $a_0$ of $T_1$ |
@@ -119,6 +123,9 @@ of the parameter.
 | `B->pi BCL a3_f+` | $a_3^{(+)}$ | BCL $B\to \pi$ form factor parametrization coefficient $a_3$ of $f_+$ |
 | `B->pi BCL a3_f0` | $a_3^{(0)}$ | BCL $B\to \pi$ form factor parametrization coefficient $a_3$ of $f_T$ |
 | `B->pi BCL a3_fT` | $a_3^{(T)}$ | BCL $B\to \pi$ form factor parametrization coefficient $a_3$ of $f_T$ |
+| `B->pi BCL m+` | $m_{B^*}^{f_+}$ | Resonance mass for the $B\to \pi$ vector and tensor form factors in BCL parametrization |
+| `B->pi BCL m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B\to \pi$ scalar form factor in BCL parametrization |
+| `B->pi IW a_T` | $a_T^{B\to \pi}$ | Relative power correction to the $B\to \pi$ tensor form factor from the improved Isgur-Wise relation |
 | `B->rho BSZ a0_A1` | $a_0^{A_1}$ | BSZ form factor parametrization coefficient $a_0$ of $A_1$ |
 | `B->rho BSZ a0_A12` | $a_0^{A_{12}}$ | BSZ form factor parametrization coefficient $a_0$ of $A_{12}$ |
 | `B->rho BSZ a0_T1` | $a_0^{T_1}$ | BSZ form factor parametrization coefficient $a_0$ of $T_1$ |
@@ -171,6 +178,17 @@ of the parameter.
 | `B0->K0 deltaC9 c Im` | $\text{Im}\,c^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^0\to K^0\ell^+\ell^-$ at high $q^2$ |
 | `B0->K0 deltaC9 c Re` | $\text{Re}\,c^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^0\to K^0\ell^+\ell^-$ at high $q^2$ |
 | `BR(B->Xcenu)_exp` | $\text{BR}(B\to X_ce\nu)_\text{exp}$ | Experimental branching ratio of $B\to X_ce\nu$ |
+| `Bs->K BCL a0_f+` | $a_0^{(+)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_0$ of $f_+$ |
+| `Bs->K BCL a0_f0` | $a_0^{(0)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_0$ of $f_0$ |
+| `Bs->K BCL a0_fT` | $a_0^{(T)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_0$ of $f_T$ |
+| `Bs->K BCL a1_f+` | $a_1^{(+)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_1$ of $f_+$ |
+| `Bs->K BCL a1_f0` | $a_1^{(0)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_1$ of $f_0$ |
+| `Bs->K BCL a1_fT` | $a_1^{(T)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_1$ of $f_T$ |
+| `Bs->K BCL a2_f+` | $a_2^{(+)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_2$ of $f_+$ |
+| `Bs->K BCL a2_f0` | $a_2^{(0)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_2$ of $f_0$ |
+| `Bs->K BCL a2_fT` | $a_2^{(T)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_2$ of $f_T$ |
+| `Bs->K BCL m+` | $m_{B^*}^{f_+}$ | Resonance mass for the $B_s\to K$ vector and tensor form factors in BCL parametrization |
+| `Bs->K BCL m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B_s\to K$ scalar form factor in BCL parametrization |
 | `Bs->K* BSZ a0_A1` | $a_0^{A_1}$ | BSZ form factor parametrization coefficient $a_0$ of $A_1$ |
 | `Bs->K* BSZ a0_A12` | $a_0^{A_{12}}$ | BSZ form factor parametrization coefficient $a_0$ of $A_{12}$ |
 | `Bs->K* BSZ a0_T1` | $a_0^{T_1}$ | BSZ form factor parametrization coefficient $a_0$ of $T_1$ |

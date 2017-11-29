@@ -1066,9 +1066,15 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.bvnunu_BRtot_summed">bvnunu_BRtot_summed</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.bvnunu_dbrdq2_int_summed">bvnunu_dbrdq2_int_summed</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.bvnunu_dbrdq2_summed">bvnunu_dbrdq2_summed</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.bvnunu_fl_int_summed">bvnunu_fl_int_summed</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.bvnunu_fl_num_int_summed">bvnunu_fl_num_int_summed</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.bvnunu_fl_num_summed">bvnunu_fl_num_summed</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.bvnunu_fl_summed">bvnunu_fl_summed</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.bvnunu_obs">bvnunu_obs</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.dbrdq2_int_summed">dbrdq2_int_summed</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.dbrdq2_summed">dbrdq2_summed</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.fl_int_summed">fl_int_summed</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.fl_summed">fl_summed</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.get_ff">get_ff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.helicity_amps">helicity_amps</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvnunu.prefactor">prefactor</a></li>
@@ -1149,10 +1155,39 @@ table {
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">dbrdq2</span>
 
+<span class="k">def</span> <span class="nf">bvnunu_fl_num_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">lep</span> <span class="o">=</span>  <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span> <span class="n">bvnunu_obs</span><span class="p">(</span><span class="k">lambda</span> <span class="n">J</span><span class="p">:</span> <span class="o">-</span><span class="n">J</span><span class="p">[</span><span class="s1">&#39;2c&#39;</span><span class="p">],</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="s1">&#39;nu&#39;</span><span class="o">+</span><span class="n">nu1</span><span class="p">,</span> <span class="s1">&#39;nu&#39;</span><span class="o">+</span><span class="n">nu2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">nu1</span> <span class="ow">in</span> <span class="n">lep</span> <span class="k">for</span> <span class="n">nu2</span> <span class="ow">in</span> <span class="n">lep</span> <span class="p">])</span>
+    <span class="k">return</span> <span class="n">num</span>
+
+<span class="k">def</span> <span class="nf">bvnunu_fl_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">lep</span> <span class="o">=</span>  <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">bvnunu_fl_num_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span> <span class="n">bvnunu_obs</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bvll</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">dGdq2</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="s1">&#39;nu&#39;</span><span class="o">+</span><span class="n">nu1</span><span class="p">,</span> <span class="s1">&#39;nu&#39;</span><span class="o">+</span><span class="n">nu2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">nu1</span> <span class="ow">in</span> <span class="n">lep</span> <span class="k">for</span> <span class="n">nu2</span> <span class="ow">in</span> <span class="n">lep</span> <span class="p">])</span>
+    <span class="k">if</span> <span class="n">den</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">den</span>
+
 <span class="k">def</span> <span class="nf">bvnunu_dbrdq2_int_summed</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">obs</span><span class="p">(</span><span class="n">q2</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">bvnunu_dbrdq2_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">nintegrate</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">bvnunu_fl_num_int_summed</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">obs</span><span class="p">(</span><span class="n">q2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">bvnunu_fl_num_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">nintegrate</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">bvnunu_fl_int_summed</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">tauB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="n">bvnunu_dbrdq2_int_summed</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span><span class="o">/</span><span class="n">tauB</span>
+    <span class="k">if</span> <span class="n">den</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">bvnunu_fl_num_int_summed</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">den</span>
 
 <span class="k">def</span> <span class="nf">bvnunu_BRtot_summed</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">obs</span><span class="p">(</span><span class="n">q2</span><span class="p">):</span>
@@ -1176,6 +1211,16 @@ table {
 <span class="k">def</span> <span class="nf">dbrdq2_summed</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">bvnunu_dbrdq2_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fct</span>
+
+<span class="k">def</span> <span class="nf">fl_int_summed</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">bvnunu_fl_int_summed</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fct</span>
+
+<span class="k">def</span> <span class="nf">fl_summed</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">bvnunu_fl_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fct</span>
 
 
@@ -1214,6 +1259,24 @@ table {
     <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\text{BR}(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)$&quot;</span>
     <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
     <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BRtot_summed</span><span class="p">(</span><span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;V&#39;</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="s1">&#39;K*&#39;</span> <span class="ow">in</span> <span class="n">M</span><span class="p">:</span> <span class="c1"># FL only implemented for K*</span>
+
+        <span class="c1"># binned FL</span>
+        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;&lt;FL&gt;(&quot;</span><span class="o">+</span><span class="n">M</span><span class="o">+</span><span class="s2">&quot;nunu)&quot;</span>
+        <span class="n">_obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">])</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Binned longitudinal polarization fraction of $&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\langle F_L \rangle(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)$&quot;</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">fl_int_summed</span><span class="p">(</span><span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;V&#39;</span><span class="p">]))</span>
+
+        <span class="c1"># differential FL</span>
+        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;FL(&quot;</span><span class="o">+</span><span class="n">M</span><span class="o">+</span><span class="s2">&quot;nunu)&quot;</span>
+        <span class="n">_obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2&#39;</span><span class="p">])</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Differential longitudinal polarization fraction o f$&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$F_L(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)$&quot;</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">fl_summed</span><span class="p">(</span><span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;V&#39;</span><span class="p">]))</span>
 </pre></div>
 
   </div>
@@ -1342,6 +1405,107 @@ table {
   
       
   <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvnunu.bvnunu_fl_int_summed">
+    <p>def <span class="ident">bvnunu_fl_int_summed</span>(</p><p>q2min, q2max, wc_obj, par, B, V)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvnunu.bvnunu_fl_int_summed', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvnunu.bvnunu_fl_int_summed" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bvnunu_fl_int_summed</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">tauB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="n">bvnunu_dbrdq2_int_summed</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span><span class="o">/</span><span class="n">tauB</span>
+    <span class="k">if</span> <span class="n">den</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">bvnunu_fl_num_int_summed</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">den</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvnunu.bvnunu_fl_num_int_summed">
+    <p>def <span class="ident">bvnunu_fl_num_int_summed</span>(</p><p>q2min, q2max, wc_obj, par, B, V)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvnunu.bvnunu_fl_num_int_summed', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvnunu.bvnunu_fl_num_int_summed" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bvnunu_fl_num_int_summed</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">obs</span><span class="p">(</span><span class="n">q2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">bvnunu_fl_num_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">nintegrate</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvnunu.bvnunu_fl_num_summed">
+    <p>def <span class="ident">bvnunu_fl_num_summed</span>(</p><p>q2, wc_obj, par, B, V)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvnunu.bvnunu_fl_num_summed', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvnunu.bvnunu_fl_num_summed" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bvnunu_fl_num_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">lep</span> <span class="o">=</span>  <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span> <span class="n">bvnunu_obs</span><span class="p">(</span><span class="k">lambda</span> <span class="n">J</span><span class="p">:</span> <span class="o">-</span><span class="n">J</span><span class="p">[</span><span class="s1">&#39;2c&#39;</span><span class="p">],</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="s1">&#39;nu&#39;</span><span class="o">+</span><span class="n">nu1</span><span class="p">,</span> <span class="s1">&#39;nu&#39;</span><span class="o">+</span><span class="n">nu2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">nu1</span> <span class="ow">in</span> <span class="n">lep</span> <span class="k">for</span> <span class="n">nu2</span> <span class="ow">in</span> <span class="n">lep</span> <span class="p">])</span>
+    <span class="k">return</span> <span class="n">num</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvnunu.bvnunu_fl_summed">
+    <p>def <span class="ident">bvnunu_fl_summed</span>(</p><p>q2, wc_obj, par, B, V)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvnunu.bvnunu_fl_summed', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvnunu.bvnunu_fl_summed" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bvnunu_fl_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">lep</span> <span class="o">=</span>  <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">bvnunu_fl_num_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span> <span class="n">bvnunu_obs</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">bvll</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">dGdq2</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="s1">&#39;nu&#39;</span><span class="o">+</span><span class="n">nu1</span><span class="p">,</span> <span class="s1">&#39;nu&#39;</span><span class="o">+</span><span class="n">nu2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">nu1</span> <span class="ow">in</span> <span class="n">lep</span> <span class="k">for</span> <span class="n">nu2</span> <span class="ow">in</span> <span class="n">lep</span> <span class="p">])</span>
+    <span class="k">if</span> <span class="n">den</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">den</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.physics.bdecays.bvnunu.bvnunu_obs">
     <p>def <span class="ident">bvnunu_obs</span>(</p><p>function, q2, wc_obj, par, B, V, nu1, nu2)</p>
     </div>
@@ -1405,6 +1569,52 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">dbrdq2_summed</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">bvnunu_dbrdq2_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fct</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvnunu.fl_int_summed">
+    <p>def <span class="ident">fl_int_summed</span>(</p><p>B, V)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvnunu.fl_int_summed', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvnunu.fl_int_summed" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fl_int_summed</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">bvnunu_fl_int_summed</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fct</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvnunu.fl_summed">
+    <p>def <span class="ident">fl_summed</span>(</p><p>B, V)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvnunu.fl_summed', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvnunu.fl_summed" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fl_summed</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">bvnunu_fl_summed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fct</span>
 </pre></div>
 

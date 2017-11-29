@@ -1174,6 +1174,7 @@ table {
 <span class="n">par_nominal</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">lambdab_12</span><span class="o">.</span><span class="n">lattice_parameters</span><span class="o">.</span><span class="n">lattice_load_nominal</span><span class="p">(</span><span class="n">par_nominal</span><span class="p">)</span>
 <span class="n">par_nominal</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;Vcb&#39;</span><span class="p">,</span> <span class="mf">0.04175</span><span class="p">)</span>
+<span class="n">par_nominal</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="s1">&#39;tau_Lambdab&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mf">4.49e-13</span><span class="p">)</span> <span class="c1"># PDG 2016 value</span>
 <span class="n">par_dict</span> <span class="o">=</span> <span class="n">par_nominal</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">ass_sm</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">scalef</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -2467,7 +2468,11 @@ self.assertEqual(the_exception.error_code, 3)
 <span class="sd">           self.assertEqual(the_exception.error_code, 3)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">_AssertRaisesContext</span><span class="p">(</span><span class="n">expected_exception</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="s1">&#39;assertRaises&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="s1">&#39;assertRaises&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># bpo-23890: manually break a reference cycle</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="bp">None</span>
 </pre></div>
 
   </div>

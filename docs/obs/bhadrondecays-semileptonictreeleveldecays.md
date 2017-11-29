@@ -552,6 +552,7 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `BR(B->Xclnu)` | $\text{BR}(B\to X_c\ell^+\nu_\ell)$ | Total branching ratio of $B\to X_c\ell^+\nu_\ell$ |  |
+| `Rtaul(B->Xclnu)` | $R_{\tau \ell}(B\to X_c\ell^+\nu)$ | Ratio of total branching ratios of $B\to X_c\tau^+\nu_\tau$ and $B\to X_c\ell^+\nu_\ell$ |  |
 
 
 ### $B\to X_c\mu^+\nu_\mu$
@@ -560,6 +561,18 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `BR(B->Xcmunu)` | $\text{BR}(B\to X_c\mu^+\nu_\mu)$ | Total branching ratio of $B\to X_c\mu^+\nu_\mu$ |  |
+| `Rmue(B->Xclnu)` | $R_{\mu e}(B\to X_c\ell^+\nu)$ | Ratio of total branching ratios of $B\to X_c\mu^+\nu_\mu$ and $B\to X_ce^+\nu_e$ |  |
+| `Rtaumu(B->Xclnu)` | $R_{\tau \mu}(B\to X_c\ell^+\nu)$ | Ratio of total branching ratios of $B\to X_c\tau^+\nu_\tau$ and $B\to X_c\mu^+\nu_\mu$ |  |
+
+
+### $B\to X_c\tau^+\nu_\tau$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B->Xctaunu)` | $\text{BR}(B\to X_c\tau^+\nu_\tau)$ | Total branching ratio of $B\to X_c\tau^+\nu_\tau$ |  |
+| `Rtaul(B->Xclnu)` | $R_{\tau \ell}(B\to X_c\ell^+\nu)$ | Ratio of total branching ratios of $B\to X_c\tau^+\nu_\tau$ and $B\to X_c\ell^+\nu_\ell$ |  |
+| `Rtaumu(B->Xclnu)` | $R_{\tau \mu}(B\to X_c\ell^+\nu)$ | Ratio of total branching ratios of $B\to X_c\tau^+\nu_\tau$ and $B\to X_c\mu^+\nu_\mu$ |  |
 
 
 ### $B\to X_ce^+\nu_e$
@@ -568,5 +581,6 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `BR(B->Xcenu)` | $\text{BR}(B\to X_ce^+\nu_e)$ | Total branching ratio of $B\to X_ce^+\nu_e$ |  |
+| `Rmue(B->Xclnu)` | $R_{\mu e}(B\to X_c\ell^+\nu)$ | Ratio of total branching ratios of $B\to X_c\mu^+\nu_\mu$ and $B\to X_ce^+\nu_e$ |  |
 
 

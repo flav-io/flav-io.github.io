@@ -1068,8 +1068,10 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
+| `<FL>(B+->K*nunu)` | $\langle F_L \rangle(B^+\to K^{*+}\nu\bar\nu)$ | Binned longitudinal polarization fraction of $B^+\to K^{*+}\nu\bar\nu$ | `q2min`, `q2max` |
 | `<dBR/dq2>(B+->K*nunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^+\to K^{*+}\nu\bar\nu)$ | Binned differential branching ratio of $B^+\to K^{*+}\nu\bar\nu$ | `q2min`, `q2max` |
 | `BR(B+->K*nunu)` | $\text{BR}(B^+\to K^{*+}\nu\bar\nu)$ | Branching ratio of $B^+\to K^{*+}\nu\bar\nu$ |  |
+| `FL(B+->K*nunu)` | $F_L(B^+\to K^{*+}\nu\bar\nu)$ | Differential longitudinal polarization fraction o f$B^+\to K^{*+}\nu\bar\nu$ | `q2` |
 | `dBR/dq2(B+->K*nunu)` | $\frac{d\text{BR}}{dq^2}(B^+\to K^{*+}\nu\bar\nu)$ | Differential branching ratio of $B^+\to K^{*+}\nu\bar\nu$ | `q2` |
 
 
@@ -1088,8 +1090,10 @@ a scalar observable).
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
+| `<FL>(B0->K*nunu)` | $\langle F_L \rangle(B^0\to K^{*0}\nu\bar\nu)$ | Binned longitudinal polarization fraction of $B^0\to K^{*0}\nu\bar\nu$ | `q2min`, `q2max` |
 | `<dBR/dq2>(B0->K*nunu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^{*0}\nu\bar\nu)$ | Binned differential branching ratio of $B^0\to K^{*0}\nu\bar\nu$ | `q2min`, `q2max` |
 | `BR(B0->K*nunu)` | $\text{BR}(B^0\to K^{*0}\nu\bar\nu)$ | Branching ratio of $B^0\to K^{*0}\nu\bar\nu$ |  |
+| `FL(B0->K*nunu)` | $F_L(B^0\to K^{*0}\nu\bar\nu)$ | Differential longitudinal polarization fraction o f$B^0\to K^{*0}\nu\bar\nu$ | `q2` |
 | `dBR/dq2(B0->K*nunu)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^{*0}\nu\bar\nu)$ | Differential branching ratio of $B^0\to K^{*0}\nu\bar\nu$ | `q2` |
 
 
