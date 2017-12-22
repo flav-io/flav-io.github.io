@@ -32,18 +32,20 @@ cd flavio
 and install the package with this command
 
 {% highlight bash %}
-pip3 install -e . --user
+pip3 install -e .[plotting,sampling,testing] --user
 {% endhighlight %}
 
 (depending on your system, the Python 3 version of `pip` might also be
 called `pip-3.3` or just `pip`).
 The `-e` switch means that the package is installed in "development mode", so
 you can make modifications to the downloaded code and don't have to reinstall.
+This will install also all the extra dependencies needed for plotting, sampling,
+and to run the unit tests.
 
 ## Step 3: run unit tests
 
 To check whether the package has been installed correctly, you can run the unit
-tests using `nose` (install it with `pip3 install nose` if necessary).
+tests using `nose`.
 Just go to the root directory of the package and run
 
 {% highlight bash %}
