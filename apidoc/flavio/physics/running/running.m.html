@@ -1106,6 +1106,7 @@ table {
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">from</span> <span class="nn">flavio.config</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 
 <span class="k">def</span> <span class="nf">rg_evolve</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">,</span> <span class="n">derivative</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
     <span class="n">sol</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="n">derivative</span><span class="p">,</span> <span class="n">initial_condition</span><span class="p">,</span> <span class="p">[</span><span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">])</span>
@@ -1114,7 +1115,8 @@ table {
 <span class="k">def</span> <span class="nf">rg_evolve_sm</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">scale_in</span> <span class="o">==</span> <span class="n">scale_out</span><span class="p">:</span>
         <span class="c1"># no need to run!</span>
-        <span class="k">return</span> <span class="n">initial_condition</span>
+        <span class="c1"># However, return a copy to prevent accidentally changing the initial condition</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">scale_out</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;RG evolution below the strange threshold not implemented.&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_rg_evolve_sm</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">),</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">,</span> <span class="n">nf_out</span><span class="p">)</span>
@@ -1720,7 +1722,8 @@ $$\mu\frac{d}{d\mu} \vec C = \gamma^T(n_f, \alpha_s, \alpha_e) \vec C$$</p></div
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">rg_evolve_sm</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">scale_in</span> <span class="o">==</span> <span class="n">scale_out</span><span class="p">:</span>
         <span class="c1"># no need to run!</span>
-        <span class="k">return</span> <span class="n">initial_condition</span>
+        <span class="c1"># However, return a copy to prevent accidentally changing the initial condition</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">scale_out</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;RG evolution below the strange threshold not implemented.&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_rg_evolve_sm</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">),</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">,</span> <span class="n">nf_out</span><span class="p">)</span>

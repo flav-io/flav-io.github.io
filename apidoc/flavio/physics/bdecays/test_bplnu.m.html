@@ -1123,6 +1123,7 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.test_bplnu.TestBVll.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bplnu.TestBVll.tearDown">tearDown</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bplnu.TestBVll.test_bpienu">test_bpienu</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.test_bplnu.TestBVll.test_bplnu_nu">test_bplnu_nu</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bplnu.TestBVll.test_lfratios">test_lfratios</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bplnu.TestBVll.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.test_bplnu.TestBVll.tearDownClass">tearDownClass</a></li>
@@ -1168,6 +1169,23 @@ table {
         <span class="c1"># for the taus, just make sure no error is raised</span>
         <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;Rtaumu(B-&gt;pilnu)&#39;</span><span class="p">)</span>
         <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;&lt;Rtaumu&gt;(B-&gt;Dlnu)&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">test_bplnu_nu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np_tau</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np_tau</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVL_butaunutau&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">4.8</span><span class="p">)</span>
+        <span class="n">wc_np_e</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np_e</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVL_butaunue&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">4.8</span><span class="p">)</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s2">&quot;BR(B+-&gt;pitaunu)&quot;</span><span class="p">]</span>
+        <span class="n">constraints</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span>
+        <span class="n">br_sm</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">)</span>
+        <span class="n">br_tau</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_np_tau</span><span class="p">)</span>
+        <span class="n">br_e</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_np_e</span><span class="p">)</span>
+        <span class="c1"># with interference: (1 + 1)^2 = 4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_tau</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.04</span><span class="p">)</span>
+        <span class="c1"># without interference: 1 + 1 = 2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_e</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1227,6 +1245,23 @@ in order to be run.</p>
         <span class="c1"># for the taus, just make sure no error is raised</span>
         <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;Rtaumu(B-&gt;pilnu)&#39;</span><span class="p">)</span>
         <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;&lt;Rtaumu&gt;(B-&gt;Dlnu)&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">test_bplnu_nu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np_tau</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np_tau</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVL_butaunutau&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">4.8</span><span class="p">)</span>
+        <span class="n">wc_np_e</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np_e</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVL_butaunue&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">4.8</span><span class="p">)</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s2">&quot;BR(B+-&gt;pitaunu)&quot;</span><span class="p">]</span>
+        <span class="n">constraints</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span>
+        <span class="n">br_sm</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">)</span>
+        <span class="n">br_tau</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_np_tau</span><span class="p">)</span>
+        <span class="n">br_e</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_np_e</span><span class="p">)</span>
+        <span class="c1"># with interference: (1 + 1)^2 = 4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_tau</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.04</span><span class="p">)</span>
+        <span class="c1"># without interference: 1 + 1 = 2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_e</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3434,6 +3469,40 @@ block, allowing further test code to be executed.</p></div>
   <div id="source-flavio.physics.bdecays.test_bplnu.TestBVll.test_bpienu" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_bpienu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">pass</span> <span class="c1">#TODO</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.test_bplnu.TestBVll.test_bplnu_nu">
+    <p>def <span class="ident">test_bplnu_nu</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.test_bplnu.TestBVll.test_bplnu_nu', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.test_bplnu.TestBVll.test_bplnu_nu" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_bplnu_nu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+    <span class="n">wc_np_tau</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+    <span class="n">wc_np_tau</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVL_butaunutau&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">4.8</span><span class="p">)</span>
+    <span class="n">wc_np_e</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+    <span class="n">wc_np_e</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVL_butaunue&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">4.8</span><span class="p">)</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s2">&quot;BR(B+-&gt;pitaunu)&quot;</span><span class="p">]</span>
+    <span class="n">constraints</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span>
+    <span class="n">br_sm</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">)</span>
+    <span class="n">br_tau</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_np_tau</span><span class="p">)</span>
+    <span class="n">br_e</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_np_e</span><span class="p">)</span>
+    <span class="c1"># with interference: (1 + 1)^2 = 4</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_tau</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.04</span><span class="p">)</span>
+    <span class="c1"># without interference: 1 + 1 = 2</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_e</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
 </pre></div>
 
   </div>

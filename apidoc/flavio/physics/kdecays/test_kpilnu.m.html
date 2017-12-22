@@ -1132,6 +1132,7 @@ table {
     <li class="mono"><a href="#flavio.physics.kdecays.test_kpilnu.TestKpilnu.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.test_kpilnu.TestKpilnu.tearDown">tearDown</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.test_kpilnu.TestKpilnu.test_kpilnu">test_kpilnu</a></li>
+    <li class="mono"><a href="#flavio.physics.kdecays.test_kpilnu.TestKpilnu.test_kpilnu_nu">test_kpilnu_nu</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.test_kpilnu.TestKpilnu.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.test_kpilnu.TestKpilnu.tearDownClass">tearDownClass</a></li>
   </ul>
@@ -1185,6 +1186,22 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(K+-&gt;pienu)&#39;</span><span class="p">)</span><span class="o">*</span><span class="mf">1e2</span><span class="o">/</span><span class="mf">5.07</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.04</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(KL-&gt;pimunu)&#39;</span><span class="p">)</span><span class="o">*</span><span class="mf">1e2</span><span class="o">/</span><span class="mf">27.04</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(K+-&gt;pimunu)&#39;</span><span class="p">)</span><span class="o">*</span><span class="mf">1e2</span><span class="o">/</span><span class="mf">3.352</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">test_kpilnu_nu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np_mu</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np_mu</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVL_sumunumu&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">4.8</span><span class="p">)</span>
+        <span class="n">wc_np_e</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np_e</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVL_sumunue&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">4.8</span><span class="p">)</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s2">&quot;BR(K+-&gt;pimunu)&quot;</span><span class="p">]</span>
+        <span class="n">br_sm</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">)</span>
+        <span class="n">br_mu</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_np_mu</span><span class="p">)</span>
+        <span class="n">br_e</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_np_e</span><span class="p">)</span>
+        <span class="c1"># with interference: (1 + 1)^2 = 4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_mu</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.06</span><span class="p">)</span>
+        <span class="c1"># without interference: 1 + 1 = 2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_e</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1274,6 +1291,22 @@ in order to be run.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(K+-&gt;pienu)&#39;</span><span class="p">)</span><span class="o">*</span><span class="mf">1e2</span><span class="o">/</span><span class="mf">5.07</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.04</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(KL-&gt;pimunu)&#39;</span><span class="p">)</span><span class="o">*</span><span class="mf">1e2</span><span class="o">/</span><span class="mf">27.04</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(K+-&gt;pimunu)&#39;</span><span class="p">)</span><span class="o">*</span><span class="mf">1e2</span><span class="o">/</span><span class="mf">3.352</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">test_kpilnu_nu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np_mu</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np_mu</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVL_sumunumu&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">4.8</span><span class="p">)</span>
+        <span class="n">wc_np_e</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc_np_e</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVL_sumunue&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">4.8</span><span class="p">)</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s2">&quot;BR(K+-&gt;pimunu)&quot;</span><span class="p">]</span>
+        <span class="n">br_sm</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">)</span>
+        <span class="n">br_mu</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_np_mu</span><span class="p">)</span>
+        <span class="n">br_e</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_np_e</span><span class="p">)</span>
+        <span class="c1"># with interference: (1 + 1)^2 = 4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_mu</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.06</span><span class="p">)</span>
+        <span class="c1"># without interference: 1 + 1 = 2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_e</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3499,6 +3532,39 @@ block, allowing further test code to be executed.</p></div>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(K+-&gt;pienu)&#39;</span><span class="p">)</span><span class="o">*</span><span class="mf">1e2</span><span class="o">/</span><span class="mf">5.07</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.04</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(KL-&gt;pimunu)&#39;</span><span class="p">)</span><span class="o">*</span><span class="mf">1e2</span><span class="o">/</span><span class="mf">27.04</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(K+-&gt;pimunu)&#39;</span><span class="p">)</span><span class="o">*</span><span class="mf">1e2</span><span class="o">/</span><span class="mf">3.352</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.kdecays.test_kpilnu.TestKpilnu.test_kpilnu_nu">
+    <p>def <span class="ident">test_kpilnu_nu</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.test_kpilnu.TestKpilnu.test_kpilnu_nu', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.kdecays.test_kpilnu.TestKpilnu.test_kpilnu_nu" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_kpilnu_nu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+    <span class="n">wc_np_mu</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+    <span class="n">wc_np_mu</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVL_sumunumu&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">4.8</span><span class="p">)</span>
+    <span class="n">wc_np_e</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+    <span class="n">wc_np_e</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVL_sumunue&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">4.8</span><span class="p">)</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s2">&quot;BR(K+-&gt;pimunu)&quot;</span><span class="p">]</span>
+    <span class="n">br_sm</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">)</span>
+    <span class="n">br_mu</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_np_mu</span><span class="p">)</span>
+    <span class="n">br_e</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">prediction_central</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">wc_np_e</span><span class="p">)</span>
+    <span class="c1"># with interference: (1 + 1)^2 = 4</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_mu</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.06</span><span class="p">)</span>
+    <span class="c1"># without interference: 1 + 1 = 2</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">br_e</span><span class="o">/</span><span class="n">br_sm</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
 </pre></div>
 
   </div>
