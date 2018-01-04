@@ -1051,6 +1051,15 @@ table {
     <h1>Index</h1>
     <ul id="index">
 
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#flavio.math.test_optimize.f">f</a></li>
+    <li class="mono"><a href="#flavio.math.test_optimize.g">g</a></li>
+    <li class="mono"><a href="#flavio.math.test_optimize.h">h</a></li>
+  </ul>
+
+    </li>
 
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
@@ -1122,7 +1131,8 @@ table {
     <li class="mono"><a href="#flavio.math.test_optimize.TestOptimize.skipTest">skipTest</a></li>
     <li class="mono"><a href="#flavio.math.test_optimize.TestOptimize.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.math.test_optimize.TestOptimize.tearDown">tearDown</a></li>
-    <li class="mono"><a href="#flavio.math.test_optimize.TestOptimize.test_optimize">test_optimize</a></li>
+    <li class="mono"><a href="#flavio.math.test_optimize.TestOptimize.test_minuit">test_minuit</a></li>
+    <li class="mono"><a href="#flavio.math.test_optimize.TestOptimize.test_slsqp">test_slsqp</a></li>
     <li class="mono"><a href="#flavio.math.test_optimize.TestOptimize.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.math.test_optimize.TestOptimize.tearDownClass">tearDownClass</a></li>
   </ul>
@@ -1152,16 +1162,29 @@ table {
 <span class="kn">import</span> <span class="nn">numpy.testing</span> <span class="kn">as</span> <span class="nn">npt</span>
 <span class="kn">import</span> <span class="nn">flavio</span>
 
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+<span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
 <span class="k">class</span> <span class="nc">TestOptimize</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">test_optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-        <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="o">-</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">disp</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_slsqp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,))</span>
         <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">maximize_robust</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">disp</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">maximize_robust</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,))</span>
         <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,))</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">test_minuit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_migrad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">print_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;MIGRAD&#39;</span><span class="p">,))</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;MIGRAD&#39;</span><span class="p">,))</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 </pre></div>
 
   </div>
@@ -1170,6 +1193,70 @@ table {
 
   <section id="section-items">
 
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="flavio.math.test_optimize.f">
+    <p>def <span class="ident">f</span>(</p><p>x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.test_optimize.f', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.test_optimize.f" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.math.test_optimize.g">
+    <p>def <span class="ident">g</span>(</p><p>x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.test_optimize.g', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.test_optimize.g" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.math.test_optimize.h">
+    <p>def <span class="ident">h</span>(</p><p>x, a)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.test_optimize.h', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.test_optimize.h" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
 
     <h2 class="section-title" id="header-classes">Classes</h2>
       
@@ -1206,15 +1293,21 @@ in order to be run.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.test_optimize.TestOptimize', this);">Show source &equiv;</a></p>
   <div id="source-flavio.math.test_optimize.TestOptimize" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TestOptimize</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">test_optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-        <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="o">-</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">disp</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_slsqp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,))</span>
         <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">maximize_robust</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">disp</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">maximize_robust</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,))</span>
         <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,))</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">test_minuit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_migrad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">print_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;MIGRAD&#39;</span><span class="p">,))</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;MIGRAD&#39;</span><span class="p">,))</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 </pre></div>
 
   </div>
@@ -3410,25 +3503,49 @@ block, allowing further test code to be executed.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="flavio.math.test_optimize.TestOptimize.test_optimize">
-    <p>def <span class="ident">test_optimize</span>(</p><p>self)</p>
+    <div class="name def" id="flavio.math.test_optimize.TestOptimize.test_minuit">
+    <p>def <span class="ident">test_minuit</span>(</p><p>self)</p>
     </div>
     
 
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.test_optimize.TestOptimize.test_optimize', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.math.test_optimize.TestOptimize.test_optimize" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="o">-</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">disp</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.test_optimize.TestOptimize.test_minuit', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.test_optimize.TestOptimize.test_minuit" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_minuit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_migrad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">print_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">maximize_robust</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">disp</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;MIGRAD&#39;</span><span class="p">,))</span>
     <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;MIGRAD&#39;</span><span class="p">,))</span>
+    <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.math.test_optimize.TestOptimize.test_slsqp">
+    <p>def <span class="ident">test_slsqp</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.test_optimize.TestOptimize.test_slsqp', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.test_optimize.TestOptimize.test_slsqp" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_slsqp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,))</span>
+    <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">maximize_robust</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,))</span>
+    <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize_robust</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">methods</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,))</span>
+    <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 </pre></div>
 
   </div>

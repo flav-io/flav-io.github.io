@@ -1096,7 +1096,7 @@ table {
     <span class="n">measurements</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">m_name</span><span class="p">,</span> <span class="n">m_data</span> <span class="ow">in</span> <span class="n">measurements</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">m</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span><span class="n">m_name</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;inspire&#39;</span><span class="p">,</span> <span class="s1">&#39;hepdata&#39;</span><span class="p">,</span> <span class="s1">&#39;experiment&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;inspire&#39;</span><span class="p">,</span> <span class="s1">&#39;hepdata&#39;</span><span class="p">,</span> <span class="s1">&#39;experiment&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">m_data</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">m_data</span><span class="p">[</span><span class="n">arg</span><span class="p">])</span>
         <span class="k">if</span> <span class="s1">&#39;observables&#39;</span> <span class="ow">in</span> <span class="n">m_data</span><span class="p">:</span>
@@ -1196,18 +1196,18 @@ table {
     <span class="sd">&quot;&quot;&quot;In the input file, the correlation matrix can be specified as a list</span>
 <span class="sd">    of lists containing only the upper right of the symmetric correlation</span>
 <span class="sd">    matrix, e.g. [[1, 0.1, 0.2], [1, 0.3], [1, 0.05]]. This function builds the</span>
-<span class="sd">    full matrix.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">n_dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="c1"># if the number of dimensions is just 2, the correlation could just</span>
-        <span class="c1"># be given as a number</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="nb">float</span><span class="p">(</span><span class="n">corr</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="c1"># if it&#39;s not a number, go on below</span>
-            <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># if it&#39;s a number, return the 2x2 matrix</span>
-            <span class="k">return</span>  <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">corr</span><span class="p">)],</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">corr</span><span class="p">),</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="sd">    full matrix.</span>
+
+<span class="sd">    Alternatively, if only a number x is given, the correlation matrix is</span>
+<span class="sd">    reconstructed as [[1, x, x, ...], ..., [..., x, x, 1]]&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">corr</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="c1"># if it&#39;s not a number, go on below</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># if it&#39;s a number, return delta_ij + (1-delta_ij)*x</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_dim</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">))</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_dim</span><span class="p">))</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">corr</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Correlation matrix must be of type list&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">corr</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n_dim</span><span class="p">:</span>

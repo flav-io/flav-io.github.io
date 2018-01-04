@@ -1056,7 +1056,8 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.formfactors.b_v.btov.config">config</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.formfactors.b_v.btov.iname">iname</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.formfactors.b_v.btov.p">p</a></li>
-    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.b_v.btov.processes">processes</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.b_v.btov.processes_H2H">processes_H2H</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.b_v.btov.processes_H2L">processes_H2L</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.formfactors.b_v.btov.quantity">quantity</a></li>
   </ul>
 
@@ -1087,16 +1088,20 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_v.btov', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.formfactors.b_v.btov" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">flavio.physics.bdecays.formfactors.b_v</span> <span class="kn">import</span> <span class="n">bsz</span><span class="p">,</span> <span class="n">sse</span><span class="p">,</span> <span class="n">cln</span>
+    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">flavio.physics.bdecays.formfactors.b_v</span> <span class="kn">import</span> <span class="n">bsz</span><span class="p">,</span> <span class="n">sse</span><span class="p">,</span> <span class="n">cln</span><span class="p">,</span> <span class="n">clnexp</span>
 <span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">AuxiliaryQuantity</span><span class="p">,</span> <span class="n">Implementation</span>
 <span class="kn">from</span> <span class="nn">flavio.config</span> <span class="kn">import</span> <span class="n">config</span>
 
-<span class="n">processes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;B-&gt;K*&#39;</span><span class="p">,</span><span class="s1">&#39;B-&gt;rho&#39;</span><span class="p">,</span><span class="s1">&#39;B-&gt;omega&#39;</span><span class="p">,</span><span class="s1">&#39;Bs-&gt;phi&#39;</span><span class="p">,</span><span class="s1">&#39;Bs-&gt;K*&#39;</span><span class="p">,</span><span class="s1">&#39;B-&gt;D*&#39;</span><span class="p">]</span>
+<span class="n">processes_H2L</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;B-&gt;K*&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;rho&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;omega&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs-&gt;phi&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs-&gt;K*&#39;</span><span class="p">]</span>  <span class="c1"># heavy to light</span>
+<span class="n">processes_H2H</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;B-&gt;D*&#39;</span><span class="p">,</span> <span class="p">]</span>  <span class="c1"># heavy to heavy</span>
+
 
 <span class="k">def</span> <span class="nf">ff_function</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">process</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">q2</span><span class="p">:</span> <span class="n">function</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">processes</span><span class="p">:</span>
+
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">processes_H2L</span> <span class="o">+</span> <span class="n">processes_H2H</span><span class="p">:</span>
+
     <span class="n">quantity</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="s1">&#39; form factor&#39;</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">AuxiliaryQuantity</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">quantity</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2&#39;</span><span class="p">])</span>
     <span class="n">a</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s1">&#39;Hadronic form factor for the &#39;</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="s1">&#39; transition&#39;</span><span class="p">)</span>
@@ -1116,10 +1121,18 @@ table {
                    <span class="n">function</span><span class="o">=</span><span class="n">ff_function</span><span class="p">(</span><span class="n">sse</span><span class="o">.</span><span class="n">ff</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
     <span class="n">i</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;2-parameter simplified series expansion&quot;</span><span class="p">)</span>
 
-    <span class="n">iname</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="s1">&#39; CLN-IW&#39;</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">processes_H2H</span><span class="p">:</span>
+
+    <span class="n">iname</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="s1">&#39; CLN&#39;</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">Implementation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">iname</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="n">quantity</span><span class="p">,</span>
                    <span class="n">function</span><span class="o">=</span><span class="n">ff_function</span><span class="p">(</span><span class="n">cln</span><span class="o">.</span><span class="n">ff</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvll&#39;</span><span class="p">]))</span>
-    <span class="n">i</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;CLN parametrization using improved Isgur-Wise relations&quot;</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;CLN parametrization&quot;</span><span class="p">)</span>
+
+    <span class="n">iname</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="s1">&#39; CLNexp-IW&#39;</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">Implementation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">iname</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="n">quantity</span><span class="p">,</span>
+                   <span class="n">function</span><span class="o">=</span><span class="n">ff_function</span><span class="p">(</span><span class="n">clnexp</span><span class="o">.</span><span class="n">ff</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;bvll&#39;</span><span class="p">]))</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s2">&quot;CLN-like parametrization as used by B factories&quot;</span>
+                      <span class="s2">&quot; and using improved Isgur-Wise relations&quot;</span>
                       <span class="s2">&quot; for the tensor form factors&quot;</span><span class="p">)</span>
 </pre></div>
 
@@ -1154,7 +1167,15 @@ table {
 
       </div>
       <div class="item">
-      <p id="flavio.physics.bdecays.formfactors.b_v.btov.processes" class="name">var <span class="ident">processes</span></p>
+      <p id="flavio.physics.bdecays.formfactors.b_v.btov.processes_H2H" class="name">var <span class="ident">processes_H2H</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.bdecays.formfactors.b_v.btov.processes_H2L" class="name">var <span class="ident">processes_H2L</span></p>
       
   
   <div class="source_cont">

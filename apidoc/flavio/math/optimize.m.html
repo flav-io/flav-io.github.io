@@ -1055,11 +1055,29 @@ table {
       
   <ul>
     <li class="mono"><a href="#flavio.math.optimize.maximize_robust">maximize_robust</a></li>
+    <li class="mono"><a href="#flavio.math.optimize.minimize_migrad">minimize_migrad</a></li>
     <li class="mono"><a href="#flavio.math.optimize.minimize_robust">minimize_robust</a></li>
   </ul>
 
     </li>
 
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#flavio.math.optimize.AttributeDict">AttributeDict</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#flavio.math.optimize.MinuitFunction">MinuitFunction</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#flavio.math.optimize.MinuitFunction.__init__">__init__</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
 
     </ul>
   </div>
@@ -1081,7 +1099,9 @@ table {
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
 
-<span class="k">def</span> <span class="nf">minimize_robust</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">methods</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">minimize_robust</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">methods</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Minimization of scalar function of one or more variables.</span>
 
 <span class="sd">    This is a wrapper around the `scipy.optimize.minimize` function that</span>
@@ -1099,17 +1119,26 @@ table {
     <span class="n">_val</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="c1"># initial value of target function</span>
     <span class="n">_x0</span> <span class="o">=</span> <span class="n">x0</span><span class="p">[:]</span> <span class="c1"># copy initial x</span>
     <span class="k">if</span> <span class="n">methods</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">methods</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="s1">&#39;BFGS&#39;</span><span class="p">,</span> <span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
+        <span class="n">methods</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="s1">&#39;MIGRAD&#39;</span><span class="p">,</span> <span class="s1">&#39;BFGS&#39;</span><span class="p">,</span> <span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tries</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">disp</span><span class="p">:</span>
                 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting try no. {} with method {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
                 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Current function value: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_val</span><span class="p">))</span>
-            <span class="k">if</span> <span class="s1">&#39;options&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">})</span>
+            <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="s1">&#39;MIGRAD&#39;</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="kn">import</span> <span class="nn">iminuit</span>
+                <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">disp</span><span class="p">:</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Skipping method MIGRAD: no iminuit installation found.&quot;</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;print_level&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">disp</span><span class="p">)}</span> <span class="c1"># 0 or 1</span>
+                <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize_migrad</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">}</span>
-            <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">}</span>
+                <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">opt</span>
             <span class="k">elif</span> <span class="n">opt</span><span class="o">.</span><span class="n">fun</span> <span class="o">&lt;</span> <span class="n">_val</span><span class="p">:</span>
@@ -1132,6 +1161,58 @@ table {
                            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="n">methods</span><span class="p">,</span>
                            <span class="n">tries</span><span class="o">=</span><span class="n">tries</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="n">disp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">res</span><span class="o">.</span><span class="n">fun</span> <span class="o">=</span> <span class="o">-</span><span class="n">res</span><span class="o">.</span><span class="n">fun</span> <span class="c1"># change back sign for function value</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="k">class</span> <span class="nc">AttributeDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dictionary subclass with attribute access&quot;&quot;&quot;</span>
+    <span class="fm">__getattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">get</span>
+    <span class="fm">__setattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__setitem__</span>
+    <span class="fm">__delattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__delitem__</span>
+
+
+<span class="k">class</span> <span class="nc">MinuitFunction</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function wrapper for Minuit to allow supplying function with vector</span>
+<span class="sd">    arguments&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the instance. f: function, dim: number of dimensions&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__code__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Needed to fake the function signature for Minuit&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">AttributeDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">co_varnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)]</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">co_argcount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">d</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">minimize_migrad</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">dx0</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Minimization function using MINUIT&#39;s MIGRAD minimizer.&quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">iminuit</span>
+    <span class="n">mfun</span> <span class="o">=</span> <span class="n">MinuitFunction</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">fun</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x0</span><span class="p">),</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
+    <span class="c1"># bring the parameters in a suitable form</span>
+    <span class="n">par</span> <span class="o">=</span> <span class="n">iminuit</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">mfun</span><span class="p">)</span>
+    <span class="n">x0_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="n">x0i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x0i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">x0</span><span class="p">)}</span>
+    <span class="k">if</span> <span class="n">dx0</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">dx0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x0</span><span class="p">))</span>
+    <span class="n">dx0_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;error_&#39;</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="n">dx0i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dx0i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dx0</span><span class="p">)}</span>
+    <span class="c1"># run</span>
+    <span class="n">minuit_args</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;errordef&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="n">minuit_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">minuit</span> <span class="o">=</span> <span class="n">iminuit</span><span class="o">.</span><span class="n">Minuit</span><span class="p">(</span><span class="n">mfun</span><span class="p">,</span> <span class="o">**</span><span class="n">x0_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">dx0_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">minuit_args</span><span class="p">)</span>
+    <span class="n">fmin</span><span class="p">,</span> <span class="n">param</span> <span class="o">=</span> <span class="n">minuit</span><span class="o">.</span><span class="n">migrad</span><span class="p">()</span>
+    <span class="c1"># cast migrad result in terms of scipy-like result object</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">OptimizeResult</span><span class="p">()</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="n">fmin</span><span class="p">[</span><span class="s1">&#39;is_valid&#39;</span><span class="p">]</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">fun</span> <span class="o">=</span> <span class="n">fmin</span><span class="p">[</span><span class="s1">&#39;fval&#39;</span><span class="p">]</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">param</span><span class="p">])</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">nfev</span> <span class="o">=</span> <span class="n">fmin</span><span class="p">[</span><span class="s1">&#39;nfcn&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">res</span>
 </pre></div>
 
@@ -1177,6 +1258,48 @@ table {
   
       
   <div class="item">
+    <div class="name def" id="flavio.math.optimize.minimize_migrad">
+    <p>def <span class="ident">minimize_migrad</span>(</p><p>fun, x0, args=(), dx0=None, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Minimization function using MINUIT's MIGRAD minimizer.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.optimize.minimize_migrad', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.optimize.minimize_migrad" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">minimize_migrad</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">dx0</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Minimization function using MINUIT&#39;s MIGRAD minimizer.&quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">iminuit</span>
+    <span class="n">mfun</span> <span class="o">=</span> <span class="n">MinuitFunction</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">fun</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x0</span><span class="p">),</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
+    <span class="c1"># bring the parameters in a suitable form</span>
+    <span class="n">par</span> <span class="o">=</span> <span class="n">iminuit</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">mfun</span><span class="p">)</span>
+    <span class="n">x0_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="n">x0i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x0i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">x0</span><span class="p">)}</span>
+    <span class="k">if</span> <span class="n">dx0</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">dx0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x0</span><span class="p">))</span>
+    <span class="n">dx0_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;error_&#39;</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="n">dx0i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dx0i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dx0</span><span class="p">)}</span>
+    <span class="c1"># run</span>
+    <span class="n">minuit_args</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;errordef&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="n">minuit_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">minuit</span> <span class="o">=</span> <span class="n">iminuit</span><span class="o">.</span><span class="n">Minuit</span><span class="p">(</span><span class="n">mfun</span><span class="p">,</span> <span class="o">**</span><span class="n">x0_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">dx0_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">minuit_args</span><span class="p">)</span>
+    <span class="n">fmin</span><span class="p">,</span> <span class="n">param</span> <span class="o">=</span> <span class="n">minuit</span><span class="o">.</span><span class="n">migrad</span><span class="p">()</span>
+    <span class="c1"># cast migrad result in terms of scipy-like result object</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">OptimizeResult</span><span class="p">()</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="n">fmin</span><span class="p">[</span><span class="s1">&#39;is_valid&#39;</span><span class="p">]</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">fun</span> <span class="o">=</span> <span class="n">fmin</span><span class="p">[</span><span class="s1">&#39;fval&#39;</span><span class="p">]</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">param</span><span class="p">])</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">nfev</span> <span class="o">=</span> <span class="n">fmin</span><span class="p">[</span><span class="s1">&#39;nfcn&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">res</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.math.optimize.minimize_robust">
     <p>def <span class="ident">minimize_robust</span>(</p><p>fun, x0, args=(), methods=None, tries=3, disp=False, **kwargs)</p>
     </div>
@@ -1199,7 +1322,8 @@ tries are used as starting points of new tries. Returns a scipy
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.optimize.minimize_robust', this);">Show source &equiv;</a></p>
   <div id="source-flavio.math.optimize.minimize_robust" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">minimize_robust</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">methods</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">minimize_robust</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">methods</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Minimization of scalar function of one or more variables.</span>
 
 <span class="sd">    This is a wrapper around the `scipy.optimize.minimize` function that</span>
@@ -1217,17 +1341,26 @@ tries are used as starting points of new tries. Returns a scipy
     <span class="n">_val</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="c1"># initial value of target function</span>
     <span class="n">_x0</span> <span class="o">=</span> <span class="n">x0</span><span class="p">[:]</span> <span class="c1"># copy initial x</span>
     <span class="k">if</span> <span class="n">methods</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">methods</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="s1">&#39;BFGS&#39;</span><span class="p">,</span> <span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
+        <span class="n">methods</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="s1">&#39;MIGRAD&#39;</span><span class="p">,</span> <span class="s1">&#39;BFGS&#39;</span><span class="p">,</span> <span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tries</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">disp</span><span class="p">:</span>
                 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting try no. {} with method {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
                 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Current function value: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_val</span><span class="p">))</span>
-            <span class="k">if</span> <span class="s1">&#39;options&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">})</span>
+            <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="s1">&#39;MIGRAD&#39;</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="kn">import</span> <span class="nn">iminuit</span>
+                <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">disp</span><span class="p">:</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Skipping method MIGRAD: no iminuit installation found.&quot;</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;print_level&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">disp</span><span class="p">)}</span> <span class="c1"># 0 or 1</span>
+                <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize_migrad</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">}</span>
-            <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">}</span>
+                <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">opt</span>
             <span class="k">elif</span> <span class="n">opt</span><span class="o">.</span><span class="n">fun</span> <span class="o">&lt;</span> <span class="n">_val</span><span class="p">:</span>
@@ -1246,6 +1379,136 @@ tries are used as starting points of new tries. Returns a scipy
   </div>
   
 
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="flavio.math.optimize.AttributeDict" class="name">class <span class="ident">AttributeDict</span></p>
+      
+  
+    <div class="desc"><p>Dictionary subclass with attribute access</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.optimize.AttributeDict', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.optimize.AttributeDict" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AttributeDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dictionary subclass with attribute access&quot;&quot;&quot;</span>
+    <span class="fm">__getattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">get</span>
+    <span class="fm">__setattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__setitem__</span>
+    <span class="fm">__delattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__delitem__</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#flavio.math.optimize.AttributeDict">AttributeDict</a></li>
+          <li>builtins.dict</li>
+          <li>builtins.object</li>
+          </ul>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="flavio.math.optimize.MinuitFunction" class="name">class <span class="ident">MinuitFunction</span></p>
+      
+  
+    <div class="desc"><p>Function wrapper for Minuit to allow supplying function with vector
+arguments</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.optimize.MinuitFunction', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.optimize.MinuitFunction" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MinuitFunction</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function wrapper for Minuit to allow supplying function with vector</span>
+<span class="sd">    arguments&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the instance. f: function, dim: number of dimensions&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__code__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Needed to fake the function signature for Minuit&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">AttributeDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">co_varnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)]</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">co_argcount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">d</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#flavio.math.optimize.MinuitFunction">MinuitFunction</a></li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.math.optimize.MinuitFunction.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, f, dim, args=())</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialize the instance. f: function, dim: number of dimensions</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.math.optimize.MinuitFunction.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.math.optimize.MinuitFunction.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">()):</span>
+    <span class="sd">&quot;&quot;&quot;Initialize the instance. f: function, dim: number of dimensions&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="flavio.math.optimize.MinuitFunction.args" class="name">var <span class="ident">args</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.math.optimize.MinuitFunction.dim" class="name">var <span class="ident">dim</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.math.optimize.MinuitFunction.f" class="name">var <span class="ident">f</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
 
   </section>
 
