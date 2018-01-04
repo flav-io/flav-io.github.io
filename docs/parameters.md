@@ -53,10 +53,13 @@ of the parameter.
 | `B->D BCL a2_f0` | $a_2^{(0)}$ | BCL $B\to D$ form factor parametrization coefficient $a_2$ of $f_0$ |
 | `B->D BCL m+` | $m_{B^*}^{f_+}$ | Resonance mass for the $B\to D$ vector and tensor form factors in BCL parametrization |
 | `B->D BCL m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B\to D$ scalar form factor in BCL parametrization |
+| `B->D CLN deltac_h+` | $\delta_{\epsilon_c^2}^{h_+}$ | Power correction to $B\to D$ HQET form factor $h_+$ |
 | `B->D IW a_T` | $a_T^{B\to D}$ | Relative power correction to the $B\to D$ tensor form factor from the improved Isgur-Wise relation |
 | `B->D* CLN R_0(1)` | $R_0(1)$ | Ratio of CLN form factors at $w=1$ |
 | `B->D* CLN R_1(1)` | $R_1(1)$ | Ratio of CLN form factors at $w=1$ |
 | `B->D* CLN R_2(1)` | $R_2(1)$ | Ratio of CLN form factors at $w=1$ |
+| `B->D* CLN deltac_hA1` | $\delta_{\epsilon_c^2}^{h_{A_1}}$ | Power correction to $B\to D^*$ HQET form factor $h_{A_1}$ |
+| `B->D* CLN deltac_hT1` | $\delta_{\epsilon_c^2}^{h_{T_1}}$ | Power correction to $B\to D^*$ HQET form factor $h_{T_1}$ |
 | `B->D* CLN h_A1(1)` | $h_{A_1}(1)$ | Universal CLN form factor at $w=1$ |
 | `B->D* CLN rho2` | $\rho^2$ | Shape parameter in the CLN form factor parametrization |
 | `B->D* IW a_T1` | $a_{T_1}^{B\to D^*}$ | Relative power correction to the $B\to D^*$ tensor form factor $T_1$ from the improved Isgur-Wise relation |
@@ -253,6 +256,8 @@ of the parameter.
 | `Bs->phi deltaC9 c_- Re` | $\text{Re}\,c^{\Delta_9}_-$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at high $q^2$ |
 | `Bs->phi deltaC9 c_0 Im` | $\text{Im}\,c^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at high $q^2$ |
 | `Bs->phi deltaC9 c_0 Re` | $\text{Re}\,c^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at high $q^2$ |
+| `CLN c_xi` | $c_\xi$ | Parameter of leading Isgur-Wise function $\xi(w)=1-\rho^2_\xi(w-1)+c_\xi(w-1)^2$ |
+| `CLN rho2_xi` | $\rho^2_\xi$ | Slope parameter of leading Isgur-Wise function $\xi(w)=1-\rho^2_\xi(w-1)+c_\xi(w-1)^2$ |
 | `C_BXlnu` | $C$ |  |
 | `DeltaGamma/Gamma_B0` | $\Delta \Gamma_d/\Gamma_d$ | Relative decay width difference in the $B_s$ system |
 | `DeltaGamma/Gamma_Bs` | $\Delta \Gamma_s/\Gamma_s$ | Relative decay width difference in the $B_s$ system |
@@ -384,6 +389,9 @@ of the parameter.
 | `c3_pi+lnu` | $c_3^{(\pi)}$ | Chiral perturbation theory coefficient in $\pi^+\to\ell^+\nu$ |
 | `c4_K+munu` | $c_4^{(K)}(m_\mu)$ | Chiral perturbation theory coefficient in $K^+\to\mu^+\nu$ |
 | `c4_pi+munu` | $c_4^{(\pi)}(m_\mu)$ | Chiral perturbation theory coefficient in $\pi^+\to\mu^+\nu$ |
+| `chi_2(1)` | $\chi_2(1)$ | Subleading Isgur-Wise function $\chi_2$ at $w=1$ |
+| `chi_2p(1)` | $\chi_2'(1)$ | Derivative of subleading Isgur-Wise function $\chi_2$ at $w=1$ |
+| `chi_3p(1)` | $\chi_3'(1)$ | Derivative of subleading Isgur-Wise function $\chi_3$ at $w=1$ |
 | `deltaPcu` | $\delta P_{c,u}$ | Contributions to the $K^+\to\pi^+\nu\bar\nu$ amplitude not described by the dimension-6 effective Hamiltonian. |
 | `delta_BXdee high` | $\delta_{bdee}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_de^+e^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXdee low` | $\delta_{bdee}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_de^+e^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
@@ -397,11 +405,13 @@ of the parameter.
 | `delta_BXsmumu high` | $\delta_{bs\mu\mu}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\mu^+\mu^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXsmumu low` | $\delta_{bs\mu\mu}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\mu^+\mu^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXstautau high` | $\delta_{bs\tau\tau}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\tau^+\tau^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
+| `eta(1)` | $\eta(1)$ | Subleading Isgur-Wise function $\eta$ at $w=1$ |
 | `eta_cc_K0` | $\eta_{cc}$ | SM QCD correction factor for the charm contribution to $K^0$ mixing |
 | `eta_ct_K0` | $\eta_{ct}$ | SM QCD correction factor for the top-charm contribution to $K^0$ mixing |
 | `eta_tt_B0` | $\eta_B$ | SM QCD correction factor for $B^0$ mixing |
 | `eta_tt_Bs` | $\eta_B$ | SM QCD correction factor for $B_s$ mixing |
 | `eta_tt_K0` | $\eta_{tt}$ | SM QCD correction factor for the top contribution to $K^0$ mixing |
+| `etap(1)` | $\eta'(1)$ | Derivative of subleading Isgur-Wise function $\eta$ at $w=1$ |
 | `f_B+` | $f_{B^\pm}$ | $B^\pm$ decay constant |
 | `f_B0` | $f_{B^0}$ | $B^0$ decay constant |
 | `f_Bc` | $f_{B_c}$ | $B_c$ decay constant |

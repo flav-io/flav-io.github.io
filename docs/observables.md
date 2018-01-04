@@ -23,7 +23,7 @@ of this page.
 
 - [Non-leptonic decays](obs/bhadrondecays-nonleptonicdecays.html) (2 observables)
 
-- [Semi-leptonic tree-level decays](obs/bhadrondecays-semileptonictreeleveldecays.html) (250 observables)
+- [Semi-leptonic tree-level decays](obs/bhadrondecays-semileptonictreeleveldecays.html) (538 observables)
 
 
 ### $c$ hadron decays
