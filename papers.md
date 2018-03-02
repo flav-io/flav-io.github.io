@@ -13,6 +13,7 @@ Authors | Title | arXiv | Code
 --------|-------|-------|------------
 M. Jung, D. M. Straub | Constraining new physics in $b\to c\ell\nu$ transitions | [1801.01112](https://arxiv.org/abs/1801.01112)
 F. Sannino, P. Stangl, D. M. Straub, A. E. Thomsen | Flavor Physics and Flavor Anomalies in Minimal Fundamental Partial Compositeness | [1712.07646](https://arxiv.org/abs/1712.07646)
+K. Fuyuto, H.L. Li, J.-H.Yu, | Implications of hidden gauged U(1) model for B anomalies |  [1712.06736](https://arxiv.org/abs/1712.06736)
 W. Altmannshofer, M. Baker, S. Gori, R. Harnik, M. Pospelov, E. Stamou, A. Thamm | Light Resonances and the Low-$q^2$ Bin of $R_{K^\ast}$ | [1711.07494](https://arxiv.org/abs/1711.07494)
 J. Albrecht, F. Bernlochner, M. Kenzie, S. Reichert, D. Straub, A. Tully | Future prospects for exploring present day anomalies in flavour physics measurements with Belle II and LHCb | [1709.10308](https://arxiv.org/abs/1709.10308)
 T. Blake, U. Egede, P. Owen, G. Pomery, K. A. Petridis | An empirical model of the long-distance contributions to $B\to K^\ast\mu^+\mu^-$ transitions | [1709.03921](https://arxiv.org/abs/1709.03921)
