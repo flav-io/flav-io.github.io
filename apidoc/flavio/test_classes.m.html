@@ -1142,6 +1142,8 @@ table {
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_parameter_constraints_yaml">test_parameter_constraints_yaml</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_pdf">test_pdf</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_prediction_class">test_prediction_class</a></li>
+    <li class="mono"><a href="#flavio.test_classes.TestClasses.test_repr_meas">test_repr_meas</a></li>
+    <li class="mono"><a href="#flavio.test_classes.TestClasses.test_repr_obs">test_repr_obs</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_set_constraint">test_set_constraint</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.tearDownClass">tearDownClass</a></li>
@@ -1427,6 +1429,31 @@ table {
             <span class="n">mnew</span> <span class="o">=</span> <span class="n">Measurement</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">yaml</span><span class="p">)</span>
             <span class="n">yaml2</span> <span class="o">=</span> <span class="n">mnew</span><span class="o">.</span><span class="n">get_yaml_dict</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">yaml</span><span class="p">,</span> <span class="n">yaml2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_repr_meas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mtest</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span><span class="s1">&#39;repr test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">mtest</span><span class="p">),</span> <span class="s2">&quot;Measurement(&#39;repr test&#39;)&quot;</span><span class="p">)</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;bla&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;bla&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;blo&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;blo&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="k">del</span> <span class="n">Measurement</span><span class="p">[</span><span class="s1">&#39;repr test&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">test_repr_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mtest</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;repr test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">mtest</span><span class="p">),</span>
+                         <span class="s2">&quot;Observable(&#39;repr test&#39;, arguments=None)&quot;</span><span class="p">)</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;bla&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;bla&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">&quot;blo&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;blo&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;blu&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;blu&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">mtest</span><span class="p">),</span>
+                         <span class="s2">&quot;Observable(&#39;repr test&#39;, arguments=[&#39;blu&#39;])&quot;</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;repr test&#39;</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -1738,6 +1765,31 @@ in order to be run.</p>
             <span class="n">mnew</span> <span class="o">=</span> <span class="n">Measurement</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">yaml</span><span class="p">)</span>
             <span class="n">yaml2</span> <span class="o">=</span> <span class="n">mnew</span><span class="o">.</span><span class="n">get_yaml_dict</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">yaml</span><span class="p">,</span> <span class="n">yaml2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_repr_meas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mtest</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span><span class="s1">&#39;repr test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">mtest</span><span class="p">),</span> <span class="s2">&quot;Measurement(&#39;repr test&#39;)&quot;</span><span class="p">)</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;bla&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;bla&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;blo&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;blo&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="k">del</span> <span class="n">Measurement</span><span class="p">[</span><span class="s1">&#39;repr test&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">test_repr_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mtest</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;repr test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">mtest</span><span class="p">),</span>
+                         <span class="s2">&quot;Observable(&#39;repr test&#39;, arguments=None)&quot;</span><span class="p">)</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;bla&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;bla&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">&quot;blo&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;blo&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="n">mtest</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;blu&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;blu&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">mtest</span><span class="p">),</span>
+                         <span class="s2">&quot;Observable(&#39;repr test&#39;, arguments=[&#39;blu&#39;])&quot;</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;repr test&#39;</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -4354,6 +4406,67 @@ block, allowing further test code to be executed.</p></div>
     <span class="c1"># removing dummy instances</span>
     <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs&#39;</span><span class="p">)</span>
     <span class="n">Parameter</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_parameter&#39;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.test_classes.TestClasses.test_repr_meas">
+    <p>def <span class="ident">test_repr_meas</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.test_classes.TestClasses.test_repr_meas', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.test_classes.TestClasses.test_repr_meas" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_repr_meas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">mtest</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span><span class="s1">&#39;repr test&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">mtest</span><span class="p">),</span> <span class="s2">&quot;Measurement(&#39;repr test&#39;)&quot;</span><span class="p">)</span>
+    <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+    <span class="n">mtest</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;bla&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;bla&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+    <span class="n">mtest</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;blo&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;blo&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+    <span class="k">del</span> <span class="n">Measurement</span><span class="p">[</span><span class="s1">&#39;repr test&#39;</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.test_classes.TestClasses.test_repr_obs">
+    <p>def <span class="ident">test_repr_obs</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.test_classes.TestClasses.test_repr_obs', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.test_classes.TestClasses.test_repr_obs" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_repr_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">mtest</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;repr test&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">mtest</span><span class="p">),</span>
+                     <span class="s2">&quot;Observable(&#39;repr test&#39;, arguments=None)&quot;</span><span class="p">)</span>
+    <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+    <span class="n">mtest</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;bla&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;bla&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+    <span class="n">mtest</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">&quot;blo&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;blo&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+    <span class="n">mtest</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;blu&quot;</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;blu&quot;</span><span class="p">,</span> <span class="n">mtest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">mtest</span><span class="p">),</span>
+                     <span class="s2">&quot;Observable(&#39;repr test&#39;, arguments=[&#39;blu&#39;])&quot;</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;repr test&#39;</span><span class="p">]</span>
 </pre></div>
 
   </div>

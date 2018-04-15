@@ -1053,12 +1053,8 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
-    <li class="mono"><a href="#flavio.physics.test_eft.adm">adm</a></li>
-    <li class="mono"><a href="#flavio.physics.test_eft.coefficients">coefficients</a></li>
-    <li class="mono"><a href="#flavio.physics.test_eft.ll">ll</a></li>
     <li class="mono"><a href="#flavio.physics.test_eft.par">par</a></li>
-    <li class="mono"><a href="#flavio.physics.test_eft.qq">qq</a></li>
-    <li class="mono"><a href="#flavio.physics.test_eft.rge_derivative">rge_derivative</a></li>
+    <li class="mono"><a href="#flavio.physics.test_eft.sectors_flavio2wcxf">sectors_flavio2wcxf</a></li>
   </ul>
 
     </li>
@@ -1135,8 +1131,11 @@ table {
     <li class="mono"><a href="#flavio.physics.test_eft.TestEFT.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.physics.test_eft.TestEFT.tearDown">tearDown</a></li>
     <li class="mono"><a href="#flavio.physics.test_eft.TestEFT.test_deprecations">test_deprecations</a></li>
-    <li class="mono"><a href="#flavio.physics.test_eft.TestEFT.test_eft">test_eft</a></li>
-    <li class="mono"><a href="#flavio.physics.test_eft.TestEFT.test_wcxf">test_wcxf</a></li>
+    <li class="mono"><a href="#flavio.physics.test_eft.TestEFT.test_eft_old">test_eft_old</a></li>
+    <li class="mono"><a href="#flavio.physics.test_eft.TestEFT.test_get_initial_wcxf_minimal">test_get_initial_wcxf_minimal</a></li>
+    <li class="mono"><a href="#flavio.physics.test_eft.TestEFT.test_set_initial_wcxf">test_set_initial_wcxf</a></li>
+    <li class="mono"><a href="#flavio.physics.test_eft.TestEFT.test_set_initial_wcxf_minimal">test_set_initial_wcxf_minimal</a></li>
+    <li class="mono"><a href="#flavio.physics.test_eft.TestEFT.tets_repr">tets_repr</a></li>
     <li class="mono"><a href="#flavio.physics.test_eft.TestEFT.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.physics.test_eft.TestEFT.tearDownClass">tearDownClass</a></li>
   </ul>
@@ -1166,6 +1165,7 @@ table {
 <span class="kn">from</span> <span class="nn">.eft</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">pkgutil</span>
 <span class="kn">import</span> <span class="nn">wcxf</span>
+<span class="kn">import</span> <span class="nn">wilson</span>
 
 <span class="n">par</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;m_Z&#39;</span><span class="p">:</span> <span class="mf">91.1876</span><span class="p">,</span>
@@ -1177,17 +1177,20 @@ table {
     <span class="s1">&#39;m_u&#39;</span><span class="p">:</span> <span class="mf">2.3e-3</span><span class="p">,</span>
     <span class="s1">&#39;alpha_e&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="mf">127.944</span><span class="p">,</span>
     <span class="s1">&#39;alpha_s&#39;</span><span class="p">:</span> <span class="mf">0.1185</span><span class="p">,</span>
+    <span class="s1">&#39;GF&#39;</span><span class="p">:</span> <span class="mf">1.1663787e-5</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="k">class</span> <span class="nc">TestEFT</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">test_eft</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_eft_old</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">wc</span> <span class="o">=</span>  <span class="n">WilsonCoefficients</span><span class="p">()</span>
         <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVLL_bsbs&#39;</span><span class="p">:</span> <span class="mf">0.1j</span><span class="p">,</span> <span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="s1">&#39;CVL_bctaunutau&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span> <span class="mf">160.</span><span class="p">)</span>
-        <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bsbs&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bsbs&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+        <span class="n">d2</span> <span class="o">=</span> <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bsbs&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>  <span class="c1"># again, to test the cache</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertDictEqual</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">)</span>
         <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bsmumu&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
         <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bctaunutau&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">test_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_set_initial_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">test_file</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;data/test/wcxf-flavio-example.yml&#39;</span><span class="p">)</span>
         <span class="n">flavio_wc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
         <span class="n">wcxf_wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">test_file</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
@@ -1200,23 +1203,49 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wc_out</span><span class="p">[</span><span class="s1">&#39;C10p_bsee&#39;</span><span class="p">],</span> <span class="mf">0.1</span><span class="o">-</span><span class="mf">0.3j</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wc_out</span><span class="p">[</span><span class="s1">&#39;CS_bsee&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">wcxf_wc</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;unknown basis&#39;</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
             <span class="n">flavio_wc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wcxf_wc</span><span class="p">)</span>
-        <span class="n">wcxf_wc</span><span class="o">.</span><span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;SMEFT&#39;</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">):</span>
-            <span class="n">flavio_wc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wcxf_wc</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_set_initial_wcxf_minimal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">eft</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-4&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-3&#39;</span><span class="p">]:</span>
+            <span class="n">wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;CVLL_sdsd&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Im&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}})</span>
+            <span class="n">fwc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
+            <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">fwc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;sdsd&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">)[</span><span class="s1">&#39;CVLL_sdsd&#39;</span><span class="p">],</span> <span class="mi">1j</span><span class="p">)</span>
+            <span class="n">pf</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="p">,</span> <span class="s1">&#39;Bern&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;1dsds&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Im&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">pf</span><span class="p">}})</span>
+            <span class="n">fwc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
+            <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">fwc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;sdsd&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">)[</span><span class="s1">&#39;CVLL_sdsd&#39;</span><span class="p">],</span> <span class="mi">1j</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">tets_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+        <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C7_bs&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">wc</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">test_get_initial_wcxf_minimal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">eft</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-4&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-3&#39;</span><span class="p">]:</span>
+            <span class="n">wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;CVLL_sdsd&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Im&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}})</span>
+            <span class="n">fwc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
+            <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+            <span class="n">wc2</span> <span class="o">=</span> <span class="n">fwc</span><span class="o">.</span><span class="n">get_initial_wcxf</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">wc2</span><span class="o">.</span><span class="n">eft</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wc2</span><span class="o">.</span><span class="n">basis</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertDictEqual</span><span class="p">(</span><span class="n">wc</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span> <span class="n">wc2</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>
+
 
     <span class="k">def</span> <span class="nf">test_deprecations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check that deprecated or renamed Wilson coefficients raise/warn&quot;&quot;&quot;</span>
         <span class="n">wc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
         <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>  <span class="c1"># this should work</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
             <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;C7effp_bs&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
             <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;C8eff_sd&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
             <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;CV_bcenu&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
             <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C3Qp_bs&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;C1_bs&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
@@ -1227,30 +1256,6 @@ table {
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p id="flavio.physics.test_eft.adm" class="name">var <span class="ident">adm</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.physics.test_eft.coefficients" class="name">var <span class="ident">coefficients</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.physics.test_eft.ll" class="name">var <span class="ident">ll</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
       <p id="flavio.physics.test_eft.par" class="name">var <span class="ident">par</span></p>
       
   
@@ -1259,15 +1264,7 @@ table {
 
       </div>
       <div class="item">
-      <p id="flavio.physics.test_eft.qq" class="name">var <span class="ident">qq</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.physics.test_eft.rge_derivative" class="name">var <span class="ident">rge_derivative</span></p>
+      <p id="flavio.physics.test_eft.sectors_flavio2wcxf" class="name">var <span class="ident">sectors_flavio2wcxf</span></p>
       
   
   <div class="source_cont">
@@ -1311,14 +1308,16 @@ in order to be run.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.test_eft.TestEFT', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.test_eft.TestEFT" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TestEFT</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">test_eft</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_eft_old</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">wc</span> <span class="o">=</span>  <span class="n">WilsonCoefficients</span><span class="p">()</span>
         <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVLL_bsbs&#39;</span><span class="p">:</span> <span class="mf">0.1j</span><span class="p">,</span> <span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="s1">&#39;CVL_bctaunutau&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span> <span class="mf">160.</span><span class="p">)</span>
-        <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bsbs&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bsbs&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+        <span class="n">d2</span> <span class="o">=</span> <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bsbs&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>  <span class="c1"># again, to test the cache</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertDictEqual</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">)</span>
         <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bsmumu&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
         <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bctaunutau&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">test_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_set_initial_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">test_file</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;data/test/wcxf-flavio-example.yml&#39;</span><span class="p">)</span>
         <span class="n">flavio_wc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
         <span class="n">wcxf_wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">test_file</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
@@ -1331,23 +1330,49 @@ in order to be run.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wc_out</span><span class="p">[</span><span class="s1">&#39;C10p_bsee&#39;</span><span class="p">],</span> <span class="mf">0.1</span><span class="o">-</span><span class="mf">0.3j</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wc_out</span><span class="p">[</span><span class="s1">&#39;CS_bsee&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">wcxf_wc</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;unknown basis&#39;</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
             <span class="n">flavio_wc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wcxf_wc</span><span class="p">)</span>
-        <span class="n">wcxf_wc</span><span class="o">.</span><span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;SMEFT&#39;</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">):</span>
-            <span class="n">flavio_wc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wcxf_wc</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_set_initial_wcxf_minimal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">eft</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-4&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-3&#39;</span><span class="p">]:</span>
+            <span class="n">wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;CVLL_sdsd&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Im&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}})</span>
+            <span class="n">fwc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
+            <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">fwc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;sdsd&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">)[</span><span class="s1">&#39;CVLL_sdsd&#39;</span><span class="p">],</span> <span class="mi">1j</span><span class="p">)</span>
+            <span class="n">pf</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="p">,</span> <span class="s1">&#39;Bern&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;1dsds&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Im&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">pf</span><span class="p">}})</span>
+            <span class="n">fwc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
+            <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">fwc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;sdsd&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">)[</span><span class="s1">&#39;CVLL_sdsd&#39;</span><span class="p">],</span> <span class="mi">1j</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">tets_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">wc</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+        <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C7_bs&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">wc</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">test_get_initial_wcxf_minimal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">eft</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-4&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-3&#39;</span><span class="p">]:</span>
+            <span class="n">wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;CVLL_sdsd&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Im&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}})</span>
+            <span class="n">fwc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
+            <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+            <span class="n">wc2</span> <span class="o">=</span> <span class="n">fwc</span><span class="o">.</span><span class="n">get_initial_wcxf</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">wc2</span><span class="o">.</span><span class="n">eft</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wc2</span><span class="o">.</span><span class="n">basis</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertDictEqual</span><span class="p">(</span><span class="n">wc</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span> <span class="n">wc2</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>
+
 
     <span class="k">def</span> <span class="nf">test_deprecations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check that deprecated or renamed Wilson coefficients raise/warn&quot;&quot;&quot;</span>
         <span class="n">wc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
         <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>  <span class="c1"># this should work</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
             <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;C7effp_bs&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
             <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;C8eff_sd&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
             <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;CV_bcenu&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
             <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C3Qp_bs&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;C1_bs&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
@@ -3559,13 +3584,13 @@ block, allowing further test code to be executed.</p></div>
     <span class="sd">&quot;&quot;&quot;Check that deprecated or renamed Wilson coefficients raise/warn&quot;&quot;&quot;</span>
     <span class="n">wc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
     <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>  <span class="c1"># this should work</span>
-    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
         <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;C7effp_bs&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
-    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
         <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;C8eff_sd&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
-    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
         <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;CV_bcenu&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
-    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
         <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C3Qp_bs&#39;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;C1_bs&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
@@ -3576,20 +3601,22 @@ block, allowing further test code to be executed.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="flavio.physics.test_eft.TestEFT.test_eft">
-    <p>def <span class="ident">test_eft</span>(</p><p>self)</p>
+    <div class="name def" id="flavio.physics.test_eft.TestEFT.test_eft_old">
+    <p>def <span class="ident">test_eft_old</span>(</p><p>self)</p>
     </div>
     
 
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.test_eft.TestEFT.test_eft', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.test_eft.TestEFT.test_eft" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_eft</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.test_eft.TestEFT.test_eft_old', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.test_eft.TestEFT.test_eft_old" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_eft_old</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">wc</span> <span class="o">=</span>  <span class="n">WilsonCoefficients</span><span class="p">()</span>
     <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;CVLL_bsbs&#39;</span><span class="p">:</span> <span class="mf">0.1j</span><span class="p">,</span> <span class="s1">&#39;C9_bsmumu&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="s1">&#39;CVL_bctaunutau&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span> <span class="mf">160.</span><span class="p">)</span>
-    <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bsbs&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bsbs&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bsbs&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>  <span class="c1"># again, to test the cache</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertDictEqual</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">)</span>
     <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bsmumu&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
     <span class="n">wc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;bctaunutau&#39;</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
 </pre></div>
@@ -3601,17 +3628,45 @@ block, allowing further test code to be executed.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="flavio.physics.test_eft.TestEFT.test_wcxf">
-    <p>def <span class="ident">test_wcxf</span>(</p><p>self)</p>
+    <div class="name def" id="flavio.physics.test_eft.TestEFT.test_get_initial_wcxf_minimal">
+    <p>def <span class="ident">test_get_initial_wcxf_minimal</span>(</p><p>self)</p>
     </div>
     
 
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.test_eft.TestEFT.test_wcxf', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.test_eft.TestEFT.test_wcxf" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.test_eft.TestEFT.test_get_initial_wcxf_minimal', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.test_eft.TestEFT.test_get_initial_wcxf_minimal" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_get_initial_wcxf_minimal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">eft</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-4&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-3&#39;</span><span class="p">]:</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;CVLL_sdsd&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Im&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}})</span>
+        <span class="n">fwc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+        <span class="n">wc2</span> <span class="o">=</span> <span class="n">fwc</span><span class="o">.</span><span class="n">get_initial_wcxf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">wc2</span><span class="o">.</span><span class="n">eft</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wc2</span><span class="o">.</span><span class="n">basis</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertDictEqual</span><span class="p">(</span><span class="n">wc</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span> <span class="n">wc2</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.test_eft.TestEFT.test_set_initial_wcxf">
+    <p>def <span class="ident">test_set_initial_wcxf</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.test_eft.TestEFT.test_set_initial_wcxf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.test_eft.TestEFT.test_set_initial_wcxf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_set_initial_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">test_file</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;data/test/wcxf-flavio-example.yml&#39;</span><span class="p">)</span>
     <span class="n">flavio_wc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
     <span class="n">wcxf_wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">test_file</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
@@ -3624,11 +3679,62 @@ block, allowing further test code to be executed.</p></div>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wc_out</span><span class="p">[</span><span class="s1">&#39;C10p_bsee&#39;</span><span class="p">],</span> <span class="mf">0.1</span><span class="o">-</span><span class="mf">0.3j</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">wc_out</span><span class="p">[</span><span class="s1">&#39;CS_bsee&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">wcxf_wc</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;unknown basis&#39;</span>
-    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">((</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)):</span>
         <span class="n">flavio_wc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wcxf_wc</span><span class="p">)</span>
-    <span class="n">wcxf_wc</span><span class="o">.</span><span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;SMEFT&#39;</span>
-    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">):</span>
-        <span class="n">flavio_wc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wcxf_wc</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.test_eft.TestEFT.test_set_initial_wcxf_minimal">
+    <p>def <span class="ident">test_set_initial_wcxf_minimal</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.test_eft.TestEFT.test_set_initial_wcxf_minimal', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.test_eft.TestEFT.test_set_initial_wcxf_minimal" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_set_initial_wcxf_minimal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">eft</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-4&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-3&#39;</span><span class="p">]:</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;CVLL_sdsd&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Im&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}})</span>
+        <span class="n">fwc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">fwc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;sdsd&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">)[</span><span class="s1">&#39;CVLL_sdsd&#39;</span><span class="p">],</span> <span class="mi">1j</span><span class="p">)</span>
+        <span class="n">pf</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="p">,</span> <span class="s1">&#39;Bern&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;1dsds&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Im&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">pf</span><span class="p">}})</span>
+        <span class="n">fwc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
+        <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">fwc</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="s1">&#39;sdsd&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">)[</span><span class="s1">&#39;CVLL_sdsd&#39;</span><span class="p">],</span> <span class="mi">1j</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.test_eft.TestEFT.tets_repr">
+    <p>def <span class="ident">tets_repr</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.test_eft.TestEFT.tets_repr', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.test_eft.TestEFT.tets_repr" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">tets_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
+    <span class="n">wc</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+    <span class="n">wc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;C7_bs&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">},</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">wc</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
 </pre></div>
 
   </div>

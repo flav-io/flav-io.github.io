@@ -1214,6 +1214,8 @@ to be used directly).</p>
                  <span class="n">input_scale</span><span class="o">=</span><span class="mf">160.</span><span class="p">,</span>
                  <span class="n">exclude_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">fit_wc_eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span>
+                 <span class="n">fit_wc_basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span>
                 <span class="p">):</span>
         <span class="k">if</span> <span class="n">fit_parameters</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1279,6 +1281,8 @@ to be used directly).</p>
         <span class="k">assert</span> <span class="n">missing_obs</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(),</span> <span class="s2">&quot;No measurement found for the observables: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">missing_obs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eft</span> <span class="o">=</span> <span class="n">fit_wc_eft</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="n">fit_wc_basis</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">get_central_fit_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1474,7 +1478,8 @@ to be used directly).</p>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">wc_obj</span>
         <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_scale</span><span class="p">)</span>
+        <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_scale</span><span class="p">,</span>
+                           <span class="n">eft</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">wc_obj</span>
 
     <span class="k">def</span> <span class="nf">log_prior_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
@@ -2275,7 +2280,8 @@ If wc is False, Wilson coefficients are set to their SM values.</p></div>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">wc_obj</span>
     <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_scale</span><span class="p">)</span>
+    <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_scale</span><span class="p">,</span>
+                       <span class="n">eft</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">wc_obj</span>
 </pre></div>
 
@@ -3288,7 +3294,8 @@ under variation of all nuisance parameters.</p>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">wc_obj</span>
     <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_scale</span><span class="p">)</span>
+    <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_scale</span><span class="p">,</span>
+                       <span class="n">eft</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">wc_obj</span>
 </pre></div>
 
@@ -3899,6 +3906,8 @@ sampling the start_wc_priors distribution.</p></div>
                  <span class="n">input_scale</span><span class="o">=</span><span class="mf">160.</span><span class="p">,</span>
                  <span class="n">exclude_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">fit_wc_eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span>
+                 <span class="n">fit_wc_basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span>
                 <span class="p">):</span>
         <span class="k">if</span> <span class="n">fit_parameters</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span> <span class="o">=</span> <span class="p">[]</span>
@@ -3964,6 +3973,8 @@ sampling the start_wc_priors distribution.</p></div>
         <span class="k">assert</span> <span class="n">missing_obs</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(),</span> <span class="s2">&quot;No measurement found for the observables: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">missing_obs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eft</span> <span class="o">=</span> <span class="n">fit_wc_eft</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="n">fit_wc_basis</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">get_central_fit_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -4159,7 +4170,8 @@ sampling the start_wc_priors distribution.</p></div>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">wc_obj</span>
         <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_scale</span><span class="p">)</span>
+        <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_scale</span><span class="p">,</span>
+                           <span class="n">eft</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">wc_obj</span>
 
     <span class="k">def</span> <span class="nf">log_prior_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
@@ -4252,7 +4264,7 @@ sampling the start_wc_priors distribution.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.Fit.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7f1cc415ca20&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fb56a233588&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None, fit_wc_eft=&#39;WET&#39;, fit_wc_basis=&#39;flavio&#39;)</p>
     </div>
     
 
@@ -4274,6 +4286,8 @@ sampling the start_wc_priors distribution.</p></div>
              <span class="n">input_scale</span><span class="o">=</span><span class="mf">160.</span><span class="p">,</span>
              <span class="n">exclude_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
              <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">fit_wc_eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span>
+             <span class="n">fit_wc_basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span>
             <span class="p">):</span>
     <span class="k">if</span> <span class="n">fit_parameters</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span> <span class="o">=</span> <span class="p">[]</span>
@@ -4337,6 +4351,8 @@ sampling the start_wc_priors distribution.</p></div>
     <span class="n">missing_obs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">observables</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">_obs_measured</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">observables</span><span class="p">))</span>
     <span class="k">assert</span> <span class="n">missing_obs</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(),</span> <span class="s2">&quot;No measurement found for the observables: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">missing_obs</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">eft</span> <span class="o">=</span> <span class="n">fit_wc_eft</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="n">fit_wc_basis</span>
 </pre></div>
 
   </div>
@@ -4530,7 +4546,8 @@ If wc is False, Wilson coefficients are set to their SM values.</p></div>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">wc_obj</span>
     <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_scale</span><span class="p">)</span>
+    <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_scale</span><span class="p">,</span>
+                       <span class="n">eft</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">wc_obj</span>
 </pre></div>
 
@@ -4680,7 +4697,27 @@ given an input array</p></div>
   
           <h3>Instance variables</h3>
             <div class="item">
+            <p id="flavio.statistics.fits.Fit.basis" class="name">var <span class="ident">basis</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
             <p id="flavio.statistics.fits.Fit.dimension" class="name">var <span class="ident">dimension</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.fits.Fit.eft" class="name">var <span class="ident">eft</span></p>
             
 
             
@@ -5240,7 +5277,8 @@ If wc is False, Wilson coefficients are set to their SM values.</p></div>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">wc_obj</span>
     <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_scale</span><span class="p">)</span>
+    <span class="n">wc_obj</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_scale</span><span class="p">,</span>
+                       <span class="n">eft</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">wc_obj</span>
 </pre></div>
 

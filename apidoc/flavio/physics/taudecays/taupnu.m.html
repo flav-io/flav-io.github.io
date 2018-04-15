@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>flavio.physics.mesonmixing.common API documentation</title>
-    <meta name="description" content="" />
+    <title>flavio.physics.taudecays.taupnu API documentation</title>
+    <meta name="description" content="Functions for $\tau\to P\nu$." />
 
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400' rel='stylesheet' type='text/css'>
@@ -1053,8 +1053,7 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
-    <li class="mono"><a href="#flavio.physics.mesonmixing.common.meson_quark">meson_quark</a></li>
-    <li class="mono"><a href="#flavio.physics.mesonmixing.common.pi">pi</a></li>
+    <li class="mono"><a href="#flavio.physics.taudecays.taupnu.P">P</a></li>
   </ul>
 
     </li>
@@ -1062,11 +1061,8 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
-    <li class="mono"><a href="#flavio.physics.mesonmixing.common.DeltaGamma">DeltaGamma</a></li>
-    <li class="mono"><a href="#flavio.physics.mesonmixing.common.DeltaM">DeltaM</a></li>
-    <li class="mono"><a href="#flavio.physics.mesonmixing.common.a_fs">a_fs</a></li>
-    <li class="mono"><a href="#flavio.physics.mesonmixing.common.bag_msbar2rgi">bag_msbar2rgi</a></li>
-    <li class="mono"><a href="#flavio.physics.mesonmixing.common.q_over_p">q_over_p</a></li>
+    <li class="mono"><a href="#flavio.physics.taudecays.taupnu.br_taupnu">br_taupnu</a></li>
+    <li class="mono"><a href="#flavio.physics.taudecays.taupnu.br_taupnu_fct">br_taupnu_fct</a></li>
   </ul>
 
     </li>
@@ -1083,58 +1079,69 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">flavio.physics.mesonmixing.common</span> module</h1>
+  <h1 class="title"><span class="name">flavio.physics.taudecays.taupnu</span> module</h1>
+  <p>Functions for $\tau\to P\nu$.</p>
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.common', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.mesonmixing.common" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span>
-<span class="kn">from</span> <span class="nn">cmath</span> <span class="kn">import</span> <span class="n">phase</span>
-<span class="kn">import</span> <span class="nn">cmath</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.taudecays.taupnu', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.taudecays.taupnu" class="source">
+    <div class="codehilite"><pre><span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Functions for $\tau\to P\nu$.&quot;&quot;&quot;</span>
 
-<span class="n">meson_quark</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;B0&#39;</span><span class="p">:</span> <span class="s1">&#39;bd&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">:</span> <span class="s1">&#39;bs&#39;</span><span class="p">,</span> <span class="s1">&#39;K0&#39;</span><span class="p">:</span> <span class="s1">&#39;sd&#39;</span><span class="p">,</span> <span class="s1">&#39;D0&#39;</span><span class="p">:</span> <span class="s1">&#39;uc&#39;</span> <span class="p">}</span>
+<span class="kn">import</span> <span class="nn">flavio</span>
+<span class="kn">from</span> <span class="nn">flavio.physics.taudecays</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">flavio.physics.bdecays.wilsoncoefficients</span> <span class="kn">import</span> <span class="n">get_CVLSM</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
 
-<span class="k">def</span> <span class="nf">bag_msbar2rgi</span><span class="p">(</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Conversion factor between renormalization group invariant (RGI) defintion</span>
-<span class="sd">    $\hat B$ of the bag parameter and the $\overline{\mathrm{MS}}$ definition</span>
-<span class="sd">    $B(mu)$:</span>
-<span class="sd">    $$\hat B = b_B^{(n_f)} B(mu)$$</span>
 
-<span class="sd">    See e.g. eq. (84) in arXiv:1011.4408.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">J</span><span class="o">=</span><span class="p">{}</span>
-    <span class="k">if</span> <span class="n">meson</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">]:</span> <span class="c1"># nf=5</span>
-        <span class="n">J</span> <span class="o">=</span> <span class="mi">5165</span><span class="o">/</span><span class="mf">3174.</span>
-        <span class="n">g</span> <span class="o">=</span> <span class="mi">6</span><span class="o">/</span><span class="mi">23</span>
-    <span class="k">elif</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;K0&#39;</span><span class="p">:</span> <span class="c1"># nf=3</span>
-        <span class="n">J</span> <span class="o">=</span> <span class="mi">307</span><span class="o">/</span><span class="mf">162.</span>
-        <span class="n">g</span> <span class="o">=</span> <span class="mi">2</span><span class="o">/</span><span class="mf">9.</span>
-    <span class="k">return</span> <span class="n">alpha_s</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">g</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">alpha_s</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">J</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_br_taupnu</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Branching ratio of $\tau^+\to P^+\bar\nu_\ell$.&quot;&quot;&quot;</span>
+    <span class="c1"># CKM element</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;taudecays&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">P</span> <span class="o">==</span> <span class="s1">&#39;pi+&#39;</span><span class="p">:</span>
+        <span class="n">Vij</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">ckm</span><span class="o">.</span><span class="n">get_ckm</span><span class="p">(</span><span class="n">par</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Vud</span>
+        <span class="n">qqlnu</span> <span class="o">=</span> <span class="s1">&#39;dutaunu&#39;</span> <span class="o">+</span> <span class="n">lep</span>
+        <span class="n">mq1</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_md</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+        <span class="n">mq2</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">P</span> <span class="o">==</span> <span class="s1">&#39;K+&#39;</span><span class="p">:</span>
+        <span class="n">Vij</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">ckm</span><span class="o">.</span><span class="n">get_ckm</span><span class="p">(</span><span class="n">par</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># Vus</span>
+        <span class="n">qqlnu</span> <span class="o">=</span> <span class="s1">&#39;sutaunu&#39;</span> <span class="o">+</span> <span class="n">lep</span>
+        <span class="n">mq1</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+        <span class="n">mq2</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="c1"># Wilson coefficients</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">qqlnu</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="c1"># add SM contribution to Wilson coefficient</span>
+    <span class="k">if</span> <span class="n">lep</span> <span class="o">==</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span>
+        <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVL_&#39;</span> <span class="o">+</span> <span class="n">qqlnu</span><span class="p">]</span> <span class="o">+=</span> <span class="n">get_CVLSM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">mtau</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_tau&#39;</span><span class="p">]</span>
+    <span class="n">mP</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span> <span class="o">+</span> <span class="n">P</span><span class="p">]</span>
+    <span class="n">rWC</span> <span class="o">=</span> <span class="p">((</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVL_&#39;</span> <span class="o">+</span> <span class="n">qqlnu</span><span class="p">]</span> <span class="o">-</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVR_&#39;</span> <span class="o">+</span> <span class="n">qqlnu</span><span class="p">])</span>
+           <span class="o">+</span> <span class="n">mP</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">mtau</span> <span class="o">/</span> <span class="p">(</span><span class="n">mq1</span> <span class="o">+</span> <span class="n">mq2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSR_&#39;</span> <span class="o">+</span> <span class="n">qqlnu</span><span class="p">]</span> <span class="o">-</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSL_&#39;</span> <span class="o">+</span> <span class="n">qqlnu</span><span class="p">]))</span>
+    <span class="n">gL</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">Vij</span> <span class="o">*</span> <span class="n">rWC</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;f_&#39;</span> <span class="o">+</span> <span class="n">P</span><span class="p">]</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_tau&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_tau&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">common</span><span class="o">.</span><span class="n">GammaFsf</span><span class="p">(</span><span class="n">mtau</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">gL</span><span class="p">,</span> <span class="o">-</span><span class="n">gL</span><span class="p">)</span>  <span class="c1"># gR = -gL for pseudoscalar</span>
 
-<span class="k">def</span> <span class="nf">DeltaM</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Meson mixing mass difference $\Delta M$ as a function of $M_{12}$ and</span>
-<span class="sd">    $\Gamma_{12}$, defined as $M_2-M_1$.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">q_over_p</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">M12</span><span class="o">-</span><span class="mi">1j</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="n">G12</span><span class="p">))</span><span class="o">.</span><span class="n">real</span>
 
-<span class="k">def</span> <span class="nf">DeltaGamma</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Meson mixing decay width difference $\Delta\Gamma$ as a function of</span>
-<span class="sd">    $M_{12}$ and $\Gamma_{12}$, defined as $\Gamma_1-\Gamma_2$.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">q_over_p</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">M12</span><span class="o">-</span><span class="mi">1j</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="n">G12</span><span class="p">))</span><span class="o">.</span><span class="n">imag</span>
+<span class="k">def</span> <span class="nf">br_taupnu</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Branching ratio of $\tau^+\to P^+\bar\nu_\ell$, summing over the</span>
+<span class="sd">    neutrino flavour.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">_br_taupnu</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span> <span class="k">for</span> <span class="n">lep</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]])</span>
 
-<span class="k">def</span> <span class="nf">q_over_p</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Ratio $q/p$ as a function of $M_{12}$ and $\Gamma_{12}$.</span>
-<span class="sd">    The sign is chosen such that $\Delta M$ is positive in the $B$ system.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="mi">2</span><span class="o">*</span><span class="n">M12</span><span class="o">-</span><span class="mi">1j</span><span class="o">*</span><span class="n">G12</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-    <span class="k">return</span> <span class="o">-</span><span class="n">cmath</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">M12</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span><span class="o">-</span><span class="mi">1j</span><span class="o">*</span><span class="n">G12</span><span class="o">.</span><span class="n">conjugate</span><span class="p">())</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">M12</span><span class="o">-</span><span class="mi">1j</span><span class="o">*</span><span class="n">G12</span><span class="p">))</span>
 
-<span class="k">def</span> <span class="nf">a_fs</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Flavour-specific CP asymmetry in meson mixing as a function of</span>
-<span class="sd">    $M_{12}$ and $\Gamma_{12}$.&quot;&quot;&quot;</span>
-    <span class="n">aM12</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">M12</span><span class="p">)</span>
-    <span class="n">aG12</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">G12</span><span class="p">)</span>
-    <span class="n">phi12</span> <span class="o">=</span> <span class="n">phase</span><span class="p">(</span><span class="o">-</span><span class="n">M12</span><span class="o">/</span><span class="n">G12</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">aG12</span> <span class="o">/</span> <span class="n">aM12</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">phi12</span><span class="p">)</span>
+<span class="c1"># function returning function needed for prediction instance</span>
+<span class="k">def</span> <span class="nf">br_taupnu_fct</span><span class="p">(</span><span class="n">P</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">br_taupnu</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span>
+
+<span class="c1"># Observable and Prediction instances</span>
+
+<span class="n">_had</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pi+&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\pi^+&#39;</span><span class="p">,</span> <span class="s1">&#39;K+&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;K^+&#39;</span><span class="p">,}</span>
+<span class="n">_shortname</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pi+&#39;</span><span class="p">:</span> <span class="s1">&#39;pi&#39;</span><span class="p">,</span> <span class="s1">&#39;K+&#39;</span><span class="p">:</span> <span class="s1">&#39;K&#39;</span><span class="p">}</span>
+
+<span class="k">for</span> <span class="n">P</span> <span class="ow">in</span> <span class="n">_had</span><span class="p">:</span>
+    <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;BR(tau-&gt;&quot;</span> <span class="o">+</span> <span class="n">_shortname</span><span class="p">[</span><span class="n">P</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;nu)&quot;</span>
+    <span class="n">_obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Branching ratio of $\tau^+\to &quot;</span> <span class="o">+</span> <span class="n">_had</span><span class="p">[</span><span class="n">P</span><span class="p">]</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;\bar\nu$&quot;</span><span class="p">)</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\text{BR}(\tau^+\to &quot;</span> <span class="o">+</span> <span class="n">_had</span><span class="p">[</span><span class="n">P</span><span class="p">]</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;\bar\nu)$&quot;</span>
+    <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">br_taupnu_fct</span><span class="p">(</span><span class="n">P</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1144,15 +1151,7 @@ table {
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p id="flavio.physics.mesonmixing.common.meson_quark" class="name">var <span class="ident">meson_quark</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.physics.mesonmixing.common.pi" class="name">var <span class="ident">pi</span></p>
+      <p id="flavio.physics.taudecays.taupnu.P" class="name">var <span class="ident">P</span></p>
       
   
   <div class="source_cont">
@@ -1163,22 +1162,22 @@ table {
     <h2 class="section-title" id="header-functions">Functions</h2>
       
   <div class="item">
-    <div class="name def" id="flavio.physics.mesonmixing.common.DeltaGamma">
-    <p>def <span class="ident">DeltaGamma</span>(</p><p>M12, G12)</p>
+    <div class="name def" id="flavio.physics.taudecays.taupnu.br_taupnu">
+    <p>def <span class="ident">br_taupnu</span>(</p><p>wc_obj, par, P)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Meson mixing decay width difference $\Delta\Gamma$ as a function of
-$M_{12}$ and $\Gamma_{12}$, defined as $\Gamma_1-\Gamma_2$.</p></div>
+    <div class="desc"><p>Branching ratio of $\tau^+\to P^+\bar\nu_\ell$, summing over the
+neutrino flavour.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.common.DeltaGamma', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.mesonmixing.common.DeltaGamma" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">DeltaGamma</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Meson mixing decay width difference $\Delta\Gamma$ as a function of</span>
-<span class="sd">    $M_{12}$ and $\Gamma_{12}$, defined as $\Gamma_1-\Gamma_2$.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">q_over_p</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">M12</span><span class="o">-</span><span class="mi">1j</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="n">G12</span><span class="p">))</span><span class="o">.</span><span class="n">imag</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.taudecays.taupnu.br_taupnu', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.taudecays.taupnu.br_taupnu" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">br_taupnu</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Branching ratio of $\tau^+\to P^+\bar\nu_\ell$, summing over the</span>
+<span class="sd">    neutrino flavour.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">_br_taupnu</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span> <span class="k">for</span> <span class="n">lep</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]])</span>
 </pre></div>
 
   </div>
@@ -1188,117 +1187,20 @@ $M_{12}$ and $\Gamma_{12}$, defined as $\Gamma_1-\Gamma_2$.</p></div>
   
       
   <div class="item">
-    <div class="name def" id="flavio.physics.mesonmixing.common.DeltaM">
-    <p>def <span class="ident">DeltaM</span>(</p><p>M12, G12)</p>
+    <div class="name def" id="flavio.physics.taudecays.taupnu.br_taupnu_fct">
+    <p>def <span class="ident">br_taupnu_fct</span>(</p><p>P)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Meson mixing mass difference $\Delta M$ as a function of $M_{12}$ and
-$\Gamma_{12}$, defined as $M_2-M_1$.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.common.DeltaM', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.mesonmixing.common.DeltaM" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">DeltaM</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Meson mixing mass difference $\Delta M$ as a function of $M_{12}$ and</span>
-<span class="sd">    $\Gamma_{12}$, defined as $M_2-M_1$.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">q_over_p</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">M12</span><span class="o">-</span><span class="mi">1j</span><span class="o">/</span><span class="mf">2.</span><span class="o">*</span><span class="n">G12</span><span class="p">))</span><span class="o">.</span><span class="n">real</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="flavio.physics.mesonmixing.common.a_fs">
-    <p>def <span class="ident">a_fs</span>(</p><p>M12, G12)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Flavour-specific CP asymmetry in meson mixing as a function of
-$M_{12}$ and $\Gamma_{12}$.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.common.a_fs', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.mesonmixing.common.a_fs" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">a_fs</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Flavour-specific CP asymmetry in meson mixing as a function of</span>
-<span class="sd">    $M_{12}$ and $\Gamma_{12}$.&quot;&quot;&quot;</span>
-    <span class="n">aM12</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">M12</span><span class="p">)</span>
-    <span class="n">aG12</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">G12</span><span class="p">)</span>
-    <span class="n">phi12</span> <span class="o">=</span> <span class="n">phase</span><span class="p">(</span><span class="o">-</span><span class="n">M12</span><span class="o">/</span><span class="n">G12</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">aG12</span> <span class="o">/</span> <span class="n">aM12</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">phi12</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="flavio.physics.mesonmixing.common.bag_msbar2rgi">
-    <p>def <span class="ident">bag_msbar2rgi</span>(</p><p>alpha_s, meson)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Conversion factor between renormalization group invariant (RGI) defintion
-$\hat B$ of the bag parameter and the $\overline{\mathrm{MS}}$ definition
-$B(mu)$:
-$$\hat B = b_B^{(n_f)} B(mu)$$</p>
-<p>See e.g. eq. (84) in arXiv:1011.4408.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.common.bag_msbar2rgi', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.mesonmixing.common.bag_msbar2rgi" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bag_msbar2rgi</span><span class="p">(</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Conversion factor between renormalization group invariant (RGI) defintion</span>
-<span class="sd">    $\hat B$ of the bag parameter and the $\overline{\mathrm{MS}}$ definition</span>
-<span class="sd">    $B(mu)$:</span>
-<span class="sd">    $$\hat B = b_B^{(n_f)} B(mu)$$</span>
-
-<span class="sd">    See e.g. eq. (84) in arXiv:1011.4408.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">J</span><span class="o">=</span><span class="p">{}</span>
-    <span class="k">if</span> <span class="n">meson</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">]:</span> <span class="c1"># nf=5</span>
-        <span class="n">J</span> <span class="o">=</span> <span class="mi">5165</span><span class="o">/</span><span class="mf">3174.</span>
-        <span class="n">g</span> <span class="o">=</span> <span class="mi">6</span><span class="o">/</span><span class="mi">23</span>
-    <span class="k">elif</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;K0&#39;</span><span class="p">:</span> <span class="c1"># nf=3</span>
-        <span class="n">J</span> <span class="o">=</span> <span class="mi">307</span><span class="o">/</span><span class="mf">162.</span>
-        <span class="n">g</span> <span class="o">=</span> <span class="mi">2</span><span class="o">/</span><span class="mf">9.</span>
-    <span class="k">return</span> <span class="n">alpha_s</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">g</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">alpha_s</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">J</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="flavio.physics.mesonmixing.common.q_over_p">
-    <p>def <span class="ident">q_over_p</span>(</p><p>M12, G12)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Ratio $q/p$ as a function of $M_{12}$ and $\Gamma_{12}$.
-The sign is chosen such that $\Delta M$ is positive in the $B$ system.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.common.q_over_p', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.mesonmixing.common.q_over_p" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">q_over_p</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Ratio $q/p$ as a function of $M_{12}$ and $\Gamma_{12}$.</span>
-<span class="sd">    The sign is chosen such that $\Delta M$ is positive in the $B$ system.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="mi">2</span><span class="o">*</span><span class="n">M12</span><span class="o">-</span><span class="mi">1j</span><span class="o">*</span><span class="n">G12</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-    <span class="k">return</span> <span class="o">-</span><span class="n">cmath</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">M12</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span><span class="o">-</span><span class="mi">1j</span><span class="o">*</span><span class="n">G12</span><span class="o">.</span><span class="n">conjugate</span><span class="p">())</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">M12</span><span class="o">-</span><span class="mi">1j</span><span class="o">*</span><span class="n">G12</span><span class="p">))</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.taudecays.taupnu.br_taupnu_fct', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.taudecays.taupnu.br_taupnu_fct" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">br_taupnu_fct</span><span class="p">(</span><span class="n">P</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">br_taupnu</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span>
 </pre></div>
 
   </div>

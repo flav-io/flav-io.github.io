@@ -1058,6 +1058,7 @@ table {
     <li class="mono"><a href="#flavio.physics.running.test_running.par_ks">par_ks</a></li>
     <li class="mono"><a href="#flavio.physics.running.test_running.par_noqed">par_noqed</a></li>
     <li class="mono"><a href="#flavio.physics.running.test_running.par_pdg">par_pdg</a></li>
+    <li class="mono"><a href="#flavio.physics.running.test_running.pi">pi</a></li>
   </ul>
 
     </li>
@@ -1133,8 +1134,11 @@ table {
     <li class="mono"><a href="#flavio.physics.running.test_running.TestRunning.skipTest">skipTest</a></li>
     <li class="mono"><a href="#flavio.physics.running.test_running.TestRunning.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.physics.running.test_running.TestRunning.tearDown">tearDown</a></li>
+    <li class="mono"><a href="#flavio.physics.running.test_running.TestRunning.test_alphae">test_alphae</a></li>
+    <li class="mono"><a href="#flavio.physics.running.test_running.TestRunning.test_alphas">test_alphas</a></li>
+    <li class="mono"><a href="#flavio.physics.running.test_running.TestRunning.test_ksmass">test_ksmass</a></li>
     <li class="mono"><a href="#flavio.physics.running.test_running.TestRunning.test_mb1S">test_mb1S</a></li>
-    <li class="mono"><a href="#flavio.physics.running.test_running.TestRunning.test_runningcouplings">test_runningcouplings</a></li>
+    <li class="mono"><a href="#flavio.physics.running.test_running.TestRunning.test_polemasses">test_polemasses</a></li>
     <li class="mono"><a href="#flavio.physics.running.test_running.TestRunning.test_runningmasses">test_runningmasses</a></li>
     <li class="mono"><a href="#flavio.physics.running.test_running.TestRunning.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.physics.running.test_running.TestRunning.tearDownClass">tearDownClass</a></li>
@@ -1164,6 +1168,7 @@ table {
 <span class="kn">from</span> <span class="nn">.running</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">flavio</span>
+<span class="kn">from</span> <span class="nn">flavio.config</span> <span class="kn">import</span> <span class="n">config</span>
 
 <span class="n">par</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">par</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1185</span>
@@ -1193,22 +1198,46 @@ table {
 
 <span class="k">class</span> <span class="nc">TestRunning</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">test_runningcouplings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_alphae</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># compare to alpha_em at m_tau as given on p. 4 of</span>
+        <span class="c1"># http://pdg.lbl.gov/2015/reviews/rpp2014-rev-standard-model.pdf</span>
+        <span class="n">alpha_tau</span> <span class="o">=</span> <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="mf">1.777</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">alpha_tau</span><span class="o">/</span><span class="mf">133.465</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">places</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="c1"># check at thresholds</span>
+        <span class="n">mc</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mc&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mc</span><span class="p">),</span>
+                         <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mc</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mc</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+                         <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mc</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+        <span class="n">mb</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mb</span><span class="p">),</span>
+                         <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+                         <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+        <span class="n">mt</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mt&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mt</span><span class="p">),</span>
+                         <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mt</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mt</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+                         <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mt</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+
+
+    <span class="k">def</span> <span class="nf">test_alphas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">alpha_b</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par_noqed</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">)</span>
         <span class="c1"># compare to 3-loop alpha_s at 4.2 GeV according to RunDec</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">alpha_b</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">0.225911</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">places</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-        <span class="c1"># compare to alpha_em at m_tau as given on p. 4 of</span>
-        <span class="c1"># http://pdg.lbl.gov/2015/reviews/rpp2014-rev-standard-model.pdf</span>
-        <span class="n">alpha_tau</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="mf">1.777</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">alpha_tau</span><span class="p">[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">133.465</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
 
     <span class="k">def</span> <span class="nf">test_runningmasses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># compare to RunDec</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="mf">120.</span><span class="p">)</span><span class="o">/</span><span class="mf">2.79211</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="mf">120.</span><span class="p">)</span><span class="o">/</span><span class="mf">167.225</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_polemasses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">4.78248</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mc_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">1.68375</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mf">4.92987</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_ksmass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># compare to 1107.3100</span>
         <span class="c1"># KS -&gt; MSbar conversion</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
@@ -1219,13 +1248,13 @@ table {
             <span class="mf">1.329</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
         <span class="c1"># MSbar -&gt; KS conversion</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">get_mb_KS</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span> <span class="mf">4.553</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">get_mc_KS</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span> <span class="mf">1.091</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.07</span><span class="p">)</span> <span class="c1"># this is satisfied poorly!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">get_mc_KS</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span> <span class="mf">1.091</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.075</span><span class="p">)</span> <span class="c1"># this is satisfied poorly!</span>
 
     <span class="k">def</span> <span class="nf">test_mb1S</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">par</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
         <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
         <span class="n">mb1S</span> <span class="o">=</span> <span class="n">get_mb_1S</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">mb1S</span><span class="p">,</span> <span class="mf">4.67</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">mb1S</span><span class="p">,</span> <span class="mf">4.67</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1274,6 +1303,14 @@ table {
 </div>
 
       </div>
+      <div class="item">
+      <p id="flavio.physics.running.test_running.pi" class="name">var <span class="ident">pi</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
 
 
     <h2 class="section-title" id="header-classes">Classes</h2>
@@ -1312,22 +1349,46 @@ in order to be run.</p>
   <div id="source-flavio.physics.running.test_running.TestRunning" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TestRunning</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">test_runningcouplings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_alphae</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># compare to alpha_em at m_tau as given on p. 4 of</span>
+        <span class="c1"># http://pdg.lbl.gov/2015/reviews/rpp2014-rev-standard-model.pdf</span>
+        <span class="n">alpha_tau</span> <span class="o">=</span> <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="mf">1.777</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">alpha_tau</span><span class="o">/</span><span class="mf">133.465</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">places</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="c1"># check at thresholds</span>
+        <span class="n">mc</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mc&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mc</span><span class="p">),</span>
+                         <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mc</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mc</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+                         <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mc</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+        <span class="n">mb</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mb</span><span class="p">),</span>
+                         <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+                         <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+        <span class="n">mt</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mt&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mt</span><span class="p">),</span>
+                         <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mt</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mt</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+                         <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mt</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+
+
+    <span class="k">def</span> <span class="nf">test_alphas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">alpha_b</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par_noqed</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">)</span>
         <span class="c1"># compare to 3-loop alpha_s at 4.2 GeV according to RunDec</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">alpha_b</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">0.225911</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">places</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-        <span class="c1"># compare to alpha_em at m_tau as given on p. 4 of</span>
-        <span class="c1"># http://pdg.lbl.gov/2015/reviews/rpp2014-rev-standard-model.pdf</span>
-        <span class="n">alpha_tau</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="mf">1.777</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">alpha_tau</span><span class="p">[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">133.465</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
 
     <span class="k">def</span> <span class="nf">test_runningmasses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># compare to RunDec</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="mf">120.</span><span class="p">)</span><span class="o">/</span><span class="mf">2.79211</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="mf">120.</span><span class="p">)</span><span class="o">/</span><span class="mf">167.225</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_polemasses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">4.78248</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mc_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">1.68375</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mf">4.92987</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_ksmass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># compare to 1107.3100</span>
         <span class="c1"># KS -&gt; MSbar conversion</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
@@ -1338,13 +1399,13 @@ in order to be run.</p>
             <span class="mf">1.329</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
         <span class="c1"># MSbar -&gt; KS conversion</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">get_mb_KS</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span> <span class="mf">4.553</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">get_mc_KS</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span> <span class="mf">1.091</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.07</span><span class="p">)</span> <span class="c1"># this is satisfied poorly!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">get_mc_KS</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span> <span class="mf">1.091</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.075</span><span class="p">)</span> <span class="c1"># this is satisfied poorly!</span>
 
     <span class="k">def</span> <span class="nf">test_mb1S</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">par</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
         <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
         <span class="n">mb1S</span> <span class="o">=</span> <span class="n">get_mb_1S</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">mb1S</span><span class="p">,</span> <span class="mf">4.67</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">mb1S</span><span class="p">,</span> <span class="mf">4.67</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3540,6 +3601,100 @@ block, allowing further test code to be executed.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="flavio.physics.running.test_running.TestRunning.test_alphae">
+    <p>def <span class="ident">test_alphae</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.test_running.TestRunning.test_alphae', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.running.test_running.TestRunning.test_alphae" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_alphae</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># compare to alpha_em at m_tau as given on p. 4 of</span>
+    <span class="c1"># http://pdg.lbl.gov/2015/reviews/rpp2014-rev-standard-model.pdf</span>
+    <span class="n">alpha_tau</span> <span class="o">=</span> <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="mf">1.777</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">alpha_tau</span><span class="o">/</span><span class="mf">133.465</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">places</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="c1"># check at thresholds</span>
+    <span class="n">mc</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mc&#39;</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mc</span><span class="p">),</span>
+                     <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mc</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mc</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+                     <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mc</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">mb</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mb</span><span class="p">),</span>
+                     <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+                     <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mb</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+    <span class="n">mt</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mt&#39;</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mt</span><span class="p">),</span>
+                     <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mt</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mt</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+                     <span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="n">mt</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.running.test_running.TestRunning.test_alphas">
+    <p>def <span class="ident">test_alphas</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.test_running.TestRunning.test_alphas', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.running.test_running.TestRunning.test_alphas" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_alphas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">alpha_b</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par_noqed</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">)</span>
+    <span class="c1"># compare to 3-loop alpha_s at 4.2 GeV according to RunDec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">alpha_b</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">0.225911</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">places</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.running.test_running.TestRunning.test_ksmass">
+    <p>def <span class="ident">test_ksmass</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.test_running.TestRunning.test_ksmass', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.running.test_running.TestRunning.test_ksmass" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_ksmass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># compare to 1107.3100</span>
+    <span class="c1"># KS -&gt; MSbar conversion</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">masses</span><span class="o">.</span><span class="n">mKS2mMS</span><span class="p">(</span><span class="mf">4.55</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">4.55</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">],</span> <span class="n">Mu</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="mf">4.20</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">masses</span><span class="o">.</span><span class="n">mKS2mMS</span><span class="p">(</span><span class="mf">1.15</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">1.15</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">],</span> <span class="n">Mu</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="mf">1.329</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+    <span class="c1"># MSbar -&gt; KS conversion</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">get_mb_KS</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span> <span class="mf">4.553</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">get_mc_KS</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span> <span class="mf">1.091</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.075</span><span class="p">)</span> <span class="c1"># this is satisfied poorly!</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.physics.running.test_running.TestRunning.test_mb1S">
     <p>def <span class="ident">test_mb1S</span>(</p><p>self)</p>
     </div>
@@ -3554,7 +3709,7 @@ block, allowing further test code to be executed.</p></div>
     <span class="n">par</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
     <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="n">mb1S</span> <span class="o">=</span> <span class="n">get_mb_1S</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">mb1S</span><span class="p">,</span> <span class="mf">4.67</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">mb1S</span><span class="p">,</span> <span class="mf">4.67</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3564,24 +3719,20 @@ block, allowing further test code to be executed.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="flavio.physics.running.test_running.TestRunning.test_runningcouplings">
-    <p>def <span class="ident">test_runningcouplings</span>(</p><p>self)</p>
+    <div class="name def" id="flavio.physics.running.test_running.TestRunning.test_polemasses">
+    <p>def <span class="ident">test_polemasses</span>(</p><p>self)</p>
     </div>
     
 
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.test_running.TestRunning.test_runningcouplings', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.running.test_running.TestRunning.test_runningcouplings" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_runningcouplings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">alpha_b</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par_noqed</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">)</span>
-    <span class="c1"># compare to 3-loop alpha_s at 4.2 GeV according to RunDec</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">alpha_b</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">0.225911</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">places</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-    <span class="c1"># compare to alpha_em at m_tau as given on p. 4 of</span>
-    <span class="c1"># http://pdg.lbl.gov/2015/reviews/rpp2014-rev-standard-model.pdf</span>
-    <span class="n">alpha_tau</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par_pdg</span><span class="p">,</span> <span class="mf">1.777</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">alpha_tau</span><span class="p">[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">133.465</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.test_running.TestRunning.test_polemasses', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.running.test_running.TestRunning.test_polemasses" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_polemasses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">4.78248</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mc_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">1.68375</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mf">4.92987</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3605,20 +3756,6 @@ block, allowing further test code to be executed.</p></div>
     <span class="c1"># compare to RunDec</span>
     <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mb</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="mf">120.</span><span class="p">)</span><span class="o">/</span><span class="mf">2.79211</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="mf">120.</span><span class="p">)</span><span class="o">/</span><span class="mf">167.225</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">4.78248</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mc_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">1.68375</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mf">4.92987</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    <span class="c1"># compare to 1107.3100</span>
-    <span class="c1"># KS -&gt; MSbar conversion</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
-        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">masses</span><span class="o">.</span><span class="n">mKS2mMS</span><span class="p">(</span><span class="mf">4.55</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">4.55</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">],</span> <span class="n">Mu</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
-        <span class="mf">4.20</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
-        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">masses</span><span class="o">.</span><span class="n">mKS2mMS</span><span class="p">(</span><span class="mf">1.15</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">1.15</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">],</span> <span class="n">Mu</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
-        <span class="mf">1.329</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-    <span class="c1"># MSbar -&gt; KS conversion</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">get_mb_KS</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span> <span class="mf">4.553</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">get_mc_KS</span><span class="p">(</span><span class="n">par_ks</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span> <span class="mf">1.091</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.07</span><span class="p">)</span> <span class="c1"># this is satisfied poorly!</span>
 </pre></div>
 
   </div>

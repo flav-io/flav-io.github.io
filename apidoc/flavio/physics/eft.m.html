@@ -1053,24 +1053,11 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
-    <li class="mono"><a href="#flavio.physics.eft.adm">adm</a></li>
-    <li class="mono"><a href="#flavio.physics.eft.coefficients">coefficients</a></li>
-    <li class="mono"><a href="#flavio.physics.eft.ll">ll</a></li>
-    <li class="mono"><a href="#flavio.physics.eft.qq">qq</a></li>
-    <li class="mono"><a href="#flavio.physics.eft.rge_derivative">rge_derivative</a></li>
+    <li class="mono"><a href="#flavio.physics.eft.sectors_flavio2wcxf">sectors_flavio2wcxf</a></li>
   </ul>
 
     </li>
 
-    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#flavio.physics.eft.adm_db1">adm_db1</a></li>
-    <li class="mono"><a href="#flavio.physics.eft.adm_ddlnu">adm_ddlnu</a></li>
-    <li class="mono"><a href="#flavio.physics.eft.adm_df2">adm_df2</a></li>
-  </ul>
-
-    </li>
 
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
@@ -1081,8 +1068,13 @@ table {
   <ul>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.__init__">__init__</a></li>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.get_wc">get_wc</a></li>
+    <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.match_run">match_run</a></li>
+    <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.run_wcxf">run_wcxf</a></li>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.set_initial">set_initial</a></li>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.set_initial_wcxf">set_initial_wcxf</a></li>
+    <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.from_wc">from_wc</a></li>
+    <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.from_wilson">from_wilson</a></li>
+    <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.load_wc">load_wc</a></li>
   </ul>
 
         </li>
@@ -1107,107 +1099,118 @@ table {
   <div id="source-flavio.physics.eft" class="source">
     <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Classes for effective field theory (EFT) Wilson coefficients&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">flavio.physics.running</span> <span class="kn">import</span> <span class="n">running</span>
-<span class="kn">from</span> <span class="nn">flavio.physics.bdecays</span> <span class="kn">import</span> <span class="n">rge</span> <span class="k">as</span> <span class="n">rge_db1</span>
-<span class="kn">from</span> <span class="nn">flavio.physics.mesonmixing</span> <span class="kn">import</span> <span class="n">rge</span> <span class="k">as</span> <span class="n">rge_df2</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">wcxf</span>
+<span class="kn">import</span> <span class="nn">wilson</span>
 
 
-<span class="c1"># Anomalous dimensions for DeltaF=2</span>
-<span class="k">def</span> <span class="nf">adm_df2</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">rge_df2</span><span class="o">.</span><span class="n">gamma_df2_array</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">)</span>
+<span class="c1"># sector names prior to v0.27 translated to WCxf sector names</span>
+<span class="n">sectors_flavio2wcxf</span> <span class="o">=</span> <span class="p">{</span>
+ <span class="s1">&#39;bcenue&#39;</span><span class="p">:</span> <span class="s1">&#39;cbenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bcenumu&#39;</span><span class="p">:</span> <span class="s1">&#39;cbenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bcenutau&#39;</span><span class="p">:</span> <span class="s1">&#39;cbenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bcmunue&#39;</span><span class="p">:</span> <span class="s1">&#39;cbmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bcmunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;cbmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bcmunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;cbmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bctaunue&#39;</span><span class="p">:</span> <span class="s1">&#39;cbtaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bctaunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;cbtaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bctaunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;cbtaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdbd&#39;</span><span class="p">:</span> <span class="s1">&#39;dbdb&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdee&#39;</span><span class="p">:</span> <span class="s1">&#39;db&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdemu&#39;</span><span class="p">:</span> <span class="s1">&#39;dbemu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdetau&#39;</span><span class="p">:</span> <span class="s1">&#39;dbetau&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdmue&#39;</span><span class="p">:</span> <span class="s1">&#39;dbmue&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdmumu&#39;</span><span class="p">:</span> <span class="s1">&#39;db&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdmutau&#39;</span><span class="p">:</span> <span class="s1">&#39;dbmutau&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdnuenue&#39;</span><span class="p">:</span> <span class="s1">&#39;dbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdnuenumu&#39;</span><span class="p">:</span> <span class="s1">&#39;dbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdnuenutau&#39;</span><span class="p">:</span> <span class="s1">&#39;dbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdnumunue&#39;</span><span class="p">:</span> <span class="s1">&#39;dbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdnumunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;dbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdnumunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;dbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdnutaunue&#39;</span><span class="p">:</span> <span class="s1">&#39;dbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdnutaunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;dbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdnutaunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;dbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdtaue&#39;</span><span class="p">:</span> <span class="s1">&#39;dbtaue&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdtaumu&#39;</span><span class="p">:</span> <span class="s1">&#39;dbtaumu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bdtautau&#39;</span><span class="p">:</span> <span class="s1">&#39;db&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsbs&#39;</span><span class="p">:</span> <span class="s1">&#39;sbsb&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsee&#39;</span><span class="p">:</span> <span class="s1">&#39;sb&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsemu&#39;</span><span class="p">:</span> <span class="s1">&#39;sbemu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsetau&#39;</span><span class="p">:</span> <span class="s1">&#39;sbetau&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsmue&#39;</span><span class="p">:</span> <span class="s1">&#39;sbmue&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsmumu&#39;</span><span class="p">:</span> <span class="s1">&#39;sb&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsmutau&#39;</span><span class="p">:</span> <span class="s1">&#39;sbmutau&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsnuenue&#39;</span><span class="p">:</span> <span class="s1">&#39;sbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsnuenumu&#39;</span><span class="p">:</span> <span class="s1">&#39;sbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsnuenutau&#39;</span><span class="p">:</span> <span class="s1">&#39;sbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsnumunue&#39;</span><span class="p">:</span> <span class="s1">&#39;sbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsnumunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;sbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsnumunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;sbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsnutaunue&#39;</span><span class="p">:</span> <span class="s1">&#39;sbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsnutaunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;sbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bsnutaunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;sbnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bstaue&#39;</span><span class="p">:</span> <span class="s1">&#39;sbtaue&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bstaumu&#39;</span><span class="p">:</span> <span class="s1">&#39;sbtaumu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bstautau&#39;</span><span class="p">:</span> <span class="s1">&#39;sb&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;buenue&#39;</span><span class="p">:</span> <span class="s1">&#39;ubenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;buenumu&#39;</span><span class="p">:</span> <span class="s1">&#39;ubenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;buenutau&#39;</span><span class="p">:</span> <span class="s1">&#39;ubenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bumunue&#39;</span><span class="p">:</span> <span class="s1">&#39;ubmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bumunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;ubmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;bumunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;ubmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;butaunue&#39;</span><span class="p">:</span> <span class="s1">&#39;ubtaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;butaunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;ubtaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;butaunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;ubtaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dcenue&#39;</span><span class="p">:</span> <span class="s1">&#39;cdenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dcenumu&#39;</span><span class="p">:</span> <span class="s1">&#39;cdenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dcenutau&#39;</span><span class="p">:</span> <span class="s1">&#39;cdenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dcmunue&#39;</span><span class="p">:</span> <span class="s1">&#39;cdmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dcmunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;cdmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dcmunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;cdmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dctaunue&#39;</span><span class="p">:</span> <span class="s1">&#39;cdtaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dctaunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;cdtaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dctaunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;cdtaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;duenue&#39;</span><span class="p">:</span> <span class="s1">&#39;udenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;duenumu&#39;</span><span class="p">:</span> <span class="s1">&#39;udenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;duenutau&#39;</span><span class="p">:</span> <span class="s1">&#39;udenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dumunue&#39;</span><span class="p">:</span> <span class="s1">&#39;udmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dumunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;udmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dumunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;udmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dutaunue&#39;</span><span class="p">:</span> <span class="s1">&#39;udtaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dutaunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;udtaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;dutaunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;udtaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;scenue&#39;</span><span class="p">:</span> <span class="s1">&#39;csenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;scenumu&#39;</span><span class="p">:</span> <span class="s1">&#39;csenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;scenutau&#39;</span><span class="p">:</span> <span class="s1">&#39;csenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;scmunue&#39;</span><span class="p">:</span> <span class="s1">&#39;csmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;scmunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;csmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;scmunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;csmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sctaunue&#39;</span><span class="p">:</span> <span class="s1">&#39;cstaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sctaunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;cstaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sctaunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;cstaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sdnuenue&#39;</span><span class="p">:</span> <span class="s1">&#39;sdnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sdnuenumu&#39;</span><span class="p">:</span> <span class="s1">&#39;sdnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sdnuenutau&#39;</span><span class="p">:</span> <span class="s1">&#39;sdnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sdnumunue&#39;</span><span class="p">:</span> <span class="s1">&#39;sdnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sdnumunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;sdnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sdnumunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;sdnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sdnutaunue&#39;</span><span class="p">:</span> <span class="s1">&#39;sdnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sdnutaunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;sdnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sdnutaunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;sdnunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sdsd&#39;</span><span class="p">:</span> <span class="s1">&#39;sdsd&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;ucuc&#39;</span><span class="p">:</span> <span class="s1">&#39;cucu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;suenue&#39;</span><span class="p">:</span> <span class="s1">&#39;usenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;suenumu&#39;</span><span class="p">:</span> <span class="s1">&#39;usenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;suenutau&#39;</span><span class="p">:</span> <span class="s1">&#39;usenu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sumunue&#39;</span><span class="p">:</span> <span class="s1">&#39;usmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sumunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;usmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sumunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;usmunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sutaunue&#39;</span><span class="p">:</span> <span class="s1">&#39;ustaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sutaunumu&#39;</span><span class="p">:</span> <span class="s1">&#39;ustaunu&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;sutaunutau&#39;</span><span class="p">:</span> <span class="s1">&#39;ustaunu&#39;</span><span class="p">}</span>
 
-<span class="c1"># Anomalous dimensions for DeltaB=1</span>
-<span class="k">def</span> <span class="nf">adm_db1</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">):</span>
-    <span class="c1"># this is the ADM for the SM basis</span>
-    <span class="n">A_L</span> <span class="o">=</span> <span class="n">rge_db1</span><span class="o">.</span><span class="n">gamma_all</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">)</span>
-    <span class="c1"># initialize with zeros</span>
-    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">34</span><span class="p">,</span><span class="mi">34</span><span class="p">))</span>
-    <span class="c1"># fill in the SM ADM</span>
-    <span class="n">A</span><span class="p">[:</span><span class="mi">15</span><span class="p">,:</span><span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_L</span>
-    <span class="c1"># the ADM for the primed SM basis is the same as for the SM</span>
-    <span class="n">A</span><span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">30</span><span class="p">,</span><span class="mi">15</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_L</span>
-    <span class="c1"># note that the enties 30-33 remain zero: these are the scalar and</span>
-    <span class="c1"># pseudoscalar operators</span>
-    <span class="k">return</span> <span class="n">A</span>
 
-<span class="c1"># Anomalous dimensions for d_i-&gt;d_jlnu processes</span>
-<span class="k">def</span> <span class="nf">adm_ddlnu</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">rge_db1</span><span class="o">.</span><span class="n">gamma_fccc</span><span class="p">(</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">)</span>
-
-<span class="c1"># List of all Wilson coefficients in the Standard basis</span>
-
-<span class="c1"># A &quot;sector&quot; is a set of WCs relevant for a particular class of processes</span>
-<span class="c1"># (e.g. b-&gt;sll) that closes under renormalization.</span>
-<span class="c1"># Individual WCs can appear in more than one set.</span>
-
-<span class="n">coefficients</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">adm</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">rge_derivative</span> <span class="o">=</span> <span class="p">{}</span>
-
-<span class="n">_fcnc</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bs&#39;</span><span class="p">,</span> <span class="s1">&#39;bd&#39;</span><span class="p">,</span> <span class="s1">&#39;sd&#39;</span><span class="p">,</span> <span class="p">]</span>
-<span class="n">_ll</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ee&#39;</span><span class="p">,</span> <span class="s1">&#39;mumu&#39;</span><span class="p">,</span> <span class="s1">&#39;tautau&#39;</span><span class="p">]</span>
-<span class="n">_lilj</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;emu&#39;</span><span class="p">,</span> <span class="s1">&#39;mue&#39;</span><span class="p">,</span> <span class="s1">&#39;etau&#39;</span><span class="p">,</span> <span class="s1">&#39;taue&#39;</span><span class="p">,</span> <span class="s1">&#39;mutau&#39;</span><span class="p">,</span> <span class="s1">&#39;taumu&#39;</span><span class="p">]</span>
-<span class="n">_lnu</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;enue&#39;</span><span class="p">,</span> <span class="s1">&#39;munumu&#39;</span><span class="p">,</span> <span class="s1">&#39;taunutau&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;enumu&#39;</span><span class="p">,</span> <span class="s1">&#39;enutau&#39;</span><span class="p">,</span> <span class="s1">&#39;munue&#39;</span><span class="p">,</span> <span class="s1">&#39;munutau&#39;</span><span class="p">,</span> <span class="s1">&#39;taunue&#39;</span><span class="p">,</span> <span class="s1">&#39;taunumu&#39;</span><span class="p">]</span>
-<span class="n">_fccc</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bc&#39;</span><span class="p">,</span> <span class="s1">&#39;bu&#39;</span><span class="p">,</span> <span class="s1">&#39;su&#39;</span><span class="p">,</span> <span class="s1">&#39;du&#39;</span><span class="p">,</span> <span class="s1">&#39;dc&#39;</span><span class="p">,</span> <span class="s1">&#39;sc&#39;</span><span class="p">,</span> <span class="p">]</span>
-<span class="n">_nunu</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;nuenue&#39;</span><span class="p">,</span> <span class="s1">&#39;numunumu&#39;</span><span class="p">,</span> <span class="s1">&#39;nutaunutau&#39;</span><span class="p">]</span>
-<span class="n">_nuinuj</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;nuenumu&#39;</span><span class="p">,</span> <span class="s1">&#39;numunue&#39;</span><span class="p">,</span> <span class="s1">&#39;nuenutau&#39;</span><span class="p">,</span> <span class="s1">&#39;nutaunue&#39;</span><span class="p">,</span> <span class="s1">&#39;numunutau&#39;</span><span class="p">,</span> <span class="s1">&#39;nutaunumu&#39;</span><span class="p">]</span>
-
-<span class="c1"># DeltaF=2 operators</span>
-<span class="k">for</span> <span class="n">qq</span> <span class="ow">in</span> <span class="n">_fcnc</span><span class="p">:</span>
-    <span class="c1"># DeltaF=2 operators</span>
-    <span class="n">coefficients</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">qq</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;CVLL_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;CSLL_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;CTLL_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span>
-                        <span class="s1">&#39;CVRR_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;CSRR_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;CTRR_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span>
-                        <span class="s1">&#39;CVLR_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;CSLR_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="p">]</span>
-    <span class="n">adm</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">qq</span><span class="p">]</span> <span class="o">=</span> <span class="n">adm_df2</span>
-
-    <span class="c1"># DeltaF=1 operators</span>
-    <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">_ll</span><span class="p">:</span>
-        <span class="n">coefficients</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;C1_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C2_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="c1"># current-current</span>
-                            <span class="s1">&#39;C3_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C4_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C5_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C6_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="c1"># QCD penguins</span>
-                            <span class="s1">&#39;C7_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C8_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="c1"># dipoles</span>
-                            <span class="s1">&#39;C9_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;C10_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="c1"># semi-leptonic</span>
-                            <span class="s1">&#39;C3Q_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C4Q_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C5Q_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C6Q_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;Cb_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="c1"># EW penguins</span>
-                            <span class="c1"># and everything with flipped chirality ...</span>
-                            <span class="s1">&#39;C1p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C2p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span>
-                            <span class="s1">&#39;C3p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C4p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C5p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C6p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span>
-                            <span class="s1">&#39;C7p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C8p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span>
-                            <span class="s1">&#39;C9p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;C10p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span>
-                            <span class="s1">&#39;C3Qp_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C4Qp_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C5Qp_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;C6Qp_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span> <span class="s1">&#39;Cbp_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="p">,</span>
-                            <span class="c1"># scalar and pseudoscalar</span>
-                            <span class="s1">&#39;CS_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;CP_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span>
-                            <span class="s1">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;CPp_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="p">]</span>
-        <span class="n">adm</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">adm_db1</span> <span class="c1"># FIXME this is not correct yetfor s-&gt;dll</span>
-
-    <span class="c1"># DeltaF=1 decays with same-flavour neutrinos in the final state</span>
-    <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">_nunu</span><span class="p">:</span>
-        <span class="n">coefficients</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;CL_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;CR_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="p">]</span>
-        <span class="n">adm</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span> <span class="c1"># they don&#39;t run</span>
-
-    <span class="c1"># DeltaF=1 decays with differently flavoured neutrinos in the final state</span>
-    <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">_nuinuj</span><span class="p">:</span>
-        <span class="n">coefficients</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;CL_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;CR_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="p">]</span>
-        <span class="n">adm</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span> <span class="c1"># they don&#39;t run</span>
-
-    <span class="c1"># DeltaF=1 LFV decays</span>
-    <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">_lilj</span><span class="p">:</span>
-        <span class="n">coefficients</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;C9_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;C10_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="c1"># semi-leptonic</span>
-                            <span class="s1">&#39;C9p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;C10p_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span>
-                            <span class="s1">&#39;CS_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;CP_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="c1"># scalar and pseudoscalar</span>
-                            <span class="s1">&#39;CSp_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;CPp_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="p">]</span>
-        <span class="n">adm</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
-
-    <span class="c1"># tree-level weak decays</span>
-    <span class="k">for</span> <span class="n">qq</span> <span class="ow">in</span> <span class="n">_fccc</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">_lnu</span><span class="p">:</span>
-            <span class="n">coefficients</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;CVL_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;CSR_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;CT_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span>
-                                <span class="s1">&#39;CVR_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="s1">&#39;CSL_&#39;</span><span class="o">+</span><span class="n">qq</span><span class="o">+</span><span class="n">ll</span><span class="p">,</span> <span class="p">]</span>
-            <span class="n">adm</span><span class="p">[</span><span class="n">qq</span> <span class="o">+</span> <span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">adm_ddlnu</span>
-
-
-<span class="k">class</span> <span class="nc">WilsonCoefficients</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">WilsonCoefficients</span><span class="p">(</span><span class="n">wilson</span><span class="o">.</span><span class="n">Wilson</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class representing a point in the EFT parameter space and giving</span>
 <span class="sd">    access to RG evolution.</span>
 
@@ -1217,47 +1220,24 @@ table {
 <span class="sd">    Methods:</span>
 
 <span class="sd">    - set_initial: set the initial values of Wilson coefficients at some scale</span>
-<span class="sd">    - set_initial_wcxf: set the initial values from a wcxf.WC instance</span>
 <span class="sd">    - get_wc: get the values of the Wilson coefficients at some scale</span>
+<span class="sd">    - set_initial_wcxf: set the initial values from a wcxf.WC instance</span>
+<span class="sd">    - get_wc_wcxf: get the values of the Wilson coefficients at some scale</span>
+<span class="sd">      as a wcxf.WC instance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">coefficients</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">all_wc</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span> <span class="c1"># list of all coeffs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wc</span> <span class="o">=</span> <span class="bp">None</span>
 
-    <span class="n">rge_derivative</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">sector</span> <span class="ow">in</span> <span class="n">coefficients</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">rge_derivative</span><span class="p">[</span><span class="n">sector</span><span class="p">]</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">make_wilson_rge_derivative</span><span class="p">(</span><span class="n">adm</span><span class="p">[</span><span class="n">sector</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wc_dict</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set initial values of Wilson coefficients.</span>
 
 <span class="sd">        Parameters:</span>
 
-<span class="sd">        - dict: dictionary where keys are Wilson coefficient name strings and</span>
+<span class="sd">        - wc_dict: dictionary where keys are Wilson coefficient name strings and</span>
 <span class="sd">          values are Wilson coefficient NP contribution values</span>
 <span class="sd">        - scale: $\overline{\text{MS}}$ renormalization scale</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;C7eff&#39;</span><span class="p">,</span> <span class="s1">&#39;C7effp&#39;</span><span class="p">,</span> <span class="s1">&#39;C8eff&#39;</span><span class="p">,</span> <span class="s1">&#39;C8effp&#39;</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;The dipole Wilson coefficients like &quot;</span> <span class="o">+</span> <span class="n">name</span>
-                               <span class="o">+</span> <span class="s2">&quot;have been renamed in v0.25.&quot;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;CV&#39;</span><span class="p">,</span> <span class="s1">&#39;CVp&#39;</span><span class="p">,</span> <span class="s1">&#39;CS&#39;</span><span class="p">,</span> <span class="s1">&#39;CSp&#39;</span><span class="p">,</span> <span class="s1">&#39;CT&#39;</span><span class="p">]</span>
-                  <span class="ow">and</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;nu&#39;</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;The semileptonic Wilson coefficients &quot;</span> <span class="o">+</span> <span class="n">name</span>
-                               <span class="o">+</span> <span class="s2">&quot; have been redefined in v0.25.&quot;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_wc</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Wilson coefficient &quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; not known&quot;</span><span class="p">)</span>
-            <span class="c1"># warn for four-quark operators that will be changed soon</span>
-            <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="s1">&#39;C2&#39;</span><span class="p">,</span> <span class="s1">&#39;C3&#39;</span><span class="p">,</span> <span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="s1">&#39;C5&#39;</span><span class="p">,</span> <span class="s1">&#39;C6&#39;</span><span class="p">,</span>
-                                        <span class="s1">&#39;C1p&#39;</span><span class="p">,</span> <span class="s1">&#39;C2p&#39;</span><span class="p">,</span> <span class="s1">&#39;C3p&#39;</span><span class="p">,</span> <span class="s1">&#39;C4p&#39;</span><span class="p">,</span> <span class="s1">&#39;C5p&#39;</span><span class="p">,</span> <span class="s1">&#39;C6p&#39;</span><span class="p">,</span>
-                                        <span class="s1">&#39;C3Q&#39;</span><span class="p">,</span> <span class="s1">&#39;C4Q&#39;</span><span class="p">,</span> <span class="s1">&#39;C5Q&#39;</span><span class="p">,</span> <span class="s1">&#39;C6Q&#39;</span><span class="p">,</span>
-                                        <span class="s1">&#39;C3Qp&#39;</span><span class="p">,</span> <span class="s1">&#39;C4Qp&#39;</span><span class="p">,</span> <span class="s1">&#39;C5Qp&#39;</span><span class="p">,</span> <span class="s1">&#39;C6Qp&#39;</span><span class="p">,</span>
-                                        <span class="p">]:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;New physics in four-quark operators &quot;</span>
-                              <span class="s2">&quot;has been deprecated in v0.25. It will be &quot;</span>
-                              <span class="s2">&quot;reimplemented at a later stage&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wcdict</span><span class="o">=</span><span class="n">wc_dict</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_initial_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wc</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set initial values of Wilson coefficients from a WCxf WC instance.</span>
@@ -1265,19 +1245,31 @@ table {
 <span class="sd">        If the instance is given in a basis other than the flavio basis,</span>
 <span class="sd">        the translation is performed automatically, if implemented in the</span>
 <span class="sd">        `wcxf` package.&quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">wcxf</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`wc` should be an instance of `wcxf.WC`&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">wc</span><span class="o">.</span><span class="n">eft</span> <span class="o">!=</span> <span class="s1">&#39;WET&#39;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Matching from a different EFT is currently not implemented.&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">wc</span><span class="o">.</span><span class="n">basis</span> <span class="o">==</span> <span class="s1">&#39;flavio&#39;</span><span class="p">:</span>
-            <span class="n">wc_dict</span> <span class="o">=</span> <span class="n">wc</span><span class="o">.</span><span class="n">dict</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">wc_trans</span> <span class="o">=</span> <span class="n">wc</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
-            <span class="n">wc_dict</span> <span class="o">=</span> <span class="n">wc_trans</span><span class="o">.</span><span class="n">dict</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="n">wc_dict</span><span class="p">,</span> <span class="n">wc</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wcdict</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_wc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_initial_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a wcxf.WC instance in the flavio basis containing the initial</span>
+<span class="sd">        values of the Wilson coefficients.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Need to set initial values first.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_wilson</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">w</span>
+        <span class="n">fwc</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">wc</span><span class="p">)</span>
+        <span class="n">fwc</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">_cache</span>
+        <span class="k">return</span> <span class="n">fwc</span>
+
+    <span class="k">def</span> <span class="nf">run_wcxf</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The method run_wcxf has been removed. Please use the match_run method of wilson.Wilson instead.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_wc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the values of the Wilson coefficients belonging to a specific</span>
 <span class="sd">        sector (e.g. `bsmumu`) at a given scale.</span>
 
@@ -1285,37 +1277,35 @@ table {
 
 <span class="sd">        Parameters:</span>
 
-<span class="sd">        - sector: string name of the sector</span>
+<span class="sd">        - sector: string name of the sector as defined in the WCxf EFT instance</span>
 <span class="sd">        - scale: $\overline{\text{MS}}$ renormalization scale</span>
 <span class="sd">        - par: dictionary of parameters</span>
-<span class="sd">        - nf_out: number of quark flavours at the output scale</span>
+<span class="sd">        - eft: name of the EFT at the output scale</span>
+<span class="sd">        - basis: name of the output basis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># intialize with complex zeros</span>
-        <span class="n">values_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
-        <span class="c1"># see if an initial value exists</span>
-        <span class="n">scale_in</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">]):</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">scale_in_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="c1"># make sure that if there are several initial values, they are at the same scale</span>
-                <span class="k">if</span> <span class="n">scale_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">scale_in_new</span> <span class="o">!=</span> <span class="n">scale_in</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You cannot define initial values at different scales for Wilson coefficients that mix under renormalization&quot;</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">scale_in</span> <span class="o">=</span> <span class="n">scale_in_new</span>
-                <span class="n">values_in</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">scale_in</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="c1"># if no initial values have been given, no need to run anyway!</span>
-            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span><span class="n">values_in</span><span class="p">))</span> <span class="c1"># these are all zero</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rge_derivative</span><span class="p">[</span><span class="n">sector</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="c1"># if the sector has vanishing anomalous dimensions, nno need to run!</span>
-            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span><span class="n">values_in</span><span class="p">))</span> <span class="c1"># these are just the initial values</span>
-        <span class="c1"># otherwise, run</span>
-        <span class="n">values_out</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">values_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rge_derivative</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="n">nf_out</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span><span class="n">values_out</span><span class="p">))</span>
+        <span class="c1"># nf_out is only present to preserve backwards compatibility</span>
+        <span class="k">if</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET&#39;</span>
+        <span class="k">elif</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET-4&#39;</span>
+        <span class="k">elif</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET-3&#39;</span>
+        <span class="k">elif</span> <span class="n">nf_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid value: nf_out=&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nf_out</span><span class="p">))</span>
+        <span class="c1"># translate from legacy flavio to wcxf sector if necessary</span>
+        <span class="n">wcxf_sector</span> <span class="o">=</span> <span class="n">sectors_flavio2wcxf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">sector</span><span class="p">)</span>
+        <span class="n">wcxf_basis</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">Basis</span><span class="p">[</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">]</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">sectors</span><span class="p">[</span><span class="n">wcxf_sector</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">wc_sm</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">coeffs</span><span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">wc_sm</span>
+        <span class="n">wc_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="p">(</span><span class="n">wcxf_sector</span><span class="p">,))</span>
+        <span class="n">wc_out_dict</span> <span class="o">=</span> <span class="n">wc_sm</span>  <span class="c1"># initialize with zeros</span>
+        <span class="n">wc_out_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">wc_out</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>  <span class="c1"># overwrite non-zero entries</span>
+        <span class="k">return</span> <span class="n">wc_out_dict</span>
 
 <span class="c1"># this global variable is simply an instance that is not meant to be modifed -</span>
-<span class="c1"># i.e., a Standard Model Wilson coefficient instance. This is useful since it</span>
-<span class="c1"># allows caching SM intermediate results where needed.</span>
+<span class="c1"># i.e., a Standard Model Wilson coefficient instance.</span>
 <span class="n">_wc_sm</span> <span class="o">=</span> <span class="n">WilsonCoefficients</span><span class="p">()</span>
 </pre></div>
 
@@ -1326,39 +1316,7 @@ table {
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p id="flavio.physics.eft.adm" class="name">var <span class="ident">adm</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.physics.eft.coefficients" class="name">var <span class="ident">coefficients</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.physics.eft.ll" class="name">var <span class="ident">ll</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.physics.eft.qq" class="name">var <span class="ident">qq</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.physics.eft.rge_derivative" class="name">var <span class="ident">rge_derivative</span></p>
+      <p id="flavio.physics.eft.sectors_flavio2wcxf" class="name">var <span class="ident">sectors_flavio2wcxf</span></p>
       
   
   <div class="source_cont">
@@ -1366,80 +1324,6 @@ table {
 
       </div>
 
-    <h2 class="section-title" id="header-functions">Functions</h2>
-      
-  <div class="item">
-    <div class="name def" id="flavio.physics.eft.adm_db1">
-    <p>def <span class="ident">adm_db1</span>(</p><p>nf, alpha_s, alpha_e)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.adm_db1', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.eft.adm_db1" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">adm_db1</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">):</span>
-    <span class="c1"># this is the ADM for the SM basis</span>
-    <span class="n">A_L</span> <span class="o">=</span> <span class="n">rge_db1</span><span class="o">.</span><span class="n">gamma_all</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">)</span>
-    <span class="c1"># initialize with zeros</span>
-    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">34</span><span class="p">,</span><span class="mi">34</span><span class="p">))</span>
-    <span class="c1"># fill in the SM ADM</span>
-    <span class="n">A</span><span class="p">[:</span><span class="mi">15</span><span class="p">,:</span><span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_L</span>
-    <span class="c1"># the ADM for the primed SM basis is the same as for the SM</span>
-    <span class="n">A</span><span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">30</span><span class="p">,</span><span class="mi">15</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_L</span>
-    <span class="c1"># note that the enties 30-33 remain zero: these are the scalar and</span>
-    <span class="c1"># pseudoscalar operators</span>
-    <span class="k">return</span> <span class="n">A</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="flavio.physics.eft.adm_ddlnu">
-    <p>def <span class="ident">adm_ddlnu</span>(</p><p>nf, alpha_s, alpha_e)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.adm_ddlnu', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.eft.adm_ddlnu" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">adm_ddlnu</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">rge_db1</span><span class="o">.</span><span class="n">gamma_fccc</span><span class="p">(</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="flavio.physics.eft.adm_df2">
-    <p>def <span class="ident">adm_df2</span>(</p><p>nf, alpha_s, alpha_e)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.adm_df2', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.eft.adm_df2" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">adm_df2</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">rge_df2</span><span class="o">.</span><span class="n">gamma_df2_array</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
 
     <h2 class="section-title" id="header-classes">Classes</h2>
       
@@ -1454,13 +1338,15 @@ only, i.e. they vanish in the SM.</p>
 <p>Methods:</p>
 <ul>
 <li>set_initial: set the initial values of Wilson coefficients at some scale</li>
-<li>set_initial_wcxf: set the initial values from a wcxf.WC instance</li>
 <li>get_wc: get the values of the Wilson coefficients at some scale</li>
+<li>set_initial_wcxf: set the initial values from a wcxf.WC instance</li>
+<li>get_wc_wcxf: get the values of the Wilson coefficients at some scale
+  as a wcxf.WC instance</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.eft.WilsonCoefficients" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">WilsonCoefficients</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">WilsonCoefficients</span><span class="p">(</span><span class="n">wilson</span><span class="o">.</span><span class="n">Wilson</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class representing a point in the EFT parameter space and giving</span>
 <span class="sd">    access to RG evolution.</span>
 
@@ -1470,47 +1356,24 @@ only, i.e. they vanish in the SM.</p>
 <span class="sd">    Methods:</span>
 
 <span class="sd">    - set_initial: set the initial values of Wilson coefficients at some scale</span>
-<span class="sd">    - set_initial_wcxf: set the initial values from a wcxf.WC instance</span>
 <span class="sd">    - get_wc: get the values of the Wilson coefficients at some scale</span>
+<span class="sd">    - set_initial_wcxf: set the initial values from a wcxf.WC instance</span>
+<span class="sd">    - get_wc_wcxf: get the values of the Wilson coefficients at some scale</span>
+<span class="sd">      as a wcxf.WC instance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">coefficients</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">all_wc</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span> <span class="c1"># list of all coeffs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wc</span> <span class="o">=</span> <span class="bp">None</span>
 
-    <span class="n">rge_derivative</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">sector</span> <span class="ow">in</span> <span class="n">coefficients</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">rge_derivative</span><span class="p">[</span><span class="n">sector</span><span class="p">]</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">make_wilson_rge_derivative</span><span class="p">(</span><span class="n">adm</span><span class="p">[</span><span class="n">sector</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wc_dict</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set initial values of Wilson coefficients.</span>
 
 <span class="sd">        Parameters:</span>
 
-<span class="sd">        - dict: dictionary where keys are Wilson coefficient name strings and</span>
+<span class="sd">        - wc_dict: dictionary where keys are Wilson coefficient name strings and</span>
 <span class="sd">          values are Wilson coefficient NP contribution values</span>
 <span class="sd">        - scale: $\overline{\text{MS}}$ renormalization scale</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;C7eff&#39;</span><span class="p">,</span> <span class="s1">&#39;C7effp&#39;</span><span class="p">,</span> <span class="s1">&#39;C8eff&#39;</span><span class="p">,</span> <span class="s1">&#39;C8effp&#39;</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;The dipole Wilson coefficients like &quot;</span> <span class="o">+</span> <span class="n">name</span>
-                               <span class="o">+</span> <span class="s2">&quot;have been renamed in v0.25.&quot;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;CV&#39;</span><span class="p">,</span> <span class="s1">&#39;CVp&#39;</span><span class="p">,</span> <span class="s1">&#39;CS&#39;</span><span class="p">,</span> <span class="s1">&#39;CSp&#39;</span><span class="p">,</span> <span class="s1">&#39;CT&#39;</span><span class="p">]</span>
-                  <span class="ow">and</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;nu&#39;</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;The semileptonic Wilson coefficients &quot;</span> <span class="o">+</span> <span class="n">name</span>
-                               <span class="o">+</span> <span class="s2">&quot; have been redefined in v0.25.&quot;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_wc</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Wilson coefficient &quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; not known&quot;</span><span class="p">)</span>
-            <span class="c1"># warn for four-quark operators that will be changed soon</span>
-            <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="s1">&#39;C2&#39;</span><span class="p">,</span> <span class="s1">&#39;C3&#39;</span><span class="p">,</span> <span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="s1">&#39;C5&#39;</span><span class="p">,</span> <span class="s1">&#39;C6&#39;</span><span class="p">,</span>
-                                        <span class="s1">&#39;C1p&#39;</span><span class="p">,</span> <span class="s1">&#39;C2p&#39;</span><span class="p">,</span> <span class="s1">&#39;C3p&#39;</span><span class="p">,</span> <span class="s1">&#39;C4p&#39;</span><span class="p">,</span> <span class="s1">&#39;C5p&#39;</span><span class="p">,</span> <span class="s1">&#39;C6p&#39;</span><span class="p">,</span>
-                                        <span class="s1">&#39;C3Q&#39;</span><span class="p">,</span> <span class="s1">&#39;C4Q&#39;</span><span class="p">,</span> <span class="s1">&#39;C5Q&#39;</span><span class="p">,</span> <span class="s1">&#39;C6Q&#39;</span><span class="p">,</span>
-                                        <span class="s1">&#39;C3Qp&#39;</span><span class="p">,</span> <span class="s1">&#39;C4Qp&#39;</span><span class="p">,</span> <span class="s1">&#39;C5Qp&#39;</span><span class="p">,</span> <span class="s1">&#39;C6Qp&#39;</span><span class="p">,</span>
-                                        <span class="p">]:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;New physics in four-quark operators &quot;</span>
-                              <span class="s2">&quot;has been deprecated in v0.25. It will be &quot;</span>
-                              <span class="s2">&quot;reimplemented at a later stage&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wcdict</span><span class="o">=</span><span class="n">wc_dict</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_initial_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wc</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set initial values of Wilson coefficients from a WCxf WC instance.</span>
@@ -1518,19 +1381,31 @@ only, i.e. they vanish in the SM.</p>
 <span class="sd">        If the instance is given in a basis other than the flavio basis,</span>
 <span class="sd">        the translation is performed automatically, if implemented in the</span>
 <span class="sd">        `wcxf` package.&quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">wcxf</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`wc` should be an instance of `wcxf.WC`&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">wc</span><span class="o">.</span><span class="n">eft</span> <span class="o">!=</span> <span class="s1">&#39;WET&#39;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Matching from a different EFT is currently not implemented.&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">wc</span><span class="o">.</span><span class="n">basis</span> <span class="o">==</span> <span class="s1">&#39;flavio&#39;</span><span class="p">:</span>
-            <span class="n">wc_dict</span> <span class="o">=</span> <span class="n">wc</span><span class="o">.</span><span class="n">dict</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">wc_trans</span> <span class="o">=</span> <span class="n">wc</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
-            <span class="n">wc_dict</span> <span class="o">=</span> <span class="n">wc_trans</span><span class="o">.</span><span class="n">dict</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="n">wc_dict</span><span class="p">,</span> <span class="n">wc</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wcdict</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_wc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_initial_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a wcxf.WC instance in the flavio basis containing the initial</span>
+<span class="sd">        values of the Wilson coefficients.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Need to set initial values first.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_wilson</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">w</span>
+        <span class="n">fwc</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">wc</span><span class="p">)</span>
+        <span class="n">fwc</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">_cache</span>
+        <span class="k">return</span> <span class="n">fwc</span>
+
+    <span class="k">def</span> <span class="nf">run_wcxf</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The method run_wcxf has been removed. Please use the match_run method of wilson.Wilson instead.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_wc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the values of the Wilson coefficients belonging to a specific</span>
 <span class="sd">        sector (e.g. `bsmumu`) at a given scale.</span>
 
@@ -1538,33 +1413,32 @@ only, i.e. they vanish in the SM.</p>
 
 <span class="sd">        Parameters:</span>
 
-<span class="sd">        - sector: string name of the sector</span>
+<span class="sd">        - sector: string name of the sector as defined in the WCxf EFT instance</span>
 <span class="sd">        - scale: $\overline{\text{MS}}$ renormalization scale</span>
 <span class="sd">        - par: dictionary of parameters</span>
-<span class="sd">        - nf_out: number of quark flavours at the output scale</span>
+<span class="sd">        - eft: name of the EFT at the output scale</span>
+<span class="sd">        - basis: name of the output basis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># intialize with complex zeros</span>
-        <span class="n">values_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
-        <span class="c1"># see if an initial value exists</span>
-        <span class="n">scale_in</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">]):</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">scale_in_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="c1"># make sure that if there are several initial values, they are at the same scale</span>
-                <span class="k">if</span> <span class="n">scale_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">scale_in_new</span> <span class="o">!=</span> <span class="n">scale_in</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You cannot define initial values at different scales for Wilson coefficients that mix under renormalization&quot;</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">scale_in</span> <span class="o">=</span> <span class="n">scale_in_new</span>
-                <span class="n">values_in</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">scale_in</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="c1"># if no initial values have been given, no need to run anyway!</span>
-            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span><span class="n">values_in</span><span class="p">))</span> <span class="c1"># these are all zero</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rge_derivative</span><span class="p">[</span><span class="n">sector</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="c1"># if the sector has vanishing anomalous dimensions, nno need to run!</span>
-            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span><span class="n">values_in</span><span class="p">))</span> <span class="c1"># these are just the initial values</span>
-        <span class="c1"># otherwise, run</span>
-        <span class="n">values_out</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">values_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rge_derivative</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="n">nf_out</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span><span class="n">values_out</span><span class="p">))</span>
+        <span class="c1"># nf_out is only present to preserve backwards compatibility</span>
+        <span class="k">if</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET&#39;</span>
+        <span class="k">elif</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET-4&#39;</span>
+        <span class="k">elif</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET-3&#39;</span>
+        <span class="k">elif</span> <span class="n">nf_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid value: nf_out=&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nf_out</span><span class="p">))</span>
+        <span class="c1"># translate from legacy flavio to wcxf sector if necessary</span>
+        <span class="n">wcxf_sector</span> <span class="o">=</span> <span class="n">sectors_flavio2wcxf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">sector</span><span class="p">)</span>
+        <span class="n">wcxf_basis</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">Basis</span><span class="p">[</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">]</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">sectors</span><span class="p">[</span><span class="n">wcxf_sector</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">wc_sm</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">coeffs</span><span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">wc_sm</span>
+        <span class="n">wc_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="p">(</span><span class="n">wcxf_sector</span><span class="p">,))</span>
+        <span class="n">wc_out_dict</span> <span class="o">=</span> <span class="n">wc_sm</span>  <span class="c1"># initialize with zeros</span>
+        <span class="n">wc_out_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">wc_out</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>  <span class="c1"># overwrite non-zero entries</span>
+        <span class="k">return</span> <span class="n">wc_out_dict</span>
 </pre></div>
 
   </div>
@@ -1575,29 +1449,9 @@ only, i.e. they vanish in the SM.</p>
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
           <li><a href="#flavio.physics.eft.WilsonCoefficients">WilsonCoefficients</a></li>
+          <li>wilson.classes.Wilson</li>
           <li>builtins.object</li>
           </ul>
-          <h3>Class variables</h3>
-            <div class="item">
-            <p id="flavio.physics.eft.WilsonCoefficients.rge_derivative" class="name">var <span class="ident">rge_derivative</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="flavio.physics.eft.WilsonCoefficients.sector" class="name">var <span class="ident">sector</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
           <h3>Static methods</h3>
             
   <div class="item">
@@ -1608,14 +1462,22 @@ only, i.e. they vanish in the SM.</p>
 
     
   
-    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+    <div class="desc"><p>Initialize the <code>Wilson</code> class.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>wcdict</code>: dictionary of Wilson coefficient values at the input scale.
+  The keys must exist as Wilson coefficients in the WCxf basis file.
+  The values must be real or complex numbers (not dictionaries with key
+  'Re'/'Im'!)</li>
+<li><code>scale</code>: input scale in GeV</li>
+<li><code>eft</code>: input EFT</li>
+<li><code>basis</code>: input basis</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.__init__', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.eft.WilsonCoefficients.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">coefficients</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">all_wc</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span> <span class="c1"># list of all coeffs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">wc</span> <span class="o">=</span> <span class="bp">None</span>
 </pre></div>
 
   </div>
@@ -1626,7 +1488,7 @@ only, i.e. they vanish in the SM.</p>
             
   <div class="item">
     <div class="name def" id="flavio.physics.eft.WilsonCoefficients.get_wc">
-    <p>def <span class="ident">get_wc</span>(</p><p>self, sector, scale, par, nf_out=None)</p>
+    <p>def <span class="ident">get_wc</span>(</p><p>self, sector, scale, par, eft=&#39;WET&#39;, basis=&#39;flavio&#39;, nf_out=None)</p>
     </div>
     
 
@@ -1637,46 +1499,167 @@ sector (e.g. <code>bsmumu</code>) at a given scale.</p>
 <p>Returns a dictionary of WC values.</p>
 <p>Parameters:</p>
 <ul>
-<li>sector: string name of the sector</li>
+<li>sector: string name of the sector as defined in the WCxf EFT instance</li>
 <li>scale: $\overline{    ext{MS}}$ renormalization scale</li>
 <li>par: dictionary of parameters</li>
-<li>nf_out: number of quark flavours at the output scale</li>
+<li>eft: name of the EFT at the output scale</li>
+<li>basis: name of the output basis</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.get_wc', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.eft.WilsonCoefficients.get_wc" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_wc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_wc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the values of the Wilson coefficients belonging to a specific</span>
 <span class="sd">    sector (e.g. `bsmumu`) at a given scale.</span>
 <span class="sd">    Returns a dictionary of WC values.</span>
 <span class="sd">    Parameters:</span>
-<span class="sd">    - sector: string name of the sector</span>
+<span class="sd">    - sector: string name of the sector as defined in the WCxf EFT instance</span>
 <span class="sd">    - scale: $\overline{\text{MS}}$ renormalization scale</span>
 <span class="sd">    - par: dictionary of parameters</span>
-<span class="sd">    - nf_out: number of quark flavours at the output scale</span>
+<span class="sd">    - eft: name of the EFT at the output scale</span>
+<span class="sd">    - basis: name of the output basis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># intialize with complex zeros</span>
-    <span class="n">values_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
-    <span class="c1"># see if an initial value exists</span>
-    <span class="n">scale_in</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">]):</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">scale_in_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="c1"># make sure that if there are several initial values, they are at the same scale</span>
-            <span class="k">if</span> <span class="n">scale_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">scale_in_new</span> <span class="o">!=</span> <span class="n">scale_in</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You cannot define initial values at different scales for Wilson coefficients that mix under renormalization&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">scale_in</span> <span class="o">=</span> <span class="n">scale_in_new</span>
-            <span class="n">values_in</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">scale_in</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="c1"># if no initial values have been given, no need to run anyway!</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span><span class="n">values_in</span><span class="p">))</span> <span class="c1"># these are all zero</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rge_derivative</span><span class="p">[</span><span class="n">sector</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="c1"># if the sector has vanishing anomalous dimensions, nno need to run!</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span><span class="n">values_in</span><span class="p">))</span> <span class="c1"># these are just the initial values</span>
-    <span class="c1"># otherwise, run</span>
-    <span class="n">values_out</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_wilson</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">values_in</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rge_derivative</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="n">nf_out</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span><span class="n">values_out</span><span class="p">))</span>
+    <span class="c1"># nf_out is only present to preserve backwards compatibility</span>
+    <span class="k">if</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET&#39;</span>
+    <span class="k">elif</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET-4&#39;</span>
+    <span class="k">elif</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET-3&#39;</span>
+    <span class="k">elif</span> <span class="n">nf_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid value: nf_out=&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nf_out</span><span class="p">))</span>
+    <span class="c1"># translate from legacy flavio to wcxf sector if necessary</span>
+    <span class="n">wcxf_sector</span> <span class="o">=</span> <span class="n">sectors_flavio2wcxf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">sector</span><span class="p">)</span>
+    <span class="n">wcxf_basis</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">Basis</span><span class="p">[</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">]</span>
+    <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">sectors</span><span class="p">[</span><span class="n">wcxf_sector</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">coeffs</span><span class="p">}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wc_sm</span>
+    <span class="n">wc_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="p">(</span><span class="n">wcxf_sector</span><span class="p">,))</span>
+    <span class="n">wc_out_dict</span> <span class="o">=</span> <span class="n">wc_sm</span>  <span class="c1"># initialize with zeros</span>
+    <span class="n">wc_out_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">wc_out</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>  <span class="c1"># overwrite non-zero entries</span>
+    <span class="k">return</span> <span class="n">wc_out_dict</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.eft.WilsonCoefficients.match_run">
+    <p>def <span class="ident">match_run</span>(</p><p>self, scale, eft, basis, sectors=&#39;all&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Run the Wilson coefficients to a different scale
+(and possibly different EFT)
+and return them as <code>wcxf.WC</code> instance.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>scale</code>: output scale in GeV</li>
+<li><code>eft</code>: output EFT</li>
+<li><code>basis</code>: output basis</li>
+<li><code>sectors</code>: in the case of WET (or WET-4 or WET-3), a tuple of sector
+  names can be optionally provided. In this case, only the Wilson coefficients
+  from this sector(s) will be returned and all others discareded. This
+  can speed up the computation significantly if only a small number of sectors
+  is of interest. The sector names are defined in the WCxf basis file.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.match_run', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.eft.WilsonCoefficients.match_run" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">match_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run the Wilson coefficients to a different scale</span>
+<span class="sd">    (and possibly different EFT)</span>
+<span class="sd">    and return them as `wcxf.WC` instance.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - `scale`: output scale in GeV</span>
+<span class="sd">    - `eft`: output EFT</span>
+<span class="sd">    - `basis`: output basis</span>
+<span class="sd">    - `sectors`: in the case of WET (or WET-4 or WET-3), a tuple of sector</span>
+<span class="sd">      names can be optionally provided. In this case, only the Wilson coefficients</span>
+<span class="sd">      from this sector(s) will be returned and all others discareded. This</span>
+<span class="sd">      can speed up the computation significantly if only a small number of sectors</span>
+<span class="sd">      is of interest. The sector names are defined in the WCxf basis file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cached</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_from_cache</span><span class="p">(</span><span class="n">sector</span><span class="o">=</span><span class="n">sectors</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cached</span>
+    <span class="n">scale_ew</span> <span class="o">=</span> <span class="mf">91.1876</span>
+    <span class="n">mb</span> <span class="o">=</span> <span class="mf">4.2</span>
+    <span class="n">mc</span> <span class="o">=</span> <span class="mf">1.3</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">basis</span> <span class="o">==</span> <span class="n">basis</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span> <span class="o">==</span> <span class="n">eft</span> <span class="ow">and</span> <span class="n">scale</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span>  <span class="c1"># nothing to do</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span> <span class="o">==</span> <span class="s1">&#39;SMEFT&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">eft</span> <span class="o">==</span> <span class="s1">&#39;SMEFT&#39;</span><span class="p">:</span>
+            <span class="n">smeft</span> <span class="o">=</span> <span class="n">SMEFT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="p">)</span>
+            <span class="c1"># if input and output EFT ist SMEFT, just run.</span>
+            <span class="n">wc_out</span> <span class="o">=</span> <span class="n">smeft</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_cache</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="s1">&#39;SMEFT&#39;</span><span class="p">,</span> <span class="n">wc_out</span><span class="o">.</span><span class="n">basis</span><span class="p">,</span> <span class="n">wc_out</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">wc_out</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># if SMEFT -&gt; WET-x: match to WET at the EW scale</span>
+            <span class="n">wc_ew</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_from_cache</span><span class="p">(</span><span class="n">sector</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale_ew</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;JMS&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">wc_ew</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">smeft</span> <span class="o">=</span> <span class="n">SMEFT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="p">)</span>
+                <span class="n">wc_ew</span> <span class="o">=</span> <span class="n">smeft</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scale_ew</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;JMS&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_cache</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">scale_ew</span><span class="p">,</span> <span class="n">wc_ew</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">wc_ew</span><span class="o">.</span><span class="n">basis</span><span class="p">,</span> <span class="n">wc_ew</span><span class="p">)</span>
+            <span class="n">wet</span> <span class="o">=</span> <span class="n">WETrunner</span><span class="p">(</span><span class="n">wc_ew</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-4&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-3&#39;</span><span class="p">]:</span>
+        <span class="n">wet</span> <span class="o">=</span> <span class="n">WETrunner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s1">&#39;JMS&#39;</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input EFT {} unknown or not supported&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">eft</span> <span class="o">==</span> <span class="n">wet</span><span class="o">.</span><span class="n">eft</span><span class="p">:</span>  <span class="c1"># just run</span>
+        <span class="n">wc_out</span> <span class="o">=</span> <span class="n">wet</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">sectors</span><span class="p">)</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_cache</span><span class="p">(</span><span class="n">sectors</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">wc_out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wc_out</span>
+    <span class="k">elif</span> <span class="n">eft</span> <span class="o">==</span> <span class="s1">&#39;WET-4&#39;</span> <span class="ow">and</span> <span class="n">wet</span><span class="o">.</span><span class="n">eft</span> <span class="o">==</span> <span class="s1">&#39;WET&#39;</span><span class="p">:</span>  <span class="c1"># match at mb</span>
+        <span class="n">wc_mb</span> <span class="o">=</span> <span class="n">wet</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mb</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">sectors</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;WET-4&#39;</span><span class="p">,</span> <span class="s1">&#39;JMS&#39;</span><span class="p">)</span>
+        <span class="n">wet4</span> <span class="o">=</span> <span class="n">WETrunner</span><span class="p">(</span><span class="n">wc_mb</span><span class="p">)</span>
+        <span class="n">wc_out</span> <span class="o">=</span> <span class="n">wet4</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">sectors</span><span class="p">)</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_cache</span><span class="p">(</span><span class="n">sectors</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="s1">&#39;WET-4&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">wc_out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wc_out</span>
+    <span class="k">elif</span> <span class="n">eft</span> <span class="o">==</span> <span class="s1">&#39;WET-3&#39;</span> <span class="ow">and</span> <span class="n">wet</span><span class="o">.</span><span class="n">eft</span> <span class="o">==</span> <span class="s1">&#39;WET-4&#39;</span><span class="p">:</span>  <span class="c1"># match at mc</span>
+        <span class="n">wc_mc</span> <span class="o">=</span> <span class="n">wet</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">sectors</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;WET-3&#39;</span><span class="p">,</span> <span class="s1">&#39;JMS&#39;</span><span class="p">)</span>
+        <span class="n">wet3</span> <span class="o">=</span> <span class="n">WETrunner</span><span class="p">(</span><span class="n">wc_mc</span><span class="p">)</span>
+        <span class="n">wc_out</span> <span class="o">=</span> <span class="n">wet3</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">sectors</span><span class="p">)</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wc_out</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_cache</span><span class="p">(</span><span class="n">sectors</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="s1">&#39;WET-3&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">wc_out</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">eft</span> <span class="o">==</span> <span class="s1">&#39;WET-3&#39;</span> <span class="ow">and</span> <span class="n">wet</span><span class="o">.</span><span class="n">eft</span> <span class="o">==</span> <span class="s1">&#39;WET&#39;</span><span class="p">:</span>  <span class="c1"># match at mb and mc</span>
+        <span class="n">wc_mb</span> <span class="o">=</span> <span class="n">wet</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mb</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">sectors</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;WET-4&#39;</span><span class="p">,</span> <span class="s1">&#39;JMS&#39;</span><span class="p">)</span>
+        <span class="n">wet4</span> <span class="o">=</span> <span class="n">WETrunner</span><span class="p">(</span><span class="n">wc_mb</span><span class="p">)</span>
+        <span class="n">wc_mc</span> <span class="o">=</span> <span class="n">wet4</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">sectors</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;WET-3&#39;</span><span class="p">,</span> <span class="s1">&#39;JMS&#39;</span><span class="p">)</span>
+        <span class="n">wet3</span> <span class="o">=</span> <span class="n">WETrunner</span><span class="p">(</span><span class="n">wc_mc</span><span class="p">)</span>
+        <span class="n">wc_out</span> <span class="o">=</span> <span class="n">wet3</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">sectors</span><span class="p">)</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_cache</span><span class="p">(</span><span class="n">sectors</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="s1">&#39;WET-3&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">wc_out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wc_out</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Running from {} to {} not implemented&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">wet</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">eft</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.eft.WilsonCoefficients.run_wcxf">
+    <p>def <span class="ident">run_wcxf</span>(</p><p>*args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.run_wcxf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.eft.WilsonCoefficients.run_wcxf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">run_wcxf</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The method run_wcxf has been removed. Please use the match_run method of wilson.Wilson instead.&quot;</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1687,7 +1670,7 @@ sector (e.g. <code>bsmumu</code>) at a given scale.</p>
             
   <div class="item">
     <div class="name def" id="flavio.physics.eft.WilsonCoefficients.set_initial">
-    <p>def <span class="ident">set_initial</span>(</p><p>self, dict, scale)</p>
+    <p>def <span class="ident">set_initial</span>(</p><p>self, wc_dict, scale, eft=&#39;WET&#39;, basis=&#39;flavio&#39;)</p>
     </div>
     
 
@@ -1696,40 +1679,21 @@ sector (e.g. <code>bsmumu</code>) at a given scale.</p>
     <div class="desc"><p>Set initial values of Wilson coefficients.</p>
 <p>Parameters:</p>
 <ul>
-<li>dict: dictionary where keys are Wilson coefficient name strings and
+<li>wc_dict: dictionary where keys are Wilson coefficient name strings and
   values are Wilson coefficient NP contribution values</li>
 <li>scale: $\overline{    ext{MS}}$ renormalization scale</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.set_initial', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.eft.WilsonCoefficients.set_initial" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wc_dict</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Set initial values of Wilson coefficients.</span>
 <span class="sd">    Parameters:</span>
-<span class="sd">    - dict: dictionary where keys are Wilson coefficient name strings and</span>
+<span class="sd">    - wc_dict: dictionary where keys are Wilson coefficient name strings and</span>
 <span class="sd">      values are Wilson coefficient NP contribution values</span>
 <span class="sd">    - scale: $\overline{\text{MS}}$ renormalization scale</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;C7eff&#39;</span><span class="p">,</span> <span class="s1">&#39;C7effp&#39;</span><span class="p">,</span> <span class="s1">&#39;C8eff&#39;</span><span class="p">,</span> <span class="s1">&#39;C8effp&#39;</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;The dipole Wilson coefficients like &quot;</span> <span class="o">+</span> <span class="n">name</span>
-                           <span class="o">+</span> <span class="s2">&quot;have been renamed in v0.25.&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;CV&#39;</span><span class="p">,</span> <span class="s1">&#39;CVp&#39;</span><span class="p">,</span> <span class="s1">&#39;CS&#39;</span><span class="p">,</span> <span class="s1">&#39;CSp&#39;</span><span class="p">,</span> <span class="s1">&#39;CT&#39;</span><span class="p">]</span>
-              <span class="ow">and</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;nu&#39;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;The semileptonic Wilson coefficients &quot;</span> <span class="o">+</span> <span class="n">name</span>
-                           <span class="o">+</span> <span class="s2">&quot; have been redefined in v0.25.&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_wc</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Wilson coefficient &quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; not known&quot;</span><span class="p">)</span>
-        <span class="c1"># warn for four-quark operators that will be changed soon</span>
-        <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="s1">&#39;C2&#39;</span><span class="p">,</span> <span class="s1">&#39;C3&#39;</span><span class="p">,</span> <span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="s1">&#39;C5&#39;</span><span class="p">,</span> <span class="s1">&#39;C6&#39;</span><span class="p">,</span>
-                                    <span class="s1">&#39;C1p&#39;</span><span class="p">,</span> <span class="s1">&#39;C2p&#39;</span><span class="p">,</span> <span class="s1">&#39;C3p&#39;</span><span class="p">,</span> <span class="s1">&#39;C4p&#39;</span><span class="p">,</span> <span class="s1">&#39;C5p&#39;</span><span class="p">,</span> <span class="s1">&#39;C6p&#39;</span><span class="p">,</span>
-                                    <span class="s1">&#39;C3Q&#39;</span><span class="p">,</span> <span class="s1">&#39;C4Q&#39;</span><span class="p">,</span> <span class="s1">&#39;C5Q&#39;</span><span class="p">,</span> <span class="s1">&#39;C6Q&#39;</span><span class="p">,</span>
-                                    <span class="s1">&#39;C3Qp&#39;</span><span class="p">,</span> <span class="s1">&#39;C4Qp&#39;</span><span class="p">,</span> <span class="s1">&#39;C5Qp&#39;</span><span class="p">,</span> <span class="s1">&#39;C6Qp&#39;</span><span class="p">,</span>
-                                    <span class="p">]:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;New physics in four-quark operators &quot;</span>
-                          <span class="s2">&quot;has been deprecated in v0.25. It will be &quot;</span>
-                          <span class="s2">&quot;reimplemented at a later stage&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wcdict</span><span class="o">=</span><span class="n">wc_dict</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1758,17 +1722,7 @@ the translation is performed automatically, if implemented in the
 <span class="sd">    If the instance is given in a basis other than the flavio basis,</span>
 <span class="sd">    the translation is performed automatically, if implemented in the</span>
 <span class="sd">    `wcxf` package.&quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">wcxf</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`wc` should be an instance of `wcxf.WC`&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">wc</span><span class="o">.</span><span class="n">eft</span> <span class="o">!=</span> <span class="s1">&#39;WET&#39;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Matching from a different EFT is currently not implemented.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">wc</span><span class="o">.</span><span class="n">basis</span> <span class="o">==</span> <span class="s1">&#39;flavio&#39;</span><span class="p">:</span>
-        <span class="n">wc_dict</span> <span class="o">=</span> <span class="n">wc</span><span class="o">.</span><span class="n">dict</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">wc_trans</span> <span class="o">=</span> <span class="n">wc</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
-        <span class="n">wc_dict</span> <span class="o">=</span> <span class="n">wc_trans</span><span class="o">.</span><span class="n">dict</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">set_initial</span><span class="p">(</span><span class="n">wc_dict</span><span class="p">,</span> <span class="n">wc</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wcdict</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1778,17 +1732,19 @@ the translation is performed automatically, if implemented in the
   
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="flavio.physics.eft.WilsonCoefficients.all_wc" class="name">var <span class="ident">all_wc</span></p>
+            <p id="flavio.physics.eft.WilsonCoefficients.get_initial_wcxf" class="name">var <span class="ident">get_initial_wcxf</span></p>
             
 
             
   
+    <div class="desc"><p>Return a wcxf.WC instance in the flavio basis containing the initial
+values of the Wilson coefficients.</p></div>
   <div class="source_cont">
 </div>
 
             </div>
             <div class="item">
-            <p id="flavio.physics.eft.WilsonCoefficients.coefficients" class="name">var <span class="ident">coefficients</span></p>
+            <p id="flavio.physics.eft.WilsonCoefficients.wc" class="name">var <span class="ident">wc</span></p>
             
 
             
@@ -1797,16 +1753,85 @@ the translation is performed automatically, if implemented in the
 </div>
 
             </div>
-            <div class="item">
-            <p id="flavio.physics.eft.WilsonCoefficients.initial" class="name">var <span class="ident">initial</span></p>
+          <h3>Methods</h3>
             
+  <div class="item">
+    <div class="name def" id="flavio.physics.eft.WilsonCoefficients.from_wc">
+    <p>def <span class="ident">from_wc</span>(</p><p>cls, wc)</p>
+    </div>
+    
 
-            
+    
   
+    <div class="desc"><p>Return a <code>Wilson</code> instance initialized by a <code>wcxf.WC</code> instance</p></div>
   <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.from_wc', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.eft.WilsonCoefficients.from_wc" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_wc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a `Wilson` instance initialized by a `wcxf.WC` instance&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">wcdict</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
+</pre></div>
+
+  </div>
 </div>
 
-            </div>
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.eft.WilsonCoefficients.from_wilson">
+    <p>def <span class="ident">from_wilson</span>(</p><p>cls, w)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.from_wilson', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.eft.WilsonCoefficients.from_wilson" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_wilson</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">w</span>
+    <span class="n">fwc</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+    <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">wc</span><span class="p">)</span>
+    <span class="n">fwc</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">_cache</span>
+    <span class="k">return</span> <span class="n">fwc</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.eft.WilsonCoefficients.load_wc">
+    <p>def <span class="ident">load_wc</span>(</p><p>cls, stream)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return a <code>Wilson</code> instance initialized by a WCxf file-like object</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.load_wc', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.eft.WilsonCoefficients.load_wc" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">load_wc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a `Wilson` instance initialized by a WCxf file-like object&quot;&quot;&quot;</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_wc</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       </div>
       </div>
 

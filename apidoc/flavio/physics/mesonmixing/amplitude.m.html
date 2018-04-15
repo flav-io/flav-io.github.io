@@ -1065,8 +1065,11 @@ table {
   <ul>
     <li class="mono"><a href="#flavio.physics.mesonmixing.amplitude.G12_d">G12_d</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.amplitude.G12_d_SM">G12_d_SM</a></li>
-    <li class="mono"><a href="#flavio.physics.mesonmixing.amplitude.M12_d">M12_d</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.amplitude.G12_u">G12_u</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.amplitude.G12_u_SM">G12_u_SM</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.amplitude.M12">M12</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.amplitude.M12_d_SM">M12_d_SM</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.amplitude.M12_u_SM">M12_u_SM</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.amplitude.matrixelements">matrixelements</a></li>
   </ul>
 
@@ -1090,6 +1093,10 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.amplitude', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.mesonmixing.amplitude" class="source">
     <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Functions for the dispersive and absorptive  parts of the meson-antimeson mixing amplitude&quot;&quot;&quot;</span>
+<span class="c1"># Note that the 12-amplitudes are defined as antimeson-&gt;meson.</span>
+<span class="c1"># Thus, for Bq and K, the relevant quark-level transition is</span>
+<span class="c1"># b-qbar-&gt;q-bbar and s-dbar-&gt;d-sbar, but for D it is u-cbar-&gt;c-ubar</span>
+<span class="c1"># (and not c-ubar-&gt;u-cbar!)</span>
 
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span><span class="n">pi</span><span class="p">,</span><span class="n">sqrt</span>
 <span class="kn">from</span> <span class="nn">flavio.physics.mesonmixing.wilsoncoefficient</span> <span class="kn">import</span> <span class="n">cvll_d</span>
@@ -1104,9 +1111,9 @@ table {
     <span class="n">mM</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
     <span class="n">fM</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;f_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
     <span class="n">BM</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;bag_&#39;</span> <span class="o">+</span> <span class="n">meson</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
-    <span class="n">di_dj</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[</span><span class="n">meson</span><span class="p">]</span>
-    <span class="n">mq1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">di_dj</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-    <span class="n">mq2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">di_dj</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">qi_qj</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[</span><span class="n">meson</span><span class="p">]</span>
+    <span class="n">mq1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">qi_qj</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">mq2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">qi_qj</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
     <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">mM</span><span class="o">/</span><span class="p">(</span><span class="n">mq1</span><span class="o">+</span><span class="n">mq2</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">me</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">me</span><span class="p">[</span><span class="s1">&#39;CVLL&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">mM</span><span class="o">*</span><span class="n">fM</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span><span class="o">*</span><span class="n">BM</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -1143,7 +1150,7 @@ table {
     <span class="k">return</span> <span class="n">M12</span>
 
 
-<span class="k">def</span> <span class="nf">M12_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">M12</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Mixing amplitude $M_{12}$ of meson $K^0$, $B^0$, or $B_s$.</span>
 
 <span class="sd">    Defined as</span>
@@ -1156,7 +1163,10 @@ table {
     <span class="c1"># the minus sign below stems from the fact that H_eff = -C_i O_i</span>
     <span class="n">contributions_np</span> <span class="o">=</span> <span class="p">[</span> <span class="o">-</span><span class="n">wc_value</span> <span class="o">*</span> <span class="n">me</span><span class="p">[</span><span class="n">wc_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">wc_name</span><span class="p">,</span> <span class="n">wc_value</span> <span class="ow">in</span> <span class="n">wc</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">]</span>
     <span class="c1"># SM contribution</span>
-    <span class="n">contribution_sm</span> <span class="o">=</span> <span class="n">M12_d_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;D0&#39;</span><span class="p">:</span>
+        <span class="n">contribution_sm</span> <span class="o">=</span> <span class="n">M12_u_SM</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># for B0, Bs, K0</span>
+        <span class="n">contribution_sm</span> <span class="o">=</span> <span class="n">M12_d_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="c1"># new physics + SM</span>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">contributions_np</span><span class="p">)</span> <span class="o">+</span> <span class="n">contribution_sm</span>
 
@@ -1172,6 +1182,28 @@ table {
 <span class="k">def</span> <span class="nf">G12_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
     <span class="c1">#TODO at the moment NP contributions to Gamma_12 are ignored!</span>
     <span class="k">return</span> <span class="n">G12_d_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+
+<span class="n">_ps</span> <span class="o">=</span> <span class="mf">1.519267515435317e+12</span> <span class="c1"># picosecond in 1/GeV</span>
+
+<span class="k">def</span> <span class="nf">G12_u_SM</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
+    <span class="n">xi_b</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;uc&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">xi_s</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;uc&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">a_bb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;Gamma12_D a_bb&#39;</span><span class="p">]</span>
+    <span class="n">a_bs</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;Gamma12_D a_bs&#39;</span><span class="p">]</span>
+    <span class="n">a_ss</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;Gamma12_D a_ss&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a_ss</span> <span class="o">*</span> <span class="n">xi_s</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">a_bs</span> <span class="o">*</span> <span class="n">xi_b</span><span class="o">*</span><span class="n">xi_s</span> <span class="o">+</span> <span class="n">a_bb</span> <span class="o">*</span> <span class="n">xi_b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">_ps</span>
+
+<span class="k">def</span> <span class="nf">M12_u_SM</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
+    <span class="n">xi_b</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;uc&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">xi_s</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;uc&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">a_bb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;M12_D a_bb&#39;</span><span class="p">]</span>
+    <span class="n">a_bs</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;M12_D a_bs&#39;</span><span class="p">]</span>
+    <span class="n">a_ss</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;M12_D a_ss&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a_ss</span> <span class="o">*</span> <span class="n">xi_s</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">a_bs</span> <span class="o">*</span> <span class="n">xi_b</span><span class="o">*</span><span class="n">xi_s</span> <span class="o">+</span> <span class="n">a_bb</span> <span class="o">*</span> <span class="n">xi_b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">_ps</span>
+
+<span class="k">def</span> <span class="nf">G12_u</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">):</span>
+    <span class="c1">#TODO at the moment NP contributions to Gamma_12 are ignored!</span>
+    <span class="k">return</span> <span class="n">G12_u_SM</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1257,8 +1289,56 @@ table {
   
       
   <div class="item">
-    <div class="name def" id="flavio.physics.mesonmixing.amplitude.M12_d">
-    <p>def <span class="ident">M12_d</span>(</p><p>par, wc, meson)</p>
+    <div class="name def" id="flavio.physics.mesonmixing.amplitude.G12_u">
+    <p>def <span class="ident">G12_u</span>(</p><p>par, wc)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.amplitude.G12_u', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.amplitude.G12_u" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">G12_u</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">):</span>
+    <span class="c1">#TODO at the moment NP contributions to Gamma_12 are ignored!</span>
+    <span class="k">return</span> <span class="n">G12_u_SM</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.amplitude.G12_u_SM">
+    <p>def <span class="ident">G12_u_SM</span>(</p><p>par)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.amplitude.G12_u_SM', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.amplitude.G12_u_SM" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">G12_u_SM</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
+    <span class="n">xi_b</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;uc&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">xi_s</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;uc&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">a_bb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;Gamma12_D a_bb&#39;</span><span class="p">]</span>
+    <span class="n">a_bs</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;Gamma12_D a_bs&#39;</span><span class="p">]</span>
+    <span class="n">a_ss</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;Gamma12_D a_ss&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a_ss</span> <span class="o">*</span> <span class="n">xi_s</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">a_bs</span> <span class="o">*</span> <span class="n">xi_b</span><span class="o">*</span><span class="n">xi_s</span> <span class="o">+</span> <span class="n">a_bb</span> <span class="o">*</span> <span class="n">xi_b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">_ps</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.amplitude.M12">
+    <p>def <span class="ident">M12</span>(</p><p>par, wc, meson)</p>
     </div>
     
 
@@ -1270,9 +1350,9 @@ $$M_{12}^M = \frac{\langle M | \mathcal H_{\mathrm{eff}}|\bar M\rangle}{2M_M}$$
 (Attention: $M_{12}$ is sometimes defined with the meson and anti-meson
 switched in the above definition, leading to a complex conjugation.)</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.amplitude.M12_d', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.mesonmixing.amplitude.M12_d" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">M12_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.amplitude.M12', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.amplitude.M12" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">M12</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Mixing amplitude $M_{12}$ of meson $K^0$, $B^0$, or $B_s$.</span>
 
 <span class="sd">    Defined as</span>
@@ -1285,7 +1365,10 @@ switched in the above definition, leading to a complex conjugation.)</p></div>
     <span class="c1"># the minus sign below stems from the fact that H_eff = -C_i O_i</span>
     <span class="n">contributions_np</span> <span class="o">=</span> <span class="p">[</span> <span class="o">-</span><span class="n">wc_value</span> <span class="o">*</span> <span class="n">me</span><span class="p">[</span><span class="n">wc_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">wc_name</span><span class="p">,</span> <span class="n">wc_value</span> <span class="ow">in</span> <span class="n">wc</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">]</span>
     <span class="c1"># SM contribution</span>
-    <span class="n">contribution_sm</span> <span class="o">=</span> <span class="n">M12_d_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;D0&#39;</span><span class="p">:</span>
+        <span class="n">contribution_sm</span> <span class="o">=</span> <span class="n">M12_u_SM</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># for B0, Bs, K0</span>
+        <span class="n">contribution_sm</span> <span class="o">=</span> <span class="n">M12_d_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="c1"># new physics + SM</span>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">contributions_np</span><span class="p">)</span> <span class="o">+</span> <span class="n">contribution_sm</span>
 </pre></div>
@@ -1344,6 +1427,32 @@ switched in the above definition, leading to a complex conjugation.)</p></div>
   
       
   <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.amplitude.M12_u_SM">
+    <p>def <span class="ident">M12_u_SM</span>(</p><p>par)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.amplitude.M12_u_SM', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.amplitude.M12_u_SM" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">M12_u_SM</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
+    <span class="n">xi_b</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;uc&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">xi_s</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;uc&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">a_bb</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;M12_D a_bb&#39;</span><span class="p">]</span>
+    <span class="n">a_bs</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;M12_D a_bs&#39;</span><span class="p">]</span>
+    <span class="n">a_ss</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;M12_D a_ss&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a_ss</span> <span class="o">*</span> <span class="n">xi_s</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">a_bs</span> <span class="o">*</span> <span class="n">xi_b</span><span class="o">*</span><span class="n">xi_s</span> <span class="o">+</span> <span class="n">a_bb</span> <span class="o">*</span> <span class="n">xi_b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">_ps</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.physics.mesonmixing.amplitude.matrixelements">
     <p>def <span class="ident">matrixelements</span>(</p><p>par, meson)</p>
     </div>
@@ -1362,9 +1471,9 @@ $\Delta F=2$ operators.</p></div>
     <span class="n">mM</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
     <span class="n">fM</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;f_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
     <span class="n">BM</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;bag_&#39;</span> <span class="o">+</span> <span class="n">meson</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
-    <span class="n">di_dj</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[</span><span class="n">meson</span><span class="p">]</span>
-    <span class="n">mq1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">di_dj</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-    <span class="n">mq2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">di_dj</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">qi_qj</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[</span><span class="n">meson</span><span class="p">]</span>
+    <span class="n">mq1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">qi_qj</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">mq2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">qi_qj</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
     <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">mM</span><span class="o">/</span><span class="p">(</span><span class="n">mq1</span><span class="o">+</span><span class="n">mq2</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">me</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">me</span><span class="p">[</span><span class="s1">&#39;CVLL&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">mM</span><span class="o">*</span><span class="n">fM</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span><span class="o">*</span><span class="n">BM</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>

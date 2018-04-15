@@ -1273,6 +1273,27 @@ table {
 
         </li>
         <li class="mono">
+        <span class="class_name"><a href="#flavio.statistics.probability.LogNormalDistribution">LogNormalDistribution</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.__init__">__init__</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.cdf">cdf</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.get_central">get_central</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.get_dict">get_dict</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.get_error_left">get_error_left</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.get_error_right">get_error_right</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.get_random">get_random</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.get_yaml">get_yaml</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.logpdf">logpdf</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.pdf">pdf</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.ppf">ppf</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.class_to_string">class_to_string</a></li>
+    <li class="mono"><a href="#flavio.statistics.probability.LogNormalDistribution.get_subclasses">get_subclasses</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
         <span class="class_name"><a href="#flavio.statistics.probability.MultivariateNormalDistribution">MultivariateNormalDistribution</a></span>
         
           
@@ -1662,6 +1683,89 @@ table {
     <span class="k">def</span> <span class="nf">get_error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsigma</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the upper error&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">nsigma</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span>
+
+
+<span class="k">class</span> <span class="nc">LogNormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Univariate log-normal distribution.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Initialize the distribution.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - central_value: median of the distribution (neither mode nor mean!).</span>
+<span class="sd">          Can be positive or negative, but must be nonzero.</span>
+<span class="sd">        - factor: must be larger than 1. 68% of the probability will be between</span>
+<span class="sd">          `central_value * factor` and `central_value / factor`.</span>
+
+<span class="sd">        The mean and standard deviation of the underlying normal distribution</span>
+<span class="sd">        correspond to `log(abs(central_value))` and `log(factor)`, respectively.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">        `LogNormalDistribution(central_value=3, factor=2)`</span>
+
+<span class="sd">        corresponds to the distribution of the exponential of a normally</span>
+<span class="sd">        distributed variable with mean ln(3) and standard deviation ln(2).</span>
+<span class="sd">        68% of the probability is within 6=3*2 and 1.5=4/2.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">central_value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Central value must not be zero&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">factor</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Factor must be bigger than 1&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">central_value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">central_value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">slim</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">central_value</span><span class="p">))</span>
+                            <span class="o">-</span> <span class="mi">6</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                             <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">slim</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span>
+            <span class="n">slim</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">central_value</span><span class="p">))</span>
+                            <span class="o">+</span> <span class="mi">6</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                             <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">slim</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;flavio.statistics.probability.LogNormalDistribution&#39;</span> <span class="o">+</span> \
+               <span class="s1">&#39;({}, {})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span>
+        <span class="k">return</span> <span class="n">s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">lognormal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span>
+        <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">s</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span>
+        <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">s</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsigma</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the lower error&quot;&quot;&quot;</span>
+        <span class="n">cl</span> <span class="o">=</span> <span class="n">confidence_level</span><span class="p">(</span><span class="n">nsigma</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">-</span> <span class="n">cl</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsigma</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the upper error&quot;&quot;&quot;</span>
+        <span class="n">cl</span> <span class="o">=</span> <span class="n">confidence_level</span><span class="p">(</span><span class="n">nsigma</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">cl</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
 
 
 <span class="k">class</span> <span class="nc">AsymmetricNormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
@@ -8408,6 +8512,578 @@ get_dict method.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.KernelDensityEstimate.get_subclasses', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.probability.KernelDensityEstimate.get_subclasses" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">get_subclasses</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return all subclasses (including subclasses of subclasses).&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">subclass</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">():</span>
+        <span class="k">yield from</span> <span class="n">subclass</span><span class="o">.</span><span class="n">get_subclasses</span><span class="p">()</span>
+        <span class="k">yield</span> <span class="n">subclass</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="flavio.statistics.probability.LogNormalDistribution" class="name">class <span class="ident">LogNormalDistribution</span></p>
+      
+  
+    <div class="desc"><p>Univariate log-normal distribution.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">LogNormalDistribution</span><span class="p">(</span><span class="n">ProbabilityDistribution</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Univariate log-normal distribution.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Initialize the distribution.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - central_value: median of the distribution (neither mode nor mean!).</span>
+<span class="sd">          Can be positive or negative, but must be nonzero.</span>
+<span class="sd">        - factor: must be larger than 1. 68% of the probability will be between</span>
+<span class="sd">          `central_value * factor` and `central_value / factor`.</span>
+
+<span class="sd">        The mean and standard deviation of the underlying normal distribution</span>
+<span class="sd">        correspond to `log(abs(central_value))` and `log(factor)`, respectively.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">        `LogNormalDistribution(central_value=3, factor=2)`</span>
+
+<span class="sd">        corresponds to the distribution of the exponential of a normally</span>
+<span class="sd">        distributed variable with mean ln(3) and standard deviation ln(2).</span>
+<span class="sd">        68% of the probability is within 6=3*2 and 1.5=4/2.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">central_value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Central value must not be zero&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">factor</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Factor must be bigger than 1&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">central_value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">central_value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">slim</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">central_value</span><span class="p">))</span>
+                            <span class="o">-</span> <span class="mi">6</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                             <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">slim</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span>
+            <span class="n">slim</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">central_value</span><span class="p">))</span>
+                            <span class="o">+</span> <span class="mi">6</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                             <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">slim</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;flavio.statistics.probability.LogNormalDistribution&#39;</span> <span class="o">+</span> \
+               <span class="s1">&#39;({}, {})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span>
+        <span class="k">return</span> <span class="n">s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">lognormal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span>
+        <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">s</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span>
+        <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">s</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsigma</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the lower error&quot;&quot;&quot;</span>
+        <span class="n">cl</span> <span class="o">=</span> <span class="n">confidence_level</span><span class="p">(</span><span class="n">nsigma</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">-</span> <span class="n">cl</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsigma</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the upper error&quot;&quot;&quot;</span>
+        <span class="n">cl</span> <span class="o">=</span> <span class="n">confidence_level</span><span class="p">(</span><span class="n">nsigma</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">cl</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#flavio.statistics.probability.LogNormalDistribution">LogNormalDistribution</a></li>
+          <li><a href="#flavio.statistics.probability.ProbabilityDistribution">ProbabilityDistribution</a></li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, central_value, factor)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialize the distribution.</p>
+<p>Parameters:</p>
+<ul>
+<li>central_value: median of the distribution (neither mode nor mean!).
+  Can be positive or negative, but must be nonzero.</li>
+<li>factor: must be larger than 1. 68% of the probability will be between
+  <code>central_value * factor</code> and <code>central_value / factor</code>.</li>
+</ul>
+<p>The mean and standard deviation of the underlying normal distribution
+correspond to <code>log(abs(central_value))</code> and <code>log(factor)</code>, respectively.</p>
+<p>Example:</p>
+<p><code>LogNormalDistribution(central_value=3, factor=2)</code></p>
+<p>corresponds to the distribution of the exponential of a normally
+distributed variable with mean ln(3) and standard deviation ln(2).
+68% of the probability is within 6=3*2 and 1.5=4/2.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_value</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Initialize the distribution.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - central_value: median of the distribution (neither mode nor mean!).</span>
+<span class="sd">      Can be positive or negative, but must be nonzero.</span>
+<span class="sd">    - factor: must be larger than 1. 68% of the probability will be between</span>
+<span class="sd">      `central_value * factor` and `central_value / factor`.</span>
+<span class="sd">    The mean and standard deviation of the underlying normal distribution</span>
+<span class="sd">    correspond to `log(abs(central_value))` and `log(factor)`, respectively.</span>
+<span class="sd">    Example:</span>
+<span class="sd">    `LogNormalDistribution(central_value=3, factor=2)`</span>
+<span class="sd">    corresponds to the distribution of the exponential of a normally</span>
+<span class="sd">    distributed variable with mean ln(3) and standard deviation ln(2).</span>
+<span class="sd">    68% of the probability is within 6=3*2 and 1.5=4/2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">central_value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Central value must not be zero&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">factor</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Factor must be bigger than 1&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">central_value</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">central_value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">slim</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">central_value</span><span class="p">))</span>
+                        <span class="o">-</span> <span class="mi">6</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                         <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="n">slim</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span>
+        <span class="n">slim</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">central_value</span><span class="p">))</span>
+                        <span class="o">+</span> <span class="mi">6</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_value</span><span class="p">,</span>
+                         <span class="n">support</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">slim</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.cdf">
+    <p>def <span class="ident">cdf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.cdf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.cdf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.get_central">
+    <p>def <span class="ident">get_central</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.get_central', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.get_central" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.get_dict">
+    <p>def <span class="ident">get_dict</span>(</p><p>self, distribution=False, iterate=False, arraytolist=False)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get an ordered dictionary with arguments and values needed to
+the instantiate the distribution.</p>
+<p>Optional arguments (default to False):</p>
+<ul>
+<li><code>distribution</code>: add a 'distribution' key to the dictionary with the
+value being the string representation of the distribution's name
+(e.g. 'asymmetric_normal').</li>
+<li><code>iterate</code>: If ProbabilityDistribution instances are among the
+arguments (e.g. for KernelDensityEstimate), return the instance's
+get_dict instead of the instance as value.</li>
+<li><code>arraytolist</code>: convert numpy arrays to lists</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.get_dict', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.get_dict" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get an ordered dictionary with arguments and values needed to</span>
+<span class="sd">    the instantiate the distribution.</span>
+<span class="sd">    Optional arguments (default to False):</span>
+<span class="sd">    - `distribution`: add a &#39;distribution&#39; key to the dictionary with the</span>
+<span class="sd">    value being the string representation of the distribution&#39;s name</span>
+<span class="sd">    (e.g. &#39;asymmetric_normal&#39;).</span>
+<span class="sd">    - `iterate`: If ProbabilityDistribution instances are among the</span>
+<span class="sd">    arguments (e.g. for KernelDensityEstimate), return the instance&#39;s</span>
+<span class="sd">    get_dict instead of the instance as value.</span>
+<span class="sd">    - `arraytolist`: convert numpy arrays to lists</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
+    <span class="n">od</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">distribution</span><span class="p">:</span>
+        <span class="n">od</span><span class="p">[</span><span class="s1">&#39;distribution&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_to_string</span><span class="p">()</span>
+    <span class="n">od</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="n">a</span><span class="p">])</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">iterate</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">od</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">ProbabilityDistribution</span><span class="p">):</span>
+                <span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">arraytolist</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">od</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                        <span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">od</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">):</span>
+            <span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">):</span>
+            <span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">):</span>
+                    <span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">):</span>
+                    <span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">od</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">od</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.get_error_left">
+    <p>def <span class="ident">get_error_left</span>(</p><p>self, nsigma=1)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the lower error</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.get_error_left', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.get_error_left" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_error_left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsigma</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the lower error&quot;&quot;&quot;</span>
+    <span class="n">cl</span> <span class="o">=</span> <span class="n">confidence_level</span><span class="p">(</span><span class="n">nsigma</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">-</span> <span class="n">cl</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.get_error_right">
+    <p>def <span class="ident">get_error_right</span>(</p><p>self, nsigma=1)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the upper error</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.get_error_right', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.get_error_right" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_error_right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsigma</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the upper error&quot;&quot;&quot;</span>
+    <span class="n">cl</span> <span class="o">=</span> <span class="n">confidence_level</span><span class="p">(</span><span class="n">nsigma</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">cl</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_value</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.get_random">
+    <p>def <span class="ident">get_random</span>(</p><p>self, size=None)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.get_random', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.get_random" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span>
+    <span class="k">return</span> <span class="n">s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">lognormal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.get_yaml">
+    <p>def <span class="ident">get_yaml</span>(</p><p>self, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get a YAML string representing the dictionary returned by the
+get_dict method.</p>
+<p>Arguments will be passed to <code>yaml.dump</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.get_yaml', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.get_yaml" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get a YAML string representing the dictionary returned by the</span>
+<span class="sd">    get_dict method.</span>
+<span class="sd">    Arguments will be passed to `yaml.dump`.&quot;&quot;&quot;</span>
+    <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">arraytolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">od</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.logpdf">
+    <p>def <span class="ident">logpdf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.logpdf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.logpdf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">s</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.pdf">
+    <p>def <span class="ident">pdf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.pdf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.pdf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">s</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.ppf">
+    <p>def <span class="ident">ppf</span>(</p><p>self, x)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.ppf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.ppf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_sign</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_central_value</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_standard_deviation</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="flavio.statistics.probability.LogNormalDistribution.error_left" class="name">var <span class="ident">error_left</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the lower error</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.LogNormalDistribution.error_right" class="name">var <span class="ident">error_right</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return the upper error</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.LogNormalDistribution.factor" class="name">var <span class="ident">factor</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.LogNormalDistribution.log_central_value" class="name">var <span class="ident">log_central_value</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.statistics.probability.LogNormalDistribution.log_standard_deviation" class="name">var <span class="ident">log_standard_deviation</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.class_to_string">
+    <p>def <span class="ident">class_to_string</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get a string name for a given ProbabilityDistribution subclass.</p>
+<p>This converts camel case to underscore and removes the word
+'distribution'.</p>
+<p>Example: class_to_string(AsymmetricNormalDistribution) returns
+'asymmetric_normal'.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.class_to_string', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.class_to_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">class_to_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get a string name for a given ProbabilityDistribution subclass.</span>
+<span class="sd">    This converts camel case to underscore and removes the word</span>
+<span class="sd">    &#39;distribution&#39;.</span>
+<span class="sd">    Example: class_to_string(AsymmetricNormalDistribution) returns</span>
+<span class="sd">    &#39;asymmetric_normal&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">_camel_to_underscore</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_distribution&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.probability.LogNormalDistribution.get_subclasses">
+    <p>def <span class="ident">get_subclasses</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return all subclasses (including subclasses of subclasses).</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.probability.LogNormalDistribution.get_subclasses', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.probability.LogNormalDistribution.get_subclasses" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">get_subclasses</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return all subclasses (including subclasses of subclasses).&quot;&quot;&quot;</span>

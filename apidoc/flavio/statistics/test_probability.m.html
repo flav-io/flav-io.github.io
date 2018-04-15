@@ -1147,6 +1147,7 @@ table {
     <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.test_get_yaml">test_get_yaml</a></li>
     <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.test_halfnormal">test_halfnormal</a></li>
     <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.test_limit">test_limit</a></li>
+    <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.test_lognormal">test_lognormal</a></li>
     <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.test_multiv_normal">test_multiv_normal</a></li>
     <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.test_multiv_numerical">test_multiv_numerical</a></li>
     <li class="mono"><a href="#flavio.statistics.test_probability.TestProbability.test_multivariate_exclude">test_multivariate_exclude</a></li>
@@ -1220,6 +1221,21 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pdf_n_1</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="mf">1.99</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pdf_p_1</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="mi">10</span><span class="p">)),</span> <span class="mi">10</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pdf_p_2</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="mi">10</span><span class="p">)),</span> <span class="mi">10</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_lognormal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">LogNormalDistribution</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">LogNormalDistribution</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.2</span><span class="p">)</span>
+        <span class="n">pdf</span> <span class="o">=</span> <span class="n">LogNormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pdf</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(),</span> <span class="mf">1.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pdf</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">pdf2</span> <span class="o">=</span> <span class="n">LogNormalDistribution</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(),</span> <span class="mf">1.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="o">-</span><span class="mf">2.7</span><span class="p">),</span> <span class="n">pdf</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="mf">2.7</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="o">-</span><span class="mf">2.7</span><span class="p">),</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">pdf</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mf">2.7</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span> <span class="o">-</span><span class="n">pdf</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.75</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">test_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">p1</span> <span class="o">=</span> <span class="n">GaussianUpperLimit</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="mf">1.78</span><span class="p">,</span> <span class="mf">0.9544997</span><span class="p">)</span>
@@ -1666,7 +1682,9 @@ table {
             <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">string_to_class</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">class_from_string_old</span><span class="p">,</span>
                         <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">class_from_string</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                         <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">KernelDensityEstimate</span><span class="p">})</span>
+                         <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">KernelDensityEstimate</span>
+                         <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">LogNormalDistribution</span><span class="p">},</span>
+                         <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Failed for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">test_get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test the test_get_yaml method of all PDs&quot;&quot;&quot;</span>
@@ -1842,6 +1860,21 @@ in order to be run.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pdf_p_1</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="mi">10</span><span class="p">)),</span> <span class="mi">10</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pdf_p_2</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="mi">10</span><span class="p">)),</span> <span class="mi">10</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">test_lognormal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">LogNormalDistribution</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">LogNormalDistribution</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.2</span><span class="p">)</span>
+        <span class="n">pdf</span> <span class="o">=</span> <span class="n">LogNormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pdf</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(),</span> <span class="mf">1.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pdf</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">pdf2</span> <span class="o">=</span> <span class="n">LogNormalDistribution</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(),</span> <span class="mf">1.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="o">-</span><span class="mf">2.7</span><span class="p">),</span> <span class="n">pdf</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="mf">2.7</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="o">-</span><span class="mf">2.7</span><span class="p">),</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">pdf</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mf">2.7</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span> <span class="o">-</span><span class="n">pdf</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.75</span><span class="p">))</span>
+
     <span class="k">def</span> <span class="nf">test_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">p1</span> <span class="o">=</span> <span class="n">GaussianUpperLimit</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="mf">1.78</span><span class="p">,</span> <span class="mf">0.9544997</span><span class="p">)</span>
         <span class="n">p2</span> <span class="o">=</span> <span class="n">HalfNormalDistribution</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.78</span><span class="p">)</span>
@@ -2287,7 +2320,9 @@ in order to be run.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">string_to_class</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">class_from_string_old</span><span class="p">,</span>
                         <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">class_from_string</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                         <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">KernelDensityEstimate</span><span class="p">})</span>
+                         <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">KernelDensityEstimate</span>
+                         <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">LogNormalDistribution</span><span class="p">},</span>
+                         <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Failed for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">test_get_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test the test_get_yaml method of all PDs&quot;&quot;&quot;</span>
@@ -4674,7 +4709,9 @@ block, allowing further test code to be executed.</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">string_to_class</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">class_from_string_old</span><span class="p">,</span>
                     <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">class_from_string</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                     <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">KernelDensityEstimate</span><span class="p">})</span>
+                     <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">KernelDensityEstimate</span>
+                     <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">LogNormalDistribution</span><span class="p">},</span>
+                     <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Failed for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -5239,6 +5276,39 @@ block, allowing further test code to be executed.</p></div>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="mf">0.237</span><span class="p">),</span> <span class="n">p2</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="mf">0.237</span><span class="p">),</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">p2</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="mf">1.78</span><span class="p">),</span> <span class="mf">0.9544997</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.test_probability.TestProbability.test_lognormal">
+    <p>def <span class="ident">test_lognormal</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_probability.TestProbability.test_lognormal', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.test_probability.TestProbability.test_lognormal" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_lognormal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">LogNormalDistribution</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">LogNormalDistribution</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.2</span><span class="p">)</span>
+    <span class="n">pdf</span> <span class="o">=</span> <span class="n">LogNormalDistribution</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pdf</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(),</span> <span class="mf">1.5</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pdf</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(),</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">pdf2</span> <span class="o">=</span> <span class="n">LogNormalDistribution</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">get_error_right</span><span class="p">(),</span> <span class="mf">1.5</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">get_error_left</span><span class="p">(),</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="o">-</span><span class="mf">2.7</span><span class="p">),</span> <span class="n">pdf</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="mf">2.7</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="o">-</span><span class="mf">2.7</span><span class="p">),</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">pdf</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mf">2.7</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pdf2</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span> <span class="o">-</span><span class="n">pdf</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.75</span><span class="p">))</span>
 </pre></div>
 
   </div>

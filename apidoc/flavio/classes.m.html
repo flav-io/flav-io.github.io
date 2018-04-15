@@ -1053,7 +1053,6 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
-    <li class="mono"><a href="#flavio.classes.class_from_string">class_from_string</a></li>
     <li class="mono"><a href="#flavio.classes.config">config</a></li>
   </ul>
 
@@ -1293,15 +1292,15 @@ table {
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">flavio</span>
 <span class="kn">from</span> <span class="nn">flavio._parse_errors</span> <span class="kn">import</span> <span class="n">constraints_from_string</span><span class="p">,</span> \
-                                 <span class="n">convolve_distributions</span><span class="p">,</span> <span class="n">errors_from_string</span><span class="p">,</span> \
-                                 <span class="n">dict2dist</span>
-<span class="kn">from</span> <span class="nn">flavio.statistics.probability</span> <span class="kn">import</span> <span class="n">class_from_string</span><span class="p">,</span> <span class="n">string_to_class</span>
-<span class="kn">import</span> <span class="nn">scipy.stats</span>
+    <span class="n">convolve_distributions</span><span class="p">,</span> <span class="n">dict2dist</span>
+<span class="kn">from</span> <span class="nn">flavio.statistics.probability</span> <span class="kn">import</span> <span class="n">string_to_class</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">urllib.parse</span>
+
 
 <span class="k">class</span> <span class="nc">NamedInstanceMetaclass</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
     <span class="c1"># this is just needed to implement the getitem method on NamedInstanceClass</span>
@@ -1313,6 +1312,7 @@ table {
 
     <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
 
 <span class="k">class</span> <span class="nc">NamedInstanceClass</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">NamedInstanceMetaclass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for classes that have named instances that can be accessed</span>
@@ -1356,8 +1356,6 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
 
 
-
-<span class="c1">########## Parameter Class ##########</span>
 <span class="k">class</span> <span class="nc">Parameter</span><span class="p">(</span><span class="n">NamedInstanceClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This class holds parameters (e.g. masses and lifetimes). It requires a</span>
 <span class="sd">    name string and also allows to set a LaTeX name and description as</span>
@@ -1379,7 +1377,6 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
 
-<span class="c1">########## Constraints Class ##########</span>
 <span class="k">class</span> <span class="nc">Constraints</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Constraints are collections of probability distributions associated</span>
 <span class="sd">    to objects like parameters or measurements. This is the base class of</span>
@@ -1455,10 +1452,10 @@ table {
         <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">pds</span> <span class="o">=</span>  <span class="n">dict2dist</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
+            <span class="n">pds</span> <span class="o">=</span> <span class="n">dict2dist</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Either constraint_string or constraint_dict have&quot;</span>
-                             <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
+                            <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
         <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 
@@ -1478,8 +1475,17 @@ table {
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
-            <span class="c1"># return the num-th entry of the central value vector</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">])[</span><span class="n">num</span><span class="p">]</span>
+            <span class="n">cv</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cv</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="c1"># return the num-th entry of the central value vector</span>
+                <span class="k">return</span> <span class="n">cv</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">cv</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Something went wrong when getting the central value of {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameter</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">get_central_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get central values of all constrained parameters.&quot;&quot;&quot;</span>
@@ -1489,13 +1495,12 @@ table {
         <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
 <span class="sd">        distributed according to the probability distribution applied.&quot;&quot;&quot;</span>
         <span class="c1"># first, generate random values for every single one of the constraints</span>
-        <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">]</span>
+        <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
         <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># now, iterate over the parameters</span>
         <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">random_dict</span>
 
     <span class="k">def</span> <span class="nf">get_1d_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
@@ -1525,10 +1530,8 @@ table {
         <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-            <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                                        <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
-                                        <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
-                                    <span class="p">)</span>
+            <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
+                                     <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">error_dict</span>
 
     <span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[]):</span>
@@ -1565,9 +1568,8 @@ table {
                     <span class="c1"># no parameter has been excluded</span>
                     <span class="n">exclude</span> <span class="o">=</span> <span class="bp">None</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span>
-                        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
+                    <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                                    <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
                 <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">prob_dict</span>
 
@@ -1601,7 +1603,7 @@ table {
             <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                         <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">}</span>
+                <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1642,7 +1644,7 @@ table {
             <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="n">v</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">inst</span>
 
-<span class="c1">########## ParameterConstraints Class ##########</span>
+
 <span class="k">class</span> <span class="nc">ParameterConstraints</span><span class="p">(</span><span class="n">Constraints</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1650,7 +1652,7 @@ table {
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-<span class="c1">########## WilsonCoefficientPriors Class ##########</span>
+
 <span class="k">class</span> <span class="nc">WilsonCoefficientPriors</span><span class="p">(</span><span class="n">Constraints</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1665,11 +1667,12 @@ table {
 <span class="sd">    See https://gist.github.com/hrldcpr/2012250&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
 
+
 <span class="k">def</span> <span class="nf">dicts</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Turn tree into nested dict&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">dicts</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">t</span><span class="p">}</span>
 
-<span class="c1">########## Observable Class ##########</span>
+
 <span class="k">class</span> <span class="nc">Observable</span><span class="p">(</span><span class="n">NamedInstanceClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An Observable is something that can be measured experimentally and</span>
 <span class="sd">    predicted theoretically.&quot;&quot;&quot;</span>
@@ -1681,6 +1684,25 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="n">arguments</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Observable(&#39;{}&#39;, arguments={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_repr_markdown_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">md</span> <span class="o">=</span> <span class="s2">&quot;### Observable `{}`</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tex</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Observable: {}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tex</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Description: {}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Arguments: &quot;</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;`{}`&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">])</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">function</span>
+            <span class="kn">from</span> <span class="nn">IPython.lib</span> <span class="kn">import</span> <span class="n">pretty</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Theory prediction: `{}`&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pretty</span><span class="o">.</span><span class="n">pretty</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">md</span>
 
     <span class="k">def</span> <span class="nf">set_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span> <span class="o">=</span> <span class="n">prediction</span>
@@ -1698,7 +1720,7 @@ table {
 <span class="sd">        &#39;Category :: Subcategory :: Subsubcategory&#39;</span>
 <span class="sd">        etc. LaTeX code is allowed. One observable can also have multiple</span>
 <span class="sd">        taxonomies (e.g. &#39;Animal :: Cat&#39; and &#39;Pet :: Favourite Pet&#39;)&quot;&quot;&quot;</span>
-        <span class="n">taxonomy_list</span> <span class="o">=</span> <span class="n">taxonomy_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; :: &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="p">]</span>
+        <span class="n">taxonomy_list</span> <span class="o">=</span> <span class="n">taxonomy_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; :: &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
         <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">taxonomy</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">taxonomy_list</span><span class="p">:</span>
             <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
@@ -1745,13 +1767,13 @@ table {
                 <span class="s2">&quot;The observable {} does not have a prediction yet&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
         <span class="n">obs_obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="n">Observable</span><span class="p">[</span><span class="n">observables</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
         <span class="n">pfcts</span> <span class="o">=</span> <span class="p">[</span><span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">function</span>
-                <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="n">observables</span><span class="p">]</span>
+                 <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="n">observables</span><span class="p">]</span>
         <span class="k">def</span> <span class="nf">pfct</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">pfcts</span><span class="p">])</span>
         <span class="n">Prediction</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pfct</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">obs_obj</span>
 
-<span class="c1">########## AuxiliaryQuantity Class ##########</span>
+
 <span class="k">class</span> <span class="nc">AuxiliaryQuantity</span><span class="p">(</span><span class="n">NamedInstanceClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An auxiliary quantity is something that can be computed theoretically but</span>
 <span class="sd">    not measured directly, e.g. some sub-contribution to an amplitude or a form</span>
@@ -1777,8 +1799,6 @@ table {
         <span class="k">return</span> <span class="n">implementation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
-
-<span class="c1">########## Prediction Class ##########</span>
 <span class="k">class</span> <span class="nc">Prediction</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A prediction is the theoretical prediction for an observable.&quot;&quot;&quot;</span>
 
@@ -1794,13 +1814,14 @@ table {
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span>    <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
-<span class="c1">########## Implementation Class ##########</span>
 <span class="k">class</span> <span class="nc">Implementation</span><span class="p">(</span><span class="n">NamedInstanceClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An implementation is the theoretical prediction for an auxiliary</span>
 <span class="sd">    quantity.&quot;&quot;&quot;</span>
@@ -1827,17 +1848,19 @@ table {
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
-<span class="c1">########## Measurement Class ##########</span>
 <span class="k">class</span> <span class="nc">Measurement</span><span class="p">(</span><span class="n">Constraints</span><span class="p">,</span> <span class="n">NamedInstanceClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A (experimental) measurement associates one (or several) probability</span>
 <span class="sd">    distributions to one (or several) observables. If it contains several</span>
@@ -1853,8 +1876,8 @@ table {
 <span class="sd">    where `constraint` is an instance of a descendant of</span>
 <span class="sd">    ProbabilityDistribution and `observables` is a list of either</span>
 <span class="sd">     - a string observable name in the case of observables without arguments</span>
-<span class="sd">     - or a tuple `(name, x_1, ..., x_n)`, where the `x_i` are float values for the</span>
-<span class="sd">       arguments, of an observable with `n` arguments.</span>
+<span class="sd">     - or a tuple `(name, x_1, ..., x_n)`, where the `x_i` are float values for</span>
+<span class="sd">       the arguments, of an observable with `n` arguments.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -1863,6 +1886,35 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">inspire</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Measurement(&#39;{}&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_repr_markdown_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">md</span> <span class="o">=</span> <span class="s2">&quot;### Measurement `{}`</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Experiment: {}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inspire</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;[Inspire](http://inspirehep.net/search?&amp;p=texkey+{})</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inspire</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;URL: &lt;{}&gt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Description: {}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Measured observables:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">args</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                    <span class="n">argnames</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span>
+                    <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;- {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Observable</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">tex</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+                        <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;, `{}` = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">argnames</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">arg</span><span class="p">)</span>
+                    <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;- {}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span><span class="o">.</span><span class="n">tex</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">md</span>
 </pre></div>
 
   </div>
@@ -1871,14 +1923,6 @@ table {
 
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="flavio.classes.class_from_string" class="name">var <span class="ident">class_from_string</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
       <div class="item">
       <p id="flavio.classes.config" class="name">var <span class="ident">config</span></p>
       
@@ -2284,10 +2328,10 @@ documentation.</p></div>
         <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">pds</span> <span class="o">=</span>  <span class="n">dict2dist</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
+            <span class="n">pds</span> <span class="o">=</span> <span class="n">dict2dist</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Either constraint_string or constraint_dict have&quot;</span>
-                             <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
+                            <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
         <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 
@@ -2307,8 +2351,17 @@ documentation.</p></div>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
-            <span class="c1"># return the num-th entry of the central value vector</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">])[</span><span class="n">num</span><span class="p">]</span>
+            <span class="n">cv</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cv</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="c1"># return the num-th entry of the central value vector</span>
+                <span class="k">return</span> <span class="n">cv</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">cv</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Something went wrong when getting the central value of {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameter</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">get_central_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get central values of all constrained parameters.&quot;&quot;&quot;</span>
@@ -2318,13 +2371,12 @@ documentation.</p></div>
         <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
 <span class="sd">        distributed according to the probability distribution applied.&quot;&quot;&quot;</span>
         <span class="c1"># first, generate random values for every single one of the constraints</span>
-        <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">]</span>
+        <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
         <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># now, iterate over the parameters</span>
         <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">random_dict</span>
 
     <span class="k">def</span> <span class="nf">get_1d_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
@@ -2354,10 +2406,8 @@ documentation.</p></div>
         <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-            <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                                        <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
-                                        <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
-                                    <span class="p">)</span>
+            <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
+                                     <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">error_dict</span>
 
     <span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[]):</span>
@@ -2394,9 +2444,8 @@ documentation.</p></div>
                     <span class="c1"># no parameter has been excluded</span>
                     <span class="n">exclude</span> <span class="o">=</span> <span class="bp">None</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span>
-                        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
+                    <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                                    <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
                 <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">prob_dict</span>
 
@@ -2430,7 +2479,7 @@ documentation.</p></div>
             <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                         <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">}</span>
+                <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2653,10 +2702,8 @@ central value.</p></div>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-        <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                                    <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
-                                    <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
-                                <span class="p">)</span>
+        <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
+                                 <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">error_dict</span>
 </pre></div>
 
@@ -2684,8 +2731,17 @@ central value.</p></div>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
-        <span class="c1"># return the num-th entry of the central value vector</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">])[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">cv</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cv</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="c1"># return the num-th entry of the central value vector</span>
+            <span class="k">return</span> <span class="n">cv</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">cv</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Something went wrong when getting the central value of {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameter</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -2774,9 +2830,8 @@ constraint/probability distribution.</p>
                 <span class="c1"># no parameter has been excluded</span>
                 <span class="n">exclude</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span>
-                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
+                <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
             <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prob_dict</span>
 </pre></div>
@@ -2804,13 +2859,12 @@ distributed according to the probability distribution applied.</p></div>
     <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
 <span class="sd">    distributed according to the probability distribution applied.&quot;&quot;&quot;</span>
     <span class="c1"># first, generate random values for every single one of the constraints</span>
-    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">]</span>
+    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
     <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># now, iterate over the parameters</span>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-        <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">random_dict</span>
 </pre></div>
 
@@ -2882,7 +2936,7 @@ containing the parameter list of each constraint (e.g. 'parameters',
         <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                     <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">}</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data</span>
     <span class="k">else</span><span class="p">:</span>
@@ -3004,10 +3058,10 @@ simultaneously.</p></div>
     <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">pds</span> <span class="o">=</span>  <span class="n">dict2dist</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">dict2dist</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Either constraint_string or constraint_dict have&quot;</span>
-                         <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
+                        <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
     <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 </pre></div>
@@ -3133,14 +3187,17 @@ quantity.</p></div>
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3208,7 +3265,8 @@ quantity.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Implementation.get', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Implementation.get" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3230,7 +3288,8 @@ quantity.</p></div>
   <div id="source-flavio.classes.Implementation.get_central" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3252,7 +3311,8 @@ quantity.</p></div>
   <div id="source-flavio.classes.Implementation.get_random" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3426,8 +3486,8 @@ describing the measurement (e.g. 'CMS Bs-&gt;mumu 2012').</p>
 <p>where <code>constraint</code> is an instance of a descendant of
 ProbabilityDistribution and <code>observables</code> is a list of either
  - a string observable name in the case of observables without arguments
- - or a tuple <code>(name, x_1, ..., x_n)</code>, where the <code>x_i</code> are float values for the
-   arguments, of an observable with <code>n</code> arguments.</p></div>
+ - or a tuple <code>(name, x_1, ..., x_n)</code>, where the <code>x_i</code> are float values for
+   the arguments, of an observable with <code>n</code> arguments.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Measurement', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Measurement" class="source">
@@ -3446,8 +3506,8 @@ ProbabilityDistribution and <code>observables</code> is a list of either
 <span class="sd">    where `constraint` is an instance of a descendant of</span>
 <span class="sd">    ProbabilityDistribution and `observables` is a list of either</span>
 <span class="sd">     - a string observable name in the case of observables without arguments</span>
-<span class="sd">     - or a tuple `(name, x_1, ..., x_n)`, where the `x_i` are float values for the</span>
-<span class="sd">       arguments, of an observable with `n` arguments.</span>
+<span class="sd">     - or a tuple `(name, x_1, ..., x_n)`, where the `x_i` are float values for</span>
+<span class="sd">       the arguments, of an observable with `n` arguments.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -3456,6 +3516,35 @@ ProbabilityDistribution and <code>observables</code> is a list of either
         <span class="bp">self</span><span class="o">.</span><span class="n">inspire</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Measurement(&#39;{}&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_repr_markdown_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">md</span> <span class="o">=</span> <span class="s2">&quot;### Measurement `{}`</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Experiment: {}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inspire</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;[Inspire](http://inspirehep.net/search?&amp;p=texkey+{})</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inspire</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;URL: &lt;{}&gt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Description: {}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Measured observables:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">args</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                    <span class="n">argnames</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span>
+                    <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;- {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Observable</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">tex</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+                        <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;, `{}` = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">argnames</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">arg</span><span class="p">)</span>
+                    <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;- {}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span><span class="o">.</span><span class="n">tex</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">md</span>
 </pre></div>
 
   </div>
@@ -3643,10 +3732,8 @@ central value.</p></div>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-        <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                                    <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
-                                    <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
-                                <span class="p">)</span>
+        <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
+                                 <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">error_dict</span>
 </pre></div>
 
@@ -3674,8 +3761,17 @@ central value.</p></div>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
-        <span class="c1"># return the num-th entry of the central value vector</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">])[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">cv</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cv</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="c1"># return the num-th entry of the central value vector</span>
+            <span class="k">return</span> <span class="n">cv</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">cv</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Something went wrong when getting the central value of {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameter</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -3764,9 +3860,8 @@ constraint/probability distribution.</p>
                 <span class="c1"># no parameter has been excluded</span>
                 <span class="n">exclude</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span>
-                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
+                <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
             <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prob_dict</span>
 </pre></div>
@@ -3794,13 +3889,12 @@ distributed according to the probability distribution applied.</p></div>
     <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
 <span class="sd">    distributed according to the probability distribution applied.&quot;&quot;&quot;</span>
     <span class="c1"># first, generate random values for every single one of the constraints</span>
-    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">]</span>
+    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
     <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># now, iterate over the parameters</span>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-        <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">random_dict</span>
 </pre></div>
 
@@ -3872,7 +3966,7 @@ containing the parameter list of each constraint (e.g. 'parameters',
         <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                     <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">}</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data</span>
     <span class="k">else</span><span class="p">:</span>
@@ -3994,10 +4088,10 @@ simultaneously.</p></div>
     <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">pds</span> <span class="o">=</span>  <span class="n">dict2dist</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">dict2dist</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Either constraint_string or constraint_dict have&quot;</span>
-                         <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
+                        <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
     <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 </pre></div>
@@ -4479,6 +4573,25 @@ predicted theoretically.</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Observable(&#39;{}&#39;, arguments={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_repr_markdown_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">md</span> <span class="o">=</span> <span class="s2">&quot;### Observable `{}`</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tex</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Observable: {}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tex</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Description: {}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Arguments: &quot;</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;`{}`&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">])</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">function</span>
+            <span class="kn">from</span> <span class="nn">IPython.lib</span> <span class="kn">import</span> <span class="n">pretty</span>
+            <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Theory prediction: `{}`&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pretty</span><span class="o">.</span><span class="n">pretty</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">md</span>
+
     <span class="k">def</span> <span class="nf">set_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span> <span class="o">=</span> <span class="n">prediction</span>
 
@@ -4495,7 +4608,7 @@ predicted theoretically.</p></div>
 <span class="sd">        &#39;Category :: Subcategory :: Subsubcategory&#39;</span>
 <span class="sd">        etc. LaTeX code is allowed. One observable can also have multiple</span>
 <span class="sd">        taxonomies (e.g. &#39;Animal :: Cat&#39; and &#39;Pet :: Favourite Pet&#39;)&quot;&quot;&quot;</span>
-        <span class="n">taxonomy_list</span> <span class="o">=</span> <span class="n">taxonomy_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; :: &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="p">]</span>
+        <span class="n">taxonomy_list</span> <span class="o">=</span> <span class="n">taxonomy_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; :: &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
         <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">taxonomy</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">taxonomy_list</span><span class="p">:</span>
             <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
@@ -4542,7 +4655,7 @@ predicted theoretically.</p></div>
                 <span class="s2">&quot;The observable {} does not have a prediction yet&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
         <span class="n">obs_obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="n">Observable</span><span class="p">[</span><span class="n">observables</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
         <span class="n">pfcts</span> <span class="o">=</span> <span class="p">[</span><span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">function</span>
-                <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="n">observables</span><span class="p">]</span>
+                 <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="n">observables</span><span class="p">]</span>
         <span class="k">def</span> <span class="nf">pfct</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">pfcts</span><span class="p">])</span>
         <span class="n">Prediction</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pfct</span><span class="p">)</span>
@@ -4632,7 +4745,7 @@ taxonomies (e.g. 'Animal :: Cat' and 'Pet :: Favourite Pet')</p></div>
 <span class="sd">    &#39;Category :: Subcategory :: Subsubcategory&#39;</span>
 <span class="sd">    etc. LaTeX code is allowed. One observable can also have multiple</span>
 <span class="sd">    taxonomies (e.g. &#39;Animal :: Cat&#39; and &#39;Pet :: Favourite Pet&#39;)&quot;&quot;&quot;</span>
-    <span class="n">taxonomy_list</span> <span class="o">=</span> <span class="n">taxonomy_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; :: &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="p">]</span>
+    <span class="n">taxonomy_list</span> <span class="o">=</span> <span class="n">taxonomy_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; :: &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
     <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">taxonomy</span>
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">taxonomy_list</span><span class="p">:</span>
         <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
@@ -4865,7 +4978,7 @@ that is defined as the difference between the two can be defined as</p>
             <span class="s2">&quot;The observable {} does not have a prediction yet&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">observable</span><span class="p">)</span>
     <span class="n">obs_obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="n">Observable</span><span class="p">[</span><span class="n">observables</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
     <span class="n">pfcts</span> <span class="o">=</span> <span class="p">[</span><span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">prediction</span><span class="o">.</span><span class="n">function</span>
-            <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="n">observables</span><span class="p">]</span>
+             <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="n">observables</span><span class="p">]</span>
     <span class="k">def</span> <span class="nf">pfct</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">pfcts</span><span class="p">])</span>
     <span class="n">Prediction</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pfct</span><span class="p">)</span>
@@ -5301,10 +5414,8 @@ central value.</p></div>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-        <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                                    <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
-                                    <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
-                                <span class="p">)</span>
+        <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
+                                 <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">error_dict</span>
 </pre></div>
 
@@ -5332,8 +5443,17 @@ central value.</p></div>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
-        <span class="c1"># return the num-th entry of the central value vector</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">])[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">cv</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cv</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="c1"># return the num-th entry of the central value vector</span>
+            <span class="k">return</span> <span class="n">cv</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">cv</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Something went wrong when getting the central value of {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameter</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -5422,9 +5542,8 @@ constraint/probability distribution.</p>
                 <span class="c1"># no parameter has been excluded</span>
                 <span class="n">exclude</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span>
-                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
+                <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
             <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prob_dict</span>
 </pre></div>
@@ -5452,13 +5571,12 @@ distributed according to the probability distribution applied.</p></div>
     <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
 <span class="sd">    distributed according to the probability distribution applied.&quot;&quot;&quot;</span>
     <span class="c1"># first, generate random values for every single one of the constraints</span>
-    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">]</span>
+    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
     <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># now, iterate over the parameters</span>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-        <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">random_dict</span>
 </pre></div>
 
@@ -5530,7 +5648,7 @@ containing the parameter list of each constraint (e.g. 'parameters',
         <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                     <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">}</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data</span>
     <span class="k">else</span><span class="p">:</span>
@@ -5652,10 +5770,10 @@ simultaneously.</p></div>
     <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">pds</span> <span class="o">=</span>  <span class="n">dict2dist</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">dict2dist</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Either constraint_string or constraint_dict have&quot;</span>
-                         <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
+                        <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
     <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 </pre></div>
@@ -5773,10 +5891,12 @@ simultaneously.</p></div>
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span>    <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -5833,7 +5953,8 @@ simultaneously.</p></div>
   <div id="source-flavio.classes.Prediction.get_central" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span>    <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -5854,7 +5975,8 @@ simultaneously.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Prediction.get_par', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Prediction.get_par" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -6080,10 +6202,8 @@ central value.</p></div>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-        <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                                    <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
-                                    <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
-                                <span class="p">)</span>
+        <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
+                                 <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">error_dict</span>
 </pre></div>
 
@@ -6111,8 +6231,17 @@ central value.</p></div>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No constraints applied to parameter/observable &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
-        <span class="c1"># return the num-th entry of the central value vector</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">])[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">cv</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cv</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="c1"># return the num-th entry of the central value vector</span>
+            <span class="k">return</span> <span class="n">cv</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">cv</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Something went wrong when getting the central value of {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameter</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -6201,9 +6330,8 @@ constraint/probability distribution.</p>
                 <span class="c1"># no parameter has been excluded</span>
                 <span class="n">exclude</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span>
-                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
+                <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
             <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prob_dict</span>
 </pre></div>
@@ -6231,13 +6359,12 @@ distributed according to the probability distribution applied.</p></div>
     <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
 <span class="sd">    distributed according to the probability distribution applied.&quot;&quot;&quot;</span>
     <span class="c1"># first, generate random values for every single one of the constraints</span>
-    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">]</span>
+    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
     <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># now, iterate over the parameters</span>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="p">([</span><span class="n">constraint</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">])</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-        <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">random_dict</span>
 </pre></div>
 
@@ -6309,7 +6436,7 @@ containing the parameter list of each constraint (e.g. 'parameters',
         <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                     <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">}</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data</span>
     <span class="k">else</span><span class="p">:</span>
@@ -6431,10 +6558,10 @@ simultaneously.</p></div>
     <span class="k">if</span> <span class="n">constraint_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">pds</span> <span class="o">=</span> <span class="n">constraints_from_string</span><span class="p">(</span><span class="n">constraint_string</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">constraint_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">pds</span> <span class="o">=</span>  <span class="n">dict2dist</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
+        <span class="n">pds</span> <span class="o">=</span> <span class="n">dict2dist</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Either constraint_string or constraint_dict have&quot;</span>
-                         <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
+                        <span class="s2">&quot; to be specified.&quot;</span><span class="p">)</span>
     <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter</span><span class="p">],</span> <span class="n">combined_pd</span><span class="p">)</span>
 </pre></div>

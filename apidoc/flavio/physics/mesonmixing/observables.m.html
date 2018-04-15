@@ -1062,8 +1062,10 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
-    <li class="mono"><a href="#flavio.physics.mesonmixing.observables.DeltaGamma">DeltaGamma</a></li>
-    <li class="mono"><a href="#flavio.physics.mesonmixing.observables.DeltaM">DeltaM</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.observables.DeltaGamma_12">DeltaGamma_12</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.observables.DeltaGamma_B">DeltaGamma_B</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.observables.DeltaM_12">DeltaM_12</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.observables.DeltaM_positive">DeltaM_positive</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.observables.S">S</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.observables.S_BJpsiK">S_BJpsiK</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.observables.S_Bspsiphi">S_Bspsiphi</a></li>
@@ -1072,7 +1074,13 @@ table {
     <li class="mono"><a href="#flavio.physics.mesonmixing.observables.amplitude_Bspsiphi">amplitude_Bspsiphi</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.observables.epsK">epsK</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.observables.get_M12_G12">get_M12_G12</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.observables.phi12">phi12</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.observables.q_over_p">q_over_p</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.observables.x">x</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.observables.x12">x12</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.observables.x12Im">x12Im</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.observables.y">y</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.observables.y12">y12</a></li>
   </ul>
 
     </li>
@@ -1110,17 +1118,26 @@ table {
 <span class="k">def</span> <span class="nf">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="n">meson</span> <span class="o">+</span> <span class="s1">&#39; mixing&#39;</span><span class="p">]</span>
     <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">common</span><span class="o">.</span><span class="n">meson_quark</span><span class="p">[</span><span class="n">meson</span><span class="p">],</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-    <span class="n">M12</span> <span class="o">=</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">M12_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="n">M12</span> <span class="o">=</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">M12</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="c1"># TODO temporary fix: we don&#39;t have a prediction for Gamma12 in the kaon sector</span>
     <span class="k">if</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;K0&#39;</span><span class="p">:</span>
         <span class="n">G12</span> <span class="o">=</span> <span class="mf">0.</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;D0&#39;</span><span class="p">:</span>
+        <span class="n">G12</span> <span class="o">=</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">G12_u</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># B0 and Bs</span>
         <span class="n">G12</span> <span class="o">=</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">G12_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span>
 
-<span class="k">def</span> <span class="nf">DeltaM</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">DeltaM_12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Mass difference defined to be $M_1 - M_2$, where the mass eigenstate</span>
+<span class="sd">    1 is CP-even in the absence of CP violation.&quot;&quot;&quot;</span>
     <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">DeltaM</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">common</span><span class="o">.</span><span class="n">DeltaM</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">DeltaM_positive</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Mass difference defined to be strictly positive&quot;&quot;&quot;</span>
+    <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DeltaM</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">))</span>
 
 <span class="k">def</span> <span class="nf">a_fs</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
     <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
@@ -1130,10 +1147,52 @@ table {
     <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">q_over_p</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">DeltaGamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">DeltaGamma_B</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Decay width difference defined as</span>
+<span class="sd">    $\Delta\Gamma = \Gamma_1 - \Gamma_2$ in the convention where</span>
+<span class="sd">    $\Delta M = M_2 - M_1$ is positive (and the mass eigenstate</span>
+<span class="sd">    1 is CP-even in the absence of CP violation), as often used in the</span>
+<span class="sd">    $B$ system.&quot;&quot;&quot;</span>
+    <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="n">DM</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DeltaM</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">DM</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">DeltaGamma</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">common</span><span class="o">.</span><span class="n">DeltaGamma</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">DeltaGamma_12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Decay width difference defined as</span>
+<span class="sd">    $\Delta\Gamma = \Gamma_1 - \Gamma_2$, in the convention where the</span>
+<span class="sd">    mass eigenstate 1 is CP-even in the absence of CP violation.&quot;&quot;&quot;</span>
     <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">DeltaGamma</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
 
+<span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$x=(M_1 - M_2)/\Gamma$ where 1 is CP-even in the CPC limit.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">DeltaM_12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span><span class="o">*</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$y=(\Gamma_1 - \Gamma_2)/2\Gamma$ where 1 is CP-even in the CPC limit.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">DeltaGamma_12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span><span class="o">*</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
+
+<span class="k">def</span> <span class="nf">x12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$x_{12}=2|M_{12}|/\Gamma$.&quot;&quot;&quot;</span>
+    <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">M12</span><span class="p">)</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">y12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$y_{12}=|\Gamma_{12}|/\Gamma$.&quot;&quot;&quot;</span>
+    <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">G12</span><span class="p">)</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">x12Im</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$x_{12}^\text{Im}=\sin\phi_{12}$.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">phi12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">phi12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$\phi_{12}=\text{arg}(-M_{12}/\Gamma_{12})&quot;&quot;&quot;</span>
+    <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">phase</span><span class="p">(</span><span class="n">M12</span> <span class="o">/</span> <span class="n">G12</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">epsK</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
     <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;K0&#39;</span><span class="p">)</span>
@@ -1152,6 +1211,9 @@ table {
 <span class="k">def</span> <span class="nf">S</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">etaCP</span><span class="p">):</span>
     <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="n">qp</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">q_over_p</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+    <span class="n">DM</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DeltaM</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">DM</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="o">-</span><span class="n">qp</span>  <span class="c1"># switch the sign of q/p to keep DeltaM &gt; 0</span>
     <span class="n">A</span> <span class="o">=</span> <span class="n">amplitude</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
     <span class="n">A_bar</span> <span class="o">=</span> <span class="n">amplitude</span><span class="p">(</span><span class="n">conjugate_par</span><span class="p">(</span><span class="n">par</span><span class="p">))</span>
     <span class="n">xi</span> <span class="o">=</span> <span class="n">etaCP</span> <span class="o">*</span> <span class="n">qp</span> <span class="o">*</span> <span class="n">A</span> <span class="o">/</span> <span class="n">A_bar</span>
@@ -1170,13 +1232,13 @@ table {
 <span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Mass difference in the $B_s$-$\bar B_s$ system&quot;</span><span class="p">)</span>
 <span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\Delta M_s$&quot;</span>
 <span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $B_s$-$\bar B_s$ mixing&#39;</span><span class="p">)</span>
-<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_s&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">DeltaM</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">))</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_s&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">DeltaM_positive</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">))</span>
 
 <span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;DeltaM_d&#39;</span><span class="p">)</span>
 <span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Mass difference in the $B^0$-$\bar B^0$ system&quot;</span><span class="p">)</span>
 <span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\Delta M_d$&quot;</span>
 <span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $B^0$-$\bar B^0$ mixing&#39;</span><span class="p">)</span>
-<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_d&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">DeltaM</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B0&#39;</span><span class="p">))</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_d&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">DeltaM_positive</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B0&#39;</span><span class="p">))</span>
 
 <span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;a_fs_s&#39;</span><span class="p">)</span>
 <span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;CP asymmetry in flavour-specific $B_s$ decays&quot;</span><span class="p">)</span>
@@ -1194,16 +1256,16 @@ table {
 <span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Decay width difference in the $B_s$-$\bar B_s$ system&quot;</span><span class="p">)</span>
 <span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\Delta\Gamma_s$&quot;</span>
 <span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $B_s$-$\bar B_s$ mixing&#39;</span><span class="p">)</span>
-<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;DeltaGamma_s&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">DeltaGamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">))</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;DeltaGamma_s&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">DeltaGamma_B</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">))</span>
 
 <span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;DeltaGamma_d&#39;</span><span class="p">)</span>
 <span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Decay width difference in the $B^0$-$\bar B^0$ system&quot;</span><span class="p">)</span>
 <span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\Delta\Gamma_d$&quot;</span>
 <span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $B^0$-$\bar B^0$ mixing&#39;</span><span class="p">)</span>
-<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;DeltaGamma_d&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">DeltaGamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B0&#39;</span><span class="p">))</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;DeltaGamma_d&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">DeltaGamma_B</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B0&#39;</span><span class="p">))</span>
 
 <span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">)</span>
-<span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Direct CP violation parameter in the $K^0$-$\bar K^0$ system&quot;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Indirect CP violation parameter in the $K^0$-$\bar K^0$ system&quot;</span><span class="p">)</span>
 <span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\vert\epsilon_K\vert$&quot;</span>
 <span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $K^0$-$\bar K^0$ mixing&#39;</span><span class="p">)</span>
 <span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">,</span> <span class="n">epsK</span><span class="p">)</span>
@@ -1221,6 +1283,54 @@ table {
 <span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $B_s$-$\bar B_s$ mixing&#39;</span><span class="p">)</span>
 <span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: $b$ hadron decays :: Non-leptonic decays :: $B\to VV$&#39;</span><span class="p">)</span>
 <span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;S_psiphi&#39;</span><span class="p">,</span> <span class="n">S_Bspsiphi</span><span class="p">)</span>
+
+<span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;x_D&#39;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Normalized mass difference in the $D^0$-$\bar D^0$ system&quot;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$x_D$&quot;</span>
+<span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $D^0$-$\bar D^0$ mixing&#39;</span><span class="p">)</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;x_D&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">x</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;D0&#39;</span><span class="p">))</span>
+
+<span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;y_D&#39;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Normalized width difference in the $D^0$-$\bar D^0$ system&quot;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$y_D$&quot;</span>
+<span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $D^0$-$\bar D^0$ mixing&#39;</span><span class="p">)</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;y_D&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">y</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;D0&#39;</span><span class="p">))</span>
+
+<span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;phi_D&#39;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Phase of $q/p$ in the $D^0$-$\bar D^0$ system&quot;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\phi_D$&quot;</span>
+<span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $D^0$-$\bar D^0$ mixing&#39;</span><span class="p">)</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;phi_D&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">phase</span><span class="p">(</span><span class="o">-</span><span class="n">q_over_p</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;D0&#39;</span><span class="p">)))</span>
+
+<span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;q/p_D&#39;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Absolute value of $q/p$ in the $D^0$-$\bar D^0$ system&quot;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$|q/p|_D$&quot;</span>
+<span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $D^0$-$\bar D^0$ mixing&#39;</span><span class="p">)</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;q/p_D&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">q_over_p</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;D0&#39;</span><span class="p">)))</span>
+
+<span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;x12_D&#39;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Normalized absolute value of the dispersive mixing amplitude in the $D^0$-$\bar D^0$ system&quot;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$x_{12}^D$&quot;</span>
+<span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $D^0$-$\bar D^0$ mixing&#39;</span><span class="p">)</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;x12_D&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">x12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;D0&#39;</span><span class="p">))</span>
+
+<span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;y12_D&#39;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Normalized absolute value of the absorptive mixing amplitude in the $D^0$-$\bar D^0$ system&quot;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$y_{12}^D$&quot;</span>
+<span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $D^0$-$\bar D^0$ mixing&#39;</span><span class="p">)</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;y12_D&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">y12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;D0&#39;</span><span class="p">))</span>
+
+<span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;phi12_D&#39;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$D^0$-$\bar D^0$ mixing phase&quot;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\phi_{12}^D$&quot;</span>
+<span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $D^0$-$\bar D^0$ mixing&#39;</span><span class="p">)</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;phi12_D&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">phi12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;D0&#39;</span><span class="p">))</span>
+
+<span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="s1">&#39;x12Im_D&#39;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Normalized imaginary part of the dispersive mixing amplitude in the $D^0$-$\bar D^0$ system&quot;</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$x_{12}^{\text{Im},D}$&quot;</span>
+<span class="n">o</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: Meson-antimeson mixing ::  $D^0$-$\bar D^0$ mixing&#39;</span><span class="p">)</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="s1">&#39;x12Im_D&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">x12Im</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;D0&#39;</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1249,17 +1359,23 @@ table {
     <h2 class="section-title" id="header-functions">Functions</h2>
       
   <div class="item">
-    <div class="name def" id="flavio.physics.mesonmixing.observables.DeltaGamma">
-    <p>def <span class="ident">DeltaGamma</span>(</p><p>wc_obj, par, meson)</p>
+    <div class="name def" id="flavio.physics.mesonmixing.observables.DeltaGamma_12">
+    <p>def <span class="ident">DeltaGamma_12</span>(</p><p>wc_obj, par, meson)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Decay width difference defined as
+$\Delta\Gamma = \Gamma_1 - \Gamma_2$, in the convention where the
+mass eigenstate 1 is CP-even in the absence of CP violation.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.observables.DeltaGamma', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.mesonmixing.observables.DeltaGamma" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">DeltaGamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.observables.DeltaGamma_12', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.observables.DeltaGamma_12" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">DeltaGamma_12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Decay width difference defined as</span>
+<span class="sd">    $\Delta\Gamma = \Gamma_1 - \Gamma_2$, in the convention where the</span>
+<span class="sd">    mass eigenstate 1 is CP-even in the absence of CP violation.&quot;&quot;&quot;</span>
     <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">DeltaGamma</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
 </pre></div>
@@ -1271,19 +1387,83 @@ table {
   
       
   <div class="item">
-    <div class="name def" id="flavio.physics.mesonmixing.observables.DeltaM">
-    <p>def <span class="ident">DeltaM</span>(</p><p>wc_obj, par, meson)</p>
+    <div class="name def" id="flavio.physics.mesonmixing.observables.DeltaGamma_B">
+    <p>def <span class="ident">DeltaGamma_B</span>(</p><p>wc_obj, par, meson)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Decay width difference defined as
+$\Delta\Gamma = \Gamma_1 - \Gamma_2$ in the convention where
+$\Delta M = M_2 - M_1$ is positive (and the mass eigenstate
+1 is CP-even in the absence of CP violation), as often used in the
+$B$ system.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.observables.DeltaM', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.mesonmixing.observables.DeltaM" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">DeltaM</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.observables.DeltaGamma_B', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.observables.DeltaGamma_B" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">DeltaGamma_B</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Decay width difference defined as</span>
+<span class="sd">    $\Delta\Gamma = \Gamma_1 - \Gamma_2$ in the convention where</span>
+<span class="sd">    $\Delta M = M_2 - M_1$ is positive (and the mass eigenstate</span>
+<span class="sd">    1 is CP-even in the absence of CP violation), as often used in the</span>
+<span class="sd">    $B$ system.&quot;&quot;&quot;</span>
     <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">DeltaM</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+    <span class="n">DM</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DeltaM</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">DM</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">DeltaGamma</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">common</span><span class="o">.</span><span class="n">DeltaGamma</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.observables.DeltaM_12">
+    <p>def <span class="ident">DeltaM_12</span>(</p><p>wc_obj, par, meson)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Mass difference defined to be $M_1 - M_2$, where the mass eigenstate
+1 is CP-even in the absence of CP violation.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.observables.DeltaM_12', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.observables.DeltaM_12" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">DeltaM_12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Mass difference defined to be $M_1 - M_2$, where the mass eigenstate</span>
+<span class="sd">    1 is CP-even in the absence of CP violation.&quot;&quot;&quot;</span>
+    <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">common</span><span class="o">.</span><span class="n">DeltaM</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.observables.DeltaM_positive">
+    <p>def <span class="ident">DeltaM_positive</span>(</p><p>wc_obj, par, meson)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Mass difference defined to be strictly positive</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.observables.DeltaM_positive', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.observables.DeltaM_positive" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">DeltaM_positive</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Mass difference defined to be strictly positive&quot;&quot;&quot;</span>
+    <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DeltaM</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1306,6 +1486,9 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">S</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">etaCP</span><span class="p">):</span>
     <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="n">qp</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">q_over_p</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+    <span class="n">DM</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DeltaM</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">DM</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="o">-</span><span class="n">qp</span>  <span class="c1"># switch the sign of q/p to keep DeltaM &gt; 0</span>
     <span class="n">A</span> <span class="o">=</span> <span class="n">amplitude</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
     <span class="n">A_bar</span> <span class="o">=</span> <span class="n">amplitude</span><span class="p">(</span><span class="n">conjugate_par</span><span class="p">(</span><span class="n">par</span><span class="p">))</span>
     <span class="n">xi</span> <span class="o">=</span> <span class="n">etaCP</span> <span class="o">*</span> <span class="n">qp</span> <span class="o">*</span> <span class="n">A</span> <span class="o">/</span> <span class="n">A_bar</span>
@@ -1464,13 +1647,39 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="n">meson</span> <span class="o">+</span> <span class="s1">&#39; mixing&#39;</span><span class="p">]</span>
     <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">common</span><span class="o">.</span><span class="n">meson_quark</span><span class="p">[</span><span class="n">meson</span><span class="p">],</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-    <span class="n">M12</span> <span class="o">=</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">M12_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="n">M12</span> <span class="o">=</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">M12</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="c1"># TODO temporary fix: we don&#39;t have a prediction for Gamma12 in the kaon sector</span>
     <span class="k">if</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;K0&#39;</span><span class="p">:</span>
         <span class="n">G12</span> <span class="o">=</span> <span class="mf">0.</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;D0&#39;</span><span class="p">:</span>
+        <span class="n">G12</span> <span class="o">=</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">G12_u</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># B0 and Bs</span>
         <span class="n">G12</span> <span class="o">=</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">G12_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.observables.phi12">
+    <p>def <span class="ident">phi12</span>(</p><p>wc_obj, par, meson)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>$\phi_{12}=\text{arg}(-M_{12}/\Gamma_{12})</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.observables.phi12', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.observables.phi12" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">phi12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$\phi_{12}=\text{arg}(-M_{12}/\Gamma_{12})&quot;&quot;&quot;</span>
+    <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">phase</span><span class="p">(</span><span class="n">M12</span> <span class="o">/</span> <span class="n">G12</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1493,6 +1702,123 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">q_over_p</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
     <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">q_over_p</span><span class="p">(</span><span class="n">M12</span><span class="p">,</span> <span class="n">G12</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.observables.x">
+    <p>def <span class="ident">x</span>(</p><p>wc_obj, par, meson)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>$x=(M_1 - M_2)/\Gamma$ where 1 is CP-even in the CPC limit.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.observables.x', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.observables.x" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$x=(M_1 - M_2)/\Gamma$ where 1 is CP-even in the CPC limit.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">DeltaM_12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span><span class="o">*</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.observables.x12">
+    <p>def <span class="ident">x12</span>(</p><p>wc_obj, par, meson)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>$x_{12}=2|M_{12}|/\Gamma$.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.observables.x12', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.observables.x12" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">x12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$x_{12}=2|M_{12}|/\Gamma$.&quot;&quot;&quot;</span>
+    <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">M12</span><span class="p">)</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.observables.x12Im">
+    <p>def <span class="ident">x12Im</span>(</p><p>wc_obj, par, meson)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>$x_{12}^\text{Im}=\sin\phi_{12}$.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.observables.x12Im', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.observables.x12Im" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">x12Im</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$x_{12}^\text{Im}=\sin\phi_{12}$.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">phi12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.observables.y">
+    <p>def <span class="ident">y</span>(</p><p>wc_obj, par, meson)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>$y=(\Gamma_1 - \Gamma_2)/2\Gamma$ where 1 is CP-even in the CPC limit.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.observables.y', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.observables.y" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$y=(\Gamma_1 - \Gamma_2)/2\Gamma$ where 1 is CP-even in the CPC limit.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">DeltaGamma_12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span><span class="o">*</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.observables.y12">
+    <p>def <span class="ident">y12</span>(</p><p>wc_obj, par, meson)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>$y_{12}=|\Gamma_{12}|/\Gamma$.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.observables.y12', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.observables.y12" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">y12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$y_{12}=|\Gamma_{12}|/\Gamma$.&quot;&quot;&quot;</span>
+    <span class="n">M12</span><span class="p">,</span> <span class="n">G12</span> <span class="o">=</span> <span class="n">get_M12_G12</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">G12</span><span class="p">)</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
 </pre></div>
 
   </div>
