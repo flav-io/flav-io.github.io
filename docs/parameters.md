@@ -181,6 +181,9 @@ of the parameter.
 | `B0->K0 deltaC9 c Im` | $\text{Im}\,c^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^0\to K^0\ell^+\ell^-$ at high $q^2$ |
 | `B0->K0 deltaC9 c Re` | $\text{Re}\,c^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^0\to K^0\ell^+\ell^-$ at high $q^2$ |
 | `BR(B->Xcenu)_exp` | $\text{BR}(B\to X_ce\nu)_\text{exp}$ | Experimental branching ratio of $B\to X_ce\nu$ |
+| `BR(tau->enunu)` |  |  |
+| `BR(tau->mununu)` |  |  |
+| `BR(tau->rhonu)` |  |  |
 | `Bs->K BCL a0_f+` | $a_0^{(+)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_0$ of $f_+$ |
 | `Bs->K BCL a0_f0` | $a_0^{(0)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_0$ of $f_0$ |
 | `Bs->K BCL a0_fT` | $a_0^{(T)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_0$ of $f_T$ |
@@ -267,6 +270,9 @@ of the parameter.
 | `Gamma12_B0_c` | $c$ | Coefficient in the approximate equality $\Delta \Gamma_d/M_{12}^d=10^{-4}[c+a\frac{\lambda_u}{\lambda_t}]$ |
 | `Gamma12_Bs_a` | $a$ | Coefficient in the approximate equality $\Delta \Gamma_s/M_{12}^s=10^{-4}[c+a\frac{\lambda_u}{\lambda_t}]$ |
 | `Gamma12_Bs_c` | $c$ | Coefficient in the approximate equality $\Delta \Gamma_s/M_{12}^s=10^{-4}[c+a\frac{\lambda_u}{\lambda_t}]$ |
+| `Gamma12_D a_bb` | $a_{bb}$ | SM contribution to the absorptive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{ub}V_{cb}^\ast$ in inverse picoseconds |
+| `Gamma12_D a_bs` | $a_{bb}$ | SM contribution to the absorptive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{ub}V_{cs}^\ast$ in inverse picoseconds |
+| `Gamma12_D a_ss` | $a_{bb}$ | SM contribution to the absorptive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{us}V_{cs}^\ast$ in inverse picoseconds |
 | `K+e3 delta_EM` | $\delta_\text{em}^{K^+e}$ | Relative electromagnetic correction to $K^+\to\pi^0 e^+\bar\nu$ decay rate |
 | `K+mu3 delta_EM` | $\delta_\text{em}^{K^+\mu}$ | Relative electromagnetic correction to $K^+\to\pi^0 \mu^+\bar\nu$ decay rate |
 | `K->pi D` | $D$ | Parameter in the dispersive parametrization of the $K\to\pi$ form factors |
@@ -335,6 +341,9 @@ of the parameter.
 | `Lambdab->Lambda deltaC9 c_perp0 Re` | $\text{Re}\,c^{\Delta_9}_{\perp_0}$ | Parameter for subleading hadronic effects in $\Lambda_b\to\Lambda\ell^+\ell^-$ at low $q^2$ |
 | `Lambdab->Lambda deltaC9 c_perp1 Im` | $\text{Im}\,c^{\Delta_9}_{\perp_1}$ | Parameter for subleading hadronic effects in $\Lambda_b\to\Lambda\ell^+\ell^-$ at low $q^2$ |
 | `Lambdab->Lambda deltaC9 c_perp1 Re` | $\text{Re}\,c^{\Delta_9}_{\perp_1}$ | Parameter for subleading hadronic effects in $\Lambda_b\to\Lambda\ell^+\ell^-$ at low $q^2$ |
+| `M12_D a_bb` | $a_{bb}$ | SM contribution to the dispersive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{ub}V_{cb}^\ast$ in inverse picoseconds |
+| `M12_D a_bs` | $a_{bb}$ | SM contribution to the dispersive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{ub}V_{cs}^\ast$ in inverse picoseconds |
+| `M12_D a_ss` | $a_{bb}$ | SM contribution to the dispersive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{us}V_{cs}^\ast$ in inverse picoseconds |
 | `Vcb` | $V_{cb}$ | CKM element $V_{cb}$ |
 | `Vub` | $\vert V_{ub}\vert$ | Absolute value of the CKM element $V_{ub}$ |
 | `Vus` | $V_{us}$ | CKM element $V_{us}$ |
@@ -374,6 +383,11 @@ of the parameter.
 | `bag_Bs_3` | $B_3^{(s)}$ | $B_s$ bag parameter of $O_3$ in the $\overline{\text{MS}}$ scheme at $m_b$ |
 | `bag_Bs_4` | $B_4^{(s)}$ | $B_s$ bag parameter of $O_4$ in the $\overline{\text{MS}}$ scheme at $m_b$ |
 | `bag_Bs_5` | $B_5^{(s)}$ | $B_s$ bag parameter of $O_5$ in the $\overline{\text{MS}}$ scheme at $m_b$ |
+| `bag_D0_1` | $B_1^{(D)}$ | $D^0$ bag parameter of $O_1$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
+| `bag_D0_2` | $B_2^{(D)}$ | $D^0$ bag parameter of $O_2$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
+| `bag_D0_3` | $B_3^{(D)}$ | $D^0$ bag parameter of $O_3$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
+| `bag_D0_4` | $B_4^{(D)}$ | $D^0$ bag parameter of $O_4$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
+| `bag_D0_5` | $B_5^{(D)}$ | $D^0$ bag parameter of $O_5$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `bag_K0_1` | $B_1^{(K)}$ | $K^0$ bag parameter of $O_1$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `bag_K0_2` | $B_2^{(K)}$ | $K^0$ bag parameter of $O_2$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `bag_K0_3` | $B_3^{(K)}$ | $K^0$ bag parameter of $O_3$ in the $\overline{\text{MS}}$ scheme at 2 GeV |
@@ -487,6 +501,11 @@ of the parameter.
 | `m_u` | $m_{u}(2\,\text{GeV})$ | $u$ quark mass in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `mu_G^2` | $\mu_G^2$ |  |
 | `mu_pi^2` | $\mu_\pi^2$ |  |
+| `nEDM beta_G` | $\beta_G$ | coefficient of the three-gluon Weinberg operator contribution to the neutron EDM |
+| `nEDM gT_d` | $g_T^d$ | Neutron down quark tensor charge |
+| `nEDM gT_u` | $g_T^u$ | Neutron up quark tensor charge |
+| `nEDM ~rho_d` | $\tilde \rho_d$ | coefficient of the down quark CEDM contribution to the neutron EDM |
+| `nEDM ~rho_u` | $\tilde \rho_u$ | coefficient of the up quark CEDM contribution to the neutron EDM |
 | `rho_D^3` | $\rho_D^3$ |  |
 | `rho_LS^3` | $\rho_LS^3$ |  |
 | `s2w` | $\sin^2 \hat\theta_w(m_Z)$ | sine squared of the weak mixing angle in the $\overline{\text{MS}}$ scheme at the scale $m_Z$ |

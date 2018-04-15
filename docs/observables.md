@@ -14,6 +14,14 @@ of this page.
 
 
 
+### $\tau$ lepton decays
+
+
+- [LFV decays](obs/tauleptondecays-lfvdecays.html) (4 observables)
+
+- [Leptonic decays](obs/tauleptondecays-leptonicdecays.html) (2 observables)
+
+
 ### $b$ hadron decays
 
 
@@ -42,12 +50,20 @@ of this page.
 - [Semi-leptonic tree-level decays](obs/shadrondecays-semileptonictreeleveldecays.html) (6 observables)
 
 
+### Electric dipole moments
+
+
+- [Nucleons](obs/electricdipolemoments-nucleons.html) (1 observable)
+
+
 ### Meson-antimeson mixing
 
 
 - [ $B^0$-$\bar B^0$ mixing](obs/mesonantimesonmixing-bbarbmixing.html) (4 observables)
 
 - [ $B_s$-$\bar B_s$ mixing](obs/mesonantimesonmixing-bsbarbsmixing.html) (4 observables)
+
+- [ $D^0$-$\bar D^0$ mixing](obs/mesonantimesonmixing-dbardmixing.html) (8 observables)
 
 - [ $K^0$-$\bar K^0$ mixing](obs/mesonantimesonmixing-kbarkmixing.html) (1 observable)
 
@@ -56,6 +72,12 @@ of this page.
 
 
 - [Leptonic tree-level decays](obs/unflavouredmesondecays-leptonictreeleveldecays.html) (1 observable)
+
+
+### muon decays
+
+
+- [LFV decays](obs/muondecays-lfvdecays.html) (2 observables)
 
 ## Some general notes on conventions
 

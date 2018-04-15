@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Observables - Meson-antimeson mixing -  $K^0$-$\bar K^0$ mixing
+title: Observables - muon decays - LFV decays
 ---
 
-# Observables / Meson-antimeson mixing /  $K^0$-$\bar K^0$ mixing
+# Observables / muon decays / LFV decays
 
 
 
@@ -20,9 +20,19 @@ a scalar observable).
 * TOC
 {:toc}
 
+## $\mu\to e\gamma$
+
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `eps_K` | $\vert\epsilon_K\vert$ | Indirect CP violation parameter in the $K^0$-$\bar K^0$ system |  |
+| `BR(mu->egamma)` | $\text{BR}(\mu\to e\gamma)$ | Branching ratio of $\mu\to e\gamma$ |  |
+
+
+## $\mu^-\to e^-e^+e^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(mu->eee)` | $\text{BR}(\mu^-\to e^-e^+e^-)$ | Branching ratio of $\mu^-\to e^-e^+e^-$ |  |
 
 

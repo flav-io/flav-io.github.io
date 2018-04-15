@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Observables - Meson-antimeson mixing -  $K^0$-$\bar K^0$ mixing
+title: Observables - Electric dipole moments - Nucleons
 ---
 
-# Observables / Meson-antimeson mixing /  $K^0$-$\bar K^0$ mixing
+# Observables / Electric dipole moments / Nucleons
 
 
 
@@ -20,9 +20,11 @@ a scalar observable).
 * TOC
 {:toc}
 
+## $d_n$
+
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `eps_K` | $\vert\epsilon_K\vert$ | Indirect CP violation parameter in the $K^0$-$\bar K^0$ system |  |
+| `d_n` | $d_n$ | Electric dipole moment of the neutron |  |
 
 
