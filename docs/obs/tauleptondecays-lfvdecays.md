@@ -20,6 +20,24 @@ a scalar observable).
 * TOC
 {:toc}
 
+## $\tau\to V\ell$
+
+### $\tau^+\to \rho^0 e^+$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(tau->rhoe)` | $\text{BR}(\tau^+\to \rho^0 e^+)$ | Branching ratio of $\tau^+\to \rho^0 e^+$ |  |
+
+
+### $\tau^+\to \rho^0\mu^+$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(tau->rhomu)` | $\text{BR}(\tau^+\to \rho^0\mu^+)$ | Branching ratio of $\tau^+\to \rho^0\mu^+$ |  |
+
+
 ## $\tau\to \ell\gamma$
 
 ### $\tau\to \mu\gamma$

@@ -17,9 +17,11 @@ of this page.
 ### $\tau$ lepton decays
 
 
-- [LFV decays](obs/tauleptondecays-lfvdecays.html) (4 observables)
+- [Hadronic tree-level decays](obs/tauleptondecays-hadronictreeleveldecays.html) (2 observables)
 
-- [Leptonic decays](obs/tauleptondecays-leptonicdecays.html) (2 observables)
+- [LFV decays](obs/tauleptondecays-lfvdecays.html) (6 observables)
+
+- [Leptonic tree-level decays](obs/tauleptondecays-leptonictreeleveldecays.html) (2 observables)
 
 
 ### $b$ hadron decays
