@@ -1161,14 +1161,18 @@ table {
     <span class="n">me</span> <span class="o">=</span> <span class="n">matrixelements</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="c1"># new physics contributions to the mixing amplitude</span>
     <span class="c1"># the minus sign below stems from the fact that H_eff = -C_i O_i</span>
-    <span class="n">contributions_np</span> <span class="o">=</span> <span class="p">[</span> <span class="o">-</span><span class="n">wc_value</span> <span class="o">*</span> <span class="n">me</span><span class="p">[</span><span class="n">wc_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">wc_name</span><span class="p">,</span> <span class="n">wc_value</span> <span class="ow">in</span> <span class="n">wc</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">]</span>
+    <span class="n">di_dj</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[</span><span class="n">meson</span><span class="p">]</span>
+    <span class="n">contribution_np</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">me_name</span><span class="p">,</span> <span class="n">me_value</span> <span class="ow">in</span> <span class="n">me</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">wc_name</span> <span class="o">=</span> <span class="s1">&#39;{}_{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">me_name</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">di_dj</span><span class="p">)</span>
+        <span class="n">contribution_np</span> <span class="o">+=</span> <span class="o">-</span><span class="n">wc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">wc_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">me_value</span>
     <span class="c1"># SM contribution</span>
     <span class="k">if</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;D0&#39;</span><span class="p">:</span>
         <span class="n">contribution_sm</span> <span class="o">=</span> <span class="n">M12_u_SM</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span> <span class="c1"># for B0, Bs, K0</span>
         <span class="n">contribution_sm</span> <span class="o">=</span> <span class="n">M12_d_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="c1"># new physics + SM</span>
-    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">contributions_np</span><span class="p">)</span> <span class="o">+</span> <span class="n">contribution_sm</span>
+    <span class="k">return</span> <span class="n">contribution_np</span> <span class="o">+</span> <span class="n">contribution_sm</span>
 
 <span class="k">def</span> <span class="nf">G12_d_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
     <span class="n">di_dj</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[</span><span class="n">meson</span><span class="p">]</span>
@@ -1363,14 +1367,18 @@ switched in the above definition, leading to a complex conjugation.)</p></div>
     <span class="n">me</span> <span class="o">=</span> <span class="n">matrixelements</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="c1"># new physics contributions to the mixing amplitude</span>
     <span class="c1"># the minus sign below stems from the fact that H_eff = -C_i O_i</span>
-    <span class="n">contributions_np</span> <span class="o">=</span> <span class="p">[</span> <span class="o">-</span><span class="n">wc_value</span> <span class="o">*</span> <span class="n">me</span><span class="p">[</span><span class="n">wc_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">wc_name</span><span class="p">,</span> <span class="n">wc_value</span> <span class="ow">in</span> <span class="n">wc</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">]</span>
+    <span class="n">di_dj</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[</span><span class="n">meson</span><span class="p">]</span>
+    <span class="n">contribution_np</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">me_name</span><span class="p">,</span> <span class="n">me_value</span> <span class="ow">in</span> <span class="n">me</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">wc_name</span> <span class="o">=</span> <span class="s1">&#39;{}_{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">me_name</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">di_dj</span><span class="p">)</span>
+        <span class="n">contribution_np</span> <span class="o">+=</span> <span class="o">-</span><span class="n">wc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">wc_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">me_value</span>
     <span class="c1"># SM contribution</span>
     <span class="k">if</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;D0&#39;</span><span class="p">:</span>
         <span class="n">contribution_sm</span> <span class="o">=</span> <span class="n">M12_u_SM</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span> <span class="c1"># for B0, Bs, K0</span>
         <span class="n">contribution_sm</span> <span class="o">=</span> <span class="n">M12_d_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
     <span class="c1"># new physics + SM</span>
-    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">contributions_np</span><span class="p">)</span> <span class="o">+</span> <span class="n">contribution_sm</span>
+    <span class="k">return</span> <span class="n">contribution_np</span> <span class="o">+</span> <span class="n">contribution_sm</span>
 </pre></div>
 
   </div>

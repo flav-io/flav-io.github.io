@@ -1141,6 +1141,7 @@ table {
     <li class="mono"><a href="#flavio.physics.mesonmixing.test_mesonmixing.TestMesonMixing.test_bmixing_classes">test_bmixing_classes</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.test_mesonmixing.TestMesonMixing.test_common">test_common</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.test_mesonmixing.TestMesonMixing.test_dmixing">test_dmixing</a></li>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.test_mesonmixing.TestMesonMixing.test_np">test_np</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.test_mesonmixing.TestMesonMixing.test_running">test_running</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.test_mesonmixing.TestMesonMixing.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.test_mesonmixing.TestMesonMixing.tearDownClass">tearDownClass</a></li>
@@ -1176,6 +1177,7 @@ table {
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">flavio</span>
 <span class="kn">import</span> <span class="nn">cmath</span>
+<span class="kn">from</span> <span class="nn">wilson</span> <span class="kn">import</span> <span class="n">Wilson</span>
 
 <span class="n">s</span> <span class="o">=</span> <span class="mf">1.519267515435317e+24</span>
 
@@ -1335,6 +1337,29 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">qp</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">M12</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span><span class="o">-</span><span class="mi">1j</span><span class="o">*</span><span class="n">G12</span><span class="o">.</span><span class="n">conjugate</span><span class="p">())</span><span class="o">/</span><span class="p">(</span><span class="n">DM</span><span class="o">+</span><span class="mi">1j</span><span class="o">*</span><span class="n">DG</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="n">places</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># (37)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">DM</span><span class="o">*</span><span class="n">DG</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">M12</span><span class="o">*</span><span class="n">G12</span><span class="o">.</span><span class="n">conjugate</span><span class="p">())</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># (36)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">DM</span><span class="o">*</span><span class="n">DG</span><span class="p">,</span> <span class="mi">4</span><span class="o">*</span><span class="n">aM12</span><span class="o">*</span><span class="n">aG12</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">phi12</span><span class="p">),</span> <span class="n">places</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># (39)</span>
+
+    <span class="k">def</span> <span class="nf">test_np</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Bd</span>
+        <span class="n">CVSM</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">mesonmixing</span><span class="o">.</span><span class="n">wilsoncoefficient</span><span class="o">.</span><span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">80</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">Wilson</span><span class="p">({</span><span class="s1">&#39;CVRR_bdbd&#39;</span><span class="p">:</span> <span class="n">CVSM</span><span class="p">},</span> <span class="mi">80</span><span class="p">,</span> <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_d&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_d&#39;</span><span class="p">),</span>
+            <span class="mi">2</span><span class="p">,</span>
+            <span class="n">delta</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>  <span class="c1"># difference due to NNLO evolution of SM contribution</span>
+        <span class="c1"># Bs</span>
+        <span class="n">CVSM</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">mesonmixing</span><span class="o">.</span><span class="n">wilsoncoefficient</span><span class="o">.</span><span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">80</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">Wilson</span><span class="p">({</span><span class="s1">&#39;CVRR_bsbs&#39;</span><span class="p">:</span> <span class="n">CVSM</span><span class="p">},</span> <span class="mi">80</span><span class="p">,</span> <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_s&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_s&#39;</span><span class="p">),</span>
+            <span class="mi">2</span><span class="p">,</span>
+            <span class="n">delta</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>  <span class="c1"># difference due to NNLO evolution of SM contribution</span>
+        <span class="c1"># K0</span>
+        <span class="n">CVSM</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">mesonmixing</span><span class="o">.</span><span class="n">wilsoncoefficient</span><span class="o">.</span><span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="s1">&#39;K0&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">80</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">Wilson</span><span class="p">({</span><span class="s1">&#39;CVRR_sdsd&#39;</span><span class="p">:</span> <span class="n">CVSM</span><span class="p">},</span> <span class="mi">80</span><span class="p">,</span> <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">),</span>
+            <span class="mi">2</span><span class="p">,</span>
+            <span class="n">delta</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>  <span class="c1"># difference due to NNLO evolution of SM contribution + charm contribution</span>
 </pre></div>
 
   </div>
@@ -1569,6 +1594,29 @@ in order to be run.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">qp</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">M12</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span><span class="o">-</span><span class="mi">1j</span><span class="o">*</span><span class="n">G12</span><span class="o">.</span><span class="n">conjugate</span><span class="p">())</span><span class="o">/</span><span class="p">(</span><span class="n">DM</span><span class="o">+</span><span class="mi">1j</span><span class="o">*</span><span class="n">DG</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="n">places</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># (37)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">DM</span><span class="o">*</span><span class="n">DG</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">M12</span><span class="o">*</span><span class="n">G12</span><span class="o">.</span><span class="n">conjugate</span><span class="p">())</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># (36)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">DM</span><span class="o">*</span><span class="n">DG</span><span class="p">,</span> <span class="mi">4</span><span class="o">*</span><span class="n">aM12</span><span class="o">*</span><span class="n">aG12</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">phi12</span><span class="p">),</span> <span class="n">places</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># (39)</span>
+
+    <span class="k">def</span> <span class="nf">test_np</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Bd</span>
+        <span class="n">CVSM</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">mesonmixing</span><span class="o">.</span><span class="n">wilsoncoefficient</span><span class="o">.</span><span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">80</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">Wilson</span><span class="p">({</span><span class="s1">&#39;CVRR_bdbd&#39;</span><span class="p">:</span> <span class="n">CVSM</span><span class="p">},</span> <span class="mi">80</span><span class="p">,</span> <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_d&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_d&#39;</span><span class="p">),</span>
+            <span class="mi">2</span><span class="p">,</span>
+            <span class="n">delta</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>  <span class="c1"># difference due to NNLO evolution of SM contribution</span>
+        <span class="c1"># Bs</span>
+        <span class="n">CVSM</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">mesonmixing</span><span class="o">.</span><span class="n">wilsoncoefficient</span><span class="o">.</span><span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">80</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">Wilson</span><span class="p">({</span><span class="s1">&#39;CVRR_bsbs&#39;</span><span class="p">:</span> <span class="n">CVSM</span><span class="p">},</span> <span class="mi">80</span><span class="p">,</span> <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_s&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_s&#39;</span><span class="p">),</span>
+            <span class="mi">2</span><span class="p">,</span>
+            <span class="n">delta</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>  <span class="c1"># difference due to NNLO evolution of SM contribution</span>
+        <span class="c1"># K0</span>
+        <span class="n">CVSM</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">mesonmixing</span><span class="o">.</span><span class="n">wilsoncoefficient</span><span class="o">.</span><span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="s1">&#39;K0&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">80</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">Wilson</span><span class="p">({</span><span class="s1">&#39;CVRR_sdsd&#39;</span><span class="p">:</span> <span class="n">CVSM</span><span class="p">},</span> <span class="mi">80</span><span class="p">,</span> <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">),</span>
+            <span class="mi">2</span><span class="p">,</span>
+            <span class="n">delta</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>  <span class="c1"># difference due to NNLO evolution of SM contribution + charm contribution</span>
 </pre></div>
 
   </div>
@@ -1747,7 +1795,8 @@ their own type equality functions to provide nicer error messages.</p>
     <div class="desc"><p>Fail if the two objects are unequal as determined by their
 difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
-between the two objects is more than the given delta.</p>
+difference between the two objects is more than the given
+delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
 as significant digits (measured from the most significant digit).</p>
 <p>If the two objects compare equal then they will automatically
@@ -1760,7 +1809,8 @@ compare almost equal.</p></div>
     <span class="sd">&quot;&quot;&quot;Fail if the two objects are unequal as determined by their</span>
 <span class="sd">       difference rounded to the given number of decimal places</span>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
-<span class="sd">       between the two objects is more than the given delta.</span>
+<span class="sd">       difference between the two objects is more than the given</span>
+<span class="sd">       delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
 <span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       If the two objects compare equal then they will automatically</span>
@@ -2416,7 +2466,7 @@ self.assertEqual(cm.output, [&#39;INFO:foo:first message&#39;,
     <div class="desc"><p>Fail if the two objects are equal as determined by their
 difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
-between the two objects is less than the given delta.</p>
+difference between the two objects is less than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
 as significant digits (measured from the most significant digit).</p>
 <p>Objects that are equal automatically fail.</p></div>
@@ -2428,7 +2478,7 @@ as significant digits (measured from the most significant digit).</p>
     <span class="sd">&quot;&quot;&quot;Fail if the two objects are equal as determined by their</span>
 <span class="sd">       difference rounded to the given number of decimal places</span>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
-<span class="sd">       between the two objects is less than the given delta.</span>
+<span class="sd">       difference between the two objects is less than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
 <span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       Objects that are equal automatically fail.</span>
@@ -3904,6 +3954,47 @@ block, allowing further test code to be executed.</p></div>
     <span class="n">x12Im</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;x12Im_D&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_D</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
     <span class="n">phi12</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;phi12_D&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_D</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">x12</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">phi12</span><span class="p">),</span> <span class="n">x12Im</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.mesonmixing.test_mesonmixing.TestMesonMixing.test_np">
+    <p>def <span class="ident">test_np</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.test_mesonmixing.TestMesonMixing.test_np', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mesonmixing.test_mesonmixing.TestMesonMixing.test_np" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_np</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># Bd</span>
+    <span class="n">CVSM</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">mesonmixing</span><span class="o">.</span><span class="n">wilsoncoefficient</span><span class="o">.</span><span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">80</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">Wilson</span><span class="p">({</span><span class="s1">&#39;CVRR_bdbd&#39;</span><span class="p">:</span> <span class="n">CVSM</span><span class="p">},</span> <span class="mi">80</span><span class="p">,</span> <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_d&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_d&#39;</span><span class="p">),</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="n">delta</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>  <span class="c1"># difference due to NNLO evolution of SM contribution</span>
+    <span class="c1"># Bs</span>
+    <span class="n">CVSM</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">mesonmixing</span><span class="o">.</span><span class="n">wilsoncoefficient</span><span class="o">.</span><span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">80</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">Wilson</span><span class="p">({</span><span class="s1">&#39;CVRR_bsbs&#39;</span><span class="p">:</span> <span class="n">CVSM</span><span class="p">},</span> <span class="mi">80</span><span class="p">,</span> <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_s&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;DeltaM_s&#39;</span><span class="p">),</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="n">delta</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>  <span class="c1"># difference due to NNLO evolution of SM contribution</span>
+    <span class="c1"># K0</span>
+    <span class="n">CVSM</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">mesonmixing</span><span class="o">.</span><span class="n">wilsoncoefficient</span><span class="o">.</span><span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="s1">&#39;K0&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">80</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">Wilson</span><span class="p">({</span><span class="s1">&#39;CVRR_sdsd&#39;</span><span class="p">:</span> <span class="n">CVSM</span><span class="p">},</span> <span class="mi">80</span><span class="p">,</span> <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">),</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="n">delta</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>  <span class="c1"># difference due to NNLO evolution of SM contribution + charm contribution</span>
 </pre></div>
 
   </div>
