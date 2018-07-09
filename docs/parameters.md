@@ -288,6 +288,27 @@ of the parameter.
 | `K->pi sT` | $s_T$ | Parameter in the pole parametrization of the $K\to\pi$ tensor form factor |
 | `K0e3 delta_EM` | $\delta_\text{em}^{K^0e}$ | Relative electromagnetic correction to $K^0\to\pi^+ e^-\nu$ decay rate |
 | `K0mu3 delta_EM` | $\delta_\text{em}^{K^0\mu}$ | Relative electromagnetic correction to $K^0\to\pi^+ \mu^-\nu$ decay rate |
+| `Kpipi M0 3` | $\langle Q_3 \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_3$ |
+| `Kpipi M0 4` | $\langle Q_4 \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_4$ |
+| `Kpipi M0 5` | $\langle Q_5 \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_5$ |
+| `Kpipi M0 6` | $\langle Q_6 \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_6$ |
+| `Kpipi M0 7` | $\langle Q_7 \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_7$ |
+| `Kpipi M0 8` | $\langle Q_8 \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_8$ |
+| `Kpipi M0 9` | $\langle Q_9 \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_9$ |
+| `Kpipi M0 SLL1_d` | $\langle Q_1^{\text{SLL},d} \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_1^{\text{SLL},d}$ |
+| `Kpipi M0 SLL1_u` | $\langle Q_1^{\text{SLL},u} \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_1^{\text{SLL},u}$ |
+| `Kpipi M0 SLL2_d` | $\langle Q_2^{\text{SLL},d} \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_2^{\text{SLL},d}$ |
+| `Kpipi M0 SLL2_u` | $\langle Q_2^{\text{SLL},u} \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_2^{\text{SLL},u}$ |
+| `Kpipi M0 SLL3_u` | $\langle Q_3^{\text{SLL},u} \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_3^{\text{SLL},u}$ |
+| `Kpipi M0 SLL4_u` | $\langle Q_4^{\text{SLL},u} \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_4^{\text{SLL},u}$ |
+| `Kpipi M0 SLR1_u` | $\langle Q_1^{\text{SLR},u} \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_1^{\text{SLR},u}$ |
+| `Kpipi M0 SLR2_u` | $\langle Q_2^{\text{SLR},u} \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_2^{\text{SLR},u}$ |
+| `Kpipi M0 g-` | $\langle Q_g^- \rangle_0$ | $K\to (\pi\pi)_{I=0}$ matrix element of $Q_g^-$ |
+| `Kpipi M2 7` | $\langle Q_7 \rangle_2$ | $K\to (\pi\pi)_{I=2}$ matrix element of $Q_7$ |
+| `Kpipi M2 8` | $\langle Q_8 \rangle_2$ | $K\to (\pi\pi)_{I=2}$ matrix element of $Q_8$ |
+| `Kpipi M2 9` | $\langle Q_9 \rangle_2$ | $K\to (\pi\pi)_{I=2}$ matrix element of $Q_9$ |
+| `Kpipi M2 SLL1_d` | $\langle Q_1^{\text{SLL},d} \rangle_2$ | $K\to (\pi\pi)_{I=2}$ matrix element of $Q_1^{\text{SLL},d}$ |
+| `Kpipi M2 SLL2_d` | $\langle Q_2^{\text{SLL},d} \rangle_2$ | $K\to (\pi\pi)_{I=2}$ matrix element of $Q_2^{\text{SLL},d}$ |
 | `Lambda->ppi alpha_-` | $\alpha_-$ | $\Lambda\to p \pi^-$ decay parameter |
 | `Lambdab->Lambda SSE a0_fA0` | $a_0^{f^A_0}$ | SSE form factor parametrization coefficient $a_0$ of $f^A_0$ |
 | `Lambdab->Lambda SSE a0_fAt` | $a_0^{f^A_t}$ | SSE form factor parametrization coefficient $a_0$ of $f^A_t$ |
@@ -344,6 +365,9 @@ of the parameter.
 | `M12_D a_bb` | $a_{bb}$ | SM contribution to the dispersive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{ub}V_{cb}^\ast$ in inverse picoseconds |
 | `M12_D a_bs` | $a_{bb}$ | SM contribution to the dispersive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{ub}V_{cs}^\ast$ in inverse picoseconds |
 | `M12_D a_ss` | $a_{bb}$ | SM contribution to the dispersive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{us}V_{cs}^\ast$ in inverse picoseconds |
+| `Omegahat_eff` | $\hat \Omega_\text{eff}$ | Parameter for isospin breaking corrections to $\epsilon\'/\epsilon$ |
+| `ReA0(K->pipi)` | $\text{Re}A_0$ | Real part of the $K\to(\pi\pi)_{I=0}$ isospin amplitude from experiment |
+| `ReA2(K->pipi)` | $\text{Re}A_2$ | Real part of the $K\to(\pi\pi)_{I=2}$ isospin amplitude from experiment |
 | `Vcb` | $V_{cb}$ | CKM element $V_{cb}$ |
 | `Vub` | $\vert V_{ub}\vert$ | Absolute value of the CKM element $V_{ub}$ |
 | `Vus` | $V_{us}$ | CKM element $V_{us}$ |
@@ -404,8 +428,8 @@ of the parameter.
 | `c4_K+munu` | $c_4^{(K)}(m_\mu)$ | Chiral perturbation theory coefficient in $K^+\to\mu^+\nu$ |
 | `c4_pi+munu` | $c_4^{(\pi)}(m_\mu)$ | Chiral perturbation theory coefficient in $\pi^+\to\mu^+\nu$ |
 | `chi_2(1)` | $\chi_2(1)$ | Subleading Isgur-Wise function $\chi_2$ at $w=1$ |
-| `chi_2p(1)` | $\chi_2'(1)$ | Derivative of subleading Isgur-Wise function $\chi_2$ at $w=1$ |
-| `chi_3p(1)` | $\chi_3'(1)$ | Derivative of subleading Isgur-Wise function $\chi_3$ at $w=1$ |
+| `chi_2p(1)` | $\chi_2\'(1)$ | Derivative of subleading Isgur-Wise function $\chi_2$ at $w=1$ |
+| `chi_3p(1)` | $\chi_3\'(1)$ | Derivative of subleading Isgur-Wise function $\chi_3$ at $w=1$ |
 | `deltaPcu` | $\delta P_{c,u}$ | Contributions to the $K^+\to\pi^+\nu\bar\nu$ amplitude not described by the dimension-6 effective Hamiltonian. |
 | `delta_BXdee high` | $\delta_{bdee}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_de^+e^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXdee low` | $\delta_{bdee}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_de^+e^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
@@ -419,13 +443,15 @@ of the parameter.
 | `delta_BXsmumu high` | $\delta_{bs\mu\mu}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\mu^+\mu^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXsmumu low` | $\delta_{bs\mu\mu}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\mu^+\mu^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXstautau high` | $\delta_{bs\tau\tau}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\tau^+\tau^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
+| `eps_K` | $\|\epsilon_K\|$ | Measured value of $\|\epsilon_K\|$ |
+| `epsp a` | $a$ | Parameter for isospin breaking corrections to $\epsilon\'/\epsilon$ |
 | `eta(1)` | $\eta(1)$ | Subleading Isgur-Wise function $\eta$ at $w=1$ |
 | `eta_cc_K0` | $\eta_{cc}$ | SM QCD correction factor for the charm contribution to $K^0$ mixing |
 | `eta_ct_K0` | $\eta_{ct}$ | SM QCD correction factor for the top-charm contribution to $K^0$ mixing |
 | `eta_tt_B0` | $\eta_B$ | SM QCD correction factor for $B^0$ mixing |
 | `eta_tt_Bs` | $\eta_B$ | SM QCD correction factor for $B_s$ mixing |
 | `eta_tt_K0` | $\eta_{tt}$ | SM QCD correction factor for the top contribution to $K^0$ mixing |
-| `etap(1)` | $\eta'(1)$ | Derivative of subleading Isgur-Wise function $\eta$ at $w=1$ |
+| `etap(1)` | $\eta\'(1)$ | Derivative of subleading Isgur-Wise function $\eta$ at $w=1$ |
 | `f_B+` | $f_{B^\pm}$ | $B^\pm$ decay constant |
 | `f_B0` | $f_{B^0}$ | $B^0$ decay constant |
 | `f_Bc` | $f_{B_c}$ | $B_c$ decay constant |
@@ -506,6 +532,7 @@ of the parameter.
 | `nEDM gT_u` | $g_T^u$ | Neutron up quark tensor charge |
 | `nEDM ~rho_d` | $\tilde \rho_d$ | coefficient of the down quark CEDM contribution to the neutron EDM |
 | `nEDM ~rho_u` | $\tilde \rho_u$ | coefficient of the up quark CEDM contribution to the neutron EDM |
+| `omega+` | $\omega_+$ |  |
 | `rho_D^3` | $\rho_D^3$ |  |
 | `rho_LS^3` | $\rho_LS^3$ |  |
 | `s2w` | $\sin^2 \hat\theta_w(m_Z)$ | sine squared of the weak mixing angle in the $\overline{\text{MS}}$ scheme at the scale $m_Z$ |

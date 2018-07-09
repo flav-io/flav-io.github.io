@@ -49,6 +49,8 @@ of this page.
 
 - [Leptonic tree-level decays](obs/shadrondecays-leptonictreeleveldecays.html) (4 observables)
 
+- [Non-leptonic decays](obs/shadrondecays-nonleptonicdecays.html) (1 observable)
+
 - [Semi-leptonic tree-level decays](obs/shadrondecays-semileptonictreeleveldecays.html) (6 observables)
 
 
