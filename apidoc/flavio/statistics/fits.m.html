@@ -1089,11 +1089,14 @@ table {
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.best_fit">best_fit</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.dict_to_array">dict_to_array</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.dict_to_shortarray">dict_to_shortarray</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_exp_central_covariance">get_exp_central_covariance</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_par_dict">get_par_dict</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_predictions">get_predictions</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_predictions_array">get_predictions_array</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_sm_covariance">get_sm_covariance</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_wc_obj">get_wc_obj</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.FastFit.load_exp_central_covariance">load_exp_central_covariance</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.FastFit.load_exp_central_covariance_dict">load_exp_central_covariance_dict</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.load_sm_covariance">load_sm_covariance</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.load_sm_covariance_dict">load_sm_covariance_dict</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.log_likelihood">log_likelihood</a></li>
@@ -1102,6 +1105,7 @@ table {
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.log_prior_parameters">log_prior_parameters</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.log_prior_wilson_coeffs">log_prior_wilson_coeffs</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.make_measurement">make_measurement</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.FastFit.save_exp_central_covariance">save_exp_central_covariance</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.save_sm_covariance">save_sm_covariance</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.set_description">set_description</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.shortarray_to_array">shortarray_to_array</a></li>
@@ -1189,15 +1193,17 @@ to be used directly).</p>
 
 <span class="kn">import</span> <span class="nn">flavio</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">flavio.statistics.probability</span> <span class="kn">import</span> <span class="n">NormalDistribution</span><span class="p">,</span> <span class="n">MultivariateNormalDistribution</span><span class="p">,</span> <span class="n">convolve_distributions</span>
+<span class="kn">from</span> <span class="nn">flavio.statistics.probability</span> <span class="kn">import</span> <span class="n">NormalDistribution</span><span class="p">,</span> <span class="n">MultivariateNormalDistribution</span>
 <span class="kn">from</span> <span class="nn">flavio.math.optimize</span> <span class="kn">import</span> <span class="n">minimize_robust</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 <span class="kn">import</span> <span class="nn">scipy.optimize</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
 
 <span class="k">class</span> <span class="nc">Fit</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">NamedInstanceClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for fits. Not meant to be used directly.&quot;&quot;&quot;</span>
@@ -1242,12 +1248,16 @@ to be used directly).</p>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
                     <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-                <span class="k">else</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                     <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected form of observable: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Observable &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; not found!&quot;</span><span class="p">)</span>
         <span class="n">_obs_measured</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">exclude_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">include_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">exclude_measurements</span> <span class="ow">and</span> <span class="n">include_measurements</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The options exclude_measurements and include_measurements must not be specified simultaneously&quot;</span><span class="p">)</span>
         <span class="c1"># check that no parameter appears as fit *and* nuisance parameter</span>
         <span class="n">intersect</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
@@ -1256,11 +1266,11 @@ to be used directly).</p>
         <span class="k">if</span> <span class="n">fit_wc_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> <span class="c1"># if list of WC names not empty</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fit_wc_function</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-                <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">})</span>
+                <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">})</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error in calling the Wilson coefficient function&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
         <span class="c1"># now that everything seems fine, we can call the init of the parent class</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span> <span class="o">=</span> <span class="n">par_obj</span>
@@ -1573,7 +1583,7 @@ to be used directly).</p>
 <span class="sd">      can also be set to &#39;all&#39;, in which case all the parameters constrainted</span>
 <span class="sd">      by `par_obj` will be treated as nuisance parameters. (Note that this makes</span>
 <span class="sd">      sense for `FastFit`, but not for a MCMC since the number of nuisance</span>
-<span class="sd">      parameters will be huge.()</span>
+<span class="sd">      parameters will be huge.)</span>
 <span class="sd">    - `observables`: a list of observable names to be included in the fit</span>
 <span class="sd">    - `exclude_measurements`: optional; a list of measurement names *not* to be included in</span>
 <span class="sd">    the fit. By default, all existing measurements are included.</span>
@@ -1651,6 +1661,10 @@ to be used directly).</p>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_predictions_array_sm</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_array</span><span class="p">,</span>
+                                                 <span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                                 <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
 
     <span class="c1"># a method to get the mean and covariance of all measurements of all</span>
@@ -1688,7 +1702,7 @@ to be used directly).</p>
             <span class="n">covariances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
         <span class="c1"># if there is only a single measuement</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># if there are severeal measurements, perform a weighted average</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># covariances: [Sigma_1, Sigma_2, ...]</span>
@@ -1709,25 +1723,94 @@ to be used directly).</p>
                                 <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">weighted_mean</span><span class="p">,</span> <span class="n">weighted_covariance</span>
 
-    <span class="k">def</span> <span class="nf">_get_random_nuisance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get_exp_central_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the experimental central values and the covriance matrix of</span>
+<span class="sd">        all observables.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - `N`: number of random computations (computing time is proportional</span>
+<span class="sd">          to it; more means less random fluctuations.)</span>
+<span class="sd">        - `force`: optional; if True (default), will recompute covariance even</span>
+<span class="sd">          if it already has been computed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">force</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">N</span> <span class="o">!=</span> <span class="mi">5000</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Argument N={} ignored &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">+</span> \
+                          <span class="s2">&quot;as experimental covariance has already been &quot;</span> <span class="o">+</span> \
+                          <span class="s2">&quot;computed. Recompute with get_exp_central_covariance.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span>
+
+    <span class="k">def</span> <span class="nf">save_exp_central_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the experimental central values and the covriance to a pickle</span>
+<span class="sd">        file.</span>
+
+<span class="sd">        The central values and the covariance must have been computed before</span>
+<span class="sd">        using `get_exp_central_covariance`.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Call get_exp_central_covariance or make_measurement first.&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">central</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">covariance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">observables</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">load_exp_central_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the experimental central values and the covriance from a pickle</span>
+<span class="sd">        file.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_exp_central_covariance_dict</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">load_exp_central_covariance_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the the experimental central values and the covriancee from a</span>
+<span class="sd">        dictionary.</span>
+
+<span class="sd">        It must have the form</span>
+<span class="sd">        {&#39;observables&#39;: [...], &#39;central&#39;: [...], &#39;covariance&#39;: [[...]]}</span>
+<span class="sd">        where &#39;central&#39; is a vector of central values and &#39;covariance&#39; is a</span>
+<span class="sd">        covariance matrix, both in the basis of observables given by</span>
+<span class="sd">        &#39;observables&#39; which must at least contain all the observables</span>
+<span class="sd">        involved in the fit. Additional observables will be ignored; the</span>
+<span class="sd">        ordering is arbitrary.&quot;&quot;&quot;</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;observables&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
+            <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="s1">&#39;central&#39;</span><span class="p">],</span>
+                <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="s1">&#39;central&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">],</span>
+                <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">],</span>
+            <span class="p">)</span>
 
     <span class="c1"># a method to get the covariance of the SM prediction of all observables</span>
     <span class="c1"># of interest</span>
+    <span class="k">def</span> <span class="nf">_get_random_nuisance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_get_covariance_sm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">pred_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> <span class="n">N</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-                <span class="n">pred_arr</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="n">X_map</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_random_nuisance</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+            <span class="n">pred_map</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_predictions_array_sm</span><span class="p">,</span> <span class="n">X_map</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># X = [get_random_nuisance_arr() for j in range(N)]</span>
             <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
-            <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_random_nuisance</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span>
-            <span class="n">pred_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_array</span><span class="p">,</span> <span class="n">X</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">X_map</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_random_nuisance</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+            <span class="n">pred_map</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_predictions_array_sm</span><span class="p">,</span> <span class="n">X_map</span><span class="p">)</span>
             <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">pred_arr</span><span class="p">)</span>
+        <span class="n">pred_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pred_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pred_map</span><span class="p">):</span>
+            <span class="n">pred_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred_i</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">pred_arr</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_sm_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the covriance matrix of the SM predictions of all observables</span>
@@ -1783,9 +1866,12 @@ to be used directly).</p>
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">force_exp</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize the fit by producing a pseudo-measurement containing both</span>
 <span class="sd">        experimental uncertainties as well as theory uncertainties stemming</span>
 <span class="sd">        from nuisance parameters.</span>
@@ -1801,8 +1887,10 @@ to be used directly).</p>
 <span class="sd">          covariance computation. Defaults to 1 (no parallelization).</span>
 <span class="sd">        - `force`: if True, will recompute SM covariance even if it</span>
 <span class="sd">          already has been computed. Defaults to False.</span>
+<span class="sd">        - `force_exp`: if True, will recompute experimental central values and</span>
+<span class="sd">          covariance even if they have already been computed. Defaults to False.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">Nexp</span><span class="p">)</span>
+        <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_exp_central_covariance</span><span class="p">(</span><span class="n">Nexp</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force_exp</span><span class="p">)</span>
         <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sm_covariance</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span>
         <span class="n">covariance</span> <span class="o">=</span> <span class="n">cov_exp</span> <span class="o">+</span> <span class="n">cov_sm</span>
         <span class="c1"># add the Pseudo-measurement</span>
@@ -1962,7 +2050,7 @@ to be used directly).</p>
   can also be set to 'all', in which case all the parameters constrainted
   by <code>par_obj</code> will be treated as nuisance parameters. (Note that this makes
   sense for <code>FastFit</code>, but not for a MCMC since the number of nuisance
-  parameters will be huge.()</li>
+  parameters will be huge.)</li>
 <li><code>observables</code>: a list of observable names to be included in the fit</li>
 <li><code>exclude_measurements</code>: optional; a list of measurement names <em>not</em> to be included in
 the fit. By default, all existing measurements are included.</li>
@@ -2004,7 +2092,7 @@ the fit. By default, all existing measurements are included.</li>
 <span class="sd">      can also be set to &#39;all&#39;, in which case all the parameters constrainted</span>
 <span class="sd">      by `par_obj` will be treated as nuisance parameters. (Note that this makes</span>
 <span class="sd">      sense for `FastFit`, but not for a MCMC since the number of nuisance</span>
-<span class="sd">      parameters will be huge.()</span>
+<span class="sd">      parameters will be huge.)</span>
 <span class="sd">    - `observables`: a list of observable names to be included in the fit</span>
 <span class="sd">    - `exclude_measurements`: optional; a list of measurement names *not* to be included in</span>
 <span class="sd">    the fit. By default, all existing measurements are included.</span>
@@ -2691,6 +2779,10 @@ importantly,</p>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_predictions_array_sm</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_array</span><span class="p">,</span>
+                                                 <span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                                 <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
 
     <span class="c1"># a method to get the mean and covariance of all measurements of all</span>
@@ -2728,7 +2820,7 @@ importantly,</p>
             <span class="n">covariances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
         <span class="c1"># if there is only a single measuement</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># if there are severeal measurements, perform a weighted average</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># covariances: [Sigma_1, Sigma_2, ...]</span>
@@ -2749,25 +2841,94 @@ importantly,</p>
                                 <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">weighted_mean</span><span class="p">,</span> <span class="n">weighted_covariance</span>
 
-    <span class="k">def</span> <span class="nf">_get_random_nuisance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get_exp_central_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the experimental central values and the covriance matrix of</span>
+<span class="sd">        all observables.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - `N`: number of random computations (computing time is proportional</span>
+<span class="sd">          to it; more means less random fluctuations.)</span>
+<span class="sd">        - `force`: optional; if True (default), will recompute covariance even</span>
+<span class="sd">          if it already has been computed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">force</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">N</span> <span class="o">!=</span> <span class="mi">5000</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Argument N={} ignored &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">+</span> \
+                          <span class="s2">&quot;as experimental covariance has already been &quot;</span> <span class="o">+</span> \
+                          <span class="s2">&quot;computed. Recompute with get_exp_central_covariance.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span>
+
+    <span class="k">def</span> <span class="nf">save_exp_central_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the experimental central values and the covriance to a pickle</span>
+<span class="sd">        file.</span>
+
+<span class="sd">        The central values and the covariance must have been computed before</span>
+<span class="sd">        using `get_exp_central_covariance`.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Call get_exp_central_covariance or make_measurement first.&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">central</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">covariance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">observables</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">load_exp_central_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the experimental central values and the covriance from a pickle</span>
+<span class="sd">        file.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_exp_central_covariance_dict</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">load_exp_central_covariance_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the the experimental central values and the covriancee from a</span>
+<span class="sd">        dictionary.</span>
+
+<span class="sd">        It must have the form</span>
+<span class="sd">        {&#39;observables&#39;: [...], &#39;central&#39;: [...], &#39;covariance&#39;: [[...]]}</span>
+<span class="sd">        where &#39;central&#39; is a vector of central values and &#39;covariance&#39; is a</span>
+<span class="sd">        covariance matrix, both in the basis of observables given by</span>
+<span class="sd">        &#39;observables&#39; which must at least contain all the observables</span>
+<span class="sd">        involved in the fit. Additional observables will be ignored; the</span>
+<span class="sd">        ordering is arbitrary.&quot;&quot;&quot;</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;observables&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
+            <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="s1">&#39;central&#39;</span><span class="p">],</span>
+                <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="s1">&#39;central&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">],</span>
+                <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">],</span>
+            <span class="p">)</span>
 
     <span class="c1"># a method to get the covariance of the SM prediction of all observables</span>
     <span class="c1"># of interest</span>
+    <span class="k">def</span> <span class="nf">_get_random_nuisance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_get_covariance_sm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">pred_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> <span class="n">N</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-                <span class="n">pred_arr</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="n">X_map</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_random_nuisance</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+            <span class="n">pred_map</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_predictions_array_sm</span><span class="p">,</span> <span class="n">X_map</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># X = [get_random_nuisance_arr() for j in range(N)]</span>
             <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
-            <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_random_nuisance</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span>
-            <span class="n">pred_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_array</span><span class="p">,</span> <span class="n">X</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">X_map</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_random_nuisance</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+            <span class="n">pred_map</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_predictions_array_sm</span><span class="p">,</span> <span class="n">X_map</span><span class="p">)</span>
             <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">pred_arr</span><span class="p">)</span>
+        <span class="n">pred_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pred_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pred_map</span><span class="p">):</span>
+            <span class="n">pred_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred_i</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">pred_arr</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_sm_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the covriance matrix of the SM predictions of all observables</span>
@@ -2823,9 +2984,12 @@ importantly,</p>
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">force_exp</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize the fit by producing a pseudo-measurement containing both</span>
 <span class="sd">        experimental uncertainties as well as theory uncertainties stemming</span>
 <span class="sd">        from nuisance parameters.</span>
@@ -2841,8 +3005,10 @@ importantly,</p>
 <span class="sd">          covariance computation. Defaults to 1 (no parallelization).</span>
 <span class="sd">        - `force`: if True, will recompute SM covariance even if it</span>
 <span class="sd">          already has been computed. Defaults to False.</span>
+<span class="sd">        - `force_exp`: if True, will recompute experimental central values and</span>
+<span class="sd">          covariance even if they have already been computed. Defaults to False.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">Nexp</span><span class="p">)</span>
+        <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_exp_central_covariance</span><span class="p">(</span><span class="n">Nexp</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force_exp</span><span class="p">)</span>
         <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sm_covariance</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span>
         <span class="n">covariance</span> <span class="o">=</span> <span class="n">cov_exp</span> <span class="o">+</span> <span class="n">cov_sm</span>
         <span class="c1"># add the Pseudo-measurement</span>
@@ -2964,6 +3130,10 @@ importantly,</p>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_get_predictions_array_sm</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_array</span><span class="p">,</span>
+                                             <span class="n">par</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">nuisance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                             <span class="n">wc</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3119,6 +3289,50 @@ floats.</p></div>
     <span class="n">arr</span><span class="p">[:</span><span class="n">n_fit_p</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_parameters&#39;</span><span class="p">][</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">]</span>
     <span class="n">arr</span><span class="p">[</span><span class="n">n_fit_p</span><span class="p">:]</span>   <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;fit_wc&#39;</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">arr</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.fits.FastFit.get_exp_central_covariance">
+    <p>def <span class="ident">get_exp_central_covariance</span>(</p><p>self, N=5000, force=True)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the experimental central values and the covriance matrix of
+all observables.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>N</code>: number of random computations (computing time is proportional
+  to it; more means less random fluctuations.)</li>
+<li><code>force</code>: optional; if True (default), will recompute covariance even
+  if it already has been computed.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.get_exp_central_covariance', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.FastFit.get_exp_central_covariance" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_exp_central_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the experimental central values and the covriance matrix of</span>
+<span class="sd">    all observables.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - `N`: number of random computations (computing time is proportional</span>
+<span class="sd">      to it; more means less random fluctuations.)</span>
+<span class="sd">    - `force`: optional; if True (default), will recompute covariance even</span>
+<span class="sd">      if it already has been computed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">force</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">N</span> <span class="o">!=</span> <span class="mi">5000</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Argument N={} ignored &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">+</span> \
+                      <span class="s2">&quot;as experimental covariance has already been &quot;</span> <span class="o">+</span> \
+                      <span class="s2">&quot;computed. Recompute with get_exp_central_covariance.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span>
 </pre></div>
 
   </div>
@@ -3306,6 +3520,88 @@ under variation of all nuisance parameters.</p>
   
             
   <div class="item">
+    <div class="name def" id="flavio.statistics.fits.FastFit.load_exp_central_covariance">
+    <p>def <span class="ident">load_exp_central_covariance</span>(</p><p>self, filename)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Load the experimental central values and the covriance from a pickle
+file.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.load_exp_central_covariance', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.FastFit.load_exp_central_covariance" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_exp_central_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load the experimental central values and the covriance from a pickle</span>
+<span class="sd">    file.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">load_exp_central_covariance_dict</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.fits.FastFit.load_exp_central_covariance_dict">
+    <p>def <span class="ident">load_exp_central_covariance_dict</span>(</p><p>self, d)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Load the the experimental central values and the covriancee from a
+dictionary.</p>
+<p>It must have the form
+{'observables': [...], 'central': [...], 'covariance': [[...]]}
+where 'central' is a vector of central values and 'covariance' is a
+covariance matrix, both in the basis of observables given by
+'observables' which must at least contain all the observables
+involved in the fit. Additional observables will be ignored; the
+ordering is arbitrary.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.load_exp_central_covariance_dict', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.FastFit.load_exp_central_covariance_dict" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_exp_central_covariance_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load the the experimental central values and the covriancee from a</span>
+<span class="sd">    dictionary.</span>
+<span class="sd">    It must have the form</span>
+<span class="sd">    {&#39;observables&#39;: [...], &#39;central&#39;: [...], &#39;covariance&#39;: [[...]]}</span>
+<span class="sd">    where &#39;central&#39; is a vector of central values and &#39;covariance&#39; is a</span>
+<span class="sd">    covariance matrix, both in the basis of observables given by</span>
+<span class="sd">    &#39;observables&#39; which must at least contain all the observables</span>
+<span class="sd">    involved in the fit. Additional observables will be ignored; the</span>
+<span class="sd">    ordering is arbitrary.&quot;&quot;&quot;</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;observables&#39;</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
+        <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;central&#39;</span><span class="p">],</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;central&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">],</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">],</span>
+        <span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.statistics.fits.FastFit.load_sm_covariance">
     <p>def <span class="ident">load_sm_covariance</span>(</p><p>self, filename)</p>
     </div>
@@ -3361,7 +3657,10 @@ ordering is arbitrary.</p></div>
         <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
         <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -3523,7 +3822,7 @@ given an input array</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.FastFit.make_measurement">
-    <p>def <span class="ident">make_measurement</span>(</p><p>self, N=100, Nexp=5000, threads=1, force=False)</p>
+    <p>def <span class="ident">make_measurement</span>(</p><p>self, N=100, Nexp=5000, threads=1, force=False, force_exp=False)</p>
     </div>
     
 
@@ -3543,11 +3842,13 @@ from nuisance parameters.</p>
   covariance computation. Defaults to 1 (no parallelization).</li>
 <li><code>force</code>: if True, will recompute SM covariance even if it
   already has been computed. Defaults to False.</li>
+<li><code>force_exp</code>: if True, will recompute experimental central values and
+  covariance even if they have already been computed. Defaults to False.</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.make_measurement', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits.FastFit.make_measurement" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">make_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">Nexp</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">force_exp</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Initialize the fit by producing a pseudo-measurement containing both</span>
 <span class="sd">    experimental uncertainties as well as theory uncertainties stemming</span>
 <span class="sd">    from nuisance parameters.</span>
@@ -3561,8 +3862,10 @@ from nuisance parameters.</p>
 <span class="sd">      covariance computation. Defaults to 1 (no parallelization).</span>
 <span class="sd">    - `force`: if True, will recompute SM covariance even if it</span>
 <span class="sd">      already has been computed. Defaults to False.</span>
+<span class="sd">    - `force_exp`: if True, will recompute experimental central values and</span>
+<span class="sd">      covariance even if they have already been computed. Defaults to False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_central_covariance_experiment</span><span class="p">(</span><span class="n">Nexp</span><span class="p">)</span>
+    <span class="n">central_exp</span><span class="p">,</span> <span class="n">cov_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_exp_central_covariance</span><span class="p">(</span><span class="n">Nexp</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force_exp</span><span class="p">)</span>
     <span class="n">cov_sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sm_covariance</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span>
     <span class="n">covariance</span> <span class="o">=</span> <span class="n">cov_exp</span> <span class="o">+</span> <span class="n">cov_sm</span>
     <span class="c1"># add the Pseudo-measurement</span>
@@ -3573,6 +3876,41 @@ from nuisance parameters.</p>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">m</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">,</span>
                 <span class="n">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">central_exp</span><span class="p">,</span> <span class="n">covariance</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.fits.FastFit.save_exp_central_covariance">
+    <p>def <span class="ident">save_exp_central_covariance</span>(</p><p>self, filename)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Save the experimental central values and the covriance to a pickle
+file.</p>
+<p>The central values and the covariance must have been computed before
+using <code>get_exp_central_covariance</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.save_exp_central_covariance', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.FastFit.save_exp_central_covariance" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_exp_central_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Save the experimental central values and the covriance to a pickle</span>
+<span class="sd">    file.</span>
+<span class="sd">    The central values and the covariance must have been computed before</span>
+<span class="sd">    using `get_exp_central_covariance`.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Call get_exp_central_covariance or make_measurement first.&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">central</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">covariance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">observables</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3934,12 +4272,16 @@ sampling the start_wc_priors distribution.</p></div>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
                     <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-                <span class="k">else</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                     <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected form of observable: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Observable &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; not found!&quot;</span><span class="p">)</span>
         <span class="n">_obs_measured</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">exclude_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">include_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">exclude_measurements</span> <span class="ow">and</span> <span class="n">include_measurements</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The options exclude_measurements and include_measurements must not be specified simultaneously&quot;</span><span class="p">)</span>
         <span class="c1"># check that no parameter appears as fit *and* nuisance parameter</span>
         <span class="n">intersect</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
@@ -3948,11 +4290,11 @@ sampling the start_wc_priors distribution.</p></div>
         <span class="k">if</span> <span class="n">fit_wc_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> <span class="c1"># if list of WC names not empty</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fit_wc_function</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-                <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">})</span>
+                <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">})</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error in calling the Wilson coefficient function&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
         <span class="c1"># now that everything seems fine, we can call the init of the parent class</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span> <span class="o">=</span> <span class="n">par_obj</span>
@@ -4264,7 +4606,7 @@ sampling the start_wc_priors distribution.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.Fit.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7f4fe9a20048&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None, fit_wc_eft=&#39;WET&#39;, fit_wc_basis=&#39;flavio&#39;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7f1737fa7320&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None, fit_wc_eft=&#39;WET&#39;, fit_wc_basis=&#39;flavio&#39;)</p>
     </div>
     
 
@@ -4314,12 +4656,16 @@ sampling the start_wc_priors distribution.</p></div>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
                 <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-            <span class="k">else</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected form of observable: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Observable &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; not found!&quot;</span><span class="p">)</span>
     <span class="n">_obs_measured</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">exclude_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">include_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">exclude_measurements</span> <span class="ow">and</span> <span class="n">include_measurements</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The options exclude_measurements and include_measurements must not be specified simultaneously&quot;</span><span class="p">)</span>
     <span class="c1"># check that no parameter appears as fit *and* nuisance parameter</span>
     <span class="n">intersect</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">)</span>
@@ -4328,11 +4674,11 @@ sampling the start_wc_priors distribution.</p></div>
     <span class="k">if</span> <span class="n">fit_wc_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> <span class="c1"># if list of WC names not empty</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fit_wc_function</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">})</span>
+            <span class="n">fit_wc_function</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">fit_wc_name</span><span class="p">:</span> <span class="mf">1e-6</span> <span class="k">for</span> <span class="n">fit_wc_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span><span class="p">})</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error in calling the Wilson coefficient function&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
     <span class="c1"># now that everything seems fine, we can call the init of the parent class</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span> <span class="o">=</span> <span class="n">par_obj</span>

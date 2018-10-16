@@ -1054,7 +1054,6 @@ table {
       
   <ul>
     <li class="mono"><a href="#flavio.physics.taudecays.taulgamma.lep">lep</a></li>
-    <li class="mono"><a href="#flavio.physics.taudecays.taulgamma.pi">pi</a></li>
     <li class="mono"><a href="#flavio.physics.taudecays.taulgamma.wcxf_sector_names">wcxf_sector_names</a></li>
   </ul>
 
@@ -1090,7 +1089,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Functions for lepton flavour violating $\tau\to \ell\gamma$ decays.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">flavio</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span>
+<span class="kn">from</span> <span class="nn">flavio.physics.taudecays.common</span> <span class="kn">import</span> <span class="n">GammaFvf</span>
 
 
 <span class="c1"># names of LFV sectors in WCxf</span>
@@ -1099,27 +1098,24 @@ table {
                      <span class="p">(</span><span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">):</span> <span class="s1">&#39;mue&#39;</span><span class="p">,</span> <span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">BR_llgamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">BR_llgamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Branching ratio of $\ell_1\to \ell_2\gamma$.&quot;&quot;&quot;</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;taudecays&#39;</span><span class="p">]</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="n">l1</span> <span class="o">+</span> <span class="s1">&#39;decays&#39;</span><span class="p">]</span>
     <span class="n">ll</span> <span class="o">=</span> <span class="n">wcxf_sector_names</span><span class="p">[</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">]</span>
     <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">ll</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-    <span class="n">alpha</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-    <span class="c1"># cf. (18) of hep-ph/0404211</span>
-    <span class="n">pre</span> <span class="o">=</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">/</span> <span class="n">pi</span>
-    <span class="n">C7</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Cgamma_&#39;</span> <span class="o">+</span> <span class="n">l1</span> <span class="o">+</span> <span class="n">l2</span><span class="p">]</span>
-    <span class="n">C7p</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Cgamma_&#39;</span> <span class="o">+</span> <span class="n">l2</span> <span class="o">+</span> <span class="n">l1</span><span class="p">]</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">l1</span> <span class="o">==</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span>
-        <span class="n">BR_SL</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;BR(tau-&gt;{}nunu)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l2</span><span class="p">)]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">BR_SL</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># BR(mu-&gt;enunu) = 1</span>
-    <span class="k">return</span> <span class="n">pre</span> <span class="o">*</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">C7</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">C7p</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">BR_SL</span>
+    <span class="n">ml1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span> <span class="o">+</span> <span class="n">l1</span><span class="p">]</span>
+    <span class="n">ml2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span> <span class="o">+</span> <span class="n">l2</span><span class="p">]</span>
+    <span class="n">gTL</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Cgamma_&#39;</span> <span class="o">+</span> <span class="n">l1</span> <span class="o">+</span> <span class="n">l2</span><span class="p">]</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
+    <span class="n">gTR</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Cgamma_&#39;</span> <span class="o">+</span> <span class="n">l2</span> <span class="o">+</span> <span class="n">l1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span> <span class="o">+</span> <span class="n">l1</span><span class="p">]</span> <span class="o">*</span> <span class="n">GammaFvf</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="n">ml1</span><span class="p">,</span> <span class="n">mv</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mf</span><span class="o">=</span><span class="n">ml2</span><span class="p">,</span>
+                                        <span class="n">gL</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gR</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                        <span class="n">gTL</span><span class="o">=</span><span class="n">gTL</span><span class="p">,</span> <span class="n">gtTL</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                        <span class="n">gTR</span><span class="o">=</span><span class="n">gTR</span><span class="p">,</span> <span class="n">gtTR</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">BR_taulgamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Branching ratio of $\tau\to \ell\gamma$.&quot;&quot;&quot;</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;taudecays&#39;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">BR_llgamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">BR_llgamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
 
 
 <span class="c1"># function returning function needed for prediction instance</span>
@@ -1159,14 +1155,6 @@ table {
 
       </div>
       <div class="item">
-      <p id="flavio.physics.taudecays.taulgamma.pi" class="name">var <span class="ident">pi</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
       <p id="flavio.physics.taudecays.taulgamma.wcxf_sector_names" class="name">var <span class="ident">wcxf_sector_names</span></p>
       
   
@@ -1179,7 +1167,7 @@ table {
       
   <div class="item">
     <div class="name def" id="flavio.physics.taudecays.taulgamma.BR_llgamma">
-    <p>def <span class="ident">BR_llgamma</span>(</p><p>wc_obj, par, scale, l1, l2)</p>
+    <p>def <span class="ident">BR_llgamma</span>(</p><p>wc_obj, par, l1, l2)</p>
     </div>
     
 
@@ -1189,21 +1177,19 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.taudecays.taulgamma.BR_llgamma', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.taudecays.taulgamma.BR_llgamma" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR_llgamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR_llgamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Branching ratio of $\ell_1\to \ell_2\gamma$.&quot;&quot;&quot;</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;taudecays&#39;</span><span class="p">]</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="n">l1</span> <span class="o">+</span> <span class="s1">&#39;decays&#39;</span><span class="p">]</span>
     <span class="n">ll</span> <span class="o">=</span> <span class="n">wcxf_sector_names</span><span class="p">[</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">]</span>
     <span class="n">wc</span> <span class="o">=</span> <span class="n">wc_obj</span><span class="o">.</span><span class="n">get_wc</span><span class="p">(</span><span class="n">ll</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-    <span class="n">alpha</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha_e</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-    <span class="c1"># cf. (18) of hep-ph/0404211</span>
-    <span class="n">pre</span> <span class="o">=</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">/</span> <span class="n">pi</span>
-    <span class="n">C7</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Cgamma_&#39;</span> <span class="o">+</span> <span class="n">l1</span> <span class="o">+</span> <span class="n">l2</span><span class="p">]</span>
-    <span class="n">C7p</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Cgamma_&#39;</span> <span class="o">+</span> <span class="n">l2</span> <span class="o">+</span> <span class="n">l1</span><span class="p">]</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">l1</span> <span class="o">==</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span>
-        <span class="n">BR_SL</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;BR(tau-&gt;{}nunu)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l2</span><span class="p">)]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">BR_SL</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># BR(mu-&gt;enunu) = 1</span>
-    <span class="k">return</span> <span class="n">pre</span> <span class="o">*</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">C7</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">C7p</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">BR_SL</span>
+    <span class="n">ml1</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span> <span class="o">+</span> <span class="n">l1</span><span class="p">]</span>
+    <span class="n">ml2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span> <span class="o">+</span> <span class="n">l2</span><span class="p">]</span>
+    <span class="n">gTL</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Cgamma_&#39;</span> <span class="o">+</span> <span class="n">l1</span> <span class="o">+</span> <span class="n">l2</span><span class="p">]</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
+    <span class="n">gTR</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;Cgamma_&#39;</span> <span class="o">+</span> <span class="n">l2</span> <span class="o">+</span> <span class="n">l1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span> <span class="o">+</span> <span class="n">l1</span><span class="p">]</span> <span class="o">*</span> <span class="n">GammaFvf</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="n">ml1</span><span class="p">,</span> <span class="n">mv</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mf</span><span class="o">=</span><span class="n">ml2</span><span class="p">,</span>
+                                        <span class="n">gL</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gR</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                        <span class="n">gTL</span><span class="o">=</span><span class="n">gTL</span><span class="p">,</span> <span class="n">gtTL</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                        <span class="n">gTR</span><span class="o">=</span><span class="n">gTR</span><span class="p">,</span> <span class="n">gtTR</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1226,8 +1212,7 @@ table {
   <div id="source-flavio.physics.taudecays.taulgamma.BR_taulgamma" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR_taulgamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Branching ratio of $\tau\to \ell\gamma$.&quot;&quot;&quot;</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="s1">&#39;taudecays&#39;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">BR_llgamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">BR_llgamma</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
 </pre></div>
 
   </div>

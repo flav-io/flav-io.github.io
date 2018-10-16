@@ -1059,6 +1059,13 @@ table {
 
     </li>
 
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#flavio.statistics.test_fits.fit_wc_fct_error">fit_wc_fct_error</a></li>
+  </ul>
+
+    </li>
 
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
@@ -1133,6 +1140,7 @@ table {
     <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.test_bayesian_fit_class">test_bayesian_fit_class</a></li>
     <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.test_correlation_warning">test_correlation_warning</a></li>
     <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.test_fastfit">test_fastfit</a></li>
+    <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.test_fastfit_covariance_sm">test_fastfit_covariance_sm</a></li>
     <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.test_fit_class">test_fit_class</a></li>
     <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.test_frequentist_fit_class">test_frequentist_fit_class</a></li>
     <li class="mono"><a href="#flavio.statistics.test_fits.TestClasses.setUpClass">setUpClass</a></li>
@@ -1171,6 +1179,9 @@ table {
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
+
+<span class="k">def</span> <span class="nf">fit_wc_fct_error</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Oops ... this should not have happened&quot;</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">TestClasses</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">test_fit_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1282,21 +1293,33 @@ table {
         <span class="n">m2</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement 2 of test_obs 1 and test_obs 2&#39;</span> <span class="p">)</span>
         <span class="n">m1</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span> <span class="n">d1</span><span class="p">)</span>
         <span class="n">m2</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">],</span> <span class="n">d2</span><span class="p">)</span>
-        <span class="n">fit</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">])</span>
-        <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">()</span>
-        <span class="n">cov_before</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp-no-p&#39;</span><span class="p">)</span>
-        <span class="n">fit</span><span class="o">.</span><span class="n">save_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">fit</span><span class="o">.</span><span class="n">load_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">cov_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
-        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">cov_before</span><span class="p">,</span> <span class="n">cov_after</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp.p&#39;</span><span class="p">)</span>
-        <span class="n">fit</span><span class="o">.</span><span class="n">save_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">fit</span><span class="o">.</span><span class="n">load_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">cov_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
-        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">cov_before</span><span class="p">,</span> <span class="n">cov_after</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">fit2</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_2&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">])</span>
+        <span class="c1"># fit with only a single observable and measurement</span>
+        <span class="n">fit1</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 2&#39;</span><span class="p">,])</span>
+        <span class="k">for</span> <span class="n">fit</span> <span class="ow">in</span> <span class="p">(</span><span class="n">fit2</span><span class="p">,</span> <span class="n">fit1</span><span class="p">):</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">()</span>
+            <span class="n">centr_cov_exp_before</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_exp_central_covariance</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp.p&#39;</span><span class="p">)</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">save_exp_central_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">load_exp_central_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">centr_cov_exp_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_exp_central_covariance</span>
+            <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">centr_cov_exp_before</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">centr_cov_exp_after</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">centr_cov_exp_before</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">centr_cov_exp_after</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">cov_before</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp-no-p&#39;</span><span class="p">)</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">save_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">load_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">cov_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
+            <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">cov_before</span><span class="p">,</span> <span class="n">cov_after</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp.p&#39;</span><span class="p">)</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">save_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">load_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">cov_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
+            <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">cov_before</span><span class="p">,</span> <span class="n">cov_after</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">fit</span> <span class="o">=</span> <span class="n">fit2</span>  <span class="c1"># the following is only for fit2</span>
         <span class="n">cov_weighted</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.008</span><span class="p">,</span> <span class="mf">0.012</span><span class="p">],[</span><span class="mf">0.012</span><span class="p">,</span><span class="mf">0.0855</span><span class="p">]]</span>
         <span class="n">mean_weighted</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5.8</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">]</span>
         <span class="n">exact_log_likelihood</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="mf">5.9</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="n">mean_weighted</span><span class="p">,</span> <span class="n">cov_weighted</span><span class="p">)</span>
@@ -1304,10 +1327,41 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">best_fit</span><span class="p">()[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="mf">5.9</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
         <span class="c1"># removing dummy instances</span>
         <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">)</span>
+        <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_2&#39;</span><span class="p">)</span>
         <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">)</span>
         <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 2&#39;</span><span class="p">)</span>
         <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 1 of test_obs 1&#39;</span><span class="p">)</span>
         <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 2 of test_obs 1 and test_obs 2&#39;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">test_fastfit_covariance_sm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># This test is to assure that calling make_measurement does not</span>
+        <span class="c1"># actually call the fit_wc_function</span>
+        <span class="c1"># dummy observables</span>
+        <span class="n">o1</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs 1&#39;</span> <span class="p">)</span>
+        <span class="c1"># dummy predictions</span>
+        <span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">par_dict</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">]</span>
+        <span class="n">Prediction</span><span class="p">(</span> <span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="n">f1</span> <span class="p">)</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement 1 of test_obs 1&#39;</span> <span class="p">)</span>
+        <span class="n">m1</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span> <span class="n">d1</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">fit_wc_fct_tmp</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="n">fit</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span>
+                      <span class="n">fit_wc_function</span><span class="o">=</span><span class="n">fit_wc_fct_tmp</span><span class="p">)</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_function</span> <span class="o">=</span> <span class="n">fit_wc_fct_error</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">()</span> <span class="c1"># single thread calculation</span>
+        <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">)</span>
+        <span class="n">fit</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span>
+                      <span class="n">fit_wc_function</span><span class="o">=</span><span class="n">fit_wc_fct_tmp</span><span class="p">)</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_function</span> <span class="o">=</span> <span class="n">fit_wc_fct_error</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">(</span><span class="n">threads</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># multi thread calculation</span>
+        <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">)</span>
+        <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 1 of test_obs 1&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_frequentist_fit_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs 2&#39;</span> <span class="p">)</span>
@@ -1366,6 +1420,28 @@ table {
 
       </div>
 
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="flavio.statistics.test_fits.fit_wc_fct_error">
+    <p>def <span class="ident">fit_wc_fct_error</span>(</p><p>X)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_fits.fit_wc_fct_error', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.test_fits.fit_wc_fct_error" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fit_wc_fct_error</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Oops ... this should not have happened&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
 
     <h2 class="section-title" id="header-classes">Classes</h2>
       
@@ -1511,21 +1587,33 @@ in order to be run.</p>
         <span class="n">m2</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement 2 of test_obs 1 and test_obs 2&#39;</span> <span class="p">)</span>
         <span class="n">m1</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span> <span class="n">d1</span><span class="p">)</span>
         <span class="n">m2</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">],</span> <span class="n">d2</span><span class="p">)</span>
-        <span class="n">fit</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">])</span>
-        <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">()</span>
-        <span class="n">cov_before</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp-no-p&#39;</span><span class="p">)</span>
-        <span class="n">fit</span><span class="o">.</span><span class="n">save_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">fit</span><span class="o">.</span><span class="n">load_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">cov_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
-        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">cov_before</span><span class="p">,</span> <span class="n">cov_after</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp.p&#39;</span><span class="p">)</span>
-        <span class="n">fit</span><span class="o">.</span><span class="n">save_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">fit</span><span class="o">.</span><span class="n">load_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">cov_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
-        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">cov_before</span><span class="p">,</span> <span class="n">cov_after</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">fit2</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_2&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">])</span>
+        <span class="c1"># fit with only a single observable and measurement</span>
+        <span class="n">fit1</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 2&#39;</span><span class="p">,])</span>
+        <span class="k">for</span> <span class="n">fit</span> <span class="ow">in</span> <span class="p">(</span><span class="n">fit2</span><span class="p">,</span> <span class="n">fit1</span><span class="p">):</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">()</span>
+            <span class="n">centr_cov_exp_before</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_exp_central_covariance</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp.p&#39;</span><span class="p">)</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">save_exp_central_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">load_exp_central_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">centr_cov_exp_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_exp_central_covariance</span>
+            <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">centr_cov_exp_before</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">centr_cov_exp_after</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">centr_cov_exp_before</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">centr_cov_exp_after</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">cov_before</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp-no-p&#39;</span><span class="p">)</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">save_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">load_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">cov_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
+            <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">cov_before</span><span class="p">,</span> <span class="n">cov_after</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp.p&#39;</span><span class="p">)</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">save_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">fit</span><span class="o">.</span><span class="n">load_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">cov_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
+            <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">cov_before</span><span class="p">,</span> <span class="n">cov_after</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">fit</span> <span class="o">=</span> <span class="n">fit2</span>  <span class="c1"># the following is only for fit2</span>
         <span class="n">cov_weighted</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.008</span><span class="p">,</span> <span class="mf">0.012</span><span class="p">],[</span><span class="mf">0.012</span><span class="p">,</span><span class="mf">0.0855</span><span class="p">]]</span>
         <span class="n">mean_weighted</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5.8</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">]</span>
         <span class="n">exact_log_likelihood</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="mf">5.9</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="n">mean_weighted</span><span class="p">,</span> <span class="n">cov_weighted</span><span class="p">)</span>
@@ -1533,10 +1621,41 @@ in order to be run.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">best_fit</span><span class="p">()[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="mf">5.9</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
         <span class="c1"># removing dummy instances</span>
         <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">)</span>
+        <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_2&#39;</span><span class="p">)</span>
         <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">)</span>
         <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 2&#39;</span><span class="p">)</span>
         <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 1 of test_obs 1&#39;</span><span class="p">)</span>
         <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 2 of test_obs 1 and test_obs 2&#39;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">test_fastfit_covariance_sm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># This test is to assure that calling make_measurement does not</span>
+        <span class="c1"># actually call the fit_wc_function</span>
+        <span class="c1"># dummy observables</span>
+        <span class="n">o1</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs 1&#39;</span> <span class="p">)</span>
+        <span class="c1"># dummy predictions</span>
+        <span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">par_dict</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">]</span>
+        <span class="n">Prediction</span><span class="p">(</span> <span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="n">f1</span> <span class="p">)</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement 1 of test_obs 1&#39;</span> <span class="p">)</span>
+        <span class="n">m1</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span> <span class="n">d1</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">fit_wc_fct_tmp</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="n">fit</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span>
+                      <span class="n">fit_wc_function</span><span class="o">=</span><span class="n">fit_wc_fct_tmp</span><span class="p">)</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_function</span> <span class="o">=</span> <span class="n">fit_wc_fct_error</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">()</span> <span class="c1"># single thread calculation</span>
+        <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">)</span>
+        <span class="n">fit</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span>
+                      <span class="n">fit_wc_function</span><span class="o">=</span><span class="n">fit_wc_fct_tmp</span><span class="p">)</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_function</span> <span class="o">=</span> <span class="n">fit_wc_fct_error</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">(</span><span class="n">threads</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># multi thread calculation</span>
+        <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">)</span>
+        <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">)</span>
+        <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 1 of test_obs 1&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_frequentist_fit_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">o</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs 2&#39;</span> <span class="p">)</span>
@@ -1748,8 +1867,7 @@ their own type equality functions to provide nicer error messages.</p>
     <div class="desc"><p>Fail if the two objects are unequal as determined by their
 difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
-difference between the two objects is more than the given
-delta.</p>
+between the two objects is more than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
 as significant digits (measured from the most significant digit).</p>
 <p>If the two objects compare equal then they will automatically
@@ -1762,8 +1880,7 @@ compare almost equal.</p></div>
     <span class="sd">&quot;&quot;&quot;Fail if the two objects are unequal as determined by their</span>
 <span class="sd">       difference rounded to the given number of decimal places</span>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
-<span class="sd">       difference between the two objects is more than the given</span>
-<span class="sd">       delta.</span>
+<span class="sd">       between the two objects is more than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
 <span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       If the two objects compare equal then they will automatically</span>
@@ -2419,7 +2536,7 @@ self.assertEqual(cm.output, [&#39;INFO:foo:first message&#39;,
     <div class="desc"><p>Fail if the two objects are equal as determined by their
 difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
-difference between the two objects is less than the given delta.</p>
+between the two objects is less than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
 as significant digits (measured from the most significant digit).</p>
 <p>Objects that are equal automatically fail.</p></div>
@@ -2431,7 +2548,7 @@ as significant digits (measured from the most significant digit).</p>
     <span class="sd">&quot;&quot;&quot;Fail if the two objects are equal as determined by their</span>
 <span class="sd">       difference rounded to the given number of decimal places</span>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
-<span class="sd">       difference between the two objects is less than the given delta.</span>
+<span class="sd">       between the two objects is less than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
 <span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       Objects that are equal automatically fail.</span>
@@ -3886,21 +4003,33 @@ block, allowing further test code to be executed.</p></div>
     <span class="n">m2</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement 2 of test_obs 1 and test_obs 2&#39;</span> <span class="p">)</span>
     <span class="n">m1</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span> <span class="n">d1</span><span class="p">)</span>
     <span class="n">m2</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">],</span> <span class="n">d2</span><span class="p">)</span>
-    <span class="n">fit</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">])</span>
-    <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">()</span>
-    <span class="n">cov_before</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp-no-p&#39;</span><span class="p">)</span>
-    <span class="n">fit</span><span class="o">.</span><span class="n">save_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-    <span class="n">fit</span><span class="o">.</span><span class="n">load_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-    <span class="n">cov_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
-    <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">cov_before</span><span class="p">,</span> <span class="n">cov_after</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp.p&#39;</span><span class="p">)</span>
-    <span class="n">fit</span><span class="o">.</span><span class="n">save_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-    <span class="n">fit</span><span class="o">.</span><span class="n">load_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-    <span class="n">cov_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
-    <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">cov_before</span><span class="p">,</span> <span class="n">cov_after</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">fit2</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_2&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_obs 2&#39;</span><span class="p">])</span>
+    <span class="c1"># fit with only a single observable and measurement</span>
+    <span class="n">fit1</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 2&#39;</span><span class="p">,])</span>
+    <span class="k">for</span> <span class="n">fit</span> <span class="ow">in</span> <span class="p">(</span><span class="n">fit2</span><span class="p">,</span> <span class="n">fit1</span><span class="p">):</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">()</span>
+        <span class="n">centr_cov_exp_before</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_exp_central_covariance</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp.p&#39;</span><span class="p">)</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">save_exp_central_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">load_exp_central_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">centr_cov_exp_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_exp_central_covariance</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">centr_cov_exp_before</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">centr_cov_exp_after</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">centr_cov_exp_before</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">centr_cov_exp_after</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">cov_before</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp-no-p&#39;</span><span class="p">)</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">save_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">load_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">cov_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">cov_before</span><span class="p">,</span> <span class="n">cov_after</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;tmp.p&#39;</span><span class="p">)</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">save_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">load_sm_covariance</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">cov_after</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_sm_covariance</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">cov_before</span><span class="p">,</span> <span class="n">cov_after</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">fit</span> <span class="o">=</span> <span class="n">fit2</span>  <span class="c1"># the following is only for fit2</span>
     <span class="n">cov_weighted</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.008</span><span class="p">,</span> <span class="mf">0.012</span><span class="p">],[</span><span class="mf">0.012</span><span class="p">,</span><span class="mf">0.0855</span><span class="p">]]</span>
     <span class="n">mean_weighted</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5.8</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">]</span>
     <span class="n">exact_log_likelihood</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="mf">5.9</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="n">mean_weighted</span><span class="p">,</span> <span class="n">cov_weighted</span><span class="p">)</span>
@@ -3908,10 +4037,58 @@ block, allowing further test code to be executed.</p></div>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">best_fit</span><span class="p">()[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="mf">5.9</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
     <span class="c1"># removing dummy instances</span>
     <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">)</span>
+    <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_2&#39;</span><span class="p">)</span>
     <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">)</span>
     <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 2&#39;</span><span class="p">)</span>
     <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 1 of test_obs 1&#39;</span><span class="p">)</span>
     <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 2 of test_obs 1 and test_obs 2&#39;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.test_fits.TestClasses.test_fastfit_covariance_sm">
+    <p>def <span class="ident">test_fastfit_covariance_sm</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_fits.TestClasses.test_fastfit_covariance_sm', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.test_fits.TestClasses.test_fastfit_covariance_sm" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_fastfit_covariance_sm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># This test is to assure that calling make_measurement does not</span>
+    <span class="c1"># actually call the fit_wc_function</span>
+    <span class="c1"># dummy observables</span>
+    <span class="n">o1</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span> <span class="s1">&#39;test_obs 1&#39;</span> <span class="p">)</span>
+    <span class="c1"># dummy predictions</span>
+    <span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">par_dict</span><span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">]</span>
+    <span class="n">Prediction</span><span class="p">(</span> <span class="s1">&#39;test_obs 1&#39;</span><span class="p">,</span> <span class="n">f1</span> <span class="p">)</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">(</span> <span class="s1">&#39;measurement 1 of test_obs 1&#39;</span> <span class="p">)</span>
+    <span class="n">m1</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span> <span class="n">d1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">fit_wc_fct_tmp</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="n">fit</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span>
+                  <span class="n">fit_wc_function</span><span class="o">=</span><span class="n">fit_wc_fct_tmp</span><span class="p">)</span>
+    <span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_function</span> <span class="o">=</span> <span class="n">fit_wc_fct_error</span>
+    <span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">()</span> <span class="c1"># single thread calculation</span>
+    <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">)</span>
+    <span class="n">fit</span> <span class="o">=</span> <span class="n">FastFit</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">,</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;m_b&#39;</span><span class="p">],</span>  <span class="p">[],</span> <span class="p">[</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">],</span>
+                  <span class="n">fit_wc_function</span><span class="o">=</span><span class="n">fit_wc_fct_tmp</span><span class="p">)</span>
+    <span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_function</span> <span class="o">=</span> <span class="n">fit_wc_fct_error</span>
+    <span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_wc_function</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">fit</span><span class="o">.</span><span class="n">make_measurement</span><span class="p">(</span><span class="n">threads</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># multi thread calculation</span>
+    <span class="n">FastFit</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;fastfit_test_1&#39;</span><span class="p">)</span>
+    <span class="n">Observable</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;test_obs 1&#39;</span><span class="p">)</span>
+    <span class="n">Measurement</span><span class="o">.</span><span class="n">del_instance</span><span class="p">(</span><span class="s1">&#39;measurement 1 of test_obs 1&#39;</span><span class="p">)</span>
 </pre></div>
 
   </div>

@@ -1099,6 +1099,7 @@ table {
     <li class="mono"><a href="#flavio.classes.Constraints.get_central">get_central</a></li>
     <li class="mono"><a href="#flavio.classes.Constraints.get_central_all">get_central_all</a></li>
     <li class="mono"><a href="#flavio.classes.Constraints.get_logprobability_all">get_logprobability_all</a></li>
+    <li class="mono"><a href="#flavio.classes.Constraints.get_logprobability_single">get_logprobability_single</a></li>
     <li class="mono"><a href="#flavio.classes.Constraints.get_random_all">get_random_all</a></li>
     <li class="mono"><a href="#flavio.classes.Constraints.get_yaml">get_yaml</a></li>
     <li class="mono"><a href="#flavio.classes.Constraints.get_yaml_dict">get_yaml_dict</a></li>
@@ -1141,6 +1142,7 @@ table {
     <li class="mono"><a href="#flavio.classes.Measurement.get_central">get_central</a></li>
     <li class="mono"><a href="#flavio.classes.Measurement.get_central_all">get_central_all</a></li>
     <li class="mono"><a href="#flavio.classes.Measurement.get_logprobability_all">get_logprobability_all</a></li>
+    <li class="mono"><a href="#flavio.classes.Measurement.get_logprobability_single">get_logprobability_single</a></li>
     <li class="mono"><a href="#flavio.classes.Measurement.get_random_all">get_random_all</a></li>
     <li class="mono"><a href="#flavio.classes.Measurement.get_yaml">get_yaml</a></li>
     <li class="mono"><a href="#flavio.classes.Measurement.get_yaml_dict">get_yaml_dict</a></li>
@@ -1184,6 +1186,7 @@ table {
     <li class="mono"><a href="#flavio.classes.Observable.prediction_par">prediction_par</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.set_description">set_description</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.set_prediction">set_prediction</a></li>
+    <li class="mono"><a href="#flavio.classes.Observable.argument_format">argument_format</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.del_instance">del_instance</a></li>
     <li class="mono"><a href="#flavio.classes.Observable.from_function">from_function</a></li>
@@ -1219,6 +1222,7 @@ table {
     <li class="mono"><a href="#flavio.classes.ParameterConstraints.get_central">get_central</a></li>
     <li class="mono"><a href="#flavio.classes.ParameterConstraints.get_central_all">get_central_all</a></li>
     <li class="mono"><a href="#flavio.classes.ParameterConstraints.get_logprobability_all">get_logprobability_all</a></li>
+    <li class="mono"><a href="#flavio.classes.ParameterConstraints.get_logprobability_single">get_logprobability_single</a></li>
     <li class="mono"><a href="#flavio.classes.ParameterConstraints.get_random_all">get_random_all</a></li>
     <li class="mono"><a href="#flavio.classes.ParameterConstraints.get_yaml">get_yaml</a></li>
     <li class="mono"><a href="#flavio.classes.ParameterConstraints.get_yaml_dict">get_yaml_dict</a></li>
@@ -1255,6 +1259,7 @@ table {
     <li class="mono"><a href="#flavio.classes.WilsonCoefficientPriors.get_central">get_central</a></li>
     <li class="mono"><a href="#flavio.classes.WilsonCoefficientPriors.get_central_all">get_central_all</a></li>
     <li class="mono"><a href="#flavio.classes.WilsonCoefficientPriors.get_logprobability_all">get_logprobability_all</a></li>
+    <li class="mono"><a href="#flavio.classes.WilsonCoefficientPriors.get_logprobability_single">get_logprobability_single</a></li>
     <li class="mono"><a href="#flavio.classes.WilsonCoefficientPriors.get_random_all">get_random_all</a></li>
     <li class="mono"><a href="#flavio.classes.WilsonCoefficientPriors.get_yaml">get_yaml</a></li>
     <li class="mono"><a href="#flavio.classes.WilsonCoefficientPriors.get_yaml_dict">get_yaml_dict</a></li>
@@ -1491,16 +1496,32 @@ table {
         <span class="sd">&quot;&quot;&quot;Get central values of all constrained parameters.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">parameter</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span> <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
 
-    <span class="k">def</span> <span class="nf">get_random_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_random_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
-<span class="sd">        distributed according to the probability distribution applied.&quot;&quot;&quot;</span>
+<span class="sd">        distributed according to the probability distribution applied.</span>
+
+<span class="sd">        If `size` is not None, the dictionary values will be arrays with length</span>
+<span class="sd">        `size` rather than numbers.&quot;&quot;&quot;</span>
         <span class="c1"># first, generate random values for every single one of the constraints</span>
-        <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
+        <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+                              <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
         <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># now, iterate over the parameters</span>
         <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
-            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
+            <span class="n">carr</span> <span class="o">=</span> <span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">carr</span><span class="p">):</span>
+                <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+            <span class="k">elif</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">():</span>
+                <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+            <span class="k">elif</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">size</span><span class="p">,)</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+            <span class="k">elif</span> <span class="n">carr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">size</span><span class="p">:</span>
+                <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span><span class="p">[:,</span> <span class="n">num</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected error in get_random_all&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">random_dict</span>
 
     <span class="k">def</span> <span class="nf">get_1d_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
@@ -1533,6 +1554,21 @@ table {
             <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
                                      <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">error_dict</span>
+
+    <span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
+<span class="sd">        constraint/probability distribution for a given value of a</span>
+<span class="sd">        single parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)[</span><span class="n">constraint</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># for multivariate distributions</span>
+            <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">parameter</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
@@ -1617,36 +1653,76 @@ table {
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Class method: load constraint from a YAML string or stream.&quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_yaml_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_yaml_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Class method: load constraint from a dictionary or list of dicts.</span>
+
+<span class="sd">        If it is a dictionary, it should have the form:</span>
+
+<span class="sd">        ```{</span>
+<span class="sd">        &#39;metadata&#39;: {...},  # optional, do set attributes of the instance</span>
+<span class="sd">        &#39;arguments&#39;: {...},  # optional, to specify keyword arguments for instantiation,</span>
+<span class="sd">        &#39;constraints&#39;: [...],  # required, the list of constraints</span>
+<span class="sd">        }</span>
+
+<span class="sd">        Alternatively, the list of constraints can be directly given.</span>
+<span class="sd">        This list should have elements in one of the two possible forms:</span>
+
+<span class="sd">        1. Dictionary as returned by `Probability.get_dict`:</span>
+<span class="sd">        ```{</span>
+<span class="sd">        pname: [...],  # required, list of constrained parameters</span>
+<span class="sd">        &#39;values&#39;: {</span>
+<span class="sd">            &#39;distribution&#39;: &#39;...&#39;,  # required, string identifying ProbabilityDistribution, e.g. &#39;normal&#39;</span>
+<span class="sd">            &#39;...&#39;: &#39;...&#39;,  # required, any arguments for the instantiation of the ProbabilityDistribution</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        2. String representing one or several (to be convolved) constraints:</span>
+<span class="sd">        ```{</span>
+<span class="sd">        &#39;my_parameter&#39;: &#39;1.0 ± 0.2 ± 0.1 e-3&#39;</span>
+<span class="sd">        }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">constraints</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;constraints&#39;</span><span class="p">]</span>
             <span class="n">meta</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="p">{})</span>
             <span class="n">arguments</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;arguments&#39;</span><span class="p">]</span>
             <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
-            <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">inst</span> <span class="o">=</span> <span class="n">instance</span> <span class="ow">or</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
                 <span class="n">inst</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">inst</span> <span class="o">=</span> <span class="n">instance</span> <span class="ow">or</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">constraints</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">pname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key &#39;</span> <span class="o">+</span> <span class="n">pname</span> <span class="o">+</span> <span class="s1">&#39; not found. &#39;</span>
-                                 <span class="s1">&#39;Please check the `pname` argument.&#39;</span><span class="p">)</span>
-            <span class="n">v</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">distname</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;distribution&#39;</span><span class="p">)</span>
-            <span class="n">dist</span> <span class="o">=</span> <span class="n">string_to_class</span><span class="p">(</span><span class="n">distname</span><span class="p">)</span>
-            <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">c</span><span class="p">[</span><span class="n">pname</span><span class="p">]]</span>
-            <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="n">v</span><span class="p">))</span>
+                <span class="k">if</span> <span class="s1">&#39;values&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="c1"># this means we probably have a constraint of the</span>
+                    <span class="c1"># form parameter: constraint_string</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># this loop runs only once</span>
+                        <span class="n">inst</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                        <span class="k">break</span>  <span class="c1"># just to be sure</span>
+                    <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># in this case something is clearly wrong. Mabye the</span>
+                    <span class="c1"># wrong &quot;pname&quot; was used.</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key &#39;</span> <span class="o">+</span> <span class="n">pname</span> <span class="o">+</span> <span class="s1">&#39; not found. &#39;</span>
+                                     <span class="s1">&#39;Please check the `pname` argument.&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">c</span><span class="p">[</span><span class="n">pname</span><span class="p">]]</span>
+                <span class="n">pds</span> <span class="o">=</span> <span class="n">dict2dist</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">])</span>
+                <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
+                <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">combined_pd</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">inst</span>
 
 
 <span class="k">class</span> <span class="nc">ParameterConstraints</span><span class="p">(</span><span class="n">Constraints</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Trivial subclass of `Constraints` that is meant for constraints on</span>
+<span class="sd">    theory parameters represented by instances of the `Parameter` class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1703,6 +1779,58 @@ table {
             <span class="kn">from</span> <span class="nn">IPython.lib</span> <span class="kn">import</span> <span class="n">pretty</span>
             <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Theory prediction: `{}`&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pretty</span><span class="o">.</span><span class="n">pretty</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">md</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">argument_format</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s1">&#39;tuple&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Class method: takes as input an observable name and numerical values</span>
+<span class="sd">        for the arguements (if any) and returns as output the same in a specific</span>
+<span class="sd">        form as specified by `format`: &#39;tuple&#39; (default), &#39;list&#39;, or &#39;dict&#39;.</span>
+
+<span class="sd">        Example inputs:</span>
+<span class="sd">        - (&#39;dBR/dq2(B0-&gt;Denu)&#39;, 1)</span>
+<span class="sd">        - {&#39;name&#39;: &#39;dBR/dq2(B0-&gt;Denu)&#39;, &#39;q2&#39;: 1}</span>
+
+<span class="sd">        Output:</span>
+<span class="sd">        tuple: (&#39;dBR/dq2(B0-&gt;Denu)&#39;, 1)</span>
+<span class="sd">        list: (&#39;dBR/dq2(B0-&gt;Denu)&#39;, 1)</span>
+<span class="sd">        dict: {&#39;name&#39;: &#39;dBR/dq2(B0-&gt;Denu)&#39;, &#39;q2&#39;: 1}</span>
+
+<span class="sd">        For a string input for observables that don&#39;t have arguments:</span>
+<span class="sd">        - &#39;eps_K&#39;</span>
+
+<span class="sd">        Output:</span>
+<span class="sd">        tuple: &#39;eps_K&#39;</span>
+<span class="sd">        list: &#39;eps_K&#39;</span>
+<span class="sd">        dict: {&#39;name&#39;: &#39;eps_K&#39;}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">cls</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Arguments missing for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">obs</span><span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">obs</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span>
+            <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong number of arguments for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span>
+            <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">obs</span>
+        <span class="k">if</span> <span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;tuple&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">t</span>
+        <span class="k">elif</span> <span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;list&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">d</span>
 
     <span class="k">def</span> <span class="nf">set_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span> <span class="o">=</span> <span class="n">prediction</span>
@@ -2367,16 +2495,32 @@ documentation.</p></div>
         <span class="sd">&quot;&quot;&quot;Get central values of all constrained parameters.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">parameter</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_central</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span> <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
 
-    <span class="k">def</span> <span class="nf">get_random_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_random_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
-<span class="sd">        distributed according to the probability distribution applied.&quot;&quot;&quot;</span>
+<span class="sd">        distributed according to the probability distribution applied.</span>
+
+<span class="sd">        If `size` is not None, the dictionary values will be arrays with length</span>
+<span class="sd">        `size` rather than numbers.&quot;&quot;&quot;</span>
         <span class="c1"># first, generate random values for every single one of the constraints</span>
-        <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
+        <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+                              <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
         <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># now, iterate over the parameters</span>
         <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
-            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
+            <span class="n">carr</span> <span class="o">=</span> <span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">carr</span><span class="p">):</span>
+                <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+            <span class="k">elif</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">():</span>
+                <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+            <span class="k">elif</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">size</span><span class="p">,)</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+            <span class="k">elif</span> <span class="n">carr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">size</span><span class="p">:</span>
+                <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span><span class="p">[:,</span> <span class="n">num</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected error in get_random_all&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">random_dict</span>
 
     <span class="k">def</span> <span class="nf">get_1d_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
@@ -2409,6 +2553,21 @@ documentation.</p></div>
             <span class="n">error_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_right</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">],</span>
                                      <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">error_dict</span>
+
+    <span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
+<span class="sd">        constraint/probability distribution for a given value of a</span>
+<span class="sd">        single parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)[</span><span class="n">constraint</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># for multivariate distributions</span>
+            <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">parameter</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
@@ -2493,31 +2652,70 @@ documentation.</p></div>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Class method: load constraint from a YAML string or stream.&quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_yaml_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_yaml_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Class method: load constraint from a dictionary or list of dicts.</span>
+
+<span class="sd">        If it is a dictionary, it should have the form:</span>
+
+<span class="sd">        ```{</span>
+<span class="sd">        &#39;metadata&#39;: {...},  # optional, do set attributes of the instance</span>
+<span class="sd">        &#39;arguments&#39;: {...},  # optional, to specify keyword arguments for instantiation,</span>
+<span class="sd">        &#39;constraints&#39;: [...],  # required, the list of constraints</span>
+<span class="sd">        }</span>
+
+<span class="sd">        Alternatively, the list of constraints can be directly given.</span>
+<span class="sd">        This list should have elements in one of the two possible forms:</span>
+
+<span class="sd">        1. Dictionary as returned by `Probability.get_dict`:</span>
+<span class="sd">        ```{</span>
+<span class="sd">        pname: [...],  # required, list of constrained parameters</span>
+<span class="sd">        &#39;values&#39;: {</span>
+<span class="sd">            &#39;distribution&#39;: &#39;...&#39;,  # required, string identifying ProbabilityDistribution, e.g. &#39;normal&#39;</span>
+<span class="sd">            &#39;...&#39;: &#39;...&#39;,  # required, any arguments for the instantiation of the ProbabilityDistribution</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        2. String representing one or several (to be convolved) constraints:</span>
+<span class="sd">        ```{</span>
+<span class="sd">        &#39;my_parameter&#39;: &#39;1.0 ± 0.2 ± 0.1 e-3&#39;</span>
+<span class="sd">        }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">constraints</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;constraints&#39;</span><span class="p">]</span>
             <span class="n">meta</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="p">{})</span>
             <span class="n">arguments</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;arguments&#39;</span><span class="p">]</span>
             <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
-            <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">inst</span> <span class="o">=</span> <span class="n">instance</span> <span class="ow">or</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
                 <span class="n">inst</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">inst</span> <span class="o">=</span> <span class="n">instance</span> <span class="ow">or</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">constraints</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">pname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key &#39;</span> <span class="o">+</span> <span class="n">pname</span> <span class="o">+</span> <span class="s1">&#39; not found. &#39;</span>
-                                 <span class="s1">&#39;Please check the `pname` argument.&#39;</span><span class="p">)</span>
-            <span class="n">v</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">distname</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;distribution&#39;</span><span class="p">)</span>
-            <span class="n">dist</span> <span class="o">=</span> <span class="n">string_to_class</span><span class="p">(</span><span class="n">distname</span><span class="p">)</span>
-            <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">c</span><span class="p">[</span><span class="n">pname</span><span class="p">]]</span>
-            <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="n">v</span><span class="p">))</span>
+                <span class="k">if</span> <span class="s1">&#39;values&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="c1"># this means we probably have a constraint of the</span>
+                    <span class="c1"># form parameter: constraint_string</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># this loop runs only once</span>
+                        <span class="n">inst</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                        <span class="k">break</span>  <span class="c1"># just to be sure</span>
+                    <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># in this case something is clearly wrong. Mabye the</span>
+                    <span class="c1"># wrong &quot;pname&quot; was used.</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key &#39;</span> <span class="o">+</span> <span class="n">pname</span> <span class="o">+</span> <span class="s1">&#39; not found. &#39;</span>
+                                     <span class="s1">&#39;Please check the `pname` argument.&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">c</span><span class="p">[</span><span class="n">pname</span><span class="p">]]</span>
+                <span class="n">pds</span> <span class="o">=</span> <span class="n">dict2dist</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">])</span>
+                <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
+                <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">combined_pd</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">inst</span>
 </pre></div>
 
@@ -2843,28 +3041,81 @@ constraint/probability distribution.</p>
   
             
   <div class="item">
+    <div class="name def" id="flavio.classes.Constraints.get_logprobability_single">
+    <p>def <span class="ident">get_logprobability_single</span>(</p><p>self, parameter, value)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return a dictionary with the logarithm of the probability for each
+constraint/probability distribution for a given value of a
+single parameter.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Constraints.get_logprobability_single', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.Constraints.get_logprobability_single" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
+<span class="sd">    constraint/probability distribution for a given value of a</span>
+<span class="sd">    single parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)[</span><span class="n">constraint</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># for multivariate distributions</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">parameter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.classes.Constraints.get_random_all">
-    <p>def <span class="ident">get_random_all</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_random_all</span>(</p><p>self, size=None)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get random values for all constrained parameters where they are
-distributed according to the probability distribution applied.</p></div>
+distributed according to the probability distribution applied.</p>
+<p>If <code>size</code> is not None, the dictionary values will be arrays with length
+<code>size</code> rather than numbers.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Constraints.get_random_all', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Constraints.get_random_all" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
-<span class="sd">    distributed according to the probability distribution applied.&quot;&quot;&quot;</span>
+<span class="sd">    distributed according to the probability distribution applied.</span>
+<span class="sd">    If `size` is not None, the dictionary values will be arrays with length</span>
+<span class="sd">    `size` rather than numbers.&quot;&quot;&quot;</span>
     <span class="c1"># first, generate random values for every single one of the constraints</span>
-    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
+    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
     <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># now, iterate over the parameters</span>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
-        <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">carr</span> <span class="o">=</span> <span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">carr</span><span class="p">):</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">():</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">size</span><span class="p">,)</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+        <span class="k">elif</span> <span class="n">carr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">size</span><span class="p">:</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span><span class="p">[:,</span> <span class="n">num</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected error in get_random_all&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">random_dict</span>
 </pre></div>
 
@@ -3093,11 +3344,13 @@ simultaneously.</p></div>
 
     
   
+    <div class="desc"><p>Class method: load constraint from a YAML string or stream.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Constraints.from_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Constraints.from_yaml" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class method: load constraint from a YAML string or stream.&quot;&quot;&quot;</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -3110,37 +3363,97 @@ simultaneously.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.Constraints.from_yaml_dict">
-    <p>def <span class="ident">from_yaml_dict</span>(</p><p>cls, data, pname=&#39;parameters&#39;, *args, **kwargs)</p>
+    <p>def <span class="ident">from_yaml_dict</span>(</p><p>cls, data, pname=&#39;parameters&#39;, instance=None, *args, **kwargs)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Class method: load constraint from a dictionary or list of dicts.</p>
+<p>If it is a dictionary, it should have the form:</p>
+<p>```{
+'metadata': {...},  # optional, do set attributes of the instance
+'arguments': {...},  # optional, to specify keyword arguments for instantiation,
+'constraints': [...],  # required, the list of constraints
+}</p>
+<p>Alternatively, the list of constraints can be directly given.
+This list should have elements in one of the two possible forms:</p>
+<ol>
+<li>
+<p>Dictionary as returned by <code>Probability.get_dict</code>:
+<code>{
+pname: [...],  # required, list of constrained parameters
+'values': {
+    'distribution': '...',  # required, string identifying ProbabilityDistribution, e.g. 'normal'
+    '...': '...',  # required, any arguments for the instantiation of the ProbabilityDistribution
+    }
+}</code></p>
+</li>
+<li>
+<p>String representing one or several (to be convolved) constraints:
+```{
+'my_parameter': '1.0 ± 0.2 ± 0.1 e-3'
+}</p>
+</li>
+</ol></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Constraints.from_yaml_dict', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Constraints.from_yaml_dict" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">from_yaml_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">from_yaml_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class method: load constraint from a dictionary or list of dicts.</span>
+<span class="sd">    If it is a dictionary, it should have the form:</span>
+<span class="sd">    ```{</span>
+<span class="sd">    &#39;metadata&#39;: {...},  # optional, do set attributes of the instance</span>
+<span class="sd">    &#39;arguments&#39;: {...},  # optional, to specify keyword arguments for instantiation,</span>
+<span class="sd">    &#39;constraints&#39;: [...],  # required, the list of constraints</span>
+<span class="sd">    }</span>
+<span class="sd">    Alternatively, the list of constraints can be directly given.</span>
+<span class="sd">    This list should have elements in one of the two possible forms:</span>
+<span class="sd">    1. Dictionary as returned by `Probability.get_dict`:</span>
+<span class="sd">    ```{</span>
+<span class="sd">    pname: [...],  # required, list of constrained parameters</span>
+<span class="sd">    &#39;values&#39;: {</span>
+<span class="sd">        &#39;distribution&#39;: &#39;...&#39;,  # required, string identifying ProbabilityDistribution, e.g. &#39;normal&#39;</span>
+<span class="sd">        &#39;...&#39;: &#39;...&#39;,  # required, any arguments for the instantiation of the ProbabilityDistribution</span>
+<span class="sd">        }</span>
+<span class="sd">    }</span>
+<span class="sd">    ```</span>
+<span class="sd">    2. String representing one or several (to be convolved) constraints:</span>
+<span class="sd">    ```{</span>
+<span class="sd">    &#39;my_parameter&#39;: &#39;1.0 ± 0.2 ± 0.1 e-3&#39;</span>
+<span class="sd">    }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">constraints</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;constraints&#39;</span><span class="p">]</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">arguments</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;arguments&#39;</span><span class="p">]</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
-        <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="n">instance</span> <span class="ow">or</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
             <span class="n">inst</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="n">instance</span> <span class="ow">or</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">constraints</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">pname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key &#39;</span> <span class="o">+</span> <span class="n">pname</span> <span class="o">+</span> <span class="s1">&#39; not found. &#39;</span>
-                             <span class="s1">&#39;Please check the `pname` argument.&#39;</span><span class="p">)</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">distname</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;distribution&#39;</span><span class="p">)</span>
-        <span class="n">dist</span> <span class="o">=</span> <span class="n">string_to_class</span><span class="p">(</span><span class="n">distname</span><span class="p">)</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">c</span><span class="p">[</span><span class="n">pname</span><span class="p">]]</span>
-        <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="n">v</span><span class="p">))</span>
+            <span class="k">if</span> <span class="s1">&#39;values&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># this means we probably have a constraint of the</span>
+                <span class="c1"># form parameter: constraint_string</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># this loop runs only once</span>
+                    <span class="n">inst</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                    <span class="k">break</span>  <span class="c1"># just to be sure</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># in this case something is clearly wrong. Mabye the</span>
+                <span class="c1"># wrong &quot;pname&quot; was used.</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key &#39;</span> <span class="o">+</span> <span class="n">pname</span> <span class="o">+</span> <span class="s1">&#39; not found. &#39;</span>
+                                 <span class="s1">&#39;Please check the `pname` argument.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">c</span><span class="p">[</span><span class="n">pname</span><span class="p">]]</span>
+            <span class="n">pds</span> <span class="o">=</span> <span class="n">dict2dist</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">])</span>
+            <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
+            <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">combined_pd</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">inst</span>
 </pre></div>
 
@@ -3873,28 +4186,81 @@ constraint/probability distribution.</p>
   
             
   <div class="item">
+    <div class="name def" id="flavio.classes.Measurement.get_logprobability_single">
+    <p>def <span class="ident">get_logprobability_single</span>(</p><p>self, parameter, value)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return a dictionary with the logarithm of the probability for each
+constraint/probability distribution for a given value of a
+single parameter.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Measurement.get_logprobability_single', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.Measurement.get_logprobability_single" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
+<span class="sd">    constraint/probability distribution for a given value of a</span>
+<span class="sd">    single parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)[</span><span class="n">constraint</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># for multivariate distributions</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">parameter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.classes.Measurement.get_random_all">
-    <p>def <span class="ident">get_random_all</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_random_all</span>(</p><p>self, size=None)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get random values for all constrained parameters where they are
-distributed according to the probability distribution applied.</p></div>
+distributed according to the probability distribution applied.</p>
+<p>If <code>size</code> is not None, the dictionary values will be arrays with length
+<code>size</code> rather than numbers.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Measurement.get_random_all', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Measurement.get_random_all" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
-<span class="sd">    distributed according to the probability distribution applied.&quot;&quot;&quot;</span>
+<span class="sd">    distributed according to the probability distribution applied.</span>
+<span class="sd">    If `size` is not None, the dictionary values will be arrays with length</span>
+<span class="sd">    `size` rather than numbers.&quot;&quot;&quot;</span>
     <span class="c1"># first, generate random values for every single one of the constraints</span>
-    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
+    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
     <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># now, iterate over the parameters</span>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
-        <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">carr</span> <span class="o">=</span> <span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">carr</span><span class="p">):</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">():</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">size</span><span class="p">,)</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+        <span class="k">elif</span> <span class="n">carr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">size</span><span class="p">:</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span><span class="p">[:,</span> <span class="n">num</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected error in get_random_all&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">random_dict</span>
 </pre></div>
 
@@ -4220,11 +4586,13 @@ simultaneously.</p></div>
 
     
   
+    <div class="desc"><p>Class method: load constraint from a YAML string or stream.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Measurement.from_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Measurement.from_yaml" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class method: load constraint from a YAML string or stream.&quot;&quot;&quot;</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -4237,37 +4605,97 @@ simultaneously.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.Measurement.from_yaml_dict">
-    <p>def <span class="ident">from_yaml_dict</span>(</p><p>cls, data, pname=&#39;parameters&#39;, *args, **kwargs)</p>
+    <p>def <span class="ident">from_yaml_dict</span>(</p><p>cls, data, pname=&#39;parameters&#39;, instance=None, *args, **kwargs)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Class method: load constraint from a dictionary or list of dicts.</p>
+<p>If it is a dictionary, it should have the form:</p>
+<p>```{
+'metadata': {...},  # optional, do set attributes of the instance
+'arguments': {...},  # optional, to specify keyword arguments for instantiation,
+'constraints': [...],  # required, the list of constraints
+}</p>
+<p>Alternatively, the list of constraints can be directly given.
+This list should have elements in one of the two possible forms:</p>
+<ol>
+<li>
+<p>Dictionary as returned by <code>Probability.get_dict</code>:
+<code>{
+pname: [...],  # required, list of constrained parameters
+'values': {
+    'distribution': '...',  # required, string identifying ProbabilityDistribution, e.g. 'normal'
+    '...': '...',  # required, any arguments for the instantiation of the ProbabilityDistribution
+    }
+}</code></p>
+</li>
+<li>
+<p>String representing one or several (to be convolved) constraints:
+```{
+'my_parameter': '1.0 ± 0.2 ± 0.1 e-3'
+}</p>
+</li>
+</ol></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Measurement.from_yaml_dict', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Measurement.from_yaml_dict" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">from_yaml_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">from_yaml_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class method: load constraint from a dictionary or list of dicts.</span>
+<span class="sd">    If it is a dictionary, it should have the form:</span>
+<span class="sd">    ```{</span>
+<span class="sd">    &#39;metadata&#39;: {...},  # optional, do set attributes of the instance</span>
+<span class="sd">    &#39;arguments&#39;: {...},  # optional, to specify keyword arguments for instantiation,</span>
+<span class="sd">    &#39;constraints&#39;: [...],  # required, the list of constraints</span>
+<span class="sd">    }</span>
+<span class="sd">    Alternatively, the list of constraints can be directly given.</span>
+<span class="sd">    This list should have elements in one of the two possible forms:</span>
+<span class="sd">    1. Dictionary as returned by `Probability.get_dict`:</span>
+<span class="sd">    ```{</span>
+<span class="sd">    pname: [...],  # required, list of constrained parameters</span>
+<span class="sd">    &#39;values&#39;: {</span>
+<span class="sd">        &#39;distribution&#39;: &#39;...&#39;,  # required, string identifying ProbabilityDistribution, e.g. &#39;normal&#39;</span>
+<span class="sd">        &#39;...&#39;: &#39;...&#39;,  # required, any arguments for the instantiation of the ProbabilityDistribution</span>
+<span class="sd">        }</span>
+<span class="sd">    }</span>
+<span class="sd">    ```</span>
+<span class="sd">    2. String representing one or several (to be convolved) constraints:</span>
+<span class="sd">    ```{</span>
+<span class="sd">    &#39;my_parameter&#39;: &#39;1.0 ± 0.2 ± 0.1 e-3&#39;</span>
+<span class="sd">    }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">constraints</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;constraints&#39;</span><span class="p">]</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">arguments</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;arguments&#39;</span><span class="p">]</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
-        <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="n">instance</span> <span class="ow">or</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
             <span class="n">inst</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="n">instance</span> <span class="ow">or</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">constraints</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">pname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key &#39;</span> <span class="o">+</span> <span class="n">pname</span> <span class="o">+</span> <span class="s1">&#39; not found. &#39;</span>
-                             <span class="s1">&#39;Please check the `pname` argument.&#39;</span><span class="p">)</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">distname</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;distribution&#39;</span><span class="p">)</span>
-        <span class="n">dist</span> <span class="o">=</span> <span class="n">string_to_class</span><span class="p">(</span><span class="n">distname</span><span class="p">)</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">c</span><span class="p">[</span><span class="n">pname</span><span class="p">]]</span>
-        <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="n">v</span><span class="p">))</span>
+            <span class="k">if</span> <span class="s1">&#39;values&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># this means we probably have a constraint of the</span>
+                <span class="c1"># form parameter: constraint_string</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># this loop runs only once</span>
+                    <span class="n">inst</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                    <span class="k">break</span>  <span class="c1"># just to be sure</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># in this case something is clearly wrong. Mabye the</span>
+                <span class="c1"># wrong &quot;pname&quot; was used.</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key &#39;</span> <span class="o">+</span> <span class="n">pname</span> <span class="o">+</span> <span class="s1">&#39; not found. &#39;</span>
+                                 <span class="s1">&#39;Please check the `pname` argument.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">c</span><span class="p">[</span><span class="n">pname</span><span class="p">]]</span>
+            <span class="n">pds</span> <span class="o">=</span> <span class="n">dict2dist</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">])</span>
+            <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
+            <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">combined_pd</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">inst</span>
 </pre></div>
 
@@ -4592,6 +5020,58 @@ predicted theoretically.</p></div>
             <span class="n">md</span> <span class="o">+=</span> <span class="s2">&quot;Theory prediction: `{}`&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pretty</span><span class="o">.</span><span class="n">pretty</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">md</span>
 
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">argument_format</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s1">&#39;tuple&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Class method: takes as input an observable name and numerical values</span>
+<span class="sd">        for the arguements (if any) and returns as output the same in a specific</span>
+<span class="sd">        form as specified by `format`: &#39;tuple&#39; (default), &#39;list&#39;, or &#39;dict&#39;.</span>
+
+<span class="sd">        Example inputs:</span>
+<span class="sd">        - (&#39;dBR/dq2(B0-&gt;Denu)&#39;, 1)</span>
+<span class="sd">        - {&#39;name&#39;: &#39;dBR/dq2(B0-&gt;Denu)&#39;, &#39;q2&#39;: 1}</span>
+
+<span class="sd">        Output:</span>
+<span class="sd">        tuple: (&#39;dBR/dq2(B0-&gt;Denu)&#39;, 1)</span>
+<span class="sd">        list: (&#39;dBR/dq2(B0-&gt;Denu)&#39;, 1)</span>
+<span class="sd">        dict: {&#39;name&#39;: &#39;dBR/dq2(B0-&gt;Denu)&#39;, &#39;q2&#39;: 1}</span>
+
+<span class="sd">        For a string input for observables that don&#39;t have arguments:</span>
+<span class="sd">        - &#39;eps_K&#39;</span>
+
+<span class="sd">        Output:</span>
+<span class="sd">        tuple: &#39;eps_K&#39;</span>
+<span class="sd">        list: &#39;eps_K&#39;</span>
+<span class="sd">        dict: {&#39;name&#39;: &#39;eps_K&#39;}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">cls</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Arguments missing for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">obs</span><span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">obs</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span>
+            <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong number of arguments for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span>
+            <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">obs</span>
+        <span class="k">if</span> <span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;tuple&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">t</span>
+        <span class="k">elif</span> <span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;list&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">d</span>
+
     <span class="k">def</span> <span class="nf">set_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prediction</span> <span class="o">=</span> <span class="n">prediction</span>
 
@@ -4872,6 +5352,88 @@ taxonomies (e.g. 'Animal :: Cat' and 'Pet :: Favourite Pet')</p></div>
 
             </div>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.classes.Observable.argument_format">
+    <p>def <span class="ident">argument_format</span>(</p><p>cls, obs, format=&#39;tuple&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Class method: takes as input an observable name and numerical values
+for the arguements (if any) and returns as output the same in a specific
+form as specified by <code>format</code>: 'tuple' (default), 'list', or 'dict'.</p>
+<p>Example inputs:
+- ('dBR/dq2(B0-&gt;Denu)', 1)
+- {'name': 'dBR/dq2(B0-&gt;Denu)', 'q2': 1}</p>
+<p>Output:
+tuple: ('dBR/dq2(B0-&gt;Denu)', 1)
+list: ('dBR/dq2(B0-&gt;Denu)', 1)
+dict: {'name': 'dBR/dq2(B0-&gt;Denu)', 'q2': 1}</p>
+<p>For a string input for observables that don't have arguments:
+- 'eps_K'</p>
+<p>Output:
+tuple: 'eps_K'
+list: 'eps_K'
+dict: {'name': 'eps_K'}</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Observable.argument_format', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.Observable.argument_format" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">argument_format</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s1">&#39;tuple&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class method: takes as input an observable name and numerical values</span>
+<span class="sd">    for the arguements (if any) and returns as output the same in a specific</span>
+<span class="sd">    form as specified by `format`: &#39;tuple&#39; (default), &#39;list&#39;, or &#39;dict&#39;.</span>
+<span class="sd">    Example inputs:</span>
+<span class="sd">    - (&#39;dBR/dq2(B0-&gt;Denu)&#39;, 1)</span>
+<span class="sd">    - {&#39;name&#39;: &#39;dBR/dq2(B0-&gt;Denu)&#39;, &#39;q2&#39;: 1}</span>
+<span class="sd">    Output:</span>
+<span class="sd">    tuple: (&#39;dBR/dq2(B0-&gt;Denu)&#39;, 1)</span>
+<span class="sd">    list: (&#39;dBR/dq2(B0-&gt;Denu)&#39;, 1)</span>
+<span class="sd">    dict: {&#39;name&#39;: &#39;dBR/dq2(B0-&gt;Denu)&#39;, &#39;q2&#39;: 1}</span>
+<span class="sd">    For a string input for observables that don&#39;t have arguments:</span>
+<span class="sd">    - &#39;eps_K&#39;</span>
+<span class="sd">    Output:</span>
+<span class="sd">    tuple: &#39;eps_K&#39;</span>
+<span class="sd">    list: &#39;eps_K&#39;</span>
+<span class="sd">    dict: {&#39;name&#39;: &#39;eps_K&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Arguments missing for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">obs</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obs</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span>
+        <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong number of arguments for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">arguments</span>
+        <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">obs</span>
+    <span class="k">if</span> <span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;tuple&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">t</span>
+    <span class="k">elif</span> <span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;list&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">d</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="flavio.classes.Observable.clear_all">
@@ -5234,11 +5796,14 @@ of the Parameter class.</p>
       <p id="flavio.classes.ParameterConstraints" class="name">class <span class="ident">ParameterConstraints</span></p>
       
   
+    <div class="desc"><p>Trivial subclass of <code>Constraints</code> that is meant for constraints on
+theory parameters represented by instances of the <code>Parameter</code> class.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.ParameterConstraints', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.ParameterConstraints" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ParameterConstraints</span><span class="p">(</span><span class="n">Constraints</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Trivial subclass of `Constraints` that is meant for constraints on</span>
+<span class="sd">    theory parameters represented by instances of the `Parameter` class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -5555,28 +6120,81 @@ constraint/probability distribution.</p>
   
             
   <div class="item">
+    <div class="name def" id="flavio.classes.ParameterConstraints.get_logprobability_single">
+    <p>def <span class="ident">get_logprobability_single</span>(</p><p>self, parameter, value)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return a dictionary with the logarithm of the probability for each
+constraint/probability distribution for a given value of a
+single parameter.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.ParameterConstraints.get_logprobability_single', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.ParameterConstraints.get_logprobability_single" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
+<span class="sd">    constraint/probability distribution for a given value of a</span>
+<span class="sd">    single parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)[</span><span class="n">constraint</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># for multivariate distributions</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">parameter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.classes.ParameterConstraints.get_random_all">
-    <p>def <span class="ident">get_random_all</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_random_all</span>(</p><p>self, size=None)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get random values for all constrained parameters where they are
-distributed according to the probability distribution applied.</p></div>
+distributed according to the probability distribution applied.</p>
+<p>If <code>size</code> is not None, the dictionary values will be arrays with length
+<code>size</code> rather than numbers.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.ParameterConstraints.get_random_all', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.ParameterConstraints.get_random_all" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
-<span class="sd">    distributed according to the probability distribution applied.&quot;&quot;&quot;</span>
+<span class="sd">    distributed according to the probability distribution applied.</span>
+<span class="sd">    If `size` is not None, the dictionary values will be arrays with length</span>
+<span class="sd">    `size` rather than numbers.&quot;&quot;&quot;</span>
     <span class="c1"># first, generate random values for every single one of the constraints</span>
-    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
+    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
     <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># now, iterate over the parameters</span>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
-        <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">carr</span> <span class="o">=</span> <span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">carr</span><span class="p">):</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">():</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">size</span><span class="p">,)</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+        <span class="k">elif</span> <span class="n">carr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">size</span><span class="p">:</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span><span class="p">[:,</span> <span class="n">num</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected error in get_random_all&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">random_dict</span>
 </pre></div>
 
@@ -5809,11 +6427,13 @@ simultaneously.</p></div>
 
     
   
+    <div class="desc"><p>Class method: load constraint from a YAML string or stream.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.ParameterConstraints.from_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.ParameterConstraints.from_yaml" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class method: load constraint from a YAML string or stream.&quot;&quot;&quot;</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -5826,37 +6446,97 @@ simultaneously.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.ParameterConstraints.from_yaml_dict">
-    <p>def <span class="ident">from_yaml_dict</span>(</p><p>cls, data, pname=&#39;parameters&#39;, *args, **kwargs)</p>
+    <p>def <span class="ident">from_yaml_dict</span>(</p><p>cls, data, pname=&#39;parameters&#39;, instance=None, *args, **kwargs)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Class method: load constraint from a dictionary or list of dicts.</p>
+<p>If it is a dictionary, it should have the form:</p>
+<p>```{
+'metadata': {...},  # optional, do set attributes of the instance
+'arguments': {...},  # optional, to specify keyword arguments for instantiation,
+'constraints': [...],  # required, the list of constraints
+}</p>
+<p>Alternatively, the list of constraints can be directly given.
+This list should have elements in one of the two possible forms:</p>
+<ol>
+<li>
+<p>Dictionary as returned by <code>Probability.get_dict</code>:
+<code>{
+pname: [...],  # required, list of constrained parameters
+'values': {
+    'distribution': '...',  # required, string identifying ProbabilityDistribution, e.g. 'normal'
+    '...': '...',  # required, any arguments for the instantiation of the ProbabilityDistribution
+    }
+}</code></p>
+</li>
+<li>
+<p>String representing one or several (to be convolved) constraints:
+```{
+'my_parameter': '1.0 ± 0.2 ± 0.1 e-3'
+}</p>
+</li>
+</ol></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.ParameterConstraints.from_yaml_dict', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.ParameterConstraints.from_yaml_dict" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">from_yaml_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">from_yaml_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class method: load constraint from a dictionary or list of dicts.</span>
+<span class="sd">    If it is a dictionary, it should have the form:</span>
+<span class="sd">    ```{</span>
+<span class="sd">    &#39;metadata&#39;: {...},  # optional, do set attributes of the instance</span>
+<span class="sd">    &#39;arguments&#39;: {...},  # optional, to specify keyword arguments for instantiation,</span>
+<span class="sd">    &#39;constraints&#39;: [...],  # required, the list of constraints</span>
+<span class="sd">    }</span>
+<span class="sd">    Alternatively, the list of constraints can be directly given.</span>
+<span class="sd">    This list should have elements in one of the two possible forms:</span>
+<span class="sd">    1. Dictionary as returned by `Probability.get_dict`:</span>
+<span class="sd">    ```{</span>
+<span class="sd">    pname: [...],  # required, list of constrained parameters</span>
+<span class="sd">    &#39;values&#39;: {</span>
+<span class="sd">        &#39;distribution&#39;: &#39;...&#39;,  # required, string identifying ProbabilityDistribution, e.g. &#39;normal&#39;</span>
+<span class="sd">        &#39;...&#39;: &#39;...&#39;,  # required, any arguments for the instantiation of the ProbabilityDistribution</span>
+<span class="sd">        }</span>
+<span class="sd">    }</span>
+<span class="sd">    ```</span>
+<span class="sd">    2. String representing one or several (to be convolved) constraints:</span>
+<span class="sd">    ```{</span>
+<span class="sd">    &#39;my_parameter&#39;: &#39;1.0 ± 0.2 ± 0.1 e-3&#39;</span>
+<span class="sd">    }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">constraints</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;constraints&#39;</span><span class="p">]</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">arguments</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;arguments&#39;</span><span class="p">]</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
-        <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="n">instance</span> <span class="ow">or</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
             <span class="n">inst</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="n">instance</span> <span class="ow">or</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">constraints</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">pname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key &#39;</span> <span class="o">+</span> <span class="n">pname</span> <span class="o">+</span> <span class="s1">&#39; not found. &#39;</span>
-                             <span class="s1">&#39;Please check the `pname` argument.&#39;</span><span class="p">)</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">distname</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;distribution&#39;</span><span class="p">)</span>
-        <span class="n">dist</span> <span class="o">=</span> <span class="n">string_to_class</span><span class="p">(</span><span class="n">distname</span><span class="p">)</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">c</span><span class="p">[</span><span class="n">pname</span><span class="p">]]</span>
-        <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="n">v</span><span class="p">))</span>
+            <span class="k">if</span> <span class="s1">&#39;values&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># this means we probably have a constraint of the</span>
+                <span class="c1"># form parameter: constraint_string</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># this loop runs only once</span>
+                    <span class="n">inst</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                    <span class="k">break</span>  <span class="c1"># just to be sure</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># in this case something is clearly wrong. Mabye the</span>
+                <span class="c1"># wrong &quot;pname&quot; was used.</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key &#39;</span> <span class="o">+</span> <span class="n">pname</span> <span class="o">+</span> <span class="s1">&#39; not found. &#39;</span>
+                                 <span class="s1">&#39;Please check the `pname` argument.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">c</span><span class="p">[</span><span class="n">pname</span><span class="p">]]</span>
+            <span class="n">pds</span> <span class="o">=</span> <span class="n">dict2dist</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">])</span>
+            <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
+            <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">combined_pd</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">inst</span>
 </pre></div>
 
@@ -6343,28 +7023,81 @@ constraint/probability distribution.</p>
   
             
   <div class="item">
+    <div class="name def" id="flavio.classes.WilsonCoefficientPriors.get_logprobability_single">
+    <p>def <span class="ident">get_logprobability_single</span>(</p><p>self, parameter, value)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return a dictionary with the logarithm of the probability for each
+constraint/probability distribution for a given value of a
+single parameter.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.WilsonCoefficientPriors.get_logprobability_single', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.classes.WilsonCoefficientPriors.get_logprobability_single" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
+<span class="sd">    constraint/probability distribution for a given value of a</span>
+<span class="sd">    single parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)[</span><span class="n">constraint</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># for multivariate distributions</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">parameter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.classes.WilsonCoefficientPriors.get_random_all">
-    <p>def <span class="ident">get_random_all</span>(</p><p>self)</p>
+    <p>def <span class="ident">get_random_all</span>(</p><p>self, size=None)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Get random values for all constrained parameters where they are
-distributed according to the probability distribution applied.</p></div>
+distributed according to the probability distribution applied.</p>
+<p>If <code>size</code> is not None, the dictionary values will be arrays with length
+<code>size</code> rather than numbers.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.WilsonCoefficientPriors.get_random_all', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.WilsonCoefficientPriors.get_random_all" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get random values for all constrained parameters where they are</span>
-<span class="sd">    distributed according to the probability distribution applied.&quot;&quot;&quot;</span>
+<span class="sd">    distributed according to the probability distribution applied.</span>
+<span class="sd">    If `size` is not None, the dictionary values will be arrays with length</span>
+<span class="sd">    `size` rather than numbers.&quot;&quot;&quot;</span>
     <span class="c1"># first, generate random values for every single one of the constraints</span>
-    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">()</span> <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
+    <span class="n">random_constraints</span> <span class="o">=</span> <span class="p">{</span><span class="n">constraint</span><span class="p">:</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">}</span>
     <span class="n">random_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># now, iterate over the parameters</span>
     <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">constraints</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraints</span>
-        <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]])[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">carr</span> <span class="o">=</span> <span class="n">random_constraints</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">carr</span><span class="p">):</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">():</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">size</span><span class="p">,)</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span>
+        <span class="k">elif</span> <span class="n">carr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">carr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">size</span><span class="p">:</span>
+            <span class="n">random_dict</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">carr</span><span class="p">[:,</span> <span class="n">num</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected error in get_random_all&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">random_dict</span>
 </pre></div>
 
@@ -6597,11 +7330,13 @@ simultaneously.</p></div>
 
     
   
+    <div class="desc"><p>Class method: load constraint from a YAML string or stream.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.WilsonCoefficientPriors.from_yaml', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.WilsonCoefficientPriors.from_yaml" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class method: load constraint from a YAML string or stream.&quot;&quot;&quot;</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -6614,37 +7349,97 @@ simultaneously.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.WilsonCoefficientPriors.from_yaml_dict">
-    <p>def <span class="ident">from_yaml_dict</span>(</p><p>cls, data, pname=&#39;parameters&#39;, *args, **kwargs)</p>
+    <p>def <span class="ident">from_yaml_dict</span>(</p><p>cls, data, pname=&#39;parameters&#39;, instance=None, *args, **kwargs)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Class method: load constraint from a dictionary or list of dicts.</p>
+<p>If it is a dictionary, it should have the form:</p>
+<p>```{
+'metadata': {...},  # optional, do set attributes of the instance
+'arguments': {...},  # optional, to specify keyword arguments for instantiation,
+'constraints': [...],  # required, the list of constraints
+}</p>
+<p>Alternatively, the list of constraints can be directly given.
+This list should have elements in one of the two possible forms:</p>
+<ol>
+<li>
+<p>Dictionary as returned by <code>Probability.get_dict</code>:
+<code>{
+pname: [...],  # required, list of constrained parameters
+'values': {
+    'distribution': '...',  # required, string identifying ProbabilityDistribution, e.g. 'normal'
+    '...': '...',  # required, any arguments for the instantiation of the ProbabilityDistribution
+    }
+}</code></p>
+</li>
+<li>
+<p>String representing one or several (to be convolved) constraints:
+```{
+'my_parameter': '1.0 ± 0.2 ± 0.1 e-3'
+}</p>
+</li>
+</ol></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.WilsonCoefficientPriors.from_yaml_dict', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.WilsonCoefficientPriors.from_yaml_dict" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">from_yaml_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">from_yaml_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pname</span><span class="o">=</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class method: load constraint from a dictionary or list of dicts.</span>
+<span class="sd">    If it is a dictionary, it should have the form:</span>
+<span class="sd">    ```{</span>
+<span class="sd">    &#39;metadata&#39;: {...},  # optional, do set attributes of the instance</span>
+<span class="sd">    &#39;arguments&#39;: {...},  # optional, to specify keyword arguments for instantiation,</span>
+<span class="sd">    &#39;constraints&#39;: [...],  # required, the list of constraints</span>
+<span class="sd">    }</span>
+<span class="sd">    Alternatively, the list of constraints can be directly given.</span>
+<span class="sd">    This list should have elements in one of the two possible forms:</span>
+<span class="sd">    1. Dictionary as returned by `Probability.get_dict`:</span>
+<span class="sd">    ```{</span>
+<span class="sd">    pname: [...],  # required, list of constrained parameters</span>
+<span class="sd">    &#39;values&#39;: {</span>
+<span class="sd">        &#39;distribution&#39;: &#39;...&#39;,  # required, string identifying ProbabilityDistribution, e.g. &#39;normal&#39;</span>
+<span class="sd">        &#39;...&#39;: &#39;...&#39;,  # required, any arguments for the instantiation of the ProbabilityDistribution</span>
+<span class="sd">        }</span>
+<span class="sd">    }</span>
+<span class="sd">    ```</span>
+<span class="sd">    2. String representing one or several (to be convolved) constraints:</span>
+<span class="sd">    ```{</span>
+<span class="sd">    &#39;my_parameter&#39;: &#39;1.0 ± 0.2 ± 0.1 e-3&#39;</span>
+<span class="sd">    }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">constraints</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;constraints&#39;</span><span class="p">]</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">arguments</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;arguments&#39;</span><span class="p">]</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
-        <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="n">instance</span> <span class="ow">or</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
             <span class="n">inst</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="n">instance</span> <span class="ow">or</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">constraints</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">inst</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">pname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key &#39;</span> <span class="o">+</span> <span class="n">pname</span> <span class="o">+</span> <span class="s1">&#39; not found. &#39;</span>
-                             <span class="s1">&#39;Please check the `pname` argument.&#39;</span><span class="p">)</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">distname</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;distribution&#39;</span><span class="p">)</span>
-        <span class="n">dist</span> <span class="o">=</span> <span class="n">string_to_class</span><span class="p">(</span><span class="n">distname</span><span class="p">)</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">c</span><span class="p">[</span><span class="n">pname</span><span class="p">]]</span>
-        <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dist</span><span class="p">(</span><span class="o">**</span><span class="n">v</span><span class="p">))</span>
+            <span class="k">if</span> <span class="s1">&#39;values&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># this means we probably have a constraint of the</span>
+                <span class="c1"># form parameter: constraint_string</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># this loop runs only once</span>
+                    <span class="n">inst</span><span class="o">.</span><span class="n">set_constraint</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                    <span class="k">break</span>  <span class="c1"># just to be sure</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># in this case something is clearly wrong. Mabye the</span>
+                <span class="c1"># wrong &quot;pname&quot; was used.</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key &#39;</span> <span class="o">+</span> <span class="n">pname</span> <span class="o">+</span> <span class="s1">&#39; not found. &#39;</span>
+                                 <span class="s1">&#39;Please check the `pname` argument.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">c</span><span class="p">[</span><span class="n">pname</span><span class="p">]]</span>
+            <span class="n">pds</span> <span class="o">=</span> <span class="n">dict2dist</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">])</span>
+            <span class="n">combined_pd</span> <span class="o">=</span> <span class="n">convolve_distributions</span><span class="p">(</span><span class="n">pds</span><span class="p">)</span>
+            <span class="n">inst</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">combined_pd</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">inst</span>
 </pre></div>
 

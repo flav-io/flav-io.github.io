@@ -1131,6 +1131,7 @@ table {
     <li class="mono"><a href="#flavio.test_measurements.TestMeasurements.tearDown">tearDown</a></li>
     <li class="mono"><a href="#flavio.test_measurements.TestMeasurements.test_fix_correlation">test_fix_correlation</a></li>
     <li class="mono"><a href="#flavio.test_measurements.TestMeasurements.test_measurements">test_measurements</a></li>
+    <li class="mono"><a href="#flavio.test_measurements.TestMeasurements.test_measurements_yaml">test_measurements_yaml</a></li>
     <li class="mono"><a href="#flavio.test_measurements.TestMeasurements.test_yaml_io_new">test_yaml_io_new</a></li>
     <li class="mono"><a href="#flavio.test_measurements.TestMeasurements.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.test_measurements.TestMeasurements.tearDownClass">tearDownClass</a></li>
@@ -1207,6 +1208,16 @@ table {
         <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span>
             <span class="n">_fix_correlation_matrix</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="mi">3</span><span class="p">),</span>
             <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]))</span>
+
+    <span class="k">def</span> <span class="nf">test_measurements_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># check if all observables in existing measurements exist</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;test&#39;</span> <span class="ow">in</span> <span class="n">obs</span> <span class="ow">or</span> <span class="s1">&#39;test&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="k">continue</span>  <span class="c1"># ignore observables defined in unit tests</span>
+                <span class="c1"># this will raise if the observable does not exist</span>
+                <span class="n">obsname</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;dict&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obsname</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -1301,6 +1312,16 @@ in order to be run.</p>
         <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span>
             <span class="n">_fix_correlation_matrix</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="mi">3</span><span class="p">),</span>
             <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]))</span>
+
+    <span class="k">def</span> <span class="nf">test_measurements_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># check if all observables in existing measurements exist</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;test&#39;</span> <span class="ow">in</span> <span class="n">obs</span> <span class="ow">or</span> <span class="s1">&#39;test&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="k">continue</span>  <span class="c1"># ignore observables defined in unit tests</span>
+                <span class="c1"># this will raise if the observable does not exist</span>
+                <span class="n">obsname</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;dict&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obsname</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -1479,8 +1500,7 @@ their own type equality functions to provide nicer error messages.</p>
     <div class="desc"><p>Fail if the two objects are unequal as determined by their
 difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
-difference between the two objects is more than the given
-delta.</p>
+between the two objects is more than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
 as significant digits (measured from the most significant digit).</p>
 <p>If the two objects compare equal then they will automatically
@@ -1493,8 +1513,7 @@ compare almost equal.</p></div>
     <span class="sd">&quot;&quot;&quot;Fail if the two objects are unequal as determined by their</span>
 <span class="sd">       difference rounded to the given number of decimal places</span>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
-<span class="sd">       difference between the two objects is more than the given</span>
-<span class="sd">       delta.</span>
+<span class="sd">       between the two objects is more than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
 <span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       If the two objects compare equal then they will automatically</span>
@@ -2150,7 +2169,7 @@ self.assertEqual(cm.output, [&#39;INFO:foo:first message&#39;,
     <div class="desc"><p>Fail if the two objects are equal as determined by their
 difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
-difference between the two objects is less than the given delta.</p>
+between the two objects is less than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
 as significant digits (measured from the most significant digit).</p>
 <p>Objects that are equal automatically fail.</p></div>
@@ -2162,7 +2181,7 @@ as significant digits (measured from the most significant digit).</p>
     <span class="sd">&quot;&quot;&quot;Fail if the two objects are equal as determined by their</span>
 <span class="sd">       difference rounded to the given number of decimal places</span>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
-<span class="sd">       difference between the two objects is less than the given delta.</span>
+<span class="sd">       between the two objects is less than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
 <span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       Objects that are equal automatically fail.</span>
@@ -3540,6 +3559,34 @@ block, allowing further test code to be executed.</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_measurements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">Measurement</span><span class="p">[</span><span class="s1">&#39;Belle phigamma 2014&#39;</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">experiment</span><span class="p">,</span> <span class="s1">&#39;Belle&#39;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.test_measurements.TestMeasurements.test_measurements_yaml">
+    <p>def <span class="ident">test_measurements_yaml</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.test_measurements.TestMeasurements.test_measurements_yaml', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.test_measurements.TestMeasurements.test_measurements_yaml" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_measurements_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># check if all observables in existing measurements exist</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;test&#39;</span> <span class="ow">in</span> <span class="n">obs</span> <span class="ow">or</span> <span class="s1">&#39;test&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># ignore observables defined in unit tests</span>
+            <span class="c1"># this will raise if the observable does not exist</span>
+            <span class="n">obsname</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;dict&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obsname</span><span class="p">]</span>
 </pre></div>
 
   </div>

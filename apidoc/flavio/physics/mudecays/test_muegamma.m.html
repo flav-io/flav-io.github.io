@@ -1050,6 +1050,13 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#flavio.physics.mudecays.test_muegamma.pi">pi</a></li>
+  </ul>
+
+    </li>
 
 
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
@@ -1123,6 +1130,7 @@ table {
     <li class="mono"><a href="#flavio.physics.mudecays.test_muegamma.TestMuEGamma.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.physics.mudecays.test_muegamma.TestMuEGamma.tearDown">tearDown</a></li>
     <li class="mono"><a href="#flavio.physics.mudecays.test_muegamma.TestMuEGamma.test_muegamma">test_muegamma</a></li>
+    <li class="mono"><a href="#flavio.physics.mudecays.test_muegamma.TestMuEGamma.test_tauegamma_implementation">test_tauegamma_implementation</a></li>
     <li class="mono"><a href="#flavio.physics.mudecays.test_muegamma.TestMuEGamma.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.physics.mudecays.test_muegamma.TestMuEGamma.tearDownClass">tearDownClass</a></li>
   </ul>
@@ -1149,11 +1157,36 @@ table {
   <div id="source-flavio.physics.mudecays.test_muegamma" class="source">
     <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">unittest</span>
 <span class="kn">import</span> <span class="nn">flavio</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">cmath</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">pi</span>
+<span class="kn">from</span> <span class="nn">wilson</span> <span class="kn">import</span> <span class="n">Wilson</span>
+
+<span class="kn">from</span> <span class="nn">flavio.physics.taudecays.test_taulgamma</span> <span class="kn">import</span> <span class="n">compare_BR</span>
 
 
 <span class="k">class</span> <span class="nc">TestMuEGamma</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">test_muegamma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(mu-&gt;egamma)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_tauegamma_implementation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">input_dict_list</span><span class="o">=</span><span class="p">[{</span>
+        <span class="s1">&#39;Cgamma_mue&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="o">*</span><span class="mf">1e-8</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="mi">1j</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()),</span>
+        <span class="s1">&#39;Cgamma_emu&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="o">*</span><span class="mf">1e-8</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="mi">1j</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()),</span>
+        <span class="p">}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+        <span class="n">BRs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span>
+                <span class="s1">&#39;BR(mu-&gt;egamma)&#39;</span><span class="p">,</span>
+                <span class="n">Wilson</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span>  <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">input_dict</span> <span class="ow">in</span> <span class="n">input_dict_list</span>
+        <span class="p">])</span>
+        <span class="n">compare_BRs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">compare_BR</span><span class="p">(</span>
+                <span class="n">Wilson</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span>  <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">input_dict</span> <span class="ow">in</span> <span class="n">input_dict_list</span>
+        <span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">BRs</span><span class="o">/</span><span class="n">compare_BRs</span><span class="p">)),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1161,6 +1194,15 @@ table {
   </header>
 
   <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="flavio.physics.mudecays.test_muegamma.pi" class="name">var <span class="ident">pi</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
 
 
     <h2 class="section-title" id="header-classes">Classes</h2>
@@ -1200,6 +1242,26 @@ in order to be run.</p>
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TestMuEGamma</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">test_muegamma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(mu-&gt;egamma)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_tauegamma_implementation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">input_dict_list</span><span class="o">=</span><span class="p">[{</span>
+        <span class="s1">&#39;Cgamma_mue&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="o">*</span><span class="mf">1e-8</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="mi">1j</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()),</span>
+        <span class="s1">&#39;Cgamma_emu&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="o">*</span><span class="mf">1e-8</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="mi">1j</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()),</span>
+        <span class="p">}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+        <span class="n">BRs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span>
+                <span class="s1">&#39;BR(mu-&gt;egamma)&#39;</span><span class="p">,</span>
+                <span class="n">Wilson</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span>  <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">input_dict</span> <span class="ow">in</span> <span class="n">input_dict_list</span>
+        <span class="p">])</span>
+        <span class="n">compare_BRs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">compare_BR</span><span class="p">(</span>
+                <span class="n">Wilson</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span>  <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">input_dict</span> <span class="ow">in</span> <span class="n">input_dict_list</span>
+        <span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">BRs</span><span class="o">/</span><span class="n">compare_BRs</span><span class="p">)),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1378,8 +1440,7 @@ their own type equality functions to provide nicer error messages.</p>
     <div class="desc"><p>Fail if the two objects are unequal as determined by their
 difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
-difference between the two objects is more than the given
-delta.</p>
+between the two objects is more than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
 as significant digits (measured from the most significant digit).</p>
 <p>If the two objects compare equal then they will automatically
@@ -1392,8 +1453,7 @@ compare almost equal.</p></div>
     <span class="sd">&quot;&quot;&quot;Fail if the two objects are unequal as determined by their</span>
 <span class="sd">       difference rounded to the given number of decimal places</span>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
-<span class="sd">       difference between the two objects is more than the given</span>
-<span class="sd">       delta.</span>
+<span class="sd">       between the two objects is more than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
 <span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       If the two objects compare equal then they will automatically</span>
@@ -2049,7 +2109,7 @@ self.assertEqual(cm.output, [&#39;INFO:foo:first message&#39;,
     <div class="desc"><p>Fail if the two objects are equal as determined by their
 difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
-difference between the two objects is less than the given delta.</p>
+between the two objects is less than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
 as significant digits (measured from the most significant digit).</p>
 <p>Objects that are equal automatically fail.</p></div>
@@ -2061,7 +2121,7 @@ as significant digits (measured from the most significant digit).</p>
     <span class="sd">&quot;&quot;&quot;Fail if the two objects are equal as determined by their</span>
 <span class="sd">       difference rounded to the given number of decimal places</span>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
-<span class="sd">       difference between the two objects is less than the given delta.</span>
+<span class="sd">       between the two objects is less than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
 <span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       Objects that are equal automatically fail.</span>
@@ -3409,6 +3469,45 @@ block, allowing further test code to be executed.</p></div>
   <div id="source-flavio.physics.mudecays.test_muegamma.TestMuEGamma.test_muegamma" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_muegamma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;BR(mu-&gt;egamma)&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.mudecays.test_muegamma.TestMuEGamma.test_tauegamma_implementation">
+    <p>def <span class="ident">test_tauegamma_implementation</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mudecays.test_muegamma.TestMuEGamma.test_tauegamma_implementation', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mudecays.test_muegamma.TestMuEGamma.test_tauegamma_implementation" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_tauegamma_implementation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">input_dict_list</span><span class="o">=</span><span class="p">[{</span>
+    <span class="s1">&#39;Cgamma_mue&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="o">*</span><span class="mf">1e-8</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="mi">1j</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()),</span>
+    <span class="s1">&#39;Cgamma_emu&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="o">*</span><span class="mf">1e-8</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="mi">1j</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()),</span>
+    <span class="p">}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+    <span class="n">BRs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span>
+            <span class="s1">&#39;BR(mu-&gt;egamma)&#39;</span><span class="p">,</span>
+            <span class="n">Wilson</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span>  <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">input_dict</span> <span class="ow">in</span> <span class="n">input_dict_list</span>
+    <span class="p">])</span>
+    <span class="n">compare_BRs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">compare_BR</span><span class="p">(</span>
+            <span class="n">Wilson</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span>  <span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;flavio&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">input_dict</span> <span class="ow">in</span> <span class="n">input_dict_list</span>
+    <span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">BRs</span><span class="o">/</span><span class="n">compare_BRs</span><span class="p">)),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span>
 </pre></div>
 
   </div>

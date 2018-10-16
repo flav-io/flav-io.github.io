@@ -1499,7 +1499,7 @@ table {
 
 
 <span class="k">def</span> <span class="nf">likelihood_contour_data</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span>
-              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Generate data required to plot coloured confidence contours (or bands)</span>
 <span class="sd">    given a log likelihood function.</span>
 
@@ -1515,6 +1515,9 @@ table {
 <span class="sd">      this number squared times the computing time of one `log_likelihood` call!)</span>
 <span class="sd">    - `threads`: number of threads, defaults to 1. If greater than one,</span>
 <span class="sd">      computation of z values will be done in parallel.</span>
+<span class="sd">    - `pool`: an instance of `multiprocessing.Pool` (or a compatible</span>
+<span class="sd">    implementation, e.g. from `multiprocess` or `schwimmbad`). Overrides the</span>
+<span class="sd">    `threads` argument.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
     <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
@@ -1526,7 +1529,7 @@ table {
         <span class="n">z</span> <span class="o">=</span> <span class="n">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">pool</span> <span class="ow">or</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">xy</span> <span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">steps</span><span class="p">,</span> <span class="n">steps</span><span class="p">))</span>
         <span class="k">except</span> <span class="n">PicklingError</span><span class="p">:</span>
@@ -2915,7 +2918,7 @@ and allow to control the presentation of the plot (see docstring of
       
   <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.likelihood_contour_data">
-    <p>def <span class="ident">likelihood_contour_data</span>(</p><p>log_likelihood, x_min, x_max, y_min, y_max, n_sigma=1, steps=20, threads=1)</p>
+    <p>def <span class="ident">likelihood_contour_data</span>(</p><p>log_likelihood, x_min, x_max, y_min, y_max, n_sigma=1, steps=20, threads=1, pool=None)</p>
     </div>
     
 
@@ -2935,12 +2938,15 @@ given a log likelihood function.</p>
   this number squared times the computing time of one <code>log_likelihood</code> call!)</li>
 <li><code>threads</code>: number of threads, defaults to 1. If greater than one,
   computation of z values will be done in parallel.</li>
+<li><code>pool</code>: an instance of <code>multiprocessing.Pool</code> (or a compatible
+implementation, e.g. from <code>multiprocess</code> or <code>schwimmbad</code>). Overrides the
+<code>threads</code> argument.</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.likelihood_contour_data', this);">Show source &equiv;</a></p>
   <div id="source-flavio.plots.plotfunctions.likelihood_contour_data" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">likelihood_contour_data</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span>
-              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Generate data required to plot coloured confidence contours (or bands)</span>
 <span class="sd">    given a log likelihood function.</span>
 
@@ -2956,6 +2962,9 @@ given a log likelihood function.</p>
 <span class="sd">      this number squared times the computing time of one `log_likelihood` call!)</span>
 <span class="sd">    - `threads`: number of threads, defaults to 1. If greater than one,</span>
 <span class="sd">      computation of z values will be done in parallel.</span>
+<span class="sd">    - `pool`: an instance of `multiprocessing.Pool` (or a compatible</span>
+<span class="sd">    implementation, e.g. from `multiprocess` or `schwimmbad`). Overrides the</span>
+<span class="sd">    `threads` argument.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
     <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
@@ -2967,7 +2976,7 @@ given a log likelihood function.</p>
         <span class="n">z</span> <span class="o">=</span> <span class="n">chi2_vect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">steps</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">pool</span> <span class="ow">or</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">xy</span> <span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">steps</span><span class="p">,</span> <span class="n">steps</span><span class="p">))</span>
         <span class="k">except</span> <span class="n">PicklingError</span><span class="p">:</span>

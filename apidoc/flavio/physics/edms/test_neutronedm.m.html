@@ -1159,6 +1159,7 @@ table {
     <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">unittest</span>
 <span class="kn">import</span> <span class="nn">flavio</span>
 <span class="kn">import</span> <span class="nn">wcxf</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
 
 
 <span class="n">par</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
@@ -1195,7 +1196,10 @@ table {
         <span class="n">par_dG</span><span class="p">[</span><span class="s1">&#39;nEDM gT_u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">par_dG</span><span class="p">[</span><span class="s1">&#39;nEDM ~rho_u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;d_n&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dG</span><span class="p">,</span> <span class="n">wcf</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mf">2e-10</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.3e-10</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="mf">246.22</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="p">,</span>
+                               <span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">par_dG</span><span class="p">[</span><span class="s1">&#39;nEDM ~rho_d&#39;</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-10</span><span class="p">),</span>
+                               <span class="n">delta</span><span class="o">=</span><span class="mf">0.3e-10</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1279,7 +1283,10 @@ in order to be run.</p>
         <span class="n">par_dG</span><span class="p">[</span><span class="s1">&#39;nEDM gT_u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">par_dG</span><span class="p">[</span><span class="s1">&#39;nEDM ~rho_u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;d_n&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dG</span><span class="p">,</span> <span class="n">wcf</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mf">2e-10</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.3e-10</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="mf">246.22</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="p">,</span>
+                               <span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">par_dG</span><span class="p">[</span><span class="s1">&#39;nEDM ~rho_d&#39;</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-10</span><span class="p">),</span>
+                               <span class="n">delta</span><span class="o">=</span><span class="mf">0.3e-10</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1458,8 +1465,7 @@ their own type equality functions to provide nicer error messages.</p>
     <div class="desc"><p>Fail if the two objects are unequal as determined by their
 difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
-difference between the two objects is more than the given
-delta.</p>
+between the two objects is more than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
 as significant digits (measured from the most significant digit).</p>
 <p>If the two objects compare equal then they will automatically
@@ -1472,8 +1478,7 @@ compare almost equal.</p></div>
     <span class="sd">&quot;&quot;&quot;Fail if the two objects are unequal as determined by their</span>
 <span class="sd">       difference rounded to the given number of decimal places</span>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
-<span class="sd">       difference between the two objects is more than the given</span>
-<span class="sd">       delta.</span>
+<span class="sd">       between the two objects is more than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
 <span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       If the two objects compare equal then they will automatically</span>
@@ -2129,7 +2134,7 @@ self.assertEqual(cm.output, [&#39;INFO:foo:first message&#39;,
     <div class="desc"><p>Fail if the two objects are equal as determined by their
 difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
-difference between the two objects is less than the given delta.</p>
+between the two objects is less than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
 as significant digits (measured from the most significant digit).</p>
 <p>Objects that are equal automatically fail.</p></div>
@@ -2141,7 +2146,7 @@ as significant digits (measured from the most significant digit).</p>
     <span class="sd">&quot;&quot;&quot;Fail if the two objects are equal as determined by their</span>
 <span class="sd">       difference rounded to the given number of decimal places</span>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
-<span class="sd">       difference between the two objects is less than the given delta.</span>
+<span class="sd">       between the two objects is less than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
 <span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       Objects that are equal automatically fail.</span>
@@ -3499,7 +3504,10 @@ block, allowing further test code to be executed.</p></div>
     <span class="n">par_dG</span><span class="p">[</span><span class="s1">&#39;nEDM gT_u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">par_dG</span><span class="p">[</span><span class="s1">&#39;nEDM ~rho_u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;d_n&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dG</span><span class="p">,</span> <span class="n">wcf</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mf">2e-10</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.3e-10</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="mf">246.22</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="p">,</span>
+                           <span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">par_dG</span><span class="p">[</span><span class="s1">&#39;nEDM ~rho_d&#39;</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-10</span><span class="p">),</span>
+                           <span class="n">delta</span><span class="o">=</span><span class="mf">0.3e-10</span><span class="p">)</span>
 </pre></div>
 
   </div>

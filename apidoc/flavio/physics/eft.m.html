@@ -1067,14 +1067,19 @@ table {
           
   <ul>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.__init__">__init__</a></li>
+    <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.clear_cache">clear_cache</a></li>
+    <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.get_option">get_option</a></li>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.get_wc">get_wc</a></li>
+    <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.get_wcxf">get_wcxf</a></li>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.match_run">match_run</a></li>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.run_wcxf">run_wcxf</a></li>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.set_initial">set_initial</a></li>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.set_initial_wcxf">set_initial_wcxf</a></li>
+    <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.set_option">set_option</a></li>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.from_wc">from_wc</a></li>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.from_wilson">from_wilson</a></li>
     <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.load_wc">load_wc</a></li>
+    <li class="mono"><a href="#flavio.physics.eft.WilsonCoefficients.set_default_option">set_default_option</a></li>
   </ul>
 
         </li>
@@ -1269,11 +1274,11 @@ table {
     <span class="k">def</span> <span class="nf">run_wcxf</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The method run_wcxf has been removed. Please use the match_run method of wilson.Wilson instead.&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_wc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the values of the Wilson coefficients belonging to a specific</span>
 <span class="sd">        sector (e.g. `bsmumu`) at a given scale.</span>
 
-<span class="sd">        Returns a dictionary of WC values.</span>
+<span class="sd">        Returns a WCxf.WC instance.</span>
 
 <span class="sd">        Parameters:</span>
 
@@ -1292,22 +1297,45 @@ table {
             <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET-3&#39;</span>
         <span class="k">elif</span> <span class="n">nf_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid value: nf_out=&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nf_out</span><span class="p">))</span>
-        <span class="n">wcxf_basis</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">Basis</span><span class="p">[</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">sector</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
-            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">all_wcs</span>
             <span class="n">mr_sectors</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># translate from legacy flavio to wcxf sector if necessary</span>
             <span class="n">wcxf_sector</span> <span class="o">=</span> <span class="n">sectors_flavio2wcxf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">sector</span><span class="p">)</span>
-            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">sectors</span><span class="p">[</span><span class="n">wcxf_sector</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="n">mr_sectors</span> <span class="o">=</span> <span class="p">(</span><span class="n">wcxf_sector</span><span class="p">,)</span>
-        <span class="n">wc_sm</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">{})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">mr_sectors</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_wc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the values of the Wilson coefficients belonging to a specific</span>
+<span class="sd">        sector (e.g. `bsmumu`) at a given scale.</span>
+
+<span class="sd">        Returns a dictionary of WC values.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - sector: string name of the sector as defined in the WCxf EFT instance</span>
+<span class="sd">        - scale: $\overline{\text{MS}}$ renormalization scale</span>
+<span class="sd">        - par: dictionary of parameters</span>
+<span class="sd">        - eft: name of the EFT at the output scale</span>
+<span class="sd">        - basis: name of the output basis</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wcxf_basis</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">Basis</span><span class="p">[</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">sector</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">all_wcs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># translate from legacy flavio to wcxf sector if necessary</span>
+            <span class="n">wcxf_sector</span> <span class="o">=</span> <span class="n">sectors_flavio2wcxf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">sector</span><span class="p">)</span>
+            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">sectors</span><span class="p">[</span><span class="n">wcxf_sector</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">wc_sm</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
             <span class="k">return</span> <span class="n">wc_sm</span>
-        <span class="n">wc_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">mr_sectors</span><span class="p">)</span>
+        <span class="n">wc_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wcxf</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">nf_out</span><span class="p">)</span>
         <span class="n">wc_out_dict</span> <span class="o">=</span> <span class="n">wc_sm</span>  <span class="c1"># initialize with zeros</span>
         <span class="n">wc_out_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">wc_out</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>  <span class="c1"># overwrite non-zero entries</span>
         <span class="k">return</span> <span class="n">wc_out_dict</span>
+
 
 <span class="c1"># this global variable is simply an instance that is not meant to be modifed -</span>
 <span class="c1"># i.e., a Standard Model Wilson coefficient instance.</span>
@@ -1410,11 +1438,11 @@ only, i.e. they vanish in the SM.</p>
     <span class="k">def</span> <span class="nf">run_wcxf</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The method run_wcxf has been removed. Please use the match_run method of wilson.Wilson instead.&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_wc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the values of the Wilson coefficients belonging to a specific</span>
 <span class="sd">        sector (e.g. `bsmumu`) at a given scale.</span>
 
-<span class="sd">        Returns a dictionary of WC values.</span>
+<span class="sd">        Returns a WCxf.WC instance.</span>
 
 <span class="sd">        Parameters:</span>
 
@@ -1433,19 +1461,41 @@ only, i.e. they vanish in the SM.</p>
             <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET-3&#39;</span>
         <span class="k">elif</span> <span class="n">nf_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid value: nf_out=&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nf_out</span><span class="p">))</span>
-        <span class="n">wcxf_basis</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">Basis</span><span class="p">[</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">sector</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
-            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">all_wcs</span>
             <span class="n">mr_sectors</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># translate from legacy flavio to wcxf sector if necessary</span>
             <span class="n">wcxf_sector</span> <span class="o">=</span> <span class="n">sectors_flavio2wcxf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">sector</span><span class="p">)</span>
-            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">sectors</span><span class="p">[</span><span class="n">wcxf_sector</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="n">mr_sectors</span> <span class="o">=</span> <span class="p">(</span><span class="n">wcxf_sector</span><span class="p">,)</span>
-        <span class="n">wc_sm</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">{})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">mr_sectors</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_wc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the values of the Wilson coefficients belonging to a specific</span>
+<span class="sd">        sector (e.g. `bsmumu`) at a given scale.</span>
+
+<span class="sd">        Returns a dictionary of WC values.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - sector: string name of the sector as defined in the WCxf EFT instance</span>
+<span class="sd">        - scale: $\overline{\text{MS}}$ renormalization scale</span>
+<span class="sd">        - par: dictionary of parameters</span>
+<span class="sd">        - eft: name of the EFT at the output scale</span>
+<span class="sd">        - basis: name of the output basis</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wcxf_basis</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">Basis</span><span class="p">[</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">sector</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">all_wcs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># translate from legacy flavio to wcxf sector if necessary</span>
+            <span class="n">wcxf_sector</span> <span class="o">=</span> <span class="n">sectors_flavio2wcxf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">sector</span><span class="p">)</span>
+            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">sectors</span><span class="p">[</span><span class="n">wcxf_sector</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">wc_sm</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
             <span class="k">return</span> <span class="n">wc_sm</span>
-        <span class="n">wc_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">mr_sectors</span><span class="p">)</span>
+        <span class="n">wc_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wcxf</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">nf_out</span><span class="p">)</span>
         <span class="n">wc_out_dict</span> <span class="o">=</span> <span class="n">wc_sm</span>  <span class="c1"># initialize with zeros</span>
         <span class="n">wc_out_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">wc_out</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>  <span class="c1"># overwrite non-zero entries</span>
         <span class="k">return</span> <span class="n">wc_out_dict</span>
@@ -1460,6 +1510,7 @@ only, i.e. they vanish in the SM.</p>
           <ul class="class_list">
           <li><a href="#flavio.physics.eft.WilsonCoefficients">WilsonCoefficients</a></li>
           <li>wilson.classes.Wilson</li>
+          <li>wilson.classes.ConfigurableClass</li>
           <li>builtins.object</li>
           </ul>
           <h3>Static methods</h3>
@@ -1488,6 +1539,52 @@ only, i.e. they vanish in the SM.</p>
   <div id="source-flavio.physics.eft.WilsonCoefficients.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">wc</span> <span class="o">=</span> <span class="bp">None</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.eft.WilsonCoefficients.clear_cache">
+    <p>def <span class="ident">clear_cache</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.clear_cache', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.eft.WilsonCoefficients.clear_cache" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">clear_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="p">{}</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.eft.WilsonCoefficients.get_option">
+    <p>def <span class="ident">get_option</span>(</p><p>self, key)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the current value of the option <code>key</code> (string).</p>
+<p>Instance method, only refers to current instance.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.get_option', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.eft.WilsonCoefficients.get_option" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the current value of the option `key` (string).</span>
+<span class="sd">    Instance method, only refers to current instance.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_options</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 </pre></div>
 
   </div>
@@ -1529,6 +1626,61 @@ sector (e.g. <code>bsmumu</code>) at a given scale.</p>
 <span class="sd">    - eft: name of the EFT at the output scale</span>
 <span class="sd">    - basis: name of the output basis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">wcxf_basis</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">Basis</span><span class="p">[</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">sector</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">all_wcs</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># translate from legacy flavio to wcxf sector if necessary</span>
+        <span class="n">wcxf_sector</span> <span class="o">=</span> <span class="n">sectors_flavio2wcxf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">sector</span><span class="p">)</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">sectors</span><span class="p">[</span><span class="n">wcxf_sector</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="n">wc_sm</span>
+    <span class="n">wc_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wcxf</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">nf_out</span><span class="p">)</span>
+    <span class="n">wc_out_dict</span> <span class="o">=</span> <span class="n">wc_sm</span>  <span class="c1"># initialize with zeros</span>
+    <span class="n">wc_out_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">wc_out</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>  <span class="c1"># overwrite non-zero entries</span>
+    <span class="k">return</span> <span class="n">wc_out_dict</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.eft.WilsonCoefficients.get_wcxf">
+    <p>def <span class="ident">get_wcxf</span>(</p><p>self, sector, scale, par, eft=&#39;WET&#39;, basis=&#39;flavio&#39;, nf_out=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the values of the Wilson coefficients belonging to a specific
+sector (e.g. <code>bsmumu</code>) at a given scale.</p>
+<p>Returns a WCxf.WC instance.</p>
+<p>Parameters:</p>
+<ul>
+<li>sector: string name of the sector as defined in the WCxf EFT instance</li>
+<li>scale: $\overline{    ext{MS}}$ renormalization scale</li>
+<li>par: dictionary of parameters</li>
+<li>eft: name of the EFT at the output scale</li>
+<li>basis: name of the output basis</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.get_wcxf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.eft.WilsonCoefficients.get_wcxf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the values of the Wilson coefficients belonging to a specific</span>
+<span class="sd">    sector (e.g. `bsmumu`) at a given scale.</span>
+<span class="sd">    Returns a WCxf.WC instance.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - sector: string name of the sector as defined in the WCxf EFT instance</span>
+<span class="sd">    - scale: $\overline{\text{MS}}$ renormalization scale</span>
+<span class="sd">    - par: dictionary of parameters</span>
+<span class="sd">    - eft: name of the EFT at the output scale</span>
+<span class="sd">    - basis: name of the output basis</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># nf_out is only present to preserve backwards compatibility</span>
     <span class="k">if</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
         <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET&#39;</span>
@@ -1538,22 +1690,15 @@ sector (e.g. <code>bsmumu</code>) at a given scale.</p>
         <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET-3&#39;</span>
     <span class="k">elif</span> <span class="n">nf_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid value: nf_out=&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nf_out</span><span class="p">))</span>
-    <span class="n">wcxf_basis</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">Basis</span><span class="p">[</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">sector</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
-        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">all_wcs</span>
         <span class="n">mr_sectors</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># translate from legacy flavio to wcxf sector if necessary</span>
         <span class="n">wcxf_sector</span> <span class="o">=</span> <span class="n">sectors_flavio2wcxf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">sector</span><span class="p">)</span>
-        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">sectors</span><span class="p">[</span><span class="n">wcxf_sector</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="n">mr_sectors</span> <span class="o">=</span> <span class="p">(</span><span class="n">wcxf_sector</span><span class="p">,)</span>
-    <span class="n">wc_sm</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">wc_sm</span>
-    <span class="n">wc_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">mr_sectors</span><span class="p">)</span>
-    <span class="n">wc_out_dict</span> <span class="o">=</span> <span class="n">wc_sm</span>  <span class="c1"># initialize with zeros</span>
-    <span class="n">wc_out_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">wc_out</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>  <span class="c1"># overwrite non-zero entries</span>
-    <span class="k">return</span> <span class="n">wc_out_dict</span>
+        <span class="k">return</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">{})</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">mr_sectors</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1610,10 +1755,11 @@ and return them as <code>wcxf.WC</code> instance.</p>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">basis</span> <span class="o">==</span> <span class="n">basis</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span> <span class="o">==</span> <span class="n">eft</span> <span class="ow">and</span> <span class="n">scale</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span>  <span class="c1"># nothing to do</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span> <span class="o">==</span> <span class="s1">&#39;SMEFT&#39;</span><span class="p">:</span>
+        <span class="n">smeft_accuracy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_option</span><span class="p">(</span><span class="s1">&#39;smeft_accuracy&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">eft</span> <span class="o">==</span> <span class="s1">&#39;SMEFT&#39;</span><span class="p">:</span>
             <span class="n">smeft</span> <span class="o">=</span> <span class="n">SMEFT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s1">&#39;Warsaw&#39;</span><span class="p">))</span>
             <span class="c1"># if input and output EFT ist SMEFT, just run.</span>
-            <span class="n">wc_out</span> <span class="o">=</span> <span class="n">smeft</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+            <span class="n">wc_out</span> <span class="o">=</span> <span class="n">smeft</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="n">smeft_accuracy</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_cache</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="s1">&#39;SMEFT&#39;</span><span class="p">,</span> <span class="n">wc_out</span><span class="o">.</span><span class="n">basis</span><span class="p">,</span> <span class="n">wc_out</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">wc_out</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1621,7 +1767,7 @@ and return them as <code>wcxf.WC</code> instance.</p>
             <span class="n">wc_ew</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_from_cache</span><span class="p">(</span><span class="n">sector</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale_ew</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;JMS&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">wc_ew</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">smeft</span> <span class="o">=</span> <span class="n">SMEFT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s1">&#39;Warsaw&#39;</span><span class="p">))</span>
-                <span class="n">wc_ew</span> <span class="o">=</span> <span class="n">smeft</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scale_ew</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;JMS&#39;</span><span class="p">)</span>
+                <span class="n">wc_ew</span> <span class="o">=</span> <span class="n">smeft</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scale_ew</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="n">smeft_accuracy</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;JMS&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_cache</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">scale_ew</span><span class="p">,</span> <span class="n">wc_ew</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">wc_ew</span><span class="o">.</span><span class="n">basis</span><span class="p">,</span> <span class="n">wc_ew</span><span class="p">)</span>
             <span class="n">wet</span> <span class="o">=</span> <span class="n">WETrunner</span><span class="p">(</span><span class="n">wc_ew</span><span class="p">)</span>
     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-4&#39;</span><span class="p">,</span> <span class="s1">&#39;WET-3&#39;</span><span class="p">]:</span>
@@ -1745,6 +1891,34 @@ the translation is performed automatically, if implemented in the
 
   </div>
   
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.eft.WilsonCoefficients.set_option">
+    <p>def <span class="ident">set_option</span>(</p><p>self, key, value)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Set the option <code>key</code> (string) to <code>value</code>.</p>
+<p>Instance method, affects only current instance.
+This will clear the cache.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.set_option', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.eft.WilsonCoefficients.set_option" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the option `key` (string) to `value`.</span>
+<span class="sd">    Instance method, affects only current instance.</span>
+<span class="sd">    This will clear the cache.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_option_schema</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">}))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">clear_cache</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
           <h3>Instance variables</h3>
             <div class="item">
             <p id="flavio.physics.eft.WilsonCoefficients.get_initial_wcxf" class="name">var <span class="ident">get_initial_wcxf</span></p>
@@ -1840,6 +2014,36 @@ values of the Wilson coefficients.</p></div>
     <span class="sd">&quot;&quot;&quot;Return a `Wilson` instance initialized by a WCxf file-like object&quot;&quot;&quot;</span>
     <span class="n">wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_wc</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.eft.WilsonCoefficients.set_default_option">
+    <p>def <span class="ident">set_default_option</span>(</p><p>cls, key, value)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Class method. Set the default value of the option <code>key</code> (string)
+to <code>value</code> for all future instances of the class.</p>
+<p>Note that this does not affect existing instances or the instance
+called from.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.eft.WilsonCoefficients.set_default_option', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.eft.WilsonCoefficients.set_default_option" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">set_default_option</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class method. Set the default value of the option `key` (string)</span>
+<span class="sd">    to `value` for all future instances of the class.</span>
+<span class="sd">    Note that this does not affect existing instances or the instance</span>
+<span class="sd">    called from.&quot;&quot;&quot;</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">_default_options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_option_schema</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">}))</span>
 </pre></div>
 
   </div>

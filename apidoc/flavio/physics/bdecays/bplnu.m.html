@@ -1072,6 +1072,7 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.bplnu.BR_binned_function">BR_binned_function</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bplnu.BR_binned_leptonflavour">BR_binned_leptonflavour</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bplnu.BR_binned_leptonflavour_function">BR_binned_leptonflavour_function</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bplnu.BR_binned_tot_function">BR_binned_tot_function</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bplnu.BR_tot">BR_tot</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bplnu.BR_tot_function">BR_tot_function</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bplnu.BR_tot_leptonflavour">BR_tot_leptonflavour</a></li>
@@ -1232,6 +1233,14 @@ table {
 <span class="k">def</span> <span class="nf">BR_tot_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">BR_tot</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
 
+<span class="k">def</span> <span class="nf">BR_binned_tot_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">):</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">BR_binned</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="n">BR_tot</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
+    <span class="k">return</span> <span class="n">f</span>
 
 <span class="k">def</span> <span class="nf">BR_tot_leptonflavour</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">):</span>
     <span class="n">num</span> <span class="o">=</span> <span class="n">BR_tot</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lnum</span><span class="p">)</span>
@@ -1304,6 +1313,17 @@ table {
                 <span class="c1"># add taxonomy for both processes (e.g. B-&gt;Penu and B-&gt;Pmunu) and for charged and neutral</span>
                 <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span> <span class="o">+</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">li</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;^+\nu_&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">li</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
         <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BR_tot_leptonflavour_function</span><span class="p">(</span><span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">_hadr_l</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;P&#39;</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+
+<span class="c1"># B-&gt;Dtaunu normalized binned BR</span>
+<span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;&lt;BR&gt;/BR(B-&gt;Dtaunu)&quot;</span>
+<span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">])</span>
+<span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Relative partial branching ratio of $B\to D\tau^+\nu$&quot;</span><span class="p">)</span>
+<span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\frac{\langle \text{BR} \rangle}{\text{BR}}(B\to D\tau^+\nu)$&quot;</span>
+<span class="k">for</span> <span class="n">M</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;B+-&gt;D&#39;</span><span class="p">,</span> <span class="s1">&#39;B0-&gt;D&#39;</span><span class="p">]:</span>
+    <span class="n">_process_tex</span> <span class="o">=</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;\tau^+\nu&quot;</span>
+    <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
+<span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BR_binned_tot_function</span><span class="p">(</span><span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;D+&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1461,6 +1481,33 @@ table {
   <div id="source-flavio.physics.bdecays.bplnu.BR_binned_leptonflavour_function" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR_binned_leptonflavour_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">):</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">:</span> <span class="n">BR_binned_leptonflavour</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lnum</span><span class="p">,</span> <span class="n">lden</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bplnu.BR_binned_tot_function">
+    <p>def <span class="ident">BR_binned_tot_function</span>(</p><p>B, P, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bplnu.BR_binned_tot_function', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bplnu.BR_binned_tot_function" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR_binned_tot_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">):</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">BR_binned</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="n">BR_tot</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
+    <span class="k">return</span> <span class="n">f</span>
 </pre></div>
 
   </div>

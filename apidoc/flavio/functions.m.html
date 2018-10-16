@@ -1055,6 +1055,7 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.functions.combine_measurements">combine_measurements</a></li>
     <li class="mono"><a href="#flavio.functions.get_dependent_parameters_sm">get_dependent_parameters_sm</a></li>
     <li class="mono"><a href="#flavio.functions.np_prediction">np_prediction</a></li>
     <li class="mono"><a href="#flavio.functions.np_uncertainty">np_uncertainty</a></li>
@@ -1105,6 +1106,9 @@ top-level namespace.</p>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
 
 <span class="k">def</span> <span class="nf">np_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the central value of the new physics prediction of an observable.</span>
@@ -1159,7 +1163,8 @@ top-level namespace.</p>
 <span class="sd">    Additional arguments are passed to the observable and are necessary,</span>
 <span class="sd">    depending on the observable (e.g. $q^2$-dependent observables).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="n">par_random</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">par_random</span> <span class="o">=</span> <span class="p">[{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_random</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
     <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="c1"># not parallel</span>
         <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_obs_prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span><span class="p">])</span>
@@ -1288,8 +1293,19 @@ top-level namespace.</p>
         <span class="n">individual_errors</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span><span class="o">/</span><span class="nb">abs</span><span class="p">(</span><span class="n">pred_central</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">individual_errors</span>
 
-<span class="k">def</span> <span class="nf">sm_covariance</span><span class="p">(</span><span class="n">obs_list</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">par_vary</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get the covariance matrix of the Standard Model predictions for a</span>
+
+<span class="k">def</span> <span class="nf">_get_prediction_array_sm</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">obs_list</span><span class="p">):</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
+    <span class="k">def</span> <span class="nf">get_prediction_sm</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="n">obs_dict</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="s1">&#39;dict&#39;</span><span class="p">)</span>
+        <span class="n">obs_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">obs_obj</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">**</span><span class="n">obs_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">get_prediction_sm</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">obs_list</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">sm_covariance</span><span class="p">(</span><span class="n">obs_list</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">par_vary</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">par_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get the covariance matrix of the Standard Model predictions for a</span>
 <span class="sd">    list of observables.</span>
 
 <span class="sd">    Parameters</span>
@@ -1300,38 +1316,101 @@ top-level namespace.</p>
 <span class="sd">    of a string and values for the arguements the observable depends on (e.g.</span>
 <span class="sd">    the values of `q2min` and `q2max` for a binned observable)</span>
 <span class="sd">    - `N` (optional): number of random evaluations of the observables.</span>
-<span class="sd">    The relative accuracy of the uncertainties returned is given by $1/\sqrt{2N}$.</span>
-<span class="sd">    - `par_vary`: a list of parameters to vary. Defaults to &#39;all&#39;, i.e. all</span>
+<span class="sd">    The relative accuracy of the uncertainties returned is given</span>
+<span class="sd">    by $1/\sqrt{2N}$.</span>
+<span class="sd">    - `par_vary` (optional): a list of parameters to vary. Defaults to &#39;all&#39;, i.e. all</span>
 <span class="sd">    parameters are varied according to their probability distributions.</span>
+<span class="sd">    - `par_obj` (optional): an instance of ParameterConstraints, defaults to</span>
+<span class="sd">    flavio.default_parameters.</span>
+<span class="sd">    - `threads` (optional): number of CPU threads to use for the computation.</span>
+<span class="sd">    Defaults to 1, i.e. serial computation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
-    <span class="n">par_central_all</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-    <span class="n">par_random_all</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="n">par_obj</span> <span class="o">=</span> <span class="n">par_obj</span> <span class="ow">or</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span>
+    <span class="n">par_central_all</span> <span class="o">=</span> <span class="n">par_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+    <span class="n">par_random_all</span> <span class="o">=</span> <span class="n">par_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">par_random_some</span><span class="p">(</span><span class="n">par_random</span><span class="p">,</span> <span class="n">par_central</span><span class="p">):</span>
-        <span class="c1"># take the central values for the parameters not to be varied</span>
-        <span class="n">par1</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_central</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">par_vary</span><span class="p">}</span>
+        <span class="c1"># take the central values for the parameters not to be varied (N times)</span>
+        <span class="n">par1</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_central</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">par_vary</span><span class="p">}</span>
         <span class="c1"># take the random values for the parameters to be varied</span>
         <span class="n">par2</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_random</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">par_vary</span><span class="p">}</span>
-        <span class="n">par1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">par2</span><span class="p">)</span> <span class="c1"># merge them</span>
+        <span class="n">par1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">par2</span><span class="p">)</span>  <span class="c1"># merge them</span>
         <span class="k">return</span> <span class="n">par1</span>
+
     <span class="k">if</span> <span class="n">par_vary</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
         <span class="n">par_random</span> <span class="o">=</span> <span class="n">par_random_all</span>
+        <span class="n">par_random</span> <span class="o">=</span> <span class="p">[{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_random</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_random_some</span><span class="p">(</span><span class="n">par_random_all</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">par_central_all</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
-    <span class="k">def</span> <span class="nf">get_prediction</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-             <span class="n">obs_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
-             <span class="k">return</span> <span class="n">obs_obj</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-             <span class="n">obs_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-             <span class="k">return</span> <span class="n">obs_obj</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-        <span class="p">[</span><span class="n">get_prediction</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span>
-        <span class="p">]</span>
-        <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">obs_list</span>
-    <span class="p">])</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span>
+        <span class="n">par_random</span> <span class="o">=</span> <span class="n">par_random_some</span><span class="p">(</span><span class="n">par_random_all</span><span class="p">,</span> <span class="n">par_central_all</span><span class="p">)</span>
+        <span class="n">par_random</span> <span class="o">=</span> <span class="p">[{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_random</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+
+    <span class="n">func_map</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_get_prediction_array_sm</span><span class="p">,</span> <span class="n">obs_list</span><span class="o">=</span><span class="n">obs_list</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">pred_map</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">func_map</span><span class="p">,</span> <span class="n">par_random</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
+        <span class="n">pred_map</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">func_map</span><span class="p">,</span> <span class="n">par_random</span><span class="p">)</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pred_map</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">all_pred</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">combine_measurements</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Combine all existing measurements of a particular observable.</span>
+
+<span class="sd">    Returns a one-dimensional instance of `ProbabilityDistribution`.</span>
+<span class="sd">    Correlations with other obersables are ignored.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    - `observable`: observable name</span>
+<span class="sd">    - `include_measurements`: iterable of measurement names to be included</span>
+<span class="sd">      (default: all)</span>
+
+<span class="sd">    Observable arguments have to be specified as keyword arguments, e.g.</span>
+<span class="sd">    `combine_measurements(&#39;&lt;dBR/dq2&gt;(B+-&gt;Kmumu)&#39;, q2min=1, q2max=6)`.</span>
+
+<span class="sd">    Note that this function returns inconsistent results (and a corresponding</span>
+<span class="sd">    warning is issued) if an observable is constrained by more than one</span>
+<span class="sd">    multivariate measurement.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">observable</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">)</span>
+    <span class="n">constraints</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_n_multivariate</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># number of multivariate constraints</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">include_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">include_measurements</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">obs</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">):</span>
+            <span class="n">_n_multivariate</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># for multivariate PDFs, reduce to 1D PDF</span>
+            <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+                             <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">num</span><span class="p">])</span>  <span class="c1"># exclude all i but num</span>
+            <span class="n">constraint1d</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">reduce_dimension</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constraint1d</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_n_multivariate</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">((</span><span class="s2">&quot;{} of the measurements of &#39;{}&#39; are multivariate. &quot;</span>
+                       <span class="s2">&quot;This can lead to inconsistent results as the other &quot;</span>
+                       <span class="s2">&quot;observables are profiled over. &quot;</span>
+                       <span class="s2">&quot;To be consistent, you should perform a multivariate &quot;</span>
+                       <span class="s2">&quot;combination that is not yet supported by `combine_measurements`.&quot;</span>
+                       <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_n_multivariate</span><span class="p">,</span> <span class="n">obs</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">constraints</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No experimental measurements found for this observable.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">constraints</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">probability</span><span class="o">.</span><span class="n">combine_distributions</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1341,6 +1420,94 @@ top-level namespace.</p>
   <section id="section-items">
 
     <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="flavio.functions.combine_measurements">
+    <p>def <span class="ident">combine_measurements</span>(</p><p>observable, include_measurements=None, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Combine all existing measurements of a particular observable.</p>
+<p>Returns a one-dimensional instance of <code>ProbabilityDistribution</code>.
+Correlations with other obersables are ignored.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>observable</code>: observable name</li>
+<li><code>include_measurements</code>: iterable of measurement names to be included
+  (default: all)</li>
+</ul>
+<p>Observable arguments have to be specified as keyword arguments, e.g.
+<code>combine_measurements('&lt;dBR/dq2&gt;(B+-&gt;Kmumu)', q2min=1, q2max=6)</code>.</p>
+<p>Note that this function returns inconsistent results (and a corresponding
+warning is issued) if an observable is constrained by more than one
+multivariate measurement.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.combine_measurements', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.combine_measurements" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">combine_measurements</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Combine all existing measurements of a particular observable.</span>
+
+<span class="sd">    Returns a one-dimensional instance of `ProbabilityDistribution`.</span>
+<span class="sd">    Correlations with other obersables are ignored.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    - `observable`: observable name</span>
+<span class="sd">    - `include_measurements`: iterable of measurement names to be included</span>
+<span class="sd">      (default: all)</span>
+
+<span class="sd">    Observable arguments have to be specified as keyword arguments, e.g.</span>
+<span class="sd">    `combine_measurements(&#39;&lt;dBR/dq2&gt;(B+-&gt;Kmumu)&#39;, q2min=1, q2max=6)`.</span>
+
+<span class="sd">    Note that this function returns inconsistent results (and a corresponding</span>
+<span class="sd">    warning is issued) if an observable is constrained by more than one</span>
+<span class="sd">    multivariate measurement.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">observable</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span><span class="o">.</span><span class="n">arguments</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">)</span>
+    <span class="n">constraints</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_n_multivariate</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># number of multivariate constraints</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">include_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">include_measurements</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">obs</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">):</span>
+            <span class="n">_n_multivariate</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># for multivariate PDFs, reduce to 1D PDF</span>
+            <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">constraint</span><span class="o">.</span><span class="n">central_value</span><span class="p">)</span>
+                             <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">num</span><span class="p">])</span>  <span class="c1"># exclude all i but num</span>
+            <span class="n">constraint1d</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">reduce_dimension</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constraint1d</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_n_multivariate</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">((</span><span class="s2">&quot;{} of the measurements of &#39;{}&#39; are multivariate. &quot;</span>
+                       <span class="s2">&quot;This can lead to inconsistent results as the other &quot;</span>
+                       <span class="s2">&quot;observables are profiled over. &quot;</span>
+                       <span class="s2">&quot;To be consistent, you should perform a multivariate &quot;</span>
+                       <span class="s2">&quot;combination that is not yet supported by `combine_measurements`.&quot;</span>
+                       <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_n_multivariate</span><span class="p">,</span> <span class="n">obs</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">constraints</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No experimental measurements found for this observable.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">constraints</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">probability</span><span class="o">.</span><span class="n">combine_distributions</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       
   <div class="item">
     <div class="name def" id="flavio.functions.get_dependent_parameters_sm">
@@ -1456,7 +1623,8 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
 <span class="sd">    Additional arguments are passed to the observable and are necessary,</span>
 <span class="sd">    depending on the observable (e.g. $q^2$-dependent observables).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="n">par_random</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">par_random</span> <span class="o">=</span> <span class="p">[{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_random</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
     <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="c1"># not parallel</span>
         <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_obs_prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span><span class="p">])</span>
@@ -1486,7 +1654,7 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
       
   <div class="item">
     <div class="name def" id="flavio.functions.sm_covariance">
-    <p>def <span class="ident">sm_covariance</span>(</p><p>obs_list, N=100, par_vary=&#39;all&#39;, **kwargs)</p>
+    <p>def <span class="ident">sm_covariance</span>(</p><p>obs_list, N=100, par_vary=&#39;all&#39;, par_obj=None, threads=1, **kwargs)</p>
     </div>
     
 
@@ -1501,15 +1669,21 @@ name (for observables that do not depend on any arguments) or as a tuple
 of a string and values for the arguements the observable depends on (e.g.
 the values of <code>q2min</code> and <code>q2max</code> for a binned observable)</li>
 <li><code>N</code> (optional): number of random evaluations of the observables.
-The relative accuracy of the uncertainties returned is given by $1/\sqrt{2N}$.</li>
-<li><code>par_vary</code>: a list of parameters to vary. Defaults to 'all', i.e. all
+The relative accuracy of the uncertainties returned is given
+by $1/\sqrt{2N}$.</li>
+<li><code>par_vary</code> (optional): a list of parameters to vary. Defaults to 'all', i.e. all
 parameters are varied according to their probability distributions.</li>
+<li><code>par_obj</code> (optional): an instance of ParameterConstraints, defaults to
+flavio.default_parameters.</li>
+<li><code>threads</code> (optional): number of CPU threads to use for the computation.
+Defaults to 1, i.e. serial computation.</li>
 </ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.sm_covariance', this);">Show source &equiv;</a></p>
   <div id="source-flavio.functions.sm_covariance" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">sm_covariance</span><span class="p">(</span><span class="n">obs_list</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">par_vary</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get the covariance matrix of the Standard Model predictions for a</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">sm_covariance</span><span class="p">(</span><span class="n">obs_list</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">par_vary</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">par_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get the covariance matrix of the Standard Model predictions for a</span>
 <span class="sd">    list of observables.</span>
 
 <span class="sd">    Parameters</span>
@@ -1520,38 +1694,44 @@ parameters are varied according to their probability distributions.</li>
 <span class="sd">    of a string and values for the arguements the observable depends on (e.g.</span>
 <span class="sd">    the values of `q2min` and `q2max` for a binned observable)</span>
 <span class="sd">    - `N` (optional): number of random evaluations of the observables.</span>
-<span class="sd">    The relative accuracy of the uncertainties returned is given by $1/\sqrt{2N}$.</span>
-<span class="sd">    - `par_vary`: a list of parameters to vary. Defaults to &#39;all&#39;, i.e. all</span>
+<span class="sd">    The relative accuracy of the uncertainties returned is given</span>
+<span class="sd">    by $1/\sqrt{2N}$.</span>
+<span class="sd">    - `par_vary` (optional): a list of parameters to vary. Defaults to &#39;all&#39;, i.e. all</span>
 <span class="sd">    parameters are varied according to their probability distributions.</span>
+<span class="sd">    - `par_obj` (optional): an instance of ParameterConstraints, defaults to</span>
+<span class="sd">    flavio.default_parameters.</span>
+<span class="sd">    - `threads` (optional): number of CPU threads to use for the computation.</span>
+<span class="sd">    Defaults to 1, i.e. serial computation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span>
-    <span class="n">par_central_all</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-    <span class="n">par_random_all</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+    <span class="n">par_obj</span> <span class="o">=</span> <span class="n">par_obj</span> <span class="ow">or</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span>
+    <span class="n">par_central_all</span> <span class="o">=</span> <span class="n">par_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+    <span class="n">par_random_all</span> <span class="o">=</span> <span class="n">par_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">par_random_some</span><span class="p">(</span><span class="n">par_random</span><span class="p">,</span> <span class="n">par_central</span><span class="p">):</span>
-        <span class="c1"># take the central values for the parameters not to be varied</span>
-        <span class="n">par1</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_central</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">par_vary</span><span class="p">}</span>
+        <span class="c1"># take the central values for the parameters not to be varied (N times)</span>
+        <span class="n">par1</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_central</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">par_vary</span><span class="p">}</span>
         <span class="c1"># take the random values for the parameters to be varied</span>
         <span class="n">par2</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_random</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">par_vary</span><span class="p">}</span>
-        <span class="n">par1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">par2</span><span class="p">)</span> <span class="c1"># merge them</span>
+        <span class="n">par1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">par2</span><span class="p">)</span>  <span class="c1"># merge them</span>
         <span class="k">return</span> <span class="n">par1</span>
+
     <span class="k">if</span> <span class="n">par_vary</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
         <span class="n">par_random</span> <span class="o">=</span> <span class="n">par_random_all</span>
+        <span class="n">par_random</span> <span class="o">=</span> <span class="p">[{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_random</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">par_random</span> <span class="o">=</span> <span class="p">[</span><span class="n">par_random_some</span><span class="p">(</span><span class="n">par_random_all</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">par_central_all</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
-    <span class="k">def</span> <span class="nf">get_prediction</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-             <span class="n">obs_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span>
-             <span class="k">return</span> <span class="n">obs_obj</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-             <span class="n">obs_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-             <span class="k">return</span> <span class="n">obs_obj</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-        <span class="p">[</span><span class="n">get_prediction</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">par_random</span>
-        <span class="p">]</span>
-        <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">obs_list</span>
-    <span class="p">])</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">all_pred</span><span class="p">)</span>
+        <span class="n">par_random</span> <span class="o">=</span> <span class="n">par_random_some</span><span class="p">(</span><span class="n">par_random_all</span><span class="p">,</span> <span class="n">par_central_all</span><span class="p">)</span>
+        <span class="n">par_random</span> <span class="o">=</span> <span class="p">[{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_random</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+
+    <span class="n">func_map</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_get_prediction_array_sm</span><span class="p">,</span> <span class="n">obs_list</span><span class="o">=</span><span class="n">obs_list</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">pred_map</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">func_map</span><span class="p">,</span> <span class="n">par_random</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">threads</span><span class="p">)</span>
+        <span class="n">pred_map</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">func_map</span><span class="p">,</span> <span class="n">par_random</span><span class="p">)</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">all_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pred_map</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">all_pred</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 </pre></div>
 
   </div>
