@@ -14,12 +14,26 @@ of this page.
 
 
 
+### $W^\pm$ decays
+
+
+- [Leptonic decays](obs/wpmdecays-leptonicdecays.html) (6 observables)
+
+
+### $Z^0$ decays
+
+
+- [FCNC decays](obs/zdecays-fcncdecays.html) (3 observables)
+
+- [Flavour conserving decays](obs/zdecays-flavourconservingdecays.html) (49 observables)
+
+
 ### $\tau$ lepton decays
 
 
 - [Hadronic tree-level decays](obs/tauleptondecays-hadronictreeleveldecays.html) (2 observables)
 
-- [LFV decays](obs/tauleptondecays-lfvdecays.html) (6 observables)
+- [LFV decays](obs/tauleptondecays-lfvdecays.html) (8 observables)
 
 - [Leptonic tree-level decays](obs/tauleptondecays-leptonictreeleveldecays.html) (2 observables)
 
@@ -27,13 +41,13 @@ of this page.
 ### $b$ hadron decays
 
 
-- [FCNC decays](obs/bhadrondecays-fcncdecays.html) (606 observables)
+- [FCNC decays](obs/bhadrondecays-fcncdecays.html) (620 observables)
 
 - [Leptonic tree-level decays](obs/bhadrondecays-leptonictreeleveldecays.html) (6 observables)
 
 - [Non-leptonic decays](obs/bhadrondecays-nonleptonicdecays.html) (2 observables)
 
-- [Semi-leptonic tree-level decays](obs/bhadrondecays-semileptonictreeleveldecays.html) (538 observables)
+- [Semi-leptonic tree-level decays](obs/bhadrondecays-semileptonictreeleveldecays.html) (614 observables)
 
 
 ### $c$ hadron decays
@@ -54,10 +68,12 @@ of this page.
 - [Semi-leptonic tree-level decays](obs/shadrondecays-semileptonictreeleveldecays.html) (6 observables)
 
 
-### Electric dipole moments
+### Dipole moments
 
 
-- [Nucleons](obs/electricdipolemoments-nucleons.html) (1 observable)
+- [Lepton anomalous magnetic moments](obs/dipolemoments-leptonanomalousmagneticmoments.html) (2 observables)
+
+- [Nucleon electric dipole moments](obs/dipolemoments-nucleonelectricdipolemoments.html) (1 observable)
 
 
 ### Meson-antimeson mixing
@@ -82,6 +98,12 @@ of this page.
 
 
 - [LFV decays](obs/muondecays-lfvdecays.html) (2 observables)
+
+
+### neutrino physics
+
+
+- [scattering cross sections](obs/neutrinophysics-scatteringcrosssections.html) (1 observable)
 
 ## Some general notes on conventions
 

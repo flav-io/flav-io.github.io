@@ -22,6 +22,22 @@ a scalar observable).
 
 ## $\tau\to V\ell$
 
+### $\tau^+\to \phi e^+$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(tau->phie)` | $\text{BR}(\tau^+\to \phi e^+)$ | Branching ratio of $\tau^+\to \phi e^+$ |  |
+
+
+### $\tau^+\to \phi\mu^+$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(tau->phimu)` | $\text{BR}(\tau^+\to \phi\mu^+)$ | Branching ratio of $\tau^+\to \phi\mu^+$ |  |
+
+
 ### $\tau^+\to \rho^0 e^+$
 
 {: class="table"}

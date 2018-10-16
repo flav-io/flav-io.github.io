@@ -273,6 +273,8 @@ of the parameter.
 | `Gamma12_D a_bb` | $a_{bb}$ | SM contribution to the absorptive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{ub}V_{cb}^\ast$ in inverse picoseconds |
 | `Gamma12_D a_bs` | $a_{bb}$ | SM contribution to the absorptive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{ub}V_{cs}^\ast$ in inverse picoseconds |
 | `Gamma12_D a_ss` | $a_{bb}$ | SM contribution to the absorptive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{us}V_{cs}^\ast$ in inverse picoseconds |
+| `GammaW_had` | $\Gamma_W^\text{had}$ | Hadronic $W$ width in the SM |
+| `GammaW_lep` | $\Gamma_W^\text{lep}$ | Leptonic $W$ width in the SM |
 | `K+e3 delta_EM` | $\delta_\text{em}^{K^+e}$ | Relative electromagnetic correction to $K^+\to\pi^0 e^+\bar\nu$ decay rate |
 | `K+mu3 delta_EM` | $\delta_\text{em}^{K^+\mu}$ | Relative electromagnetic correction to $K^+\to\pi^0 \mu^+\bar\nu$ decay rate |
 | `K->pi D` | $D$ | Parameter in the dispersive parametrization of the $K\to\pi$ form factors |
@@ -395,6 +397,8 @@ of the parameter.
 | `a2_perp_phi` | $a_2^{\phi_\perp}$ | Second Gegenbauer moment of the transversely polarized $\phi$ LCDA at 1 GeV |
 | `a2_perp_rho+` | $a_2^{\rho^{+}_\perp}$ | Second Gegenbauer moment of the transversely polarized $\rho^{+}$ LCDA at 1 GeV |
 | `a2_perp_rho0` | $a_2^{\rho^{0}_\perp}$ | Second Gegenbauer moment of the transversely polarized $\rho^{0}$ LCDA at 1 GeV |
+| `a_mu SM` | $a_\mu^\text{SM}$ | SM prediction for the anomalous magnetic moment of the muon |
+| `a_tau SM` | $a_\tau^\text{SM}$ | SM prediction for the anomalous magnetic moment of the tau |
 | `alpha_e` | $\alpha_e(m_Z)$ | electromagnetic fine structure constant in the $\overline{\text{MS}}$ scheme at the scale $m_Z$ |
 | `alpha_s` | $\alpha_s(m_Z)$ | strong coupling constant in the $\overline{\text{MS}}$ scheme at the scale $m_Z$ |
 | `bag_B0_1` | $B_1^{(d)}$ | $B^0$ bag parameter of $O_1$ in the $\overline{\text{MS}}$ scheme at $m_b$ |
@@ -443,6 +447,13 @@ of the parameter.
 | `delta_BXsmumu high` | $\delta_{bs\mu\mu}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\mu^+\mu^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXsmumu low` | $\delta_{bs\mu\mu}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\mu^+\mu^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXstautau high` | $\delta_{bs\tau\tau}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\tau^+\tau^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_Gammab` | $\delta_{\Gamma_b} $ | Uncertainty in the SM $Z$ partial width to bottom quarks in GeV |
+| `delta_Gammac` | $\delta_{\Gamma_c}$ | Uncertainty in the SM $Z$ partial width to charm quarks in GeV |
+| `delta_Gammad,s` | $\delta_{\Gamma_s}$ | Uncertainty in the SM $Z$ partial width to strange quarks in GeV |
+| `delta_Gammae,mu` | $\delta_{\Gamma_{e,\mu}}$ | Uncertainty in the SM $Z$ partial width to light leptons in GeV |
+| `delta_Gammanu` | $\delta_{\Gamma_\nu}$ | Uncertainty in the SM $Z$ partial width to neutrinos in GeV |
+| `delta_Gammatau` | $\delta_{\Gamma_\tau}$ | Uncertainty in the SM $Z$ partial width to tau leptons in GeV |
+| `delta_Gammau` | $\delta_{\Gamma_u}$ | Uncertainty in the SM $Z$ partial width to up quarks in GeV |
 | `eps_K` | $\|\epsilon_K\|$ | Measured value of $\|\epsilon_K\|$ |
 | `epsp a` | $a$ | Parameter for isospin breaking corrections to $\epsilon\'/\epsilon$ |
 | `eta(1)` | $\eta(1)$ | Subleading Isgur-Wise function $\eta$ at $w=1$ |
@@ -529,8 +540,10 @@ of the parameter.
 | `mu_pi^2` | $\mu_\pi^2$ |  |
 | `nEDM beta_G` | $\beta_G$ | coefficient of the three-gluon Weinberg operator contribution to the neutron EDM |
 | `nEDM gT_d` | $g_T^d$ | Neutron down quark tensor charge |
+| `nEDM gT_s` | $g_T^s$ | Nucleon strange quark tensor charge |
 | `nEDM gT_u` | $g_T^u$ | Neutron up quark tensor charge |
 | `nEDM ~rho_d` | $\tilde \rho_d$ | coefficient of the down quark CEDM contribution to the neutron EDM |
+| `nEDM ~rho_s` | $\tilde \rho_s$ | coefficient of the strange quark CEDM contribution to the neutron EDM |
 | `nEDM ~rho_u` | $\tilde \rho_u$ | coefficient of the up quark CEDM contribution to the neutron EDM |
 | `omega+` | $\omega_+$ |  |
 | `rho_D^3` | $\rho_D^3$ |  |

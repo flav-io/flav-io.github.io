@@ -38,6 +38,14 @@ a scalar observable).
 | `BR(B+->Kmue)` | $\text{BR}(B^-\to K^- \mu^+e^-)$ | Total branching ratio of $B^-\to K^- \mu^+e^-$ |  |
 
 
+### $B^-\to K^- \mu^\pm\tau^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B+->Kmutau,taumu)` | $\text{BR}(B^-\to K^- \mu^\pm\tau^\mp)$ | Total branching ratio of $B^-\to K^- \mu^\pm\tau^\mp$ |  |
+
+
 ### $B^-\to K^- \tau^+\mu^-$
 
 {: class="table"}
@@ -70,6 +78,22 @@ a scalar observable).
 | `BR(B+->Ketau)` | $\text{BR}(B^-\to K^- e^+\tau^-)$ | Total branching ratio of $B^-\to K^- e^+\tau^-$ |  |
 
 
+### $B^-\to K^- e^\pm\mu^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B+->Kemu,mue)` | $\text{BR}(B^-\to K^- e^\pm\mu^\mp)$ | Total branching ratio of $B^-\to K^- e^\pm\mu^\mp$ |  |
+
+
+### $B^-\to K^- e^\pm\tau^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B+->Ketau,taue)` | $\text{BR}(B^-\to K^- e^\pm\tau^\mp)$ | Total branching ratio of $B^-\to K^- e^\pm\tau^\mp$ |  |
+
+
 ### $B^-\to \pi^- \mu^+\tau^-$
 
 {: class="table"}
@@ -84,6 +108,14 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `BR(B+->pimue)` | $\text{BR}(B^-\to \pi^- \mu^+e^-)$ | Total branching ratio of $B^-\to \pi^- \mu^+e^-$ |  |
+
+
+### $B^-\to \pi^- \mu^\pm\tau^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B+->pimutau,taumu)` | $\text{BR}(B^-\to \pi^- \mu^\pm\tau^\mp)$ | Total branching ratio of $B^-\to \pi^- \mu^\pm\tau^\mp$ |  |
 
 
 ### $B^-\to \pi^- \tau^+\mu^-$
@@ -118,6 +150,22 @@ a scalar observable).
 | `BR(B+->pietau)` | $\text{BR}(B^-\to \pi^- e^+\tau^-)$ | Total branching ratio of $B^-\to \pi^- e^+\tau^-$ |  |
 
 
+### $B^-\to \pi^- e^\pm\mu^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B+->piemu,mue)` | $\text{BR}(B^-\to \pi^- e^\pm\mu^\mp)$ | Total branching ratio of $B^-\to \pi^- e^\pm\mu^\mp$ |  |
+
+
+### $B^-\to \pi^- e^\pm\tau^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B+->pietau,taue)` | $\text{BR}(B^-\to \pi^- e^\pm\tau^\mp)$ | Total branching ratio of $B^-\to \pi^- e^\pm\tau^\mp$ |  |
+
+
 ### $B^0\to K^0\mu^+\mu^-$
 
 {: class="table"}
@@ -149,6 +197,7 @@ a scalar observable).
 | `<dBR/dq2>(B0->Ktautau)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^0\to K^0\tau^+\tau^-)$ | Binned differential branching ratio of $B^0\to K^0\tau^+\tau^-$ | `q2min`, `q2max` |
 | `ACP(B0->Ktautau)` | $A_\text{CP}(B^0\to K^0\tau^+\tau^-)$ | Direct CP asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2` |
 | `AFB(B0->Ktautau)` | $A_\text{FB}(B^0\to K^0\tau^+\tau^-)$ | Forward-backward asymmetry in $B^0\to K^0\tau^+\tau^-$ | `q2` |
+| `BR(B0->Ktautau)` | $\text{BR}(B^0\to K^0\tau^+\tau^-)$ | Branching ratio of $B^0\to K^0\tau^+\tau^-$ |  |
 | `FH(B0->Ktautau)` | $F_H(B^0\to K^0\tau^+\tau^-)$ | Flat term in $B^0\to K^0\tau^+\tau^-$ | `q2` |
 | `Rtaumu(B0->Kll)` | $R_{\tau \mu}(B^0\to K^0\ell^+\ell^-)$ | Ratio of differential branching ratios of $B^0\to K^0\tau^+ \tau^-$ and $B^0\to K^0\mu^+ \mu^-$ | `q2` |
 | `dBR/dq2(B0->Ktautau)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^0\tau^+\tau^-)$ | Differential branching ratio of $B^0\to K^0\tau^+\tau^-$ | `q2` |
@@ -202,6 +251,7 @@ a scalar observable).
 | `<dBR/dq2>(B+->Ktautau)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^\pm\to K^\pm \tau^+\tau^-)$ | Binned differential branching ratio of $B^\pm\to K^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
 | `ACP(B+->Ktautau)` | $A_\text{CP}(B^\pm\to K^\pm \tau^+\tau^-)$ | Direct CP asymmetry in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
 | `AFB(B+->Ktautau)` | $A_\text{FB}(B^\pm\to K^\pm \tau^+\tau^-)$ | Forward-backward asymmetry in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
+| `BR(B+->Ktautau)` | $\text{BR}(B^\pm\to K^\pm \tau^+\tau^-)$ | Branching ratio of $B^\pm\to K^\pm \tau^+\tau^-$ |  |
 | `FH(B+->Ktautau)` | $F_H(B^\pm\to K^\pm \tau^+\tau^-)$ | Flat term in $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
 | `Rtaumu(B+->Kll)` | $R_{\tau \mu}(B^\pm\to K^\pm \ell^+\ell^-)$ | Ratio of differential branching ratios of $B^\pm\to K^\pm \tau^+ \tau^-$ and $B^\pm\to K^\pm \mu^+ \mu^-$ | `q2` |
 | `dBR/dq2(B+->Ktautau)` | $\frac{d\text{BR}}{dq^2}(B^\pm\to K^\pm \tau^+\tau^-)$ | Differential branching ratio of $B^\pm\to K^\pm \tau^+\tau^-$ | `q2` |
@@ -240,6 +290,14 @@ a scalar observable).
 | `BR(B0->Kmue)` | $\text{BR}(\bar B^0\to \bar K^0 \mu^+e^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 \mu^+e^-$ |  |
 
 
+### $\bar B^0\to \bar K^0 \mu^\pm\tau^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B0->Kmutau,taumu)` | $\text{BR}(\bar B^0\to \bar K^0 \mu^\pm\tau^\mp)$ | Total branching ratio of $\bar B^0\to \bar K^0 \mu^\pm\tau^\mp$ |  |
+
+
 ### $\bar B^0\to \bar K^0 \tau^+\mu^-$
 
 {: class="table"}
@@ -272,6 +330,22 @@ a scalar observable).
 | `BR(B0->Ketau)` | $\text{BR}(\bar B^0\to \bar K^0 e^+\tau^-)$ | Total branching ratio of $\bar B^0\to \bar K^0 e^+\tau^-$ |  |
 
 
+### $\bar B^0\to \bar K^0 e^\pm\mu^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B0->Kemu,mue)` | $\text{BR}(\bar B^0\to \bar K^0 e^\pm\mu^\mp)$ | Total branching ratio of $\bar B^0\to \bar K^0 e^\pm\mu^\mp$ |  |
+
+
+### $\bar B^0\to \bar K^0 e^\pm\tau^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B0->Ketau,taue)` | $\text{BR}(\bar B^0\to \bar K^0 e^\pm\tau^\mp)$ | Total branching ratio of $\bar B^0\to \bar K^0 e^\pm\tau^\mp$ |  |
+
+
 ### $\bar B^0\to \pi^0 \mu^+\tau^-$
 
 {: class="table"}
@@ -286,6 +360,14 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `BR(B0->pimue)` | $\text{BR}(\bar B^0\to \pi^0 \mu^+e^-)$ | Total branching ratio of $\bar B^0\to \pi^0 \mu^+e^-$ |  |
+
+
+### $\bar B^0\to \pi^0 \mu^\pm\tau^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B0->pimutau,taumu)` | $\text{BR}(\bar B^0\to \pi^0 \mu^\pm\tau^\mp)$ | Total branching ratio of $\bar B^0\to \pi^0 \mu^\pm\tau^\mp$ |  |
 
 
 ### $\bar B^0\to \pi^0 \tau^+\mu^-$
@@ -318,6 +400,22 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `BR(B0->pietau)` | $\text{BR}(\bar B^0\to \pi^0 e^+\tau^-)$ | Total branching ratio of $\bar B^0\to \pi^0 e^+\tau^-$ |  |
+
+
+### $\bar B^0\to \pi^0 e^\pm\mu^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B0->piemu,mue)` | $\text{BR}(\bar B^0\to \pi^0 e^\pm\mu^\mp)$ | Total branching ratio of $\bar B^0\to \pi^0 e^\pm\mu^\mp$ |  |
+
+
+### $\bar B^0\to \pi^0 e^\pm\tau^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(B0->pietau,taue)` | $\text{BR}(\bar B^0\to \pi^0 e^\pm\tau^\mp)$ | Total branching ratio of $\bar B^0\to \pi^0 e^\pm\tau^\mp$ |  |
 
 
 ## $B\to P\nu\bar\nu$
