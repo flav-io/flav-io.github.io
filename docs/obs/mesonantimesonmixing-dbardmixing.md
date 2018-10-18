@@ -25,7 +25,7 @@ a scalar observable).
 |------|--------|-------------|-----------|
 | `phi12_D` | $\phi_{12}^D$ | $D^0$-$\bar D^0$ mixing phase |  |
 | `phi_D` | $\phi_D$ | Phase of $q/p$ in the $D^0$-$\bar D^0$ system |  |
-| `q/p_D` | $|q/p|_D$ | Absolute value of $q/p$ in the $D^0$-$\bar D^0$ system |  |
+| `q/p_D` | $\vert q/p\vert_D$ | Absolute value of $q/p$ in the $D^0$-$\bar D^0$ system |  |
 | `x12Im_D` | $x_{12}^{\text{Im},D}$ | Normalized imaginary part of the dispersive mixing amplitude in the $D^0$-$\bar D^0$ system |  |
 | `x12_D` | $x_{12}^D$ | Normalized absolute value of the dispersive mixing amplitude in the $D^0$-$\bar D^0$ system |  |
 | `x_D` | $x_D$ | Normalized mass difference in the $D^0$-$\bar D^0$ system |  |

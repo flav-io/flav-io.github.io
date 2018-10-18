@@ -71,7 +71,7 @@ of this page.
 ### Dipole moments
 
 
-- [Lepton anomalous magnetic moments](obs/dipolemoments-leptonanomalousmagneticmoments.html) (2 observables)
+- [Lepton anomalous magnetic moments](obs/dipolemoments-leptonanomalousmagneticmoments.html) (3 observables)
 
 - [Nucleon electric dipole moments](obs/dipolemoments-nucleonelectricdipolemoments.html) (1 observable)
 

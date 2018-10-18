@@ -36,3 +36,11 @@ a scalar observable).
 | `a_tau` | $a_\tau$ | Anomalous magnetic moment of the tau lepton |  |
 
 
+## $a_e$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `a_e` | $a_e$ | Anomalous magnetic moment of the electron |  |
+
+

@@ -397,6 +397,7 @@ of the parameter.
 | `a2_perp_phi` | $a_2^{\phi_\perp}$ | Second Gegenbauer moment of the transversely polarized $\phi$ LCDA at 1 GeV |
 | `a2_perp_rho+` | $a_2^{\rho^{+}_\perp}$ | Second Gegenbauer moment of the transversely polarized $\rho^{+}$ LCDA at 1 GeV |
 | `a2_perp_rho0` | $a_2^{\rho^{0}_\perp}$ | Second Gegenbauer moment of the transversely polarized $\rho^{0}$ LCDA at 1 GeV |
+| `a_e SM` | $a_e^\text{SM}$ | SM prediction for the anomalous magnetic moment of the electron |
 | `a_mu SM` | $a_\mu^\text{SM}$ | SM prediction for the anomalous magnetic moment of the muon |
 | `a_tau SM` | $a_\tau^\text{SM}$ | SM prediction for the anomalous magnetic moment of the tau |
 | `alpha_e` | $\alpha_e(m_Z)$ | electromagnetic fine structure constant in the $\overline{\text{MS}}$ scheme at the scale $m_Z$ |
