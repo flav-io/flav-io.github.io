@@ -1053,6 +1053,7 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.physics.mdms.test_al.ae_SM">ae_SM</a></li>
     <li class="mono"><a href="#flavio.physics.mdms.test_al.amu_SM">amu_SM</a></li>
     <li class="mono"><a href="#flavio.physics.mdms.test_al.atau_SM">atau_SM</a></li>
     <li class="mono"><a href="#flavio.physics.mdms.test_al.par">par</a></li>
@@ -1132,6 +1133,7 @@ table {
     <li class="mono"><a href="#flavio.physics.mdms.test_al.TestGminus2Leptons.skipTest">skipTest</a></li>
     <li class="mono"><a href="#flavio.physics.mdms.test_al.TestGminus2Leptons.subTest">subTest</a></li>
     <li class="mono"><a href="#flavio.physics.mdms.test_al.TestGminus2Leptons.tearDown">tearDown</a></li>
+    <li class="mono"><a href="#flavio.physics.mdms.test_al.TestGminus2Leptons.test_ae_SM">test_ae_SM</a></li>
     <li class="mono"><a href="#flavio.physics.mdms.test_al.TestGminus2Leptons.test_amu_NP">test_amu_NP</a></li>
     <li class="mono"><a href="#flavio.physics.mdms.test_al.TestGminus2Leptons.test_amu_SM">test_amu_SM</a></li>
     <li class="mono"><a href="#flavio.physics.mdms.test_al.TestGminus2Leptons.test_atau_SM">test_atau_SM</a></li>
@@ -1168,6 +1170,7 @@ table {
 <span class="n">par</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">default_parameters</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
 <span class="n">amu_SM</span> <span class="o">=</span> <span class="mf">11659182.3e-10</span>
 <span class="n">atau_SM</span> <span class="o">=</span> <span class="mf">117721e-8</span>
+<span class="n">ae_SM</span> <span class="o">=</span> <span class="mf">0.00115965218157</span>
 
 
 <span class="k">class</span> <span class="nc">TestGminus2Leptons</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
@@ -1187,6 +1190,15 @@ table {
 
     <span class="k">def</span> <span class="nf">test_atau_SM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;a_tau&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">atau_SM</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_ae_SM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;a_e&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">ae_SM</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">pd</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">combine_measurements</span><span class="p">(</span><span class="s1">&#39;a_e&#39;</span><span class="p">)</span>
+        <span class="n">ae_exp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="n">ae_err_exp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">error_left</span>
+        <span class="n">ae_err_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_uncertainty</span><span class="p">(</span><span class="s1">&#39;a_e&#39;</span><span class="p">)</span>
+        <span class="c1"># check that there is a -2.3 sigma tension, see 1804.07409 p. 13</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">((</span><span class="n">ae_exp</span> <span class="o">-</span> <span class="n">ae_SM</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">ae_err_sm</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">ae_err_exp</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="o">-</span><span class="mf">2.3</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1195,6 +1207,14 @@ table {
 
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="flavio.physics.mdms.test_al.ae_SM" class="name">var <span class="ident">ae_SM</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
       <div class="item">
       <p id="flavio.physics.mdms.test_al.amu_SM" class="name">var <span class="ident">amu_SM</span></p>
       
@@ -1280,6 +1300,15 @@ in order to be run.</p>
 
     <span class="k">def</span> <span class="nf">test_atau_SM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;a_tau&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">atau_SM</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_ae_SM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;a_e&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">ae_SM</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">pd</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">combine_measurements</span><span class="p">(</span><span class="s1">&#39;a_e&#39;</span><span class="p">)</span>
+        <span class="n">ae_exp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">central_value</span>
+        <span class="n">ae_err_exp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">error_left</span>
+        <span class="n">ae_err_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_uncertainty</span><span class="p">(</span><span class="s1">&#39;a_e&#39;</span><span class="p">)</span>
+        <span class="c1"># check that there is a -2.3 sigma tension, see 1804.07409 p. 13</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">((</span><span class="n">ae_exp</span> <span class="o">-</span> <span class="n">ae_SM</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">ae_err_sm</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">ae_err_exp</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="o">-</span><span class="mf">2.3</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1458,7 +1487,8 @@ their own type equality functions to provide nicer error messages.</p>
     <div class="desc"><p>Fail if the two objects are unequal as determined by their
 difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
-between the two objects is more than the given delta.</p>
+difference between the two objects is more than the given
+delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
 as significant digits (measured from the most significant digit).</p>
 <p>If the two objects compare equal then they will automatically
@@ -1471,7 +1501,8 @@ compare almost equal.</p></div>
     <span class="sd">&quot;&quot;&quot;Fail if the two objects are unequal as determined by their</span>
 <span class="sd">       difference rounded to the given number of decimal places</span>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
-<span class="sd">       between the two objects is more than the given delta.</span>
+<span class="sd">       difference between the two objects is more than the given</span>
+<span class="sd">       delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
 <span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       If the two objects compare equal then they will automatically</span>
@@ -2127,7 +2158,7 @@ self.assertEqual(cm.output, [&#39;INFO:foo:first message&#39;,
     <div class="desc"><p>Fail if the two objects are equal as determined by their
 difference rounded to the given number of decimal places
 (default 7) and comparing to zero, or by comparing that the
-between the two objects is less than the given delta.</p>
+difference between the two objects is less than the given delta.</p>
 <p>Note that decimal places (from zero) are usually not the same
 as significant digits (measured from the most significant digit).</p>
 <p>Objects that are equal automatically fail.</p></div>
@@ -2139,7 +2170,7 @@ as significant digits (measured from the most significant digit).</p>
     <span class="sd">&quot;&quot;&quot;Fail if the two objects are equal as determined by their</span>
 <span class="sd">       difference rounded to the given number of decimal places</span>
 <span class="sd">       (default 7) and comparing to zero, or by comparing that the</span>
-<span class="sd">       between the two objects is less than the given delta.</span>
+<span class="sd">       difference between the two objects is less than the given delta.</span>
 <span class="sd">       Note that decimal places (from zero) are usually not the same</span>
 <span class="sd">       as significant digits (measured from the most significant digit).</span>
 <span class="sd">       Objects that are equal automatically fail.</span>
@@ -3466,6 +3497,33 @@ block, allowing further test code to be executed.</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="s2">&quot;Hook method for deconstructing the test fixture after testing it.&quot;</span>
     <span class="k">pass</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.mdms.test_al.TestGminus2Leptons.test_ae_SM">
+    <p>def <span class="ident">test_ae_SM</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mdms.test_al.TestGminus2Leptons.test_ae_SM', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.mdms.test_al.TestGminus2Leptons.test_ae_SM" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_ae_SM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;a_e&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">ae_SM</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">pd</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">combine_measurements</span><span class="p">(</span><span class="s1">&#39;a_e&#39;</span><span class="p">)</span>
+    <span class="n">ae_exp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">central_value</span>
+    <span class="n">ae_err_exp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">error_left</span>
+    <span class="n">ae_err_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">sm_uncertainty</span><span class="p">(</span><span class="s1">&#39;a_e&#39;</span><span class="p">)</span>
+    <span class="c1"># check that there is a -2.3 sigma tension, see 1804.07409 p. 13</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">((</span><span class="n">ae_exp</span> <span class="o">-</span> <span class="n">ae_SM</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">ae_err_sm</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">ae_err_exp</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="o">-</span><span class="mf">2.3</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 
   </div>

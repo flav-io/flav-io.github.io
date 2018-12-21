@@ -1702,7 +1702,11 @@ to be used directly).</p>
             <span class="n">covariances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
         <span class="c1"># if there is only a single measuement</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># if there is only a single observable</span>
+                <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># if there are severeal measurements, perform a weighted average</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># covariances: [Sigma_1, Sigma_2, ...]</span>
@@ -1778,7 +1782,7 @@ to be used directly).</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -1863,11 +1867,14 @@ to be used directly).</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">]</span>
 
@@ -2820,7 +2827,11 @@ importantly,</p>
             <span class="n">covariances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
         <span class="c1"># if there is only a single measuement</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># if there is only a single observable</span>
+                <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># if there are severeal measurements, perform a weighted average</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># covariances: [Sigma_1, Sigma_2, ...]</span>
@@ -2896,7 +2907,7 @@ importantly,</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -2981,11 +2992,14 @@ importantly,</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">]</span>
 
@@ -3580,7 +3594,7 @@ ordering is arbitrary.</p></div>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
         <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -3654,11 +3668,14 @@ ordering is arbitrary.</p></div>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
         <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sm_covariance</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">]</span>
 </pre></div>
@@ -4606,7 +4623,7 @@ sampling the start_wc_priors distribution.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.Fit.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7f1737fa7320&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None, fit_wc_eft=&#39;WET&#39;, fit_wc_basis=&#39;flavio&#39;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fdce3683e80&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None, fit_wc_eft=&#39;WET&#39;, fit_wc_basis=&#39;flavio&#39;)</p>
     </div>
     
 

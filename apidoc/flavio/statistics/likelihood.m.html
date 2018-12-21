@@ -1561,13 +1561,16 @@ table {
         <span class="k">try</span><span class="p">:</span>
             <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span> <span class="n">permutation</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">]</span>
 
 
 <span class="k">class</span> <span class="nc">MeasurementCovariance</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -1619,7 +1622,11 @@ table {
             <span class="n">covariances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
         <span class="c1"># if there is only a single measuement</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># if there is only a single observable</span>
+                <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># if there are severeal measurements, perform a weighted average</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># covariances: [Sigma_1, Sigma_2, ...]</span>
@@ -1690,7 +1697,7 @@ table {
         <span class="k">try</span><span class="p">:</span>
             <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">ml</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -2073,7 +2080,7 @@ and <code>dump</code> methods.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.FastLikelihood.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7f1737fa7320&gt;, fit_parameters=None, nuisance_parameters=&#39;all&#39;, observables=None, exclude_measurements=None, include_measurements=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fdce3683e80&gt;, fit_parameters=None, nuisance_parameters=&#39;all&#39;, observables=None, exclude_measurements=None, include_measurements=None)</p>
     </div>
     
 
@@ -2500,7 +2507,7 @@ from nuisance parameters.</p>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.FastLikelihood.load">
-    <p>def <span class="ident">load</span>(</p><p>cls, f)</p>
+    <p>def <span class="ident">load</span>(</p><p>cls, f, **kwargs)</p>
     </div>
     
 
@@ -2511,10 +2518,10 @@ from nuisance parameters.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.FastLikelihood.load', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.FastLikelihood.load" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Instantiate an object from a YAML string or stream.&quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">load_include</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2525,7 +2532,7 @@ from nuisance parameters.</p>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.FastLikelihood.load_dict">
-    <p>def <span class="ident">load_dict</span>(</p><p>cls, d)</p>
+    <p>def <span class="ident">load_dict</span>(</p><p>cls, d, **kwargs)</p>
     </div>
     
 
@@ -2536,10 +2543,10 @@ from nuisance parameters.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.FastLikelihood.load_dict', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.FastLikelihood.load_dict" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Instantiate an object from a YAML dictionary.&quot;&quot;&quot;</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">input_schema</span><span class="p">()</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">schema</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">schema</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2685,7 +2692,7 @@ and <code>dump</code> methods.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.Likelihood.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7f1737fa7320&gt;, fit_parameters=None, observables=None, exclude_measurements=None, include_measurements=None, include_pseudo_measurements=False)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fdce3683e80&gt;, fit_parameters=None, observables=None, exclude_measurements=None, include_measurements=None, include_pseudo_measurements=False)</p>
     </div>
     
 
@@ -2961,7 +2968,7 @@ and <code>dump</code> methods.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.Likelihood.load">
-    <p>def <span class="ident">load</span>(</p><p>cls, f)</p>
+    <p>def <span class="ident">load</span>(</p><p>cls, f, **kwargs)</p>
     </div>
     
 
@@ -2972,10 +2979,10 @@ and <code>dump</code> methods.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.Likelihood.load', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.Likelihood.load" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Instantiate an object from a YAML string or stream.&quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">load_include</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2986,7 +2993,7 @@ and <code>dump</code> methods.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.Likelihood.load_dict">
-    <p>def <span class="ident">load_dict</span>(</p><p>cls, d)</p>
+    <p>def <span class="ident">load_dict</span>(</p><p>cls, d, **kwargs)</p>
     </div>
     
 
@@ -2997,10 +3004,10 @@ and <code>dump</code> methods.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.Likelihood.load_dict', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.Likelihood.load_dict" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Instantiate an object from a YAML dictionary.&quot;&quot;&quot;</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">input_schema</span><span class="p">()</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">schema</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">schema</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3099,7 +3106,11 @@ values of experimental measurements.</p>
             <span class="n">covariances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
         <span class="c1"># if there is only a single measuement</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># if there is only a single observable</span>
+                <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># if there are severeal measurements, perform a weighted average</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># covariances: [Sigma_1, Sigma_2, ...]</span>
@@ -3170,7 +3181,7 @@ values of experimental measurements.</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">ml</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -3265,7 +3276,11 @@ values of experimental measurements.</p>
         <span class="n">covariances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
     <span class="c1"># if there is only a single measuement</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># if there is only a single observable</span>
+            <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">means</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="c1"># if there are severeal measurements, perform a weighted average</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># covariances: [Sigma_1, Sigma_2, ...]</span>
@@ -3387,7 +3402,7 @@ ordering is arbitrary.</p></div>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">ml</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
         <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -3928,7 +3943,7 @@ constrain any of the fit observables.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.MeasurementLikelihood.load">
-    <p>def <span class="ident">load</span>(</p><p>cls, f)</p>
+    <p>def <span class="ident">load</span>(</p><p>cls, f, **kwargs)</p>
     </div>
     
 
@@ -3939,10 +3954,10 @@ constrain any of the fit observables.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.MeasurementLikelihood.load', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.MeasurementLikelihood.load" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Instantiate an object from a YAML string or stream.&quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">load_include</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3953,7 +3968,7 @@ constrain any of the fit observables.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.MeasurementLikelihood.load_dict">
-    <p>def <span class="ident">load_dict</span>(</p><p>cls, d)</p>
+    <p>def <span class="ident">load_dict</span>(</p><p>cls, d, **kwargs)</p>
     </div>
     
 
@@ -3964,10 +3979,10 @@ constrain any of the fit observables.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.MeasurementLikelihood.load_dict', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.MeasurementLikelihood.load_dict" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Instantiate an object from a YAML dictionary.&quot;&quot;&quot;</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">input_schema</span><span class="p">()</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">schema</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">schema</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -4092,7 +4107,7 @@ and <code>dump</code> methods.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.ParameterLikelihood.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7f1737fa7320&gt;, parameters=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fdce3683e80&gt;, parameters=None)</p>
     </div>
     
 
@@ -4289,7 +4304,7 @@ contribution to the likelihood.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.ParameterLikelihood.load">
-    <p>def <span class="ident">load</span>(</p><p>cls, f)</p>
+    <p>def <span class="ident">load</span>(</p><p>cls, f, **kwargs)</p>
     </div>
     
 
@@ -4300,10 +4315,10 @@ contribution to the likelihood.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.ParameterLikelihood.load', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.ParameterLikelihood.load" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Instantiate an object from a YAML string or stream.&quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">load_include</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -4314,7 +4329,7 @@ contribution to the likelihood.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.ParameterLikelihood.load_dict">
-    <p>def <span class="ident">load_dict</span>(</p><p>cls, d)</p>
+    <p>def <span class="ident">load_dict</span>(</p><p>cls, d, **kwargs)</p>
     </div>
     
 
@@ -4325,10 +4340,10 @@ contribution to the likelihood.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.ParameterLikelihood.load_dict', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.ParameterLikelihood.load_dict" class="source">
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Instantiate an object from a YAML dictionary.&quot;&quot;&quot;</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">input_schema</span><span class="p">()</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">schema</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">schema</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -4461,13 +4476,16 @@ predictions.</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span> <span class="n">permutation</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -4637,13 +4655,16 @@ ordering is arbitrary.</p></div>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">permutation</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
         <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span> <span class="n">permutation</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cov</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span><span class="n">permutation</span><span class="p">]</span>
 </pre></div>
 
   </div>
