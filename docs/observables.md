@@ -33,7 +33,7 @@ of this page.
 
 - [Hadronic tree-level decays](obs/tauleptondecays-hadronictreeleveldecays.html) (2 observables)
 
-- [LFV decays](obs/tauleptondecays-lfvdecays.html) (8 observables)
+- [LFV decays](obs/tauleptondecays-lfvdecays.html) (16 observables)
 
 - [Leptonic tree-level decays](obs/tauleptondecays-leptonictreeleveldecays.html) (2 observables)
 
@@ -65,7 +65,7 @@ of this page.
 
 - [Non-leptonic decays](obs/shadrondecays-nonleptonicdecays.html) (1 observable)
 
-- [Semi-leptonic tree-level decays](obs/shadrondecays-semileptonictreeleveldecays.html) (6 observables)
+- [Semi-leptonic tree-level decays](obs/shadrondecays-semileptonictreeleveldecays.html) (9 observables)
 
 
 ### Dipole moments

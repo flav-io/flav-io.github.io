@@ -70,3 +70,27 @@ a scalar observable).
 | `BR(KL->pienu)` | $\text{BR}(K_L\to \pi^+e^+\nu_e)$ | Total branching ratio of $K_L\to \pi^+e^+\nu_e$ |  |
 
 
+### $K_S\to \pi^+\ell^+\nu_\ell$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(KS->pilnu)` | $\text{BR}(K_S\to \pi^+\ell^+\nu_\ell)$ | Total branching ratio of $K_S\to \pi^+\ell^+\nu_\ell$ |  |
+
+
+### $K_S\to \pi^+\mu^+\nu_\mu$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(KS->pimunu)` | $\text{BR}(K_S\to \pi^+\mu^+\nu_\mu)$ | Total branching ratio of $K_S\to \pi^+\mu^+\nu_\mu$ |  |
+
+
+### $K_S\to \pi^+e^+\nu_e$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(KS->pienu)` | $\text{BR}(K_S\to \pi^+e^+\nu_e)$ | Total branching ratio of $K_S\to \pi^+e^+\nu_e$ |  |
+
+

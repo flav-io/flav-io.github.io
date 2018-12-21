@@ -55,6 +55,9 @@ of the parameter.
 | `B->D BCL m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B\to D$ scalar form factor in BCL parametrization |
 | `B->D CLN deltac_h+` | $\delta_{\epsilon_c^2}^{h_+}$ | Power correction to $B\to D$ HQET form factor $h_+$ |
 | `B->D IW a_T` | $a_T^{B\to D}$ | Relative power correction to the $B\to D$ tensor form factor from the improved Isgur-Wise relation |
+| `B->D* BCL m0` | $m_{B^*}^{A_0}$ | Resonance mass for the $B\to D^*$ scalar form factor in BCL or BSZ parametrization |
+| `B->D* BCL m1+` | $m_{B^*}^{1^+}$ | Resonance mass for the $B\to D^*$ form factors $A_{12}$ and $T_{2,23}$ in BCL or BSZ parametrization |
+| `B->D* BCL m1-` | $m_{B^*}^{1^-}$ | Resonance mass for the $B\to D^*$ form factors $V$ and $T_1$ in BCL or BSZ parametrization |
 | `B->D* CLN R_0(1)` | $R_0(1)$ | Ratio of CLN form factors at $w=1$ |
 | `B->D* CLN R_1(1)` | $R_1(1)$ | Ratio of CLN form factors at $w=1$ |
 | `B->D* CLN R_2(1)` | $R_2(1)$ | Ratio of CLN form factors at $w=1$ |
@@ -76,8 +79,19 @@ of the parameter.
 | `B->K BCL a2_fT` | $a_2^{(T)}$ | BCL $B\to K$ form factor parametrization coefficient $a_2$ of $f_T$ |
 | `B->K BCL m+` | $m_{B^*}^{f_+}$ | Resonance mass for the $B\to K$ vector and tensor form factors in BCL parametrization |
 | `B->K BCL m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B\to K$ scalar form factor in BCL parametrization |
+| `B->K BSZ a0_f+` | $a_0^{f_+}$ | BSZ form factor parametrization coefficient $a_0$ of $f_+$ |
+| `B->K BSZ a0_fT` | $a_0^{f_T}$ | BSZ form factor parametrization coefficient $a_0$ of $f_T$ |
+| `B->K BSZ a1_f+` | $a_1^{f_+}$ | BSZ form factor parametrization coefficient $a_1$ of $f_+$ |
+| `B->K BSZ a1_f0` | $a_1^{f_0}$ | BSZ form factor parametrization coefficient $a_1$ of $f_0$ |
+| `B->K BSZ a1_fT` | $a_1^{f_T}$ | BSZ form factor parametrization coefficient $a_1$ of $f_T$ |
+| `B->K BSZ a2_f+` | $a_2^{f_+}$ | BSZ form factor parametrization coefficient $a_2$ of $f_+$ |
+| `B->K BSZ a2_f0` | $a_2^{f_0}$ | BSZ form factor parametrization coefficient $a_2$ of $f_0$ |
+| `B->K BSZ a2_fT` | $a_2^{f_T}$ | BSZ form factor parametrization coefficient $a_2$ of $f_T$ |
+| `B->K* BCL m0` | $m_{B^*}^{A_0}$ | Resonance mass for the $B\to K^*$ scalar form factor in BCL or BSZ parametrization |
+| `B->K* BCL m1+` | $m_{B^*}^{1^+}$ | Resonance mass for the $B\to K^*$ form factors $A_{12}$ and $T_{2,23}$ in BCL or BSZ parametrization |
+| `B->K* BCL m1-` | $m_{B^*}^{1^-}$ | Resonance mass for the $B\to K^*$ form factors $V$ and $T_1$ in BCL or BSZ parametrization |
+| `B->K* BSZ a0_A0` | $a_0^{A_0}$ | BSZ form factor parametrization coefficient $a_0$ of $A_0$ |
 | `B->K* BSZ a0_A1` | $a_0^{A_1}$ | BSZ form factor parametrization coefficient $a_0$ of $A_1$ |
-| `B->K* BSZ a0_A12` | $a_0^{A_{12}}$ | BSZ form factor parametrization coefficient $a_0$ of $A_{12}$ |
 | `B->K* BSZ a0_T1` | $a_0^{T_1}$ | BSZ form factor parametrization coefficient $a_0$ of $T_1$ |
 | `B->K* BSZ a0_T23` | $a_0^{T_{23}}$ | BSZ form factor parametrization coefficient $a_0$ of $T_{23}$ |
 | `B->K* BSZ a0_V` | $a_0^{V}$ | BSZ form factor parametrization coefficient $a_0$ of $V$ |
@@ -95,8 +109,11 @@ of the parameter.
 | `B->K* BSZ a2_T2` | $a_2^{T_2}$ | BSZ form factor parametrization coefficient $a_2$ of $T_2$ |
 | `B->K* BSZ a2_T23` | $a_2^{T_{23}}$ | BSZ form factor parametrization coefficient $a_2$ of $T_{23}$ |
 | `B->K* BSZ a2_V` | $a_2^{V}$ | BSZ form factor parametrization coefficient $a_2$ of $V$ |
+| `B->omega BCL m0` | $m_{B^*}^{A_0}$ | Resonance mass for the $B\to \omega$ scalar form factor in BCL or BSZ parametrization |
+| `B->omega BCL m1+` | $m_{B^*}^{1^+}$ | Resonance mass for the $B\to \omega$ form factors $A_{12}$ and $T_{2,23}$ in BCL or BSZ parametrization |
+| `B->omega BCL m1-` | $m_{B^*}^{1^-}$ | Resonance mass for the $B\to \omega$ form factors $V$ and $T_1$ in BCL or BSZ parametrization |
+| `B->omega BSZ a0_A0` | $a_0^{A_0}$ | BSZ form factor parametrization coefficient $a_0$ of $A_0$ |
 | `B->omega BSZ a0_A1` | $a_0^{A_1}$ | BSZ form factor parametrization coefficient $a_0$ of $A_1$ |
-| `B->omega BSZ a0_A12` | $a_0^{A_{12}}$ | BSZ form factor parametrization coefficient $a_0$ of $A_{12}$ |
 | `B->omega BSZ a0_T1` | $a_0^{T_1}$ | BSZ form factor parametrization coefficient $a_0$ of $T_1$ |
 | `B->omega BSZ a0_T23` | $a_0^{T_{23}}$ | BSZ form factor parametrization coefficient $a_0$ of $T_{23}$ |
 | `B->omega BSZ a0_V` | $a_0^{V}$ | BSZ form factor parametrization coefficient $a_0$ of $V$ |
@@ -128,9 +145,20 @@ of the parameter.
 | `B->pi BCL a3_fT` | $a_3^{(T)}$ | BCL $B\to \pi$ form factor parametrization coefficient $a_3$ of $f_T$ |
 | `B->pi BCL m+` | $m_{B^*}^{f_+}$ | Resonance mass for the $B\to \pi$ vector and tensor form factors in BCL parametrization |
 | `B->pi BCL m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B\to \pi$ scalar form factor in BCL parametrization |
+| `B->pi BSZ a0_f+` | $a_0^{f_+}$ | BSZ form factor parametrization coefficient $a_0$ of $f_+$ |
+| `B->pi BSZ a0_fT` | $a_0^{f_T}$ | BSZ form factor parametrization coefficient $a_0$ of $f_T$ |
+| `B->pi BSZ a1_f+` | $a_1^{f_+}$ | BSZ form factor parametrization coefficient $a_1$ of $f_+$ |
+| `B->pi BSZ a1_f0` | $a_1^{f_0}$ | BSZ form factor parametrization coefficient $a_1$ of $f_0$ |
+| `B->pi BSZ a1_fT` | $a_1^{f_T}$ | BSZ form factor parametrization coefficient $a_1$ of $f_T$ |
+| `B->pi BSZ a2_f+` | $a_2^{f_+}$ | BSZ form factor parametrization coefficient $a_2$ of $f_+$ |
+| `B->pi BSZ a2_f0` | $a_2^{f_0}$ | BSZ form factor parametrization coefficient $a_2$ of $f_0$ |
+| `B->pi BSZ a2_fT` | $a_2^{f_T}$ | BSZ form factor parametrization coefficient $a_2$ of $f_T$ |
 | `B->pi IW a_T` | $a_T^{B\to \pi}$ | Relative power correction to the $B\to \pi$ tensor form factor from the improved Isgur-Wise relation |
+| `B->rho BCL m0` | $m_{B^*}^{A_0}$ | Resonance mass for the $B\to \rho$ scalar form factor in BCL or BSZ parametrization |
+| `B->rho BCL m1+` | $m_{B^*}^{1^+}$ | Resonance mass for the $B\to \rho$ form factors $A_{12}$ and $T_{2,23}$ in BCL or BSZ parametrization |
+| `B->rho BCL m1-` | $m_{B^*}^{1^-}$ | Resonance mass for the $B\to \rho$ form factors $V$ and $T_1$ in BCL or BSZ parametrization |
+| `B->rho BSZ a0_A0` | $a_0^{A_0}$ | BSZ form factor parametrization coefficient $a_0$ of $A_0$ |
 | `B->rho BSZ a0_A1` | $a_0^{A_1}$ | BSZ form factor parametrization coefficient $a_0$ of $A_1$ |
-| `B->rho BSZ a0_A12` | $a_0^{A_{12}}$ | BSZ form factor parametrization coefficient $a_0$ of $A_{12}$ |
 | `B->rho BSZ a0_T1` | $a_0^{T_1}$ | BSZ form factor parametrization coefficient $a_0$ of $T_1$ |
 | `B->rho BSZ a0_T23` | $a_0^{T_{23}}$ | BSZ form factor parametrization coefficient $a_0$ of $T_{23}$ |
 | `B->rho BSZ a0_V` | $a_0^{V}$ | BSZ form factor parametrization coefficient $a_0$ of $V$ |
@@ -195,8 +223,11 @@ of the parameter.
 | `Bs->K BCL a2_fT` | $a_2^{(T)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_2$ of $f_T$ |
 | `Bs->K BCL m+` | $m_{B^*}^{f_+}$ | Resonance mass for the $B_s\to K$ vector and tensor form factors in BCL parametrization |
 | `Bs->K BCL m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B_s\to K$ scalar form factor in BCL parametrization |
+| `Bs->K* BCL m0` | $m_{B^*}^{A_0}$ | Resonance mass for the $B_s\to K^*$ scalar form factor in BCL or BSZ parametrization |
+| `Bs->K* BCL m1+` | $m_{B^*}^{1^+}$ | Resonance mass for the $B_s\to K^*$ form factors $A_{12}$ and $T_{2,23}$ in BCL or BSZ parametrization |
+| `Bs->K* BCL m1-` | $m_{B^*}^{1^-}$ | Resonance mass for the $B_s\to K^*$ form factors $V$ and $T_1$ in BCL or BSZ parametrization |
+| `Bs->K* BSZ a0_A0` | $a_0^{A_0}$ | BSZ form factor parametrization coefficient $a_0$ of $A_0$ |
 | `Bs->K* BSZ a0_A1` | $a_0^{A_1}$ | BSZ form factor parametrization coefficient $a_0$ of $A_1$ |
-| `Bs->K* BSZ a0_A12` | $a_0^{A_{12}}$ | BSZ form factor parametrization coefficient $a_0$ of $A_{12}$ |
 | `Bs->K* BSZ a0_T1` | $a_0^{T_1}$ | BSZ form factor parametrization coefficient $a_0$ of $T_1$ |
 | `Bs->K* BSZ a0_T23` | $a_0^{T_{23}}$ | BSZ form factor parametrization coefficient $a_0$ of $T_{23}$ |
 | `Bs->K* BSZ a0_V` | $a_0^{V}$ | BSZ form factor parametrization coefficient $a_0$ of $V$ |
@@ -214,8 +245,11 @@ of the parameter.
 | `Bs->K* BSZ a2_T2` | $a_2^{T_2}$ | BSZ form factor parametrization coefficient $a_2$ of $T_2$ |
 | `Bs->K* BSZ a2_T23` | $a_2^{T_{23}}$ | BSZ form factor parametrization coefficient $a_2$ of $T_{23}$ |
 | `Bs->K* BSZ a2_V` | $a_2^{V}$ | BSZ form factor parametrization coefficient $a_2$ of $V$ |
+| `Bs->phi BCL m0` | $m_{B^*}^{A_0}$ | Resonance mass for the $B_s\to\phi$ scalar form factor in BCL or BSZ parametrization |
+| `Bs->phi BCL m1+` | $m_{B^*}^{1^+}$ | Resonance mass for the $B_s\to\phi$ form factors $A_{12}$ and $T_{2,23}$ in BCL or BSZ parametrization |
+| `Bs->phi BCL m1-` | $m_{B^*}^{1^-}$ | Resonance mass for the $B_s\to\phi$ form factors $V$ and $T_1$ in BCL or BSZ parametrization |
+| `Bs->phi BSZ a0_A0` | $a_0^{A_0}$ | BSZ form factor parametrization coefficient $a_0$ of $A_0$ |
 | `Bs->phi BSZ a0_A1` | $a_0^{A_1}$ | BSZ form factor parametrization coefficient $a_0$ of $A_1$ |
-| `Bs->phi BSZ a0_A12` | $a_0^{A_{12}}$ | BSZ form factor parametrization coefficient $a_0$ of $A_{12}$ |
 | `Bs->phi BSZ a0_T1` | $a_0^{T_1}$ | BSZ form factor parametrization coefficient $a_0$ of $T_1$ |
 | `Bs->phi BSZ a0_T23` | $a_0^{T_{23}}$ | BSZ form factor parametrization coefficient $a_0$ of $T_{23}$ |
 | `Bs->phi BSZ a0_V` | $a_0^{V}$ | BSZ form factor parametrization coefficient $a_0$ of $V$ |
@@ -476,12 +510,12 @@ of the parameter.
 | `f_K+` | $f_{K^\pm}$ | Charged kaon decay constant |
 | `f_K0` | $f_{K^0}$ | Neutral kaon decay constant |
 | `f_omega` | $f_{\omega}$ | $\omega$ decay constant |
-| `f_perp_K*+` | $f^\perp_{K^{\pm}}$ | Transverse $K^{*\pm}$ decay constant at 1 GeV |
-| `f_perp_K*0` | $f^\perp_{K^{*0}}$ | Transverse $K^{*0}$ decay constant at 1 GeV |
-| `f_perp_omega` | $f^\perp_\omega$ | Transverse $\omega$ decay constant at 1 GeV |
-| `f_perp_phi` | $f^\perp_\phi$ | Transverse $\phi$ decay constant at 1 GeV |
-| `f_perp_rho+` | $f^\perp_{\rho^{\pm}}$ | Transverse $\rho^{\pm}$ decay constant at 1 GeV |
-| `f_perp_rho0` | $f^\perp_{\rho^{0}}$ | Transverse $\rho^{0}$ decay constant at 1 GeV |
+| `f_perp_K*+` | $f^\perp_{K^{\pm}}$ | Transverse $K^{*\pm}$ decay constant at 2 GeV in the 3-flavour scheme |
+| `f_perp_K*0` | $f^\perp_{K^{*0}}$ | Transverse $K^{*0}$ decay constant at 2 GeV in the 3-flavour scheme |
+| `f_perp_omega` | $f^\perp_\omega$ | Transverse $\omega$ decay constant at 2 GeV in the 3-flavour scheme |
+| `f_perp_phi` | $f^\perp_\phi$ | Transverse $\phi$ decay constant at 2 GeV in the 3-flavour scheme |
+| `f_perp_rho+` | $f^\perp_{\rho^{\pm}}$ | Transverse $\rho^{\pm}$ decay constant at 2 GeV in the 3-flavour scheme |
+| `f_perp_rho0` | $f^\perp_{\rho^{0}}$ | Transverse $\rho^{0}$ decay constant at 2 GeV in the 3-flavour scheme |
 | `f_phi` | $f_{\phi}$ | $\phi$ decay constant |
 | `f_pi+` | $f_{pi^\pm}$ | Charged pion decay constant |
 | `f_pi0` | $f_{\pi^0}$ | Neutral pion decay constant |

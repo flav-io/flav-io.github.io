@@ -20,6 +20,40 @@ a scalar observable).
 * TOC
 {:toc}
 
+## $\tau\to P\ell$
+
+### $\tau^+\to K^0 e^+$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(tau->Ke)` | $\text{BR}(\tau^+\to K^0 e^+)$ | Branching ratio of $\tau^+\to K^0 e^+$ |  |
+
+
+### $\tau^+\to K^0\mu^+$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(tau->Kmu)` | $\text{BR}(\tau^+\to K^0\mu^+)$ | Branching ratio of $\tau^+\to K^0\mu^+$ |  |
+
+
+### $\tau^+\to \pi^0 e^+$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(tau->pie)` | $\text{BR}(\tau^+\to \pi^0 e^+)$ | Branching ratio of $\tau^+\to \pi^0 e^+$ |  |
+
+
+### $\tau^+\to \pi^0\mu^+$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(tau->pimu)` | $\text{BR}(\tau^+\to \pi^0\mu^+)$ | Branching ratio of $\tau^+\to \pi^0\mu^+$ |  |
+
+
 ## $\tau\to V\ell$
 
 ### $\tau^+\to \phi e^+$
@@ -82,11 +116,43 @@ a scalar observable).
 | `BR(tau->mumumu)` | $\text{BR}(\tau^-\to \mu^-\mu^+\mu^-)$ | Branching ratio of $\tau^-\to \mu^-\mu^+\mu^-$ |  |
 
 
+### $\tau^-\to \mu^-e^+\mu^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(tau->muemu)` | $\text{BR}(\tau^-\to \mu^-e^+\mu^-)$ | Branching ratio of $\tau^-\to \mu^-e^+\mu^-$ |  |
+
+
 ### $\tau^-\to \mu^-e^+e^-$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `BR(tau->muee)` | $\text{BR}(\tau^-\to \mu^-e^+e^-)$ | Branching ratio of $\tau^-\to \mu^-e^+e^-$ |  |
+
+
+### $\tau^-\to e^-\mu^+\mu^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(tau->emumu)` | $\text{BR}(\tau^-\to e^-\mu^+\mu^-)$ | Branching ratio of $\tau^-\to e^-\mu^+\mu^-$ |  |
+
+
+### $\tau^-\to e^-\mu^+e^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(tau->emue)` | $\text{BR}(\tau^-\to e^-\mu^+e^-)$ | Branching ratio of $\tau^-\to e^-\mu^+e^-$ |  |
+
+
+### $\tau^-\to e^-e^+e^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(tau->eee)` | $\text{BR}(\tau^-\to e^-e^+e^-)$ | Branching ratio of $\tau^-\to e^-e^+e^-$ |  |
 
 
