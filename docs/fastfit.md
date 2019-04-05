@@ -36,6 +36,6 @@ where `x` is a  list (or NumPy array) *only* containing the values of the
 fit parameters (or Wilson coefficients). Note that there is no prior probability
 for the nuisance parameters, because they have effectively been integrated out.
 
-For more usage details and a full list of options, see the [`FastFit` API docs](http://0.0.0.0:4000/apidoc/flavio/statistics/fits.m.html#flavio.statistics.fits.FastFit).
+For more usage details and a full list of options, see the [`FastFit` API docs](/apidoc/flavio/statistics/fits.m.html#flavio.statistics.fits.FastFit).
 
 Several examples of fitting and visualization using the `FastFit` class can be found in the [example repository](https://github.com/flav-io/flavio-examples).
