@@ -1056,7 +1056,6 @@ table {
   <ul>
     <li class="mono"><a href="#flavio.physics.kdecays.kpipi.config">config</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.kpipi.o">o</a></li>
-    <li class="mono"><a href="#flavio.physics.kdecays.kpipi.wcsm">wcsm</a></li>
   </ul>
 
     </li>
@@ -1071,7 +1070,6 @@ table {
     <li class="mono"><a href="#flavio.physics.kdecays.kpipi.epsprime">epsprime</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.kpipi.epsprime_NP">epsprime_NP</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.kpipi.epsprime_SM">epsprime_SM</a></li>
-    <li class="mono"><a href="#flavio.physics.kdecays.kpipi.sd_wilsoncoefficients_sm">sd_wilsoncoefficients_sm</a></li>
   </ul>
 
     </li>
@@ -1101,40 +1099,9 @@ $\epsilon'/\epsilon$.</p>
 <span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">Prediction</span><span class="p">,</span> <span class="n">Observable</span>
 <span class="kn">from</span> <span class="nn">flavio.config</span> <span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span> <span class="nn">flavio.physics</span> <span class="kn">import</span> <span class="n">ckm</span>
+<span class="kn">from</span> <span class="nn">flavio.physics.kdecays.wilsoncoefficients</span> <span class="kn">import</span> <span class="n">wilsoncoefficients_sm_fourquark</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
-<span class="kn">import</span> <span class="nn">scipy.interpolate</span>
 
-
-<span class="c1"># Table 1 of 1507.06345: Wilson coefficients at 1.3 GeV</span>
-<span class="c1"># for alpha_s = [0.1179, 0.1185, 0.1191]</span>
-<span class="n">_yz</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">0.4036</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4092</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4150</span><span class="p">],</span>
-<span class="p">[</span><span class="mf">1.2084</span><span class="p">,</span> <span class="mf">1.2120</span><span class="p">,</span> <span class="mf">1.2157</span><span class="p">],</span>
-<span class="p">[</span><span class="mf">0.0275</span><span class="p">,</span> <span class="mf">0.0280</span><span class="p">,</span> <span class="mf">0.0285</span><span class="p">],</span>
-<span class="p">[</span><span class="o">-</span><span class="mf">0.0555</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0563</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0571</span><span class="p">],</span>
-<span class="p">[</span><span class="mf">0.0054</span><span class="p">,</span> <span class="mf">0.0052</span><span class="p">,</span> <span class="mf">0.0050</span><span class="p">],</span>
-<span class="p">[</span><span class="o">-</span><span class="mf">0.0849</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0867</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0887</span><span class="p">],</span>
-<span class="p">[</span><span class="o">-</span><span class="mf">0.0404</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0403</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0402</span><span class="p">],</span>
-<span class="p">[</span><span class="mf">0.1207</span><span class="p">,</span> <span class="mf">0.1234</span><span class="p">,</span> <span class="mf">0.1261</span><span class="p">],</span>
-<span class="p">[</span><span class="o">-</span><span class="mf">1.3936</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.3981</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.4027</span><span class="p">],</span>
-<span class="p">[</span><span class="mf">0.4997</span><span class="p">,</span> <span class="mf">0.5071</span><span class="p">,</span> <span class="mf">0.5146</span><span class="p">]]</span>
-<span class="n">_yz_rows</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;z1&quot;</span><span class="p">,</span> <span class="s2">&quot;z2&quot;</span><span class="p">,</span> <span class="s2">&quot;y3&quot;</span><span class="p">,</span> <span class="s2">&quot;y4&quot;</span><span class="p">,</span> <span class="s2">&quot;y5&quot;</span><span class="p">,</span> <span class="s2">&quot;y6&quot;</span><span class="p">,</span> <span class="s2">&quot;y7/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y8/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y9/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y10/al&quot;</span><span class="p">,]</span>
-<span class="c1"># inter- &amp; extrapolating alpha_s dependence</span>
-<span class="n">wcsm</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">([</span><span class="mf">0.1179</span><span class="p">,</span> <span class="mf">0.1185</span><span class="p">,</span> <span class="mf">0.1191</span><span class="p">],</span> <span class="n">_yz</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">sd_wilsoncoefficients_sm</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the $\Delta S=1$ Wilson coefficients in the SM at the scale</span>
-<span class="sd">    `scale`.</span>
-
-<span class="sd">    Currently only implemented for `scale=1.3`.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">scale</span> <span class="o">!=</span> <span class="mf">1.3</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wilson coefficients only implemented for scale=1.3&quot;</span><span class="p">)</span>
-    <span class="n">wcarr</span> <span class="o">=</span> <span class="n">wcsm</span><span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">])</span>
-    <span class="n">wc_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;z1&quot;</span><span class="p">,</span> <span class="s2">&quot;z2&quot;</span><span class="p">,</span> <span class="s2">&quot;y3&quot;</span><span class="p">,</span> <span class="s2">&quot;y4&quot;</span><span class="p">,</span> <span class="s2">&quot;y5&quot;</span><span class="p">,</span> <span class="s2">&quot;y6&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;y7/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y8/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y9/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y10/al&quot;</span><span class="p">,],</span> <span class="n">wcarr</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;y7&#39;</span><span class="p">,</span> <span class="s1">&#39;y8&#39;</span><span class="p">,</span> <span class="s1">&#39;y9&#39;</span><span class="p">,</span> <span class="s1">&#39;y10&#39;</span><span class="p">]:</span>
-        <span class="n">wc_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;{}/al&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="o">/</span> <span class="mi">128</span>
-    <span class="k">return</span> <span class="n">wc_dict</span>
 
 
 <span class="k">def</span> <span class="nf">Kpipi_matrixelements_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
@@ -1233,7 +1200,7 @@ $\epsilon'/\epsilon$.</p>
     <span class="n">pref</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;ds&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>  <span class="c1"># GF/sqrt(2) Vus* Vud</span>
     <span class="n">me</span> <span class="o">=</span> <span class="n">Kpipi_matrixelements_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="c1"># Wilson coefficients</span>
-    <span class="n">wc</span> <span class="o">=</span> <span class="n">sd_wilsoncoefficients_sm</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wilsoncoefficients_sm_fourquark</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="n">tau</span> <span class="o">=</span> <span class="o">-</span><span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;ds&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span> <span class="o">/</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;ds&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
     <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">include_VmA</span><span class="p">:</span>
@@ -1331,14 +1298,6 @@ $\epsilon'/\epsilon$.</p>
 </div>
 
       </div>
-      <div class="item">
-      <p id="flavio.physics.kdecays.kpipi.wcsm" class="name">var <span class="ident">wcsm</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
 
     <h2 class="section-title" id="header-functions">Functions</h2>
       
@@ -1397,7 +1356,7 @@ the $K\to\pi\pi$ transition.</p></div>
     <span class="n">pref</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;ds&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>  <span class="c1"># GF/sqrt(2) Vus* Vud</span>
     <span class="n">me</span> <span class="o">=</span> <span class="n">Kpipi_matrixelements_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="c1"># Wilson coefficients</span>
-    <span class="n">wc</span> <span class="o">=</span> <span class="n">sd_wilsoncoefficients_sm</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wilsoncoefficients_sm_fourquark</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="n">tau</span> <span class="o">=</span> <span class="o">-</span><span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;ds&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span> <span class="o">/</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;ds&#39;</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
     <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">include_VmA</span><span class="p">:</span>
@@ -1642,41 +1601,6 @@ isospin breaking corrections.</p></div>
     <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;omega+&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eps_K&#39;</span><span class="p">])</span>
             <span class="o">*</span> <span class="p">(</span><span class="n">ImA0</span> <span class="o">/</span> <span class="n">ReA0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;Omegahat_eff&#39;</span><span class="p">])</span>
                <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">a</span> <span class="o">*</span> <span class="n">ImA2</span> <span class="o">/</span> <span class="n">ReA2</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="flavio.physics.kdecays.kpipi.sd_wilsoncoefficients_sm">
-    <p>def <span class="ident">sd_wilsoncoefficients_sm</span>(</p><p>par, scale)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Return the $\Delta S=1$ Wilson coefficients in the SM at the scale
-<code>scale</code>.</p>
-<p>Currently only implemented for <code>scale=1.3</code>.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.kpipi.sd_wilsoncoefficients_sm', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.kdecays.kpipi.sd_wilsoncoefficients_sm" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">sd_wilsoncoefficients_sm</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the $\Delta S=1$ Wilson coefficients in the SM at the scale</span>
-<span class="sd">    `scale`.</span>
-
-<span class="sd">    Currently only implemented for `scale=1.3`.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">scale</span> <span class="o">!=</span> <span class="mf">1.3</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wilson coefficients only implemented for scale=1.3&quot;</span><span class="p">)</span>
-    <span class="n">wcarr</span> <span class="o">=</span> <span class="n">wcsm</span><span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">])</span>
-    <span class="n">wc_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;z1&quot;</span><span class="p">,</span> <span class="s2">&quot;z2&quot;</span><span class="p">,</span> <span class="s2">&quot;y3&quot;</span><span class="p">,</span> <span class="s2">&quot;y4&quot;</span><span class="p">,</span> <span class="s2">&quot;y5&quot;</span><span class="p">,</span> <span class="s2">&quot;y6&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;y7/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y8/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y9/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y10/al&quot;</span><span class="p">,],</span> <span class="n">wcarr</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;y7&#39;</span><span class="p">,</span> <span class="s1">&#39;y8&#39;</span><span class="p">,</span> <span class="s1">&#39;y9&#39;</span><span class="p">,</span> <span class="s1">&#39;y10&#39;</span><span class="p">]:</span>
-        <span class="n">wc_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;{}/al&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="o">/</span> <span class="mi">128</span>
-    <span class="k">return</span> <span class="n">wc_dict</span>
 </pre></div>
 
   </div>

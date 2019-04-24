@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>flavio.physics.bdecays.formfactors.b_p.bcl_parameters API documentation</title>
-    <meta name="description" content="" />
+    <title>flavio.physics.kdecays.wilsoncoefficients API documentation</title>
+    <meta name="description" content="Functions for SM Wilson coefficients in kaon decays." />
 
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400' rel='stylesheet' type='text/css'>
@@ -1050,11 +1050,19 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#flavio.physics.kdecays.wilsoncoefficients.wcsm">wcsm</a></li>
+  </ul>
+
+    </li>
 
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
-    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.b_p.bcl_parameters.load_parameters">load_parameters</a></li>
+    <li class="mono"><a href="#flavio.physics.kdecays.wilsoncoefficients.wilsoncoefficients_sm_fourquark">wilsoncoefficients_sm_fourquark</a></li>
+    <li class="mono"><a href="#flavio.physics.kdecays.wilsoncoefficients.wilsoncoefficients_sm_sl">wilsoncoefficients_sm_sl</a></li>
   </ul>
 
     </li>
@@ -1071,34 +1079,61 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">flavio.physics.bdecays.formfactors.b_p.bcl_parameters</span> module</h1>
+  <h1 class="title"><span class="name">flavio.physics.kdecays.wilsoncoefficients</span> module</h1>
+  <p>Functions for SM Wilson coefficients in kaon decays.</p>
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_p.bcl_parameters', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.formfactors.b_p.bcl_parameters" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">import</span> <span class="nn">pkgutil</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">Parameter</span>
-<span class="kn">from</span> <span class="nn">flavio.statistics.probability</span> <span class="kn">import</span> <span class="n">MultivariateNormalDistribution</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.wilsoncoefficients', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.kdecays.wilsoncoefficients" class="source">
+    <div class="codehilite"><pre><span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Functions for SM Wilson coefficients in kaon decays.&quot;&quot;&quot;</span>
 
-<span class="k">def</span> <span class="nf">load_parameters</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio.physics&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="n">ff_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]:</span>
-        <span class="k">try</span><span class="p">:</span> <span class="c1"># check if parameter object already exists</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
-        <span class="k">except</span><span class="p">:</span> <span class="c1"># otherwise, create a new one</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span> <span class="c1"># if parameter exists, remove existing constraints</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-    <span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;uncertainties&#39;</span><span class="p">],</span> <span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;uncertainties&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;correlation&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">covariance</span><span class="p">,</span> <span class="n">covariance</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
-        <span class="c1"># if the covariance is not symmetric, it is assumed that only the values above the diagonal are present.</span>
-        <span class="c1"># then: M -&gt; M + M^T - diag(M)</span>
-        <span class="n">covariance</span> <span class="o">=</span> <span class="n">covariance</span> <span class="o">+</span> <span class="n">covariance</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">covariance</span><span class="p">))</span>
-    <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">],</span>
-            <span class="n">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;central_values&#39;</span><span class="p">],</span> <span class="n">covariance</span><span class="o">=</span><span class="n">covariance</span><span class="p">)</span> <span class="p">)</span>
+<span class="kn">import</span> <span class="nn">scipy.interpolate</span>
+<span class="kn">from</span> <span class="nn">flavio.physics</span> <span class="kn">import</span> <span class="n">ckm</span>
+
+
+<span class="c1"># Table 1 of 1507.06345: Wilson coefficients at 1.3 GeV</span>
+<span class="c1"># for alpha_s = [0.1179, 0.1185, 0.1191]</span>
+<span class="n">_yz</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">0.4036</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4092</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4150</span><span class="p">],</span>
+<span class="p">[</span><span class="mf">1.2084</span><span class="p">,</span> <span class="mf">1.2120</span><span class="p">,</span> <span class="mf">1.2157</span><span class="p">],</span>
+<span class="p">[</span><span class="mf">0.0275</span><span class="p">,</span> <span class="mf">0.0280</span><span class="p">,</span> <span class="mf">0.0285</span><span class="p">],</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">0.0555</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0563</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0571</span><span class="p">],</span>
+<span class="p">[</span><span class="mf">0.0054</span><span class="p">,</span> <span class="mf">0.0052</span><span class="p">,</span> <span class="mf">0.0050</span><span class="p">],</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">0.0849</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0867</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0887</span><span class="p">],</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">0.0404</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0403</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0402</span><span class="p">],</span>
+<span class="p">[</span><span class="mf">0.1207</span><span class="p">,</span> <span class="mf">0.1234</span><span class="p">,</span> <span class="mf">0.1261</span><span class="p">],</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">1.3936</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.3981</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.4027</span><span class="p">],</span>
+<span class="p">[</span><span class="mf">0.4997</span><span class="p">,</span> <span class="mf">0.5071</span><span class="p">,</span> <span class="mf">0.5146</span><span class="p">]]</span>
+<span class="n">_yz_rows</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;z1&quot;</span><span class="p">,</span> <span class="s2">&quot;z2&quot;</span><span class="p">,</span> <span class="s2">&quot;y3&quot;</span><span class="p">,</span> <span class="s2">&quot;y4&quot;</span><span class="p">,</span> <span class="s2">&quot;y5&quot;</span><span class="p">,</span> <span class="s2">&quot;y6&quot;</span><span class="p">,</span> <span class="s2">&quot;y7/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y8/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y9/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y10/al&quot;</span><span class="p">,]</span>
+<span class="c1"># inter- &amp; extrapolating alpha_s dependence</span>
+<span class="n">wcsm</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">([</span><span class="mf">0.1179</span><span class="p">,</span> <span class="mf">0.1185</span><span class="p">,</span> <span class="mf">0.1191</span><span class="p">],</span> <span class="n">_yz</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">wilsoncoefficients_sm_fourquark</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the $\Delta S=1$ Wilson coefficients of four-quark operators</span>
+<span class="sd">    in the SM at the scale `scale`.</span>
+
+<span class="sd">    Currently only implemented for `scale=1.3`.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">scale</span> <span class="o">!=</span> <span class="mf">1.3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wilson coefficients only implemented for scale=1.3&quot;</span><span class="p">)</span>
+    <span class="n">wcarr</span> <span class="o">=</span> <span class="n">wcsm</span><span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">])</span>
+    <span class="n">wc_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;z1&quot;</span><span class="p">,</span> <span class="s2">&quot;z2&quot;</span><span class="p">,</span> <span class="s2">&quot;y3&quot;</span><span class="p">,</span> <span class="s2">&quot;y4&quot;</span><span class="p">,</span> <span class="s2">&quot;y5&quot;</span><span class="p">,</span> <span class="s2">&quot;y6&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;y7/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y8/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y9/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y10/al&quot;</span><span class="p">,],</span> <span class="n">wcarr</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;y7&#39;</span><span class="p">,</span> <span class="s1">&#39;y8&#39;</span><span class="p">,</span> <span class="s1">&#39;y9&#39;</span><span class="p">,</span> <span class="s1">&#39;y10&#39;</span><span class="p">]:</span>
+        <span class="n">wc_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;{}/al&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="o">/</span> <span class="mi">128</span>
+    <span class="k">return</span> <span class="n">wc_dict</span>
+
+
+<span class="k">def</span> <span class="nf">wilsoncoefficients_sm_sl</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the $\Delta S=1$ Wilson coefficients of semi-leptonic operators</span>
+<span class="sd">    in the SM at the scale `scale`.</span>
+
+<span class="sd">    Currently only $C_{10}$ (top and charm contributions) is implemented.&quot;&quot;&quot;</span>
+    <span class="n">wc_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># fold in approximate m_t-dependence of C_10 (see eq. 4 of arXiv:1311.0903)</span>
+    <span class="n">wc_dict</span><span class="p">[</span><span class="s1">&#39;C10_t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.10</span>  <span class="o">*</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_t&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">173.1</span><span class="p">)</span><span class="o">**</span><span class="mf">1.53</span>
+    <span class="n">Vus</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ckm</span><span class="o">.</span><span class="n">get_ckm</span><span class="p">(</span><span class="n">par</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">Pc</span> <span class="o">=</span> <span class="mf">0.115</span> <span class="c1"># +-0.011, arXiv:hep-ph/0605203</span>
+    <span class="n">wc_dict</span><span class="p">[</span><span class="s1">&#39;C10_c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">Pc</span> <span class="o">/</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;s2w&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">Vus</span><span class="o">**</span><span class="mi">4</span>
+    <span class="k">return</span> <span class="n">wc_dict</span>
 </pre></div>
 
   </div>
@@ -1106,37 +1141,79 @@ table {
   </header>
 
   <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="flavio.physics.kdecays.wilsoncoefficients.wcsm" class="name">var <span class="ident">wcsm</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
 
     <h2 class="section-title" id="header-functions">Functions</h2>
       
   <div class="item">
-    <div class="name def" id="flavio.physics.bdecays.formfactors.b_p.bcl_parameters.load_parameters">
-    <p>def <span class="ident">load_parameters</span>(</p><p>filename, constraints)</p>
+    <div class="name def" id="flavio.physics.kdecays.wilsoncoefficients.wilsoncoefficients_sm_fourquark">
+    <p>def <span class="ident">wilsoncoefficients_sm_fourquark</span>(</p><p>par, scale)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Return the $\Delta S=1$ Wilson coefficients of four-quark operators
+in the SM at the scale <code>scale</code>.</p>
+<p>Currently only implemented for <code>scale=1.3</code>.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_p.bcl_parameters.load_parameters', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.formfactors.b_p.bcl_parameters.load_parameters" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_parameters</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio.physics&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="n">ff_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]:</span>
-        <span class="k">try</span><span class="p">:</span> <span class="c1"># check if parameter object already exists</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
-        <span class="k">except</span><span class="p">:</span> <span class="c1"># otherwise, create a new one</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span> <span class="c1"># if parameter exists, remove existing constraints</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-    <span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;uncertainties&#39;</span><span class="p">],</span> <span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;uncertainties&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;correlation&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">covariance</span><span class="p">,</span> <span class="n">covariance</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
-        <span class="c1"># if the covariance is not symmetric, it is assumed that only the values above the diagonal are present.</span>
-        <span class="c1"># then: M -&gt; M + M^T - diag(M)</span>
-        <span class="n">covariance</span> <span class="o">=</span> <span class="n">covariance</span> <span class="o">+</span> <span class="n">covariance</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">covariance</span><span class="p">))</span>
-    <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">],</span>
-            <span class="n">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;central_values&#39;</span><span class="p">],</span> <span class="n">covariance</span><span class="o">=</span><span class="n">covariance</span><span class="p">)</span> <span class="p">)</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.wilsoncoefficients.wilsoncoefficients_sm_fourquark', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.kdecays.wilsoncoefficients.wilsoncoefficients_sm_fourquark" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">wilsoncoefficients_sm_fourquark</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the $\Delta S=1$ Wilson coefficients of four-quark operators</span>
+<span class="sd">    in the SM at the scale `scale`.</span>
+
+<span class="sd">    Currently only implemented for `scale=1.3`.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">scale</span> <span class="o">!=</span> <span class="mf">1.3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wilson coefficients only implemented for scale=1.3&quot;</span><span class="p">)</span>
+    <span class="n">wcarr</span> <span class="o">=</span> <span class="n">wcsm</span><span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">])</span>
+    <span class="n">wc_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;z1&quot;</span><span class="p">,</span> <span class="s2">&quot;z2&quot;</span><span class="p">,</span> <span class="s2">&quot;y3&quot;</span><span class="p">,</span> <span class="s2">&quot;y4&quot;</span><span class="p">,</span> <span class="s2">&quot;y5&quot;</span><span class="p">,</span> <span class="s2">&quot;y6&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;y7/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y8/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y9/al&quot;</span><span class="p">,</span> <span class="s2">&quot;y10/al&quot;</span><span class="p">,],</span> <span class="n">wcarr</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;y7&#39;</span><span class="p">,</span> <span class="s1">&#39;y8&#39;</span><span class="p">,</span> <span class="s1">&#39;y9&#39;</span><span class="p">,</span> <span class="s1">&#39;y10&#39;</span><span class="p">]:</span>
+        <span class="n">wc_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;{}/al&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="o">/</span> <span class="mi">128</span>
+    <span class="k">return</span> <span class="n">wc_dict</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.kdecays.wilsoncoefficients.wilsoncoefficients_sm_sl">
+    <p>def <span class="ident">wilsoncoefficients_sm_sl</span>(</p><p>par, scale)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the $\Delta S=1$ Wilson coefficients of semi-leptonic operators
+in the SM at the scale <code>scale</code>.</p>
+<p>Currently only $C_{10}$ (top and charm contributions) is implemented.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.wilsoncoefficients.wilsoncoefficients_sm_sl', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.kdecays.wilsoncoefficients.wilsoncoefficients_sm_sl" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">wilsoncoefficients_sm_sl</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the $\Delta S=1$ Wilson coefficients of semi-leptonic operators</span>
+<span class="sd">    in the SM at the scale `scale`.</span>
+
+<span class="sd">    Currently only $C_{10}$ (top and charm contributions) is implemented.&quot;&quot;&quot;</span>
+    <span class="n">wc_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># fold in approximate m_t-dependence of C_10 (see eq. 4 of arXiv:1311.0903)</span>
+    <span class="n">wc_dict</span><span class="p">[</span><span class="s1">&#39;C10_t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.10</span>  <span class="o">*</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_t&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">173.1</span><span class="p">)</span><span class="o">**</span><span class="mf">1.53</span>
+    <span class="n">Vus</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ckm</span><span class="o">.</span><span class="n">get_ckm</span><span class="p">(</span><span class="n">par</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">Pc</span> <span class="o">=</span> <span class="mf">0.115</span> <span class="c1"># +-0.011, arXiv:hep-ph/0605203</span>
+    <span class="n">wc_dict</span><span class="p">[</span><span class="s1">&#39;C10_c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">Pc</span> <span class="o">/</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;s2w&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">Vus</span><span class="o">**</span><span class="mi">4</span>
+    <span class="k">return</span> <span class="n">wc_dict</span>
 </pre></div>
 
   </div>

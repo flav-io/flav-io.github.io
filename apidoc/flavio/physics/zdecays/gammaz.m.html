@@ -1080,6 +1080,7 @@ table {
     <li class="mono"><a href="#flavio.physics.zdecays.gammaz.Remutau">Remutau</a></li>
     <li class="mono"><a href="#flavio.physics.zdecays.gammaz.Rl">Rl</a></li>
     <li class="mono"><a href="#flavio.physics.zdecays.gammaz.Rq">Rq</a></li>
+    <li class="mono"><a href="#flavio.physics.zdecays.gammaz.Rq1q2">Rq1q2</a></li>
     <li class="mono"><a href="#flavio.physics.zdecays.gammaz.sigmahad">sigmahad</a></li>
   </ul>
 
@@ -1194,6 +1195,12 @@ table {
     <span class="k">return</span> <span class="n">_Rq</span>
 
 
+<span class="k">def</span> <span class="nf">Rq1q2</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_Rq1q2</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">GammaZ</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">f1</span><span class="p">,</span> <span class="n">f1</span><span class="p">)</span> <span class="o">+</span> <span class="n">GammaZ</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f2</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Gammahad</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">_Rq1q2</span>
+
+
 <span class="k">def</span> <span class="nf">Remutau</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">_Remutau</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Gammahad</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span> <span class="o">/</span> <span class="n">GammaZ</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
@@ -1230,6 +1237,12 @@ table {
             <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Ratio of $Z^0$ partial widths to ${}$ pairs vs. all hadrons&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tex</span><span class="p">))</span>
             <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">Rq</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
 
+<span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;R_uc&quot;</span>
+<span class="n">_obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
+<span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$R_{uc}^0$&quot;</span>
+<span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Process :: $Z^0$ decays :: Flavour conserving decays :: $&#39;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
+<span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Average ratio of $Z^0$ partial widths to $u$ or $c$ pairs vs. all hadrons&quot;</span><span class="p">)</span>
+<span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">Rq1q2</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">))</span>
 
 <span class="c1"># LFV Z decays</span>
 <span class="k">for</span> <span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">),</span> <span class="p">]:</span>
@@ -1641,6 +1654,29 @@ table {
     <span class="k">def</span> <span class="nf">_Rq</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GammaZ</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="o">/</span> <span class="n">Gammahad</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_Rq</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.zdecays.gammaz.Rq1q2">
+    <p>def <span class="ident">Rq1q2</span>(</p><p>f1, f2)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.zdecays.gammaz.Rq1q2', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.zdecays.gammaz.Rq1q2" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Rq1q2</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_Rq1q2</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">GammaZ</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">f1</span><span class="p">,</span> <span class="n">f1</span><span class="p">)</span> <span class="o">+</span> <span class="n">GammaZ</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f2</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Gammahad</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">_Rq1q2</span>
 </pre></div>
 
   </div>

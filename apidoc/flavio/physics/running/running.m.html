@@ -1066,6 +1066,7 @@ table {
     <li class="mono"><a href="#flavio.physics.running.running.get_alpha">get_alpha</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_alpha_e">get_alpha_e</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_alpha_s">get_alpha_s</a></li>
+    <li class="mono"><a href="#flavio.physics.running.running.get_f_perp">get_f_perp</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_mb">get_mb</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_mb_1S">get_mb_1S</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_mb_KS">get_mb_KS</a></li>
@@ -1117,6 +1118,16 @@ table {
 <span class="kn">from</span> <span class="nn">wilson.util</span> <span class="kn">import</span> <span class="n">qcd</span>
 <span class="kn">import</span> <span class="nn">rundec</span>
 
+<span class="c1"># quark mass thresholds</span>
+<span class="k">def</span> <span class="nf">_thresholds</span><span class="p">():</span>
+    <span class="n">thresholds</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mc&#39;</span><span class="p">],</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mb&#39;</span><span class="p">],</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mt&#39;</span><span class="p">],</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="k">return</span> <span class="n">thresholds</span>
 
 <span class="k">def</span> <span class="nf">rg_evolve</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">,</span> <span class="n">derivative</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">):</span>
     <span class="n">sol</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="n">derivative</span><span class="p">,</span> <span class="n">initial_condition</span><span class="p">,</span> <span class="p">[</span><span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">])</span>
@@ -1133,14 +1144,7 @@ table {
 
 <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">][</span><span class="s1">&#39;cache size&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">_rg_evolve_sm</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">,</span> <span class="n">nf_out</span><span class="p">):</span>
-    <span class="c1"># quark mass thresholds</span>
-    <span class="n">thresholds</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="mi">3</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-        <span class="mi">4</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mc&#39;</span><span class="p">],</span>
-        <span class="mi">5</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mb&#39;</span><span class="p">],</span>
-        <span class="mi">6</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mt&#39;</span><span class="p">],</span>
-        <span class="mi">7</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-        <span class="p">}</span>
+    <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_thresholds</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">scale_in</span> <span class="o">&gt;</span> <span class="n">scale_out</span><span class="p">:</span> <span class="c1"># running DOWN</span>
         <span class="c1"># set initial values and scales</span>
         <span class="n">initial_nf</span> <span class="o">=</span> <span class="n">initial_condition</span>
@@ -1173,14 +1177,6 @@ table {
             <span class="n">initial_nf</span> <span class="o">=</span> <span class="n">sol</span>
             <span class="n">scale_in_nf</span> <span class="o">=</span> <span class="n">thresholds</span><span class="p">[</span><span class="n">nf</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">sol</span>
-
-    <span class="n">thresholds</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="mi">3</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-        <span class="mi">4</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mc&#39;</span><span class="p">],</span>
-        <span class="mi">5</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mb&#39;</span><span class="p">],</span>
-        <span class="mi">6</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;RGE thresholds&#39;</span><span class="p">][</span><span class="s1">&#39;mt&#39;</span><span class="p">],</span>
-        <span class="mi">7</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-        <span class="p">}</span>
 
 
 <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">][</span><span class="s1">&#39;cache size&#39;</span><span class="p">])</span>
@@ -1312,7 +1308,7 @@ table {
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get the $c$ quark mass in the kinetic scheme.&quot;&quot;&quot;</span>
     <span class="n">mcmc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_c&#39;</span><span class="p">]</span>
     <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mcmc</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">_get_mb_KS</span><span class="p">(</span><span class="n">mbmb</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">alpha_s</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_get_mc_KS</span><span class="p">(</span><span class="n">mcmc</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">alpha_s</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
 
 <span class="c1"># cached version</span>
@@ -1408,6 +1404,44 @@ table {
     <span class="n">sol</span> <span class="o">=</span> <span class="n">rg_evolve_sm</span><span class="p">(</span><span class="n">x_in</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="n">nf_out</span><span class="p">)</span>
     <span class="n">c_out</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">c_out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">complex</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">get_f_perp</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get the transverse meson decay constant at a given scale.</span>
+<span class="sd">    The argument `meson` should be one of `rho0`, `rho+`, `K*0`, `K*+`,</span>
+<span class="sd">    `omega`, `phi`. The input value for the transverse decay constant is taken</span>
+<span class="sd">    from `par` and is assumed to be at a scale of 2 GeV in the 3-flavour</span>
+<span class="sd">    scheme.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_thresholds</span><span class="p">()</span>
+    <span class="n">f_perp</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;f_perp_&#39;</span> <span class="o">+</span>  <span class="n">meson</span><span class="p">]</span>
+    <span class="n">scale_start</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">nf</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">if</span> <span class="n">scale</span> <span class="o">==</span> <span class="n">scale_start</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">f_perp</span>
+    <span class="k">for</span> <span class="n">nf</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+        <span class="c1"># run to final scale directly if nf equals nf_out</span>
+        <span class="k">if</span> <span class="n">nf_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="n">nf</span><span class="p">:</span>
+            <span class="n">scale_stop</span> <span class="o">=</span> <span class="n">scale</span>
+        <span class="c1"># run either to next threshold or to final scale, whichever is closer</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scale_stop</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">thresholds</span><span class="p">[</span><span class="n">nf</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">scale</span><span class="p">)</span>
+        <span class="n">f_perp</span> <span class="o">=</span> <span class="n">_rg_factor_f_perp</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_start</span><span class="p">,</span> <span class="n">scale_stop</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span> <span class="o">*</span> <span class="n">f_perp</span>
+        <span class="k">if</span> <span class="n">scale_stop</span> <span class="o">==</span> <span class="n">scale</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">f_perp</span>
+        <span class="n">scale_start</span> <span class="o">=</span> <span class="n">thresholds</span><span class="p">[</span><span class="n">nf</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">_rg_factor_f_perp</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_start</span><span class="p">,</span> <span class="n">scale_stop</span><span class="p">,</span> <span class="n">nf</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;This function returns the leading order renormalization group (RG)</span>
+<span class="sd">    factor that relates the value of the transverse meson decay constant</span>
+<span class="sd">    at the scale `scale_stop` to its value at the scale `scale_start`.</span>
+<span class="sd">    The number of fermion flavours to be taken into account is specified by</span>
+<span class="sd">    `nf`. The exponent used in the RG factor can be written es `4/(3*beta_0)`,</span>
+<span class="sd">    where `beta_0` is given by `11-2*nf/3` (cf. e.g.</span>
+<span class="sd">    https://arxiv.org/abs/hep-lat/0301020 eq. (14)).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alpha_start</span> <span class="o">=</span> <span class="n">get_alpha_s</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_start</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="n">nf</span><span class="p">)</span>
+    <span class="n">alpha_stop</span> <span class="o">=</span> <span class="n">get_alpha_s</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_stop</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="n">nf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">alpha_stop</span> <span class="o">/</span> <span class="n">alpha_start</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">4</span> <span class="o">/</span> <span class="p">(</span><span class="mi">33</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">nf</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1532,6 +1566,54 @@ $\alpha_s$ at the specified scale.</p></div>
 <span class="sd">    $\alpha_s$ at the specified scale.&quot;&quot;&quot;</span>
     <span class="n">nf</span> <span class="o">=</span> <span class="n">nf_out</span> <span class="ow">or</span> <span class="n">get_nf</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">qcd</span><span class="o">.</span><span class="n">alpha_s</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">nf</span><span class="p">,</span> <span class="n">alphasMZ</span><span class="o">=</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">])</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.running.running.get_f_perp">
+    <p>def <span class="ident">get_f_perp</span>(</p><p>par, meson, scale, nf_out=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the transverse meson decay constant at a given scale.
+The argument <code>meson</code> should be one of <code>rho0</code>, <code>rho+</code>, <code>K*0</code>, <code>K*+</code>,
+<code>omega</code>, <code>phi</code>. The input value for the transverse decay constant is taken
+from <code>par</code> and is assumed to be at a scale of 2 GeV in the 3-flavour
+scheme.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_f_perp', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.running.running.get_f_perp" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_f_perp</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get the transverse meson decay constant at a given scale.</span>
+<span class="sd">    The argument `meson` should be one of `rho0`, `rho+`, `K*0`, `K*+`,</span>
+<span class="sd">    `omega`, `phi`. The input value for the transverse decay constant is taken</span>
+<span class="sd">    from `par` and is assumed to be at a scale of 2 GeV in the 3-flavour</span>
+<span class="sd">    scheme.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_thresholds</span><span class="p">()</span>
+    <span class="n">f_perp</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;f_perp_&#39;</span> <span class="o">+</span>  <span class="n">meson</span><span class="p">]</span>
+    <span class="n">scale_start</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">nf</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">if</span> <span class="n">scale</span> <span class="o">==</span> <span class="n">scale_start</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">f_perp</span>
+    <span class="k">for</span> <span class="n">nf</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+        <span class="c1"># run to final scale directly if nf equals nf_out</span>
+        <span class="k">if</span> <span class="n">nf_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="n">nf</span><span class="p">:</span>
+            <span class="n">scale_stop</span> <span class="o">=</span> <span class="n">scale</span>
+        <span class="c1"># run either to next threshold or to final scale, whichever is closer</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scale_stop</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">thresholds</span><span class="p">[</span><span class="n">nf</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">scale</span><span class="p">)</span>
+        <span class="n">f_perp</span> <span class="o">=</span> <span class="n">_rg_factor_f_perp</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_start</span><span class="p">,</span> <span class="n">scale_stop</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span> <span class="o">*</span> <span class="n">f_perp</span>
+        <span class="k">if</span> <span class="n">scale_stop</span> <span class="o">==</span> <span class="n">scale</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">f_perp</span>
+        <span class="n">scale_start</span> <span class="o">=</span> <span class="n">thresholds</span><span class="p">[</span><span class="n">nf</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
 </pre></div>
 
   </div>
@@ -1681,7 +1763,7 @@ formula from the $\overline{\mathrm{MS}}$ mass.</p></div>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get the $c$ quark mass in the kinetic scheme.&quot;&quot;&quot;</span>
     <span class="n">mcmc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_c&#39;</span><span class="p">]</span>
     <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mcmc</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">_get_mb_KS</span><span class="p">(</span><span class="n">mbmb</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">alpha_s</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_get_mc_KS</span><span class="p">(</span><span class="n">mcmc</span><span class="o">=</span><span class="n">mcmc</span><span class="p">,</span> <span class="n">alpha_s</span><span class="o">=</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">nl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
   </div>

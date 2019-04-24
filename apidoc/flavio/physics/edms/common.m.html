@@ -1065,6 +1065,7 @@ table {
     <li class="mono"><a href="#flavio.physics.edms.common.cedm_f">cedm_f</a></li>
     <li class="mono"><a href="#flavio.physics.edms.common.edm_f">edm_f</a></li>
     <li class="mono"><a href="#flavio.physics.edms.common.get_m">get_m</a></li>
+    <li class="mono"><a href="#flavio.physics.edms.common.proton_charges">proton_charges</a></li>
   </ul>
 
     </li>
@@ -1140,6 +1141,28 @@ table {
     <span class="n">m</span> <span class="o">=</span> <span class="n">get_m</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="p">)</span>
     <span class="n">pre_gs</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">16</span> <span class="o">*</span> <span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">m</span>  <span class="c1"># p / gs</span>
     <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pre_gs</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;C8_{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">f</span><span class="p">)]</span><span class="o">.</span><span class="n">imag</span>
+
+
+<span class="k">def</span> <span class="nf">proton_charges</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Charges of the nucleon.&quot;&quot;&quot;</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">md</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_md</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ms</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">me</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># u-d</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gV_u-d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># CVC</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gA_u-d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;g_A&#39;</span><span class="p">]</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gS_u-d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gS_u-d&#39;</span><span class="p">]</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gP_u-d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_p&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_n&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">md</span> <span class="o">+</span> <span class="n">mu</span><span class="p">)</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;g_A&#39;</span><span class="p">]</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gT_u-d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gT_u&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gT_d&#39;</span><span class="p">]</span>
+    <span class="c1"># u+d</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gS_u+d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;sigma_piN&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">((</span><span class="n">md</span> <span class="o">+</span> <span class="n">mu</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gT_u+d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gT_u&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gT_d&#39;</span><span class="p">]</span>
+    <span class="c1"># strange</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gA_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gA_s&#39;</span><span class="p">]</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gS_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;sigma_s&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">ms</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gT_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gT_s&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">me</span>
 </pre></div>
 
   </div>
@@ -1269,6 +1292,46 @@ of the operator in the effective Lagrangian.</p></div>
         <span class="k">return</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="n">nf_out</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;get_m not defined for fermion {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.edms.common.proton_charges">
+    <p>def <span class="ident">proton_charges</span>(</p><p>par, scale)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Charges of the nucleon.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.edms.common.proton_charges', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.edms.common.proton_charges" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">proton_charges</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Charges of the nucleon.&quot;&quot;&quot;</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">md</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_md</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ms</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">me</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># u-d</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gV_u-d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># CVC</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gA_u-d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;g_A&#39;</span><span class="p">]</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gS_u-d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gS_u-d&#39;</span><span class="p">]</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gP_u-d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_p&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_n&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">md</span> <span class="o">+</span> <span class="n">mu</span><span class="p">)</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;g_A&#39;</span><span class="p">]</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gT_u-d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gT_u&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gT_d&#39;</span><span class="p">]</span>
+    <span class="c1"># u+d</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gS_u+d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;sigma_piN&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">((</span><span class="n">md</span> <span class="o">+</span> <span class="n">mu</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gT_u+d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gT_u&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gT_d&#39;</span><span class="p">]</span>
+    <span class="c1"># strange</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gA_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gA_s&#39;</span><span class="p">]</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gS_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;sigma_s&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">ms</span>
+    <span class="n">me</span><span class="p">[</span><span class="s1">&#39;gT_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;gT_s&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">me</span>
 </pre></div>
 
   </div>

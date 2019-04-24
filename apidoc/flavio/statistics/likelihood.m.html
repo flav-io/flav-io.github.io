@@ -1236,6 +1236,8 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="o">=</span> <span class="n">exclude_measurements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="o">=</span> <span class="n">include_measurements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">include_pseudo_measurements</span> <span class="o">=</span> <span class="n">include_pseudo_measurements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_hash</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_values</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="n">exclude_measurements</span> <span class="ow">and</span> <span class="n">include_measurements</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The options exclude_measurements and include_measurements must not be specified simultaneously&quot;</span><span class="p">)</span>
 
@@ -1312,33 +1314,46 @@ table {
     <span class="k">def</span> <span class="nf">get_predictions_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compute the predictions for all observables as functions of</span>
 <span class="sd">        a parameter dictionary `par_dict`and WilsonCoefficient instance</span>
-<span class="sd">        `wc_obj`&quot;&quot;&quot;</span>
-        <span class="n">all_predictions</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">:</span>
-            <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="s1">&#39;dict&#39;</span><span class="p">)</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
-            <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="n">all_predictions</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">**</span><span class="n">obs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">all_predictions</span>
+<span class="sd">        `wc_obj`.</span>
+<span class="sd">        The latest computed values are cached and returned if the function is</span>
+<span class="sd">        called successively with the same arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># compute a hash from the function&#39;s arguments used for caching</span>
+        <span class="n">arg_hash</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span><span class="n">wc_obj</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">arg_hash</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_hash</span><span class="p">:</span>
+            <span class="n">all_predictions</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">:</span>
+                <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="s1">&#39;dict&#39;</span><span class="p">)</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+                <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">all_predictions</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">**</span><span class="n">obs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_values</span> <span class="o">=</span> <span class="n">all_predictions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_hash</span> <span class="o">=</span> <span class="n">arg_hash</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_values</span>
 
-    <span class="k">def</span> <span class="nf">log_likelihood_pred</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_likelihood_pred</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred_dict</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the logarithm of the likelihood function as a function of</span>
 <span class="sd">        a dictionary of observable predictions `pred_dict`&quot;&quot;&quot;</span>
         <span class="n">ll</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">:</span>
             <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="p">[</span><span class="n">measurement</span><span class="p">]</span>
-            <span class="n">m_obs</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
-            <span class="n">exclude_observables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">m_obs</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span>
-            <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">pred_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">)</span>
+            <span class="n">m_obs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">)</span>
+            <span class="n">exclude_observables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">exclude_observables</span> <span class="ow">or</span> <span class="p">[])</span>
+            <span class="c1"># exclude the observables not contained in the likelihood</span>
+            <span class="c1"># as well as the ones explicitly excluded by `exclude_observables`</span>
+            <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="n">m_obs</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span> <span class="o">|</span> <span class="n">exclude_observables</span>
+            <span class="k">if</span> <span class="n">m_obs</span> <span class="o">==</span> <span class="n">exclude_parameters</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># if all measured observables are excluded: nothing to do</span>
+            <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">pred_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
             <span class="n">ll</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">prob_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">ll</span>
 
-    <span class="k">def</span> <span class="nf">log_likelihood_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_likelihood_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the logarithm of the likelihood function as a function of</span>
 <span class="sd">        a parameter dictionary `par_dict` and WilsonCoefficient instance</span>
 <span class="sd">        `wc_obj`&quot;&quot;&quot;</span>
         <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood_pred</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood_pred</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">ParameterLikelihood</span><span class="p">(</span><span class="n">iio</span><span class="o">.</span><span class="n">YAMLLoadable</span><span class="p">):</span>
@@ -1380,13 +1395,13 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">log_likelihood_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_likelihood_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the prior probability for all parameters.</span>
 
 <span class="sd">        Note that only the parameters in `self.parameters` will give a</span>
 <span class="sd">        contribution to the likelihood.&quot;&quot;&quot;</span>
         <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
-        <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">)</span>
+        <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prob_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
 
     <span class="nd">@property</span>
@@ -1458,24 +1473,24 @@ table {
             <span class="n">par_obj</span><span class="o">=</span><span class="n">par_obj</span><span class="p">,</span>
             <span class="n">parameters</span><span class="o">=</span><span class="n">fit_parameters</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">log_prior_fit_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_prior_fit_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Parameter contribution to the log-likelihood.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># nothing to do</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_likelihood</span><span class="o">.</span><span class="n">log_likelihood_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_likelihood</span><span class="o">.</span><span class="n">log_likelihood_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">log_likelihood_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_likelihood_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Experimental contribution to the log-likelihood.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurement_likelihood</span><span class="o">.</span><span class="n">log_likelihood_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurement_likelihood</span><span class="o">.</span><span class="n">log_likelihood_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Total log-likelihood.</span>
 
 <span class="sd">        Parameters:</span>
 <span class="sd">        - `par_dict`: a dictionary of parameter values</span>
 <span class="sd">        - `wc_obj`: an instance of `WilsonCoefficients` or `wilson.Wilson`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_prior_fit_parameters</span><span class="p">(</span><span class="n">par_dict</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood_exp</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_prior_fit_parameters</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood_exp</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">SMCovariance</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -1701,12 +1716,12 @@ table {
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_central_cov</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">d</span><span class="p">[</span><span class="s1">&#39;central&#39;</span><span class="p">],</span>
                 <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_central_cov</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">d</span><span class="p">[</span><span class="s1">&#39;central&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">],</span>
                 <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span> <span class="n">permutation</span><span class="p">],</span>
             <span class="p">)</span>
@@ -1851,14 +1866,14 @@ table {
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You need to call `make_measurement` first.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood</span>
 
-    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Log-likelihood function.</span>
 
 <span class="sd">        Parameters:</span>
 <span class="sd">        - `par_dict`: a dictionary of parameter values</span>
 <span class="sd">        - `wc_obj`: an instance of `WilsonCoefficients` or `wilson.Wilson`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="n">log_likelihood_exp</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="n">log_likelihood_exp</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2054,14 +2069,14 @@ and <code>dump</code> methods.</p></div>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You need to call `make_measurement` first.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood</span>
 
-    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Log-likelihood function.</span>
 
 <span class="sd">        Parameters:</span>
 <span class="sd">        - `par_dict`: a dictionary of parameter values</span>
 <span class="sd">        - `wc_obj`: an instance of `WilsonCoefficients` or `wilson.Wilson`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="n">log_likelihood_exp</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="n">log_likelihood_exp</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2080,7 +2095,7 @@ and <code>dump</code> methods.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.FastLikelihood.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fdce3683e80&gt;, fit_parameters=None, nuisance_parameters=&#39;all&#39;, observables=None, exclude_measurements=None, include_measurements=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fccaf2e4048&gt;, fit_parameters=None, nuisance_parameters=&#39;all&#39;, observables=None, exclude_measurements=None, include_measurements=None)</p>
     </div>
     
 
@@ -2182,7 +2197,7 @@ and <code>dump</code> methods.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.FastLikelihood.log_likelihood">
-    <p>def <span class="ident">log_likelihood</span>(</p><p>self, par_dict, wc_obj)</p>
+    <p>def <span class="ident">log_likelihood</span>(</p><p>self, par_dict, wc_obj, exclude_observables=None, delta=False)</p>
     </div>
     
 
@@ -2195,13 +2210,13 @@ and <code>dump</code> methods.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.FastLikelihood.log_likelihood', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.FastLikelihood.log_likelihood" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Log-likelihood function.</span>
 <span class="sd">    Parameters:</span>
 <span class="sd">    - `par_dict`: a dictionary of parameter values</span>
 <span class="sd">    - `wc_obj`: an instance of `WilsonCoefficients` or `wilson.Wilson`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="n">log_likelihood_exp</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="n">log_likelihood_exp</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2657,24 +2672,24 @@ and <code>dump</code> methods.</p></div>
             <span class="n">par_obj</span><span class="o">=</span><span class="n">par_obj</span><span class="p">,</span>
             <span class="n">parameters</span><span class="o">=</span><span class="n">fit_parameters</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">log_prior_fit_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_prior_fit_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Parameter contribution to the log-likelihood.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># nothing to do</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_likelihood</span><span class="o">.</span><span class="n">log_likelihood_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_likelihood</span><span class="o">.</span><span class="n">log_likelihood_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">log_likelihood_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_likelihood_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Experimental contribution to the log-likelihood.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurement_likelihood</span><span class="o">.</span><span class="n">log_likelihood_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurement_likelihood</span><span class="o">.</span><span class="n">log_likelihood_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Total log-likelihood.</span>
 
 <span class="sd">        Parameters:</span>
 <span class="sd">        - `par_dict`: a dictionary of parameter values</span>
 <span class="sd">        - `wc_obj`: an instance of `WilsonCoefficients` or `wilson.Wilson`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_prior_fit_parameters</span><span class="p">(</span><span class="n">par_dict</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood_exp</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_prior_fit_parameters</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood_exp</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2692,7 +2707,7 @@ and <code>dump</code> methods.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.Likelihood.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fdce3683e80&gt;, fit_parameters=None, observables=None, exclude_measurements=None, include_measurements=None, include_pseudo_measurements=False)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fccaf2e4048&gt;, fit_parameters=None, observables=None, exclude_measurements=None, include_measurements=None, include_pseudo_measurements=False)</p>
     </div>
     
 
@@ -2786,7 +2801,7 @@ and <code>dump</code> methods.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.Likelihood.log_likelihood">
-    <p>def <span class="ident">log_likelihood</span>(</p><p>self, par_dict, wc_obj)</p>
+    <p>def <span class="ident">log_likelihood</span>(</p><p>self, par_dict, wc_obj, exclude_observables=None, delta=False)</p>
     </div>
     
 
@@ -2799,13 +2814,13 @@ and <code>dump</code> methods.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.Likelihood.log_likelihood', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.Likelihood.log_likelihood" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Total log-likelihood.</span>
 <span class="sd">    Parameters:</span>
 <span class="sd">    - `par_dict`: a dictionary of parameter values</span>
 <span class="sd">    - `wc_obj`: an instance of `WilsonCoefficients` or `wilson.Wilson`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_prior_fit_parameters</span><span class="p">(</span><span class="n">par_dict</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood_exp</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_prior_fit_parameters</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood_exp</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2816,7 +2831,7 @@ and <code>dump</code> methods.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.Likelihood.log_likelihood_exp">
-    <p>def <span class="ident">log_likelihood_exp</span>(</p><p>self, par_dict, wc_obj)</p>
+    <p>def <span class="ident">log_likelihood_exp</span>(</p><p>self, par_dict, wc_obj, exclude_observables=None, delta=False)</p>
     </div>
     
 
@@ -2826,9 +2841,9 @@ and <code>dump</code> methods.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.Likelihood.log_likelihood_exp', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.Likelihood.log_likelihood_exp" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_likelihood_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_likelihood_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Experimental contribution to the log-likelihood.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurement_likelihood</span><span class="o">.</span><span class="n">log_likelihood_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurement_likelihood</span><span class="o">.</span><span class="n">log_likelihood_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2839,7 +2854,7 @@ and <code>dump</code> methods.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.Likelihood.log_prior_fit_parameters">
-    <p>def <span class="ident">log_prior_fit_parameters</span>(</p><p>self, par_dict)</p>
+    <p>def <span class="ident">log_prior_fit_parameters</span>(</p><p>self, par_dict, delta=False)</p>
     </div>
     
 
@@ -2849,11 +2864,11 @@ and <code>dump</code> methods.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.Likelihood.log_prior_fit_parameters', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.Likelihood.log_prior_fit_parameters" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_prior_fit_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_prior_fit_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Parameter contribution to the log-likelihood.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_parameters</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># nothing to do</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_likelihood</span><span class="o">.</span><span class="n">log_likelihood_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_likelihood</span><span class="o">.</span><span class="n">log_likelihood_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3185,12 +3200,12 @@ values of experimental measurements.</p>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
             <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_central_cov</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">d</span><span class="p">[</span><span class="s1">&#39;central&#39;</span><span class="p">],</span>
                 <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_central_cov</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">d</span><span class="p">[</span><span class="s1">&#39;central&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">],</span>
                 <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span> <span class="n">permutation</span><span class="p">],</span>
             <span class="p">)</span>
@@ -3406,12 +3421,12 @@ ordering is arbitrary.</p></div>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">observables</span><span class="p">),</span> \
         <span class="s2">&quot;Covariance matrix does not contain all necessary entries&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_central_cov</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">d</span><span class="p">[</span><span class="s1">&#39;central&#39;</span><span class="p">],</span>
             <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">]</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_exp_central_covariance</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_central_cov</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">d</span><span class="p">[</span><span class="s1">&#39;central&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">],</span>
             <span class="n">d</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">][</span><span class="n">permutation</span><span class="p">][:,</span> <span class="n">permutation</span><span class="p">],</span>
         <span class="p">)</span>
@@ -3541,6 +3556,8 @@ and <code>dump</code> methods.</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="o">=</span> <span class="n">exclude_measurements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="o">=</span> <span class="n">include_measurements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">include_pseudo_measurements</span> <span class="o">=</span> <span class="n">include_pseudo_measurements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_hash</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_values</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="n">exclude_measurements</span> <span class="ow">and</span> <span class="n">include_measurements</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The options exclude_measurements and include_measurements must not be specified simultaneously&quot;</span><span class="p">)</span>
 
@@ -3617,33 +3634,46 @@ and <code>dump</code> methods.</p></div>
     <span class="k">def</span> <span class="nf">get_predictions_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compute the predictions for all observables as functions of</span>
 <span class="sd">        a parameter dictionary `par_dict`and WilsonCoefficient instance</span>
-<span class="sd">        `wc_obj`&quot;&quot;&quot;</span>
-        <span class="n">all_predictions</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">:</span>
-            <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="s1">&#39;dict&#39;</span><span class="p">)</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
-            <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="n">all_predictions</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">**</span><span class="n">obs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">all_predictions</span>
+<span class="sd">        `wc_obj`.</span>
+<span class="sd">        The latest computed values are cached and returned if the function is</span>
+<span class="sd">        called successively with the same arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># compute a hash from the function&#39;s arguments used for caching</span>
+        <span class="n">arg_hash</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span><span class="n">wc_obj</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">arg_hash</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_hash</span><span class="p">:</span>
+            <span class="n">all_predictions</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">:</span>
+                <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="s1">&#39;dict&#39;</span><span class="p">)</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+                <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">all_predictions</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">**</span><span class="n">obs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_values</span> <span class="o">=</span> <span class="n">all_predictions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_hash</span> <span class="o">=</span> <span class="n">arg_hash</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_values</span>
 
-    <span class="k">def</span> <span class="nf">log_likelihood_pred</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_likelihood_pred</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred_dict</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the logarithm of the likelihood function as a function of</span>
 <span class="sd">        a dictionary of observable predictions `pred_dict`&quot;&quot;&quot;</span>
         <span class="n">ll</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">:</span>
             <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="p">[</span><span class="n">measurement</span><span class="p">]</span>
-            <span class="n">m_obs</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
-            <span class="n">exclude_observables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">m_obs</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span>
-            <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">pred_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">)</span>
+            <span class="n">m_obs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">)</span>
+            <span class="n">exclude_observables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">exclude_observables</span> <span class="ow">or</span> <span class="p">[])</span>
+            <span class="c1"># exclude the observables not contained in the likelihood</span>
+            <span class="c1"># as well as the ones explicitly excluded by `exclude_observables`</span>
+            <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="n">m_obs</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span> <span class="o">|</span> <span class="n">exclude_observables</span>
+            <span class="k">if</span> <span class="n">m_obs</span> <span class="o">==</span> <span class="n">exclude_parameters</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># if all measured observables are excluded: nothing to do</span>
+            <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">pred_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
             <span class="n">ll</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">prob_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">ll</span>
 
-    <span class="k">def</span> <span class="nf">log_likelihood_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_likelihood_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the logarithm of the likelihood function as a function of</span>
 <span class="sd">        a parameter dictionary `par_dict` and WilsonCoefficient instance</span>
 <span class="sd">        `wc_obj`&quot;&quot;&quot;</span>
         <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood_pred</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood_pred</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3702,6 +3732,8 @@ carry 'Pseudo-measurement' in their name).</p></div>
     <span class="bp">self</span><span class="o">.</span><span class="n">exclude_measurements</span> <span class="o">=</span> <span class="n">exclude_measurements</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">include_measurements</span> <span class="o">=</span> <span class="n">include_measurements</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">include_pseudo_measurements</span> <span class="o">=</span> <span class="n">include_pseudo_measurements</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_hash</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_values</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="n">exclude_measurements</span> <span class="ow">and</span> <span class="n">include_measurements</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The options exclude_measurements and include_measurements must not be specified simultaneously&quot;</span><span class="p">)</span>
     <span class="c1"># check that observables are constrained</span>
@@ -3754,21 +3786,31 @@ carry 'Pseudo-measurement' in their name).</p></div>
   
     <div class="desc"><p>Compute the predictions for all observables as functions of
 a parameter dictionary <code>par_dict</code>and WilsonCoefficient instance
-<code>wc_obj</code></p></div>
+<code>wc_obj</code>.
+The latest computed values are cached and returned if the function is
+called successively with the same arguments.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.MeasurementLikelihood.get_predictions_par', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.MeasurementLikelihood.get_predictions_par" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_predictions_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the predictions for all observables as functions of</span>
 <span class="sd">    a parameter dictionary `par_dict`and WilsonCoefficient instance</span>
-<span class="sd">    `wc_obj`&quot;&quot;&quot;</span>
-    <span class="n">all_predictions</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">:</span>
-        <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="s1">&#39;dict&#39;</span><span class="p">)</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
-        <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="n">all_predictions</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">**</span><span class="n">obs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">all_predictions</span>
+<span class="sd">    `wc_obj`.</span>
+<span class="sd">    The latest computed values are cached and returned if the function is</span>
+<span class="sd">    called successively with the same arguments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># compute a hash from the function&#39;s arguments used for caching</span>
+    <span class="n">arg_hash</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">par_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span><span class="n">wc_obj</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">arg_hash</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_hash</span><span class="p">:</span>
+        <span class="n">all_predictions</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">observable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">:</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="n">observable</span><span class="p">,</span> <span class="s1">&#39;dict&#39;</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+            <span class="n">_inst</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">all_predictions</span><span class="p">[</span><span class="n">observable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">**</span><span class="n">obs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_values</span> <span class="o">=</span> <span class="n">all_predictions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_hash</span> <span class="o">=</span> <span class="n">arg_hash</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predictions_cache_values</span>
 </pre></div>
 
   </div>
@@ -3807,7 +3849,7 @@ a parameter dictionary <code>par_dict</code>and WilsonCoefficient instance
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.MeasurementLikelihood.log_likelihood_par">
-    <p>def <span class="ident">log_likelihood_par</span>(</p><p>self, par_dict, wc_obj)</p>
+    <p>def <span class="ident">log_likelihood_par</span>(</p><p>self, par_dict, wc_obj, exclude_observables=None, delta=False)</p>
     </div>
     
 
@@ -3819,12 +3861,12 @@ a parameter dictionary <code>par_dict</code> and WilsonCoefficient instance
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.MeasurementLikelihood.log_likelihood_par', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.MeasurementLikelihood.log_likelihood_par" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_likelihood_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_likelihood_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return the logarithm of the likelihood function as a function of</span>
 <span class="sd">    a parameter dictionary `par_dict` and WilsonCoefficient instance</span>
 <span class="sd">    `wc_obj`&quot;&quot;&quot;</span>
     <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions_par</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood_pred</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood_pred</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3835,7 +3877,7 @@ a parameter dictionary <code>par_dict</code> and WilsonCoefficient instance
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.MeasurementLikelihood.log_likelihood_pred">
-    <p>def <span class="ident">log_likelihood_pred</span>(</p><p>self, pred_dict)</p>
+    <p>def <span class="ident">log_likelihood_pred</span>(</p><p>self, pred_dict, exclude_observables=None, delta=False)</p>
     </div>
     
 
@@ -3846,15 +3888,20 @@ a dictionary of observable predictions <code>pred_dict</code></p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.MeasurementLikelihood.log_likelihood_pred', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.MeasurementLikelihood.log_likelihood_pred" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_likelihood_pred</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred_dict</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_likelihood_pred</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred_dict</span><span class="p">,</span> <span class="n">exclude_observables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return the logarithm of the likelihood function as a function of</span>
 <span class="sd">    a dictionary of observable predictions `pred_dict`&quot;&quot;&quot;</span>
     <span class="n">ll</span> <span class="o">=</span> <span class="mf">0.</span>
     <span class="k">for</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">:</span>
         <span class="n">m_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="p">[</span><span class="n">measurement</span><span class="p">]</span>
-        <span class="n">m_obs</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
-        <span class="n">exclude_observables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">m_obs</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span>
-        <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">pred_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_observables</span><span class="p">)</span>
+        <span class="n">m_obs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">)</span>
+        <span class="n">exclude_observables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">exclude_observables</span> <span class="ow">or</span> <span class="p">[])</span>
+        <span class="c1"># exclude the observables not contained in the likelihood</span>
+        <span class="c1"># as well as the ones explicitly excluded by `exclude_observables`</span>
+        <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="n">m_obs</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">)</span> <span class="o">|</span> <span class="n">exclude_observables</span>
+        <span class="k">if</span> <span class="n">m_obs</span> <span class="o">==</span> <span class="n">exclude_parameters</span><span class="p">:</span>
+            <span class="k">continue</span>  <span class="c1"># if all measured observables are excluded: nothing to do</span>
+        <span class="n">prob_dict</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">pred_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
         <span class="n">ll</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">prob_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">ll</span>
 </pre></div>
@@ -4071,13 +4118,13 @@ and <code>dump</code> methods.</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">log_likelihood_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">log_likelihood_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the prior probability for all parameters.</span>
 
 <span class="sd">        Note that only the parameters in `self.parameters` will give a</span>
 <span class="sd">        contribution to the likelihood.&quot;&quot;&quot;</span>
         <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
-        <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">)</span>
+        <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prob_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
 
     <span class="nd">@property</span>
@@ -4107,7 +4154,7 @@ and <code>dump</code> methods.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.ParameterLikelihood.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fdce3683e80&gt;, parameters=None)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fccaf2e4048&gt;, parameters=None)</p>
     </div>
     
 
@@ -4199,7 +4246,7 @@ into account in the likelihood.</li>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.likelihood.ParameterLikelihood.log_likelihood_par">
-    <p>def <span class="ident">log_likelihood_par</span>(</p><p>self, par_dict)</p>
+    <p>def <span class="ident">log_likelihood_par</span>(</p><p>self, par_dict, delta=False)</p>
     </div>
     
 
@@ -4211,12 +4258,12 @@ contribution to the likelihood.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.likelihood.ParameterLikelihood.log_likelihood_par', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.likelihood.ParameterLikelihood.log_likelihood_par" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_likelihood_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">log_likelihood_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return the prior probability for all parameters.</span>
 <span class="sd">    Note that only the parameters in `self.parameters` will give a</span>
 <span class="sd">    contribution to the likelihood.&quot;&quot;&quot;</span>
     <span class="n">exclude_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
-    <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">)</span>
+    <span class="n">prob_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">par_obj</span><span class="o">.</span><span class="n">get_logprobability_all</span><span class="p">(</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="n">exclude_parameters</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prob_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
 </pre></div>
 

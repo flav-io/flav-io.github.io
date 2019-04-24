@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>flavio.physics.bdecays.formfactors.b_p.bcl_parameters API documentation</title>
-    <meta name="description" content="" />
+    <title>flavio.physics.bdecays.bc_lifetime API documentation</title>
+    <meta name="description" content="$B_c$ lifetime" />
 
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400' rel='stylesheet' type='text/css'>
@@ -1054,7 +1054,7 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
-    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.b_p.bcl_parameters.load_parameters">load_parameters</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bc_lifetime.tau_Bc">tau_Bc</a></li>
   </ul>
 
     </li>
@@ -1071,34 +1071,40 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">flavio.physics.bdecays.formfactors.b_p.bcl_parameters</span> module</h1>
+  <h1 class="title"><span class="name">flavio.physics.bdecays.bc_lifetime</span> module</h1>
+  <p>$B_c$ lifetime</p>
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_p.bcl_parameters', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.formfactors.b_p.bcl_parameters" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">import</span> <span class="nn">pkgutil</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">Parameter</span>
-<span class="kn">from</span> <span class="nn">flavio.statistics.probability</span> <span class="kn">import</span> <span class="n">MultivariateNormalDistribution</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bc_lifetime', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bc_lifetime" class="source">
+    <div class="codehilite"><pre><span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;$B_c$ lifetime&quot;&quot;&quot;</span>
 
-<span class="k">def</span> <span class="nf">load_parameters</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio.physics&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="n">ff_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]:</span>
-        <span class="k">try</span><span class="p">:</span> <span class="c1"># check if parameter object already exists</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
-        <span class="k">except</span><span class="p">:</span> <span class="c1"># otherwise, create a new one</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span> <span class="c1"># if parameter exists, remove existing constraints</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-    <span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;uncertainties&#39;</span><span class="p">],</span> <span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;uncertainties&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;correlation&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">covariance</span><span class="p">,</span> <span class="n">covariance</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
-        <span class="c1"># if the covariance is not symmetric, it is assumed that only the values above the diagonal are present.</span>
-        <span class="c1"># then: M -&gt; M + M^T - diag(M)</span>
-        <span class="n">covariance</span> <span class="o">=</span> <span class="n">covariance</span> <span class="o">+</span> <span class="n">covariance</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">covariance</span><span class="p">))</span>
-    <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">],</span>
-            <span class="n">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;central_values&#39;</span><span class="p">],</span> <span class="n">covariance</span><span class="o">=</span><span class="n">covariance</span><span class="p">)</span> <span class="p">)</span>
+<span class="kn">import</span> <span class="nn">flavio</span>
+
+
+<span class="k">def</span> <span class="nf">tau_Bc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Lifetime of the $B_c$ meson based on the SM OPE estimate plus</span>
+<span class="sd">    the NP contribution to leptonic decays.&quot;&quot;&quot;</span>
+    <span class="n">tau_SM</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_Bc_SM&#39;</span><span class="p">]</span>
+    <span class="n">tau_exp</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_Bc&#39;</span><span class="p">]</span>
+    <span class="n">tau_lnu</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]:</span>
+        <span class="n">_br_SM</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;BR(Bc-&gt;{}nu)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">)</span>
+        <span class="n">_br_NP</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;BR(Bc-&gt;{}nu)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
+        <span class="n">tau_lnu</span> <span class="o">+=</span> <span class="p">(</span><span class="n">_br_NP</span> <span class="o">-</span> <span class="n">_br_SM</span><span class="p">)</span> <span class="o">*</span> <span class="n">tau_exp</span>
+    <span class="k">return</span> <span class="n">tau_SM</span> <span class="o">+</span> <span class="n">tau_lnu</span>
+
+
+<span class="c1"># Observable and Prediction instance</span>
+<span class="n">_process_tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;B_c\to X&quot;</span>
+<span class="n">_process_taxonomy</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Process :: $b$ hadron decays :: Lifetimes :: $&#39;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span>
+
+<span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;tau_Bc&quot;</span>
+<span class="n">_obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
+<span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$B_c$ lifetime&quot;</span><span class="p">)</span>
+<span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\tau_{B_c}$&quot;</span>
+<span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span><span class="p">)</span>
+<span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">tau_Bc</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1110,33 +1116,30 @@ table {
     <h2 class="section-title" id="header-functions">Functions</h2>
       
   <div class="item">
-    <div class="name def" id="flavio.physics.bdecays.formfactors.b_p.bcl_parameters.load_parameters">
-    <p>def <span class="ident">load_parameters</span>(</p><p>filename, constraints)</p>
+    <div class="name def" id="flavio.physics.bdecays.bc_lifetime.tau_Bc">
+    <p>def <span class="ident">tau_Bc</span>(</p><p>wc_obj, par)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>Lifetime of the $B_c$ meson based on the SM OPE estimate plus
+the NP contribution to leptonic decays.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_p.bcl_parameters.load_parameters', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.formfactors.b_p.bcl_parameters.load_parameters" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_parameters</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio.physics&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="n">ff_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]:</span>
-        <span class="k">try</span><span class="p">:</span> <span class="c1"># check if parameter object already exists</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
-        <span class="k">except</span><span class="p">:</span> <span class="c1"># otherwise, create a new one</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span> <span class="c1"># if parameter exists, remove existing constraints</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-    <span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;uncertainties&#39;</span><span class="p">],</span> <span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;uncertainties&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;correlation&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">covariance</span><span class="p">,</span> <span class="n">covariance</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
-        <span class="c1"># if the covariance is not symmetric, it is assumed that only the values above the diagonal are present.</span>
-        <span class="c1"># then: M -&gt; M + M^T - diag(M)</span>
-        <span class="n">covariance</span> <span class="o">=</span> <span class="n">covariance</span> <span class="o">+</span> <span class="n">covariance</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">covariance</span><span class="p">))</span>
-    <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">],</span>
-            <span class="n">MultivariateNormalDistribution</span><span class="p">(</span><span class="n">central_value</span><span class="o">=</span><span class="n">ff_dict</span><span class="p">[</span><span class="s1">&#39;central_values&#39;</span><span class="p">],</span> <span class="n">covariance</span><span class="o">=</span><span class="n">covariance</span><span class="p">)</span> <span class="p">)</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bc_lifetime.tau_Bc', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bc_lifetime.tau_Bc" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">tau_Bc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Lifetime of the $B_c$ meson based on the SM OPE estimate plus</span>
+<span class="sd">    the NP contribution to leptonic decays.&quot;&quot;&quot;</span>
+    <span class="n">tau_SM</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_Bc_SM&#39;</span><span class="p">]</span>
+    <span class="n">tau_exp</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_Bc&#39;</span><span class="p">]</span>
+    <span class="n">tau_lnu</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]:</span>
+        <span class="n">_br_SM</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;BR(Bc-&gt;{}nu)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">)</span>
+        <span class="n">_br_NP</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;BR(Bc-&gt;{}nu)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span><span class="o">.</span><span class="n">prediction_par</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">)</span>
+        <span class="n">tau_lnu</span> <span class="o">+=</span> <span class="p">(</span><span class="n">_br_NP</span> <span class="o">-</span> <span class="n">_br_SM</span><span class="p">)</span> <span class="o">*</span> <span class="n">tau_exp</span>
+    <span class="k">return</span> <span class="n">tau_SM</span> <span class="o">+</span> <span class="n">tau_lnu</span>
 </pre></div>
 
   </div>

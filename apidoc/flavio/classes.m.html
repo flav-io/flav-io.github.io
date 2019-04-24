@@ -1555,7 +1555,7 @@ table {
                                      <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">error_dict</span>
 
-    <span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
 <span class="sd">        constraint/probability distribution for a given value of a</span>
 <span class="sd">        single parameter.</span>
@@ -1563,14 +1563,20 @@ table {
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)[</span><span class="n">constraint</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># for multivariate distributions</span>
             <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
                             <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">parameter</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[],</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
 <span class="sd">        constraint/probability distribution.</span>
 
@@ -1597,7 +1603,10 @@ table {
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
-                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                    <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># for multivariate distributions</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
@@ -1606,7 +1615,10 @@ table {
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
                                     <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
-                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                    <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">prob_dict</span>
 
     <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1654,7 +1666,7 @@ table {
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Class method: load constraint from a YAML string or stream.&quot;&quot;&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -1942,11 +1954,11 @@ table {
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span>    <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
@@ -1976,16 +1988,16 @@ table {
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
-        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
@@ -2554,7 +2566,7 @@ documentation.</p></div>
                                      <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">([</span><span class="n">errors_left</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">num</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">error_dict</span>
 
-    <span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
 <span class="sd">        constraint/probability distribution for a given value of a</span>
 <span class="sd">        single parameter.</span>
@@ -2562,14 +2574,20 @@ documentation.</p></div>
         <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)[</span><span class="n">constraint</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># for multivariate distributions</span>
             <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
                             <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">parameter</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[],</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
 <span class="sd">        constraint/probability distribution.</span>
 
@@ -2596,7 +2614,10 @@ documentation.</p></div>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
-                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                    <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># for multivariate distributions</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
@@ -2605,7 +2626,10 @@ documentation.</p></div>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
                                     <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
-                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                    <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">prob_dict</span>
 
     <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2653,7 +2677,7 @@ documentation.</p></div>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Class method: load constraint from a YAML string or stream.&quot;&quot;&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -2973,7 +2997,7 @@ central value.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.Constraints.get_logprobability_all">
-    <p>def <span class="ident">get_logprobability_all</span>(</p><p>self, par_dict, exclude_parameters=[])</p>
+    <p>def <span class="ident">get_logprobability_all</span>(</p><p>self, par_dict, exclude_parameters=[], delta=False)</p>
     </div>
     
 
@@ -2995,7 +3019,7 @@ constraint/probability distribution.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Constraints.get_logprobability_all', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Constraints.get_logprobability_all" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[]):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[],</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
 <span class="sd">    constraint/probability distribution.</span>
 <span class="sd">    Inputs</span>
@@ -3021,7 +3045,10 @@ constraint/probability distribution.</p>
             <span class="k">continue</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
-            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># for multivariate distributions</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
@@ -3030,7 +3057,10 @@ constraint/probability distribution.</p>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
                                 <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
-            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prob_dict</span>
 </pre></div>
 
@@ -3042,7 +3072,7 @@ constraint/probability distribution.</p>
             
   <div class="item">
     <div class="name def" id="flavio.classes.Constraints.get_logprobability_single">
-    <p>def <span class="ident">get_logprobability_single</span>(</p><p>self, parameter, value)</p>
+    <p>def <span class="ident">get_logprobability_single</span>(</p><p>self, parameter, value, delta=False)</p>
     </div>
     
 
@@ -3054,7 +3084,7 @@ single parameter.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Constraints.get_logprobability_single', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Constraints.get_logprobability_single" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
 <span class="sd">    constraint/probability distribution for a given value of a</span>
 <span class="sd">    single parameter.</span>
@@ -3062,12 +3092,18 @@ single parameter.</p></div>
     <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
     <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)[</span><span class="n">constraint</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># for multivariate distributions</span>
         <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">parameter</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3351,7 +3387,7 @@ simultaneously.</p></div>
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class method: load constraint from a YAML string or stream.&quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -3500,16 +3536,16 @@ quantity.</p></div>
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
-        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -3578,7 +3614,7 @@ quantity.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Implementation.get', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Implementation.get" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -3601,7 +3637,7 @@ quantity.</p></div>
   <div id="source-flavio.classes.Implementation.get_central" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -3624,7 +3660,7 @@ quantity.</p></div>
   <div id="source-flavio.classes.Implementation.get_random" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_random_all</span><span class="p">()</span>
-    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -4118,7 +4154,7 @@ central value.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.Measurement.get_logprobability_all">
-    <p>def <span class="ident">get_logprobability_all</span>(</p><p>self, par_dict, exclude_parameters=[])</p>
+    <p>def <span class="ident">get_logprobability_all</span>(</p><p>self, par_dict, exclude_parameters=[], delta=False)</p>
     </div>
     
 
@@ -4140,7 +4176,7 @@ constraint/probability distribution.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Measurement.get_logprobability_all', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Measurement.get_logprobability_all" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[]):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[],</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
 <span class="sd">    constraint/probability distribution.</span>
 <span class="sd">    Inputs</span>
@@ -4166,7 +4202,10 @@ constraint/probability distribution.</p>
             <span class="k">continue</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
-            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># for multivariate distributions</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
@@ -4175,7 +4214,10 @@ constraint/probability distribution.</p>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
                                 <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
-            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prob_dict</span>
 </pre></div>
 
@@ -4187,7 +4229,7 @@ constraint/probability distribution.</p>
             
   <div class="item">
     <div class="name def" id="flavio.classes.Measurement.get_logprobability_single">
-    <p>def <span class="ident">get_logprobability_single</span>(</p><p>self, parameter, value)</p>
+    <p>def <span class="ident">get_logprobability_single</span>(</p><p>self, parameter, value, delta=False)</p>
     </div>
     
 
@@ -4199,7 +4241,7 @@ single parameter.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Measurement.get_logprobability_single', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Measurement.get_logprobability_single" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
 <span class="sd">    constraint/probability distribution for a given value of a</span>
 <span class="sd">    single parameter.</span>
@@ -4207,12 +4249,18 @@ single parameter.</p></div>
     <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
     <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)[</span><span class="n">constraint</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># for multivariate distributions</span>
         <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">parameter</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -4593,7 +4641,7 @@ simultaneously.</p></div>
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class method: load constraint from a YAML string or stream.&quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -6052,7 +6100,7 @@ central value.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.ParameterConstraints.get_logprobability_all">
-    <p>def <span class="ident">get_logprobability_all</span>(</p><p>self, par_dict, exclude_parameters=[])</p>
+    <p>def <span class="ident">get_logprobability_all</span>(</p><p>self, par_dict, exclude_parameters=[], delta=False)</p>
     </div>
     
 
@@ -6074,7 +6122,7 @@ constraint/probability distribution.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.ParameterConstraints.get_logprobability_all', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.ParameterConstraints.get_logprobability_all" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[]):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[],</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
 <span class="sd">    constraint/probability distribution.</span>
 <span class="sd">    Inputs</span>
@@ -6100,7 +6148,10 @@ constraint/probability distribution.</p>
             <span class="k">continue</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
-            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># for multivariate distributions</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
@@ -6109,7 +6160,10 @@ constraint/probability distribution.</p>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
                                 <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
-            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prob_dict</span>
 </pre></div>
 
@@ -6121,7 +6175,7 @@ constraint/probability distribution.</p>
             
   <div class="item">
     <div class="name def" id="flavio.classes.ParameterConstraints.get_logprobability_single">
-    <p>def <span class="ident">get_logprobability_single</span>(</p><p>self, parameter, value)</p>
+    <p>def <span class="ident">get_logprobability_single</span>(</p><p>self, parameter, value, delta=False)</p>
     </div>
     
 
@@ -6133,7 +6187,7 @@ single parameter.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.ParameterConstraints.get_logprobability_single', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.ParameterConstraints.get_logprobability_single" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
 <span class="sd">    constraint/probability distribution for a given value of a</span>
 <span class="sd">    single parameter.</span>
@@ -6141,12 +6195,18 @@ single parameter.</p></div>
     <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
     <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)[</span><span class="n">constraint</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># for multivariate distributions</span>
         <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">parameter</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -6434,7 +6494,7 @@ simultaneously.</p></div>
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class method: load constraint from a YAML string or stream.&quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -6571,11 +6631,11 @@ pname: [...],  # required, list of constrained parameters
 
     <span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span>    <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+        <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -6633,7 +6693,7 @@ pname: [...],  # required, list of constrained parameters
   <div id="source-flavio.classes.Prediction.get_central" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_central</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints_obj</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span>    <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">par_dict</span> <span class="o">=</span> <span class="n">constraints_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
-    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -6655,7 +6715,7 @@ pname: [...],  # required, list of constrained parameters
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Prediction.get_par', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Prediction.get_par" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_par</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">)</span>
+    <span class="n">fwc_obj</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="o">.</span><span class="n">from_wilson</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fwc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -6955,7 +7015,7 @@ central value.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.WilsonCoefficientPriors.get_logprobability_all">
-    <p>def <span class="ident">get_logprobability_all</span>(</p><p>self, par_dict, exclude_parameters=[])</p>
+    <p>def <span class="ident">get_logprobability_all</span>(</p><p>self, par_dict, exclude_parameters=[], delta=False)</p>
     </div>
     
 
@@ -6977,7 +7037,7 @@ constraint/probability distribution.</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.WilsonCoefficientPriors.get_logprobability_all', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.WilsonCoefficientPriors.get_logprobability_all" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[]):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">exclude_parameters</span><span class="o">=</span><span class="p">[],</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
 <span class="sd">    constraint/probability distribution.</span>
 <span class="sd">    Inputs</span>
@@ -7003,7 +7063,10 @@ constraint/probability distribution.</p>
             <span class="k">continue</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 1D constraints should have a scalar, not a length-1 array</span>
-            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># for multivariate distributions</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
@@ -7012,7 +7075,10 @@ constraint/probability distribution.</p>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
                                 <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p_cons</span><span class="p">)</span>
-            <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prob_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prob_dict</span>
 </pre></div>
 
@@ -7024,7 +7090,7 @@ constraint/probability distribution.</p>
             
   <div class="item">
     <div class="name def" id="flavio.classes.WilsonCoefficientPriors.get_logprobability_single">
-    <p>def <span class="ident">get_logprobability_single</span>(</p><p>self, parameter, value)</p>
+    <p>def <span class="ident">get_logprobability_single</span>(</p><p>self, parameter, value, delta=False)</p>
     </div>
     
 
@@ -7036,7 +7102,7 @@ single parameter.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.WilsonCoefficientPriors.get_logprobability_single', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.WilsonCoefficientPriors.get_logprobability_single" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_logprobability_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a dictionary with the logarithm of the probability for each</span>
 <span class="sd">    constraint/probability distribution for a given value of a</span>
 <span class="sd">    single parameter.</span>
@@ -7044,12 +7110,18 @@ single parameter.</p></div>
     <span class="n">num</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
     <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">)[</span><span class="n">constraint</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># for multivariate distributions</span>
         <span class="n">exclude</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">parameter</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">delta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">constraint</span><span class="o">.</span><span class="n">delta_logpdf</span><span class="p">([</span><span class="n">value</span><span class="p">],</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -7337,7 +7409,7 @@ simultaneously.</p></div>
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class method: load constraint from a YAML string or stream.&quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
