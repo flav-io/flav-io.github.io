@@ -24,6 +24,7 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `DeltaGamma_s` | $\Delta\Gamma_s$ | Decay width difference in the $B_s$-$\bar B_s$ system |  |
+| `DeltaM_d/DeltaM_s` | $\Delta M_d/\Delta M_s$ | Ratio of Mass differences in the $B^0$-$\bar B^0$ and $B_s$-$\bar B_s$ systems |  |
 | `DeltaM_s` | $\Delta M_s$ | Mass difference in the $B_s$-$\bar B_s$ system |  |
 | `S_psiphi` | $S_{\psi\phi}$ | Mixing induced CP asymmetry in $B_s\to J/\psi \phi$ |  |
 | `a_fs_s` | $a_\text{fs}^s$ | CP asymmetry in flavour-specific $B_s$ decays |  |

@@ -22,11 +22,21 @@ a scalar observable).
 
 ## $\pi\to \ell\nu$
 
+### $\pi^+\to \mu^+\nu$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `Gamma(pi+->munu)` | $\Gamma(\pi^+\to \mu^+\nu)$ | Decay rate of $\pi^+\to \mu^+\nu$ |  |
+| `RKpi(P+->munu)` | $\text{R}_{K\pi}(P^+\to \mu^+\nu)$ | Ratio $K^+\to \mu^+\nu$ and $\pi^+\to \mu^+\nu$ decay rates |  |
+
+
 ### $\pi^+\to e^+\nu$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `BR(pi+->enu)` | $\text{BR}(\pi^+\to e^+\nu)$ | Branching ratio of $\pi^+\to e^+\nu$ |  |
+| `RKpi(P+->enu)` | $\text{R}_{K\pi}(P^+\to e^+\nu)$ | Ratio $K^+\to e^+\nu$ and $\pi^+\to e^+\nu$ decay rates |  |
 
 

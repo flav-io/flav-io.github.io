@@ -17,7 +17,9 @@ of this page.
 ### $W^\pm$ decays
 
 
-- [Leptonic decays](obs/wpmdecays-leptonicdecays.html) (6 observables)
+- [Hadronic decays](obs/wpmdecays-hadronicdecays.html) (1 observable)
+
+- [Leptonic decays](obs/wpmdecays-leptonicdecays.html) (12 observables)
 
 
 ### $Z^0$ decays
@@ -25,7 +27,13 @@ of this page.
 
 - [FCNC decays](obs/zdecays-fcncdecays.html) (3 observables)
 
-- [Flavour conserving decays](obs/zdecays-flavourconservingdecays.html) (49 observables)
+- [Flavour conserving decays](obs/zdecays-flavourconservingdecays.html) (50 observables)
+
+
+### $\mu$ lepton decays
+
+
+- [LFV decays](obs/muleptondecays-lfvdecays.html) (3 observables)
 
 
 ### $\tau$ lepton decays
@@ -45,6 +53,8 @@ of this page.
 
 - [Leptonic tree-level decays](obs/bhadrondecays-leptonictreeleveldecays.html) (6 observables)
 
+- [Lifetimes](obs/bhadrondecays-lifetimes.html) (1 observable)
+
 - [Non-leptonic decays](obs/bhadrondecays-nonleptonicdecays.html) (2 observables)
 
 - [Semi-leptonic tree-level decays](obs/bhadrondecays-semileptonictreeleveldecays.html) (614 observables)
@@ -59,9 +69,9 @@ of this page.
 ### $s$ hadron decays
 
 
-- [FCNC decays](obs/shadrondecays-fcncdecays.html) (2 observables)
+- [FCNC decays](obs/shadrondecays-fcncdecays.html) (8 observables)
 
-- [Leptonic tree-level decays](obs/shadrondecays-leptonictreeleveldecays.html) (4 observables)
+- [Leptonic tree-level decays](obs/shadrondecays-leptonictreeleveldecays.html) (6 observables)
 
 - [Non-leptonic decays](obs/shadrondecays-nonleptonicdecays.html) (1 observable)
 
@@ -79,9 +89,9 @@ of this page.
 ### Meson-antimeson mixing
 
 
-- [ $B^0$-$\bar B^0$ mixing](obs/mesonantimesonmixing-bbarbmixing.html) (4 observables)
+- [ $B^0$-$\bar B^0$ mixing](obs/mesonantimesonmixing-bbarbmixing.html) (5 observables)
 
-- [ $B_s$-$\bar B_s$ mixing](obs/mesonantimesonmixing-bsbarbsmixing.html) (4 observables)
+- [ $B_s$-$\bar B_s$ mixing](obs/mesonantimesonmixing-bsbarbsmixing.html) (5 observables)
 
 - [ $D^0$-$\bar D^0$ mixing](obs/mesonantimesonmixing-dbardmixing.html) (8 observables)
 
@@ -91,7 +101,7 @@ of this page.
 ### Unflavoured meson decays
 
 
-- [Leptonic tree-level decays](obs/unflavouredmesondecays-leptonictreeleveldecays.html) (1 observable)
+- [Leptonic tree-level decays](obs/unflavouredmesondecays-leptonictreeleveldecays.html) (4 observables)
 
 
 ### muon decays

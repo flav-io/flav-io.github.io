@@ -22,21 +22,23 @@ a scalar observable).
 
 ## $K\to \ell\nu$
 
-### $K^+\to \mu^+\nu_\mu$
+### $K^+\to \mu^+\nu$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(K+->munu)` | $\text{BR}(K^+\to \mu^+\nu_\mu)$ | Branching ratio of $K^+\to \mu^+\nu_\mu(\gamma)$ |  |
+| `BR(K+->munu)` | $\text{BR}(K^+\to \mu^+\nu)$ | Branching ratio of $K^+\to \mu^+\nu(\gamma)$ |  |
+| `RKpi(P+->munu)` | $\text{R}_{K\pi}(P^+\to \mu^+\nu)$ | Ratio $K^+\to \mu^+\nu$ and $\pi^+\to \mu^+\nu$ decay rates |  |
 | `Remu(K+->lnu)` | $R_{e\mu}(K^+\to \ell^+\nu)$ | Ratio of branching ratios of $K^+\to e^+\nu_e$ and $K^+\to \mu^+\nu_\mu$ |  |
 
 
-### $K^+\to e^+\nu_e$
+### $K^+\to e^+\nu$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(K+->enu)` | $\text{BR}(K^+\to e^+\nu_e)$ | Branching ratio of $K^+\to e^+\nu_e(\gamma)$ |  |
+| `BR(K+->enu)` | $\text{BR}(K^+\to e^+\nu)$ | Branching ratio of $K^+\to e^+\nu(\gamma)$ |  |
+| `RKpi(P+->enu)` | $\text{R}_{K\pi}(P^+\to e^+\nu)$ | Ratio $K^+\to e^+\nu$ and $\pi^+\to e^+\nu$ decay rates |  |
 | `Remu(K+->lnu)` | $R_{e\mu}(K^+\to \ell^+\nu)$ | Ratio of branching ratios of $K^+\to e^+\nu_e$ and $K^+\to \mu^+\nu_\mu$ |  |
 
 

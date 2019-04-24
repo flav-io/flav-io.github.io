@@ -22,51 +22,51 @@ a scalar observable).
 
 ## $B\to \ell\nu$
 
-### $B^+\to \mu^+\nu_\mu$
+### $B^+\to \mu^+\nu$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(B+->munu)` | $\text{BR}(B^+\to \mu^+\nu_\mu)$ | Branching ratio of $B^+\to \mu^+\nu_\mu$ |  |
+| `BR(B+->munu)` | $\text{BR}(B^+\to \mu^+\nu)$ | Branching ratio of $B^+\to \mu^+\nu$ |  |
 
 
-### $B^+\to \tau^+\nu_\tau$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `BR(B+->taunu)` | $\text{BR}(B^+\to \tau^+\nu_\tau)$ | Branching ratio of $B^+\to \tau^+\nu_\tau$ |  |
-
-
-### $B^+\to e^+\nu_e$
+### $B^+\to \tau^+\nu$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(B+->enu)` | $\text{BR}(B^+\to e^+\nu_e)$ | Branching ratio of $B^+\to e^+\nu_e$ |  |
+| `BR(B+->taunu)` | $\text{BR}(B^+\to \tau^+\nu)$ | Branching ratio of $B^+\to \tau^+\nu$ |  |
 
 
-### $B_c\to \mu^+\nu_\mu$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `BR(Bc->munu)` | $\text{BR}(B_c\to \mu^+\nu_\mu)$ | Branching ratio of $B_c\to \mu^+\nu_\mu$ |  |
-
-
-### $B_c\to \tau^+\nu_\tau$
+### $B^+\to e^+\nu$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bc->taunu)` | $\text{BR}(B_c\to \tau^+\nu_\tau)$ | Branching ratio of $B_c\to \tau^+\nu_\tau$ |  |
+| `BR(B+->enu)` | $\text{BR}(B^+\to e^+\nu)$ | Branching ratio of $B^+\to e^+\nu$ |  |
 
 
-### $B_c\to e^+\nu_e$
+### $B_c\to \mu^+\nu$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(Bc->enu)` | $\text{BR}(B_c\to e^+\nu_e)$ | Branching ratio of $B_c\to e^+\nu_e$ |  |
+| `BR(Bc->munu)` | $\text{BR}(B_c\to \mu^+\nu)$ | Branching ratio of $B_c\to \mu^+\nu$ |  |
+
+
+### $B_c\to \tau^+\nu$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(Bc->taunu)` | $\text{BR}(B_c\to \tau^+\nu)$ | Branching ratio of $B_c\to \tau^+\nu$ |  |
+
+
+### $B_c\to e^+\nu$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(Bc->enu)` | $\text{BR}(B_c\to e^+\nu)$ | Branching ratio of $B_c\to e^+\nu$ |  |
 
 

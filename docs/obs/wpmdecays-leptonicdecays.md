@@ -27,6 +27,8 @@ a scalar observable).
 |------|--------|-------------|-----------|
 | `BR(W->enu)` | $\text{BR}(W^\pm\to  e^\pm\nu)$ | Branching ratio of $W^\pm\to  e^\pm\nu$, summed over neutrino flavours |  |
 | `GammaW` | $\Gamma_W$ | Total width of the $W^\pm$ boson |  |
+| `Rmue(W->lnu)` | $\text{R}_{\mu  e}(W^\pm\to \ell^\pm\nu)$ | Ratio of branching ratio of $W^\pm\to \mu^\pm\nu$ and  $W^\pm\to  e^\pm\nu$, individually summed over neutrino flavours |  |
+| `Rtaue(W->lnu)` | $\text{R}_{\tau  e}(W^\pm\to \ell^\pm\nu)$ | Ratio of branching ratio of $W^\pm\to \tau^\pm\nu$ and  $W^\pm\to  e^\pm\nu$, individually summed over neutrino flavours |  |
 
 
 ## $W^\pm\to \mu^\pm\nu$
@@ -36,6 +38,8 @@ a scalar observable).
 |------|--------|-------------|-----------|
 | `BR(W->munu)` | $\text{BR}(W^\pm\to \mu^\pm\nu)$ | Branching ratio of $W^\pm\to \mu^\pm\nu$, summed over neutrino flavours |  |
 | `GammaW` | $\Gamma_W$ | Total width of the $W^\pm$ boson |  |
+| `Rmue(W->lnu)` | $\text{R}_{\mu  e}(W^\pm\to \ell^\pm\nu)$ | Ratio of branching ratio of $W^\pm\to \mu^\pm\nu$ and  $W^\pm\to  e^\pm\nu$, individually summed over neutrino flavours |  |
+| `Rtaumu(W->lnu)` | $\text{R}_{\tau \mu}(W^\pm\to \ell^\pm\nu)$ | Ratio of branching ratio of $W^\pm\to \tau^\pm\nu$ and  $W^\pm\to \mu^\pm\nu$, individually summed over neutrino flavours |  |
 
 
 ## $W^\pm\to \tau^\pm\nu$
@@ -45,5 +49,7 @@ a scalar observable).
 |------|--------|-------------|-----------|
 | `BR(W->taunu)` | $\text{BR}(W^\pm\to \tau^\pm\nu)$ | Branching ratio of $W^\pm\to \tau^\pm\nu$, summed over neutrino flavours |  |
 | `GammaW` | $\Gamma_W$ | Total width of the $W^\pm$ boson |  |
+| `Rtaue(W->lnu)` | $\text{R}_{\tau  e}(W^\pm\to \ell^\pm\nu)$ | Ratio of branching ratio of $W^\pm\to \tau^\pm\nu$ and  $W^\pm\to  e^\pm\nu$, individually summed over neutrino flavours |  |
+| `Rtaumu(W->lnu)` | $\text{R}_{\tau \mu}(W^\pm\to \ell^\pm\nu)$ | Ratio of branching ratio of $W^\pm\to \tau^\pm\nu$ and  $W^\pm\to \mu^\pm\nu$, individually summed over neutrino flavours |  |
 
 

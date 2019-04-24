@@ -296,6 +296,9 @@ of the parameter.
 | `CLN c_xi` | $c_\xi$ | Parameter of leading Isgur-Wise function $\xi(w)=1-\rho^2_\xi(w-1)+c_\xi(w-1)^2$ |
 | `CLN rho2_xi` | $\rho^2_\xi$ | Slope parameter of leading Isgur-Wise function $\xi(w)=1-\rho^2_\xi(w-1)+c_\xi(w-1)^2$ |
 | `C_BXlnu` | $C$ |  |
+| `D Al` | $D$ | Overlap integral corresponding to the photon/Z contribution |
+| `D Au` | $D$ | Overlap integral corresponding to the photon/Z contribution |
+| `D Ti` | $D$ | Overlap integral corresponding to the photon/Z contribution |
 | `DeltaGamma/Gamma_B0` | $\Delta \Gamma_d/\Gamma_d$ | Relative decay width difference in the $B_s$ system |
 | `DeltaGamma/Gamma_Bs` | $\Delta \Gamma_s/\Gamma_s$ | Relative decay width difference in the $B_s$ system |
 | `DeltaM_K0` | $\Delta M_K$ | Mass difference in the $K^0$ system |
@@ -307,6 +310,9 @@ of the parameter.
 | `Gamma12_D a_bb` | $a_{bb}$ | SM contribution to the absorptive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{ub}V_{cb}^\ast$ in inverse picoseconds |
 | `Gamma12_D a_bs` | $a_{bb}$ | SM contribution to the absorptive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{ub}V_{cs}^\ast$ in inverse picoseconds |
 | `Gamma12_D a_ss` | $a_{bb}$ | SM contribution to the absorptive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{us}V_{cs}^\ast$ in inverse picoseconds |
+| `GammaCapture Al` | $\Gamma_\text{capture}(\phantom k^{27}_{13} \mathrm{Al})$ | Capture rate of $\mu$ in $\phantom k^{27}_{13} \mathrm{Al}$ |
+| `GammaCapture Au` | $\Gamma_\text{capture}(\phantom k^{197}_{79} \mathrm{Au})$ | Capture rate of $\mu$ in $\phantom k^{197}_{79} \mathrm{Au}$ |
+| `GammaCapture Ti` | $\Gamma_\text{capture}(\phantom k^{48}_{22} \mathrm{Ti})$ | Capture rate of $\mu$ in $\phantom k^{48}_{22} \mathrm{Ti}$ |
 | `GammaW_had` | $\Gamma_W^\text{had}$ | Hadronic $W$ width in the SM |
 | `GammaW_lep` | $\Gamma_W^\text{lep}$ | Leptonic $W$ width in the SM |
 | `K+e3 delta_EM` | $\delta_\text{em}^{K^+e}$ | Relative electromagnetic correction to $K^+\to\pi^0 e^+\bar\nu$ decay rate |
@@ -404,7 +410,19 @@ of the parameter.
 | `Omegahat_eff` | $\hat \Omega_\text{eff}$ | Parameter for isospin breaking corrections to $\epsilon\'/\epsilon$ |
 | `ReA0(K->pipi)` | $\text{Re}A_0$ | Real part of the $K\to(\pi\pi)_{I=0}$ isospin amplitude from experiment |
 | `ReA2(K->pipi)` | $\text{Re}A_2$ | Real part of the $K\to(\pi\pi)_{I=2}$ isospin amplitude from experiment |
+| `Sn Al` | $S^{(n)}$ | Scalar overlap integral with neutron distribution |
+| `Sn Au` | $S^{(n)}$ | Scalar overlap integral with neutron distribution |
+| `Sn Ti` | $S^{(n)}$ | Scalar overlap integral with neutron distribution |
+| `Sp Al` | $S^{(p)}$ | Scalar overlap integral with proton distribution |
+| `Sp Au` | $S^{(p)}$ | Scalar overlap integral with proton distribution |
+| `Sp Ti` | $S^{(p)}$ | Scalar overlap integral with proton distribution |
 | `Vcb` | $V_{cb}$ | CKM element $V_{cb}$ |
+| `Vn Al` | $V^{(n)$ | Vector overlap integral with neutron distribution |
+| `Vn Au` | $V^{(n)$ | Vector overlap integral with neutron distribution |
+| `Vn Ti` | $V^{(n)$ | Vector overlap integral with neutron distribution |
+| `Vp Al` | $V^{(p)}$ | Vector overlap integral with proton distribution |
+| `Vp Au` | $V^{(p)}$ | Vector overlap integral with proton distribution |
+| `Vp Ti` | $V^{(p)}$ | Vector overlap integral with proton distribution |
 | `Vub` | $\vert V_{ub}\vert$ | Absolute value of the CKM element $V_{ub}$ |
 | `Vus` | $V_{us}$ | CKM element $V_{us}$ |
 | `a1_para_K*+` | $a_1^{K^{*+}_\parallel}$ | First Gegenbauer moment of the parallely polarized $K^{*+}$ LCDA at 1 GeV |
@@ -469,6 +487,8 @@ of the parameter.
 | `chi_2(1)` | $\chi_2(1)$ | Subleading Isgur-Wise function $\chi_2$ at $w=1$ |
 | `chi_2p(1)` | $\chi_2\'(1)$ | Derivative of subleading Isgur-Wise function $\chi_2$ at $w=1$ |
 | `chi_3p(1)` | $\chi_3\'(1)$ | Derivative of subleading Isgur-Wise function $\chi_3$ at $w=1$ |
+| `chi_disp(KL->gammagamma)` | $\chi_\text{disp}$ | Dispersive part of the $K_L\to\gamma\gamma$ amplitude |
+| `delta` | $\delta$ | CKM phase $\delta$ in radians |
 | `deltaPcu` | $\delta P_{c,u}$ | Contributions to the $K^+\to\pi^+\nu\bar\nu$ amplitude not described by the dimension-6 effective Hamiltonian. |
 | `delta_BXdee high` | $\delta_{bdee}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_de^+e^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXdee low` | $\delta_{bdee}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_de^+e^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
@@ -476,6 +496,7 @@ of the parameter.
 | `delta_BXdmumu high` | $\delta_{bd\mu\mu}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_d\mu^+\mu^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXdmumu low` | $\delta_{bd\mu\mu}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_d\mu^+\mu^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXdtautau high` | $\delta_{bd\tau\tau}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_d\tau^+\tau^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BXlnu` | $\delta_{BX\ell\nu}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders $B\to X_c\ell\nu$. |
 | `delta_BXsee high` | $\delta_{bsee}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_se^+e^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXsee low` | $\delta_{bsee}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_se^+e^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXsgamma` | $\delta_{bs\gamma}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders, interpolation, and non-perturbative effects in $B\to X_s\gamma$. The relative uncertainty is $1+\delta$. |
@@ -489,6 +510,7 @@ of the parameter.
 | `delta_Gammanu` | $\delta_{\Gamma_\nu}$ | Uncertainty in the SM $Z$ partial width to neutrinos in GeV |
 | `delta_Gammatau` | $\delta_{\Gamma_\tau}$ | Uncertainty in the SM $Z$ partial width to tau leptons in GeV |
 | `delta_Gammau` | $\delta_{\Gamma_u}$ | Uncertainty in the SM $Z$ partial width to up quarks in GeV |
+| `delta_mN` | $\delta m_N$ | QCD contribution to the neutron-proton mass difference |
 | `eps_K` | $\|\epsilon_K\|$ | Measured value of $\|\epsilon_K\|$ |
 | `epsp a` | $a$ | Parameter for isospin breaking corrections to $\epsilon\'/\epsilon$ |
 | `eta(1)` | $\eta(1)$ | Subleading Isgur-Wise function $\eta$ at $w=1$ |
@@ -517,10 +539,15 @@ of the parameter.
 | `f_perp_rho+` | $f^\perp_{\rho^{\pm}}$ | Transverse $\rho^{\pm}$ decay constant at 2 GeV in the 3-flavour scheme |
 | `f_perp_rho0` | $f^\perp_{\rho^{0}}$ | Transverse $\rho^{0}$ decay constant at 2 GeV in the 3-flavour scheme |
 | `f_phi` | $f_{\phi}$ | $\phi$ decay constant |
-| `f_pi+` | $f_{pi^\pm}$ | Charged pion decay constant |
+| `f_pi+` | $f_{\pi^\pm}$ | Charged pion decay constant |
 | `f_pi0` | $f_{\pi^0}$ | Neutral pion decay constant |
 | `f_rho0` | $f_{\rho^0}$ | $\rho^0$ decay constant |
-| `gamma` | $\gamma$ | CKM angle $\gamma$ in radians |
+| `gA_s` | $g_A^s$ | Proton strange quark axial charge |
+| `gS_u-d` | $g_S^{u-d}$ | Nucleon isovector scalar charge |
+| `gT_d` | $g_T^d$ | Proton down quark tensor charge |
+| `gT_s` | $g_T^s$ | Proton strange quark tensor charge |
+| `gT_u` | $g_T^u$ | Proton up quark tensor charge |
+| `g_A` | $g_A^{u-d}$ | Nucleon isovector axial charge |
 | `kappa_L_tilde` | $\tilde{\kappa}_L$ | Parameter $\kappa_L$ containing the hadronic form factor information needed for the $K_L\to\pi^0\nu\bar\nu$ branching ratio, determined assuming $V_{us}\equiv0.225$ |
 | `kappa_epsilon` | $\kappa_\epsilon$ | Correction factor for $\epsilon_K$ |
 | `kappa_plus_tilde` | $\tilde{\kappa}_+$ | Parameter $\kappa_+$ containing the hadronic form factor information needed for the $K^+\to\pi^+\nu\bar\nu$ branching ratio, determined assuming $V_{us}\equiv0.225$ |
@@ -560,7 +587,9 @@ of the parameter.
 | `m_f0` | $m_{f}$ | $f$ mass |
 | `m_h` | $m_{H}$ | $H$ mass |
 | `m_mu` | $m_{\mu}$ | $\mu$ mass |
+| `m_n` | $m_{n}$ | $n$ mass |
 | `m_omega` | $m_{\omega}$ | $\omega$ mass |
+| `m_p` | $m_{p}$ | $p$ mass |
 | `m_phi` | $m_{\phi}$ | $\phi$ mass |
 | `m_pi+` | $m_{\pi^{+}}$ | $\pi^{+}$ mass |
 | `m_pi0` | $m_{\pi^{0}}$ | $\pi^{0}$ mass |
@@ -570,23 +599,23 @@ of the parameter.
 | `m_s` | $m_{s}(2\,\text{GeV})$ | $s$ quark mass in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `m_t` | $m_{t}$ | $t$ quark pole mass |
 | `m_tau` | $m_{\tau}$ | $\tau$ mass |
-| `m_u` | $m_{u}(2\,\text{GeV})$ | $u$ quark mass in the $\overline{\text{MS}}$ scheme at 2 GeV |
+| `m_u` | $m_{u}$ | $u$ mass |
 | `mu_G^2` | $\mu_G^2$ |  |
 | `mu_pi^2` | $\mu_\pi^2$ |  |
 | `nEDM beta_G` | $\beta_G$ | coefficient of the three-gluon Weinberg operator contribution to the neutron EDM |
-| `nEDM gT_d` | $g_T^d$ | Neutron down quark tensor charge |
-| `nEDM gT_s` | $g_T^s$ | Nucleon strange quark tensor charge |
-| `nEDM gT_u` | $g_T^u$ | Neutron up quark tensor charge |
 | `nEDM ~rho_d` | $\tilde \rho_d$ | coefficient of the down quark CEDM contribution to the neutron EDM |
 | `nEDM ~rho_s` | $\tilde \rho_s$ | coefficient of the strange quark CEDM contribution to the neutron EDM |
 | `nEDM ~rho_u` | $\tilde \rho_u$ | coefficient of the up quark CEDM contribution to the neutron EDM |
 | `omega+` | $\omega_+$ |  |
 | `rho_D^3` | $\rho_D^3$ |  |
-| `rho_LS^3` | $\rho_LS^3$ |  |
+| `rho_LS^3` | $\rho_{LS}^3$ |  |
 | `s2w` | $\sin^2 \hat\theta_w(m_Z)$ | sine squared of the weak mixing angle in the $\overline{\text{MS}}$ scheme at the scale $m_Z$ |
+| `sigma_piN` | $\sigma_{\pi N}$ | Pion-nucleon $\sigma$ term |
+| `sigma_s` | $\sigma_s$ | Nuclean strange quark $\sigma$ term |
 | `tau_B+` | $\tau_{B^{+}}$ | $B^{+}$ lifetime |
 | `tau_B0` | $\tau_{B^{0}}$ | $B^{0}$ lifetime |
 | `tau_Bc` | $\tau_{B_{c}}$ | $B_{c}$ lifetime |
+| `tau_Bc_SM` | $\tau_{B_c}^\text{SM}$ | Standard Model prediction for the $B_c$ lifetime |
 | `tau_Bs` | $\tau_{B_{s}}$ | $B_{s}$ lifetime |
 | `tau_D*+` | $\tau_{D^{*}}$ | $D^{*}$ lifetime |
 | `tau_D+` | $\tau_{D^{+}}$ | $D^{+}$ lifetime |
@@ -606,6 +635,7 @@ of the parameter.
 | `tau_eta` | $\tau_{\eta}$ | $\eta$ lifetime |
 | `tau_f0` | $\tau_{f}$ | $f$ lifetime |
 | `tau_mu` | $\tau_{\mu}$ | $\mu$ lifetime |
+| `tau_n` | $\tau_{n}$ | $n$ lifetime |
 | `tau_omega` | $\tau_{\omega}$ | $\omega$ lifetime |
 | `tau_phi` | $\tau_{\phi}$ | $\phi$ lifetime |
 | `tau_pi+` | $\tau_{\pi^{+}}$ | $\pi^{+}$ lifetime |
