@@ -30,12 +30,6 @@ of this page.
 - [Flavour conserving decays](obs/zdecays-flavourconservingdecays.html) (50 observables)
 
 
-### $\mu$ lepton decays
-
-
-- [LFV decays](obs/muleptondecays-lfvdecays.html) (3 observables)
-
-
 ### $\tau$ lepton decays
 
 
@@ -107,7 +101,7 @@ of this page.
 ### muon decays
 
 
-- [LFV decays](obs/muondecays-lfvdecays.html) (2 observables)
+- [LFV decays](obs/muondecays-lfvdecays.html) (5 observables)
 
 
 ### neutrino physics

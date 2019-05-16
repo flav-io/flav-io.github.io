@@ -1126,6 +1126,7 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.test_bvll.TestBVll.test_bvll_integrate_pole">test_bvll_integrate_pole</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.test_bvll.TestBVll.test_compare_to_Davids_old_code">test_compare_to_Davids_old_code</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.test_bvll.TestBVll.test_obs">test_obs</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvll.test_bvll.TestBVll.test_qcdf_warning">test_qcdf_warning</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.test_bvll.TestBVll.test_unphysical">test_unphysical</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.test_bvll.TestBVll.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.test_bvll.TestBVll.tearDownClass">tearDownClass</a></li>
@@ -1157,6 +1158,8 @@ table {
 <span class="kn">from</span> <span class="nn">flavio.physics.bdecays.formfactors.b_v</span> <span class="kn">import</span> <span class="n">bsz_parameters</span>
 <span class="kn">from</span> <span class="nn">flavio.physics.bdecays.bvll</span> <span class="kn">import</span> <span class="n">observables</span><span class="p">,</span> <span class="n">observables_bs</span>
 <span class="kn">import</span> <span class="nn">cmath</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
 
 <span class="k">class</span> <span class="nc">TestBVll</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">test_compare_to_Davids_old_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1311,6 +1314,15 @@ table {
                                <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">nintegrate_pole</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mf">0.0005</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">nintegrate</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mf">0.0005</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">epsrel</span><span class="o">=</span><span class="mf">0.001</span><span class="p">),</span>
                                <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_qcdf_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># computing the BR at q²=8 should warn</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertWarnsRegex</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;The QCDF corrections should not be trusted .*&quot;</span><span class="p">):</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;dBR/dq2(B0-&gt;K*mumu)&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="c1"># computing the LFU ratio at q²=8 should not warn</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;Rmue(B0-&gt;K*ll)&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1507,6 +1519,15 @@ in order to be run.</p>
                                <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">nintegrate_pole</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mf">0.0005</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">nintegrate</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mf">0.0005</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">epsrel</span><span class="o">=</span><span class="mf">0.001</span><span class="p">),</span>
                                <span class="mi">1</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_qcdf_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># computing the BR at q²=8 should warn</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertWarnsRegex</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;The QCDF corrections should not be trusted .*&quot;</span><span class="p">):</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;dBR/dq2(B0-&gt;K*mumu)&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="c1"># computing the LFU ratio at q²=8 should not warn</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;Rmue(B0-&gt;K*ll)&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3901,6 +3922,33 @@ block, allowing further test code to be executed.</p></div>
     <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s2">&quot;P1(B0-&gt;K*ee)&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
     <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s2">&quot;&lt;Rmue&gt;(B0-&gt;K*ll)&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
     <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s2">&quot;Rmue(B0-&gt;K*ll)&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvll.test_bvll.TestBVll.test_qcdf_warning">
+    <p>def <span class="ident">test_qcdf_warning</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvll.test_bvll.TestBVll.test_qcdf_warning', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvll.test_bvll.TestBVll.test_qcdf_warning" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_qcdf_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># computing the BR at q²=8 should warn</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertWarnsRegex</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;The QCDF corrections should not be trusted .*&quot;</span><span class="p">):</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;dBR/dq2(B0-&gt;K*mumu)&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="c1"># computing the LFU ratio at q²=8 should not warn</span>
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="s1">&#39;Rmue(B0-&gt;K*ll)&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
 </pre></div>
 
   </div>

@@ -1342,6 +1342,7 @@ table {
 <span class="kn">from</span> <span class="nn">.amplitudes</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">Observable</span><span class="p">,</span> <span class="n">Prediction</span>
 <span class="kn">import</span> <span class="nn">flavio</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 
 <span class="k">def</span> <span class="nf">dGdq2</span><span class="p">(</span><span class="n">J</span><span class="p">):</span>
@@ -1730,24 +1731,29 @@ table {
 
 <span class="k">def</span> <span class="nf">bvll_obs_int_ratio_leptonflavour</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">):</span>
-        <span class="n">numobj</span> <span class="o">=</span> <span class="n">BVll_obs_int</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-        <span class="n">numobj</span><span class="o">.</span><span class="n">epsrel</span> <span class="o">=</span> <span class="mf">0.0005</span>
-        <span class="n">num</span> <span class="o">=</span> <span class="n">numobj</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mi">0</span>
-        <span class="n">denobj</span> <span class="o">=</span> <span class="n">BVll_obs_int</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-        <span class="n">denobj</span><span class="o">.</span><span class="n">epsrel</span> <span class="o">=</span> <span class="mf">0.0005</span>
-        <span class="n">den</span> <span class="o">=</span> <span class="n">denobj</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
+        <span class="c1"># ignore QCDF warnings for LFU ratios!</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;The QCDF corrections should not be trusted .*&quot;</span><span class="p">)</span>
+            <span class="n">numobj</span> <span class="o">=</span> <span class="n">BVll_obs_int</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+            <span class="n">numobj</span><span class="o">.</span><span class="n">epsrel</span> <span class="o">=</span> <span class="mf">0.0005</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="n">numobj</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="n">denobj</span> <span class="o">=</span> <span class="n">BVll_obs_int</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+            <span class="n">denobj</span><span class="o">.</span><span class="n">epsrel</span> <span class="o">=</span> <span class="mf">0.0005</span>
+            <span class="n">den</span> <span class="o">=</span> <span class="n">denobj</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
     <span class="k">return</span> <span class="n">fct</span>
 
 <span class="k">def</span> <span class="nf">bvll_obs_ratio_leptonflavour</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
-        <span class="n">num</span> <span class="o">=</span> <span class="n">BVll_obs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)()</span>
-        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mi">0</span>
-        <span class="n">den</span> <span class="o">=</span> <span class="n">BVll_obs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)()</span>
-        <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;The QCDF corrections should not be trusted .*&quot;</span><span class="p">)</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="n">BVll_obs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)()</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="n">den</span> <span class="o">=</span> <span class="n">BVll_obs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)()</span>
+            <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
     <span class="k">return</span> <span class="n">fct</span>
 
 
@@ -2438,15 +2444,18 @@ $\hat F_L$.</p>
   <div id="source-flavio.physics.bdecays.bvll.observables.bvll_obs_int_ratio_leptonflavour" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bvll_obs_int_ratio_leptonflavour</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">):</span>
-        <span class="n">numobj</span> <span class="o">=</span> <span class="n">BVll_obs_int</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-        <span class="n">numobj</span><span class="o">.</span><span class="n">epsrel</span> <span class="o">=</span> <span class="mf">0.0005</span>
-        <span class="n">num</span> <span class="o">=</span> <span class="n">numobj</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mi">0</span>
-        <span class="n">denobj</span> <span class="o">=</span> <span class="n">BVll_obs_int</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
-        <span class="n">denobj</span><span class="o">.</span><span class="n">epsrel</span> <span class="o">=</span> <span class="mf">0.0005</span>
-        <span class="n">den</span> <span class="o">=</span> <span class="n">denobj</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
+        <span class="c1"># ignore QCDF warnings for LFU ratios!</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;The QCDF corrections should not be trusted .*&quot;</span><span class="p">)</span>
+            <span class="n">numobj</span> <span class="o">=</span> <span class="n">BVll_obs_int</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+            <span class="n">numobj</span><span class="o">.</span><span class="n">epsrel</span> <span class="o">=</span> <span class="mf">0.0005</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="n">numobj</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="n">denobj</span> <span class="o">=</span> <span class="n">BVll_obs_int</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+            <span class="n">denobj</span><span class="o">.</span><span class="n">epsrel</span> <span class="o">=</span> <span class="mf">0.0005</span>
+            <span class="n">den</span> <span class="o">=</span> <span class="n">denobj</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
     <span class="k">return</span> <span class="n">fct</span>
 </pre></div>
 
@@ -2469,11 +2478,13 @@ $\hat F_L$.</p>
   <div id="source-flavio.physics.bdecays.bvll.observables.bvll_obs_ratio_leptonflavour" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bvll_obs_ratio_leptonflavour</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
-        <span class="n">num</span> <span class="o">=</span> <span class="n">BVll_obs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)()</span>
-        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mi">0</span>
-        <span class="n">den</span> <span class="o">=</span> <span class="n">BVll_obs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)()</span>
-        <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;The QCDF corrections should not be trusted .*&quot;</span><span class="p">)</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="n">BVll_obs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)()</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="n">den</span> <span class="o">=</span> <span class="n">BVll_obs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">l2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)()</span>
+            <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
     <span class="k">return</span> <span class="n">fct</span>
 </pre></div>
 

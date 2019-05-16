@@ -20,6 +20,32 @@ a scalar observable).
 * TOC
 {:toc}
 
+## $\mu N \to e N$
+
+### $CR(\mu - e)$ in $\phantom k^{197}_{79} \mathrm{Au}$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `CR(mu->e, Au)` | $CR(\mu - e)$ in $\phantom k^{197}_{79} \mathrm{Au}$ | Coherent conversion rate of $\mu^-$ to $e^-$ in $\phantom k^{197}_{79} \mathrm{Au}$ |  |
+
+
+### $CR(\mu - e)$ in $\phantom k^{27}_{13} \mathrm{Al}$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `CR(mu->e, Al)` | $CR(\mu - e)$ in $\phantom k^{27}_{13} \mathrm{Al}$ | Coherent conversion rate of $\mu^-$ to $e^-$ in $\phantom k^{27}_{13} \mathrm{Al}$ |  |
+
+
+### $CR(\mu - e)$ in $\phantom k^{48}_{22} \mathrm{Ti}$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `CR(mu->e, Ti)` | $CR(\mu - e)$ in $\phantom k^{48}_{22} \mathrm{Ti}$ | Coherent conversion rate of $\mu^-$ to $e^-$ in $\phantom k^{48}_{22} \mathrm{Ti}$ |  |
+
+
 ## $\mu\to e\gamma$
 
 {: class="table"}

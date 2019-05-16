@@ -1061,6 +1061,7 @@ table {
     <li class="mono"><a href="#flavio.plots.plotfunctions.density_contour">density_contour</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.density_contour_data">density_contour_data</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.density_contour_joint">density_contour_joint</a></li>
+    <li class="mono"><a href="#flavio.plots.plotfunctions.diff_plot_exp">diff_plot_exp</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.diff_plot_th">diff_plot_th</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.diff_plot_th_err">diff_plot_th_err</a></li>
     <li class="mono"><a href="#flavio.plots.plotfunctions.error_budget_pie">error_budget_pie</a></li>
@@ -1163,7 +1164,7 @@ table {
     <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">fracs</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="n">my_autopct</span><span class="p">,</span> <span class="n">wedgeprops</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mf">0.5</span><span class="p">},</span> <span class="n">colors</span><span class="o">=</span><span class="n">flavio</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">pastel</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">diff_plot_th</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">diff_plot_th</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot the central theory prediction of an observable dependending on</span>
 <span class="sd">    a continuous parameter, e.g. $q^2$.</span>
 
@@ -1174,6 +1175,8 @@ table {
 <span class="sd">      Wilson coefficients</span>
 <span class="sd">    - `steps` (optional): number of steps in x. Defaults to 100. Less is</span>
 <span class="sd">      faster but less precise.</span>
+<span class="sd">    - `scale_factor` (optional): factor by which all values will be multiplied.</span>
+<span class="sd">      Defaults to 1.</span>
 
 <span class="sd">    Additional keyword arguments are passed to the matplotlib plot function,</span>
 <span class="sd">    e.g. &#39;c&#39; for colour.</span>
@@ -1190,12 +1193,13 @@ table {
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
     <span class="k">if</span> <span class="s1">&#39;c&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s1">&#39;color&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">obs_arr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">obs_arr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">diff_plot_th_err</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
                         <span class="n">steps_err</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                        <span class="n">plot_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fill_args</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+                        <span class="n">plot_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fill_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                        <span class="n">scale_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot the theory prediction of an observable dependending on</span>
 <span class="sd">    a continuous parameter, e.g. $q^2$,</span>
 <span class="sd">    with uncertainties as a function of this parameter.</span>
@@ -1218,6 +1222,8 @@ table {
 <span class="sd">      to the matplotlib plot function, e.g. &#39;c&#39; for colour.</span>
 <span class="sd">    - `fill_args` (optional): dictionary with keyword arguments to be passed</span>
 <span class="sd">      to the matplotlib fill_between function, e.g. &#39;facecolor&#39;</span>
+<span class="sd">    - `scale_factor` (optional): factor by which all values will be multiplied.</span>
+<span class="sd">      Defaults to 1.</span>
 
 <span class="sd">    A word of caution regarding the `steps_err` option. By default, the</span>
 <span class="sd">    uncertainty is only computed at 10 steps and is interpolated in</span>
@@ -1249,13 +1255,13 @@ table {
         <span class="n">plot_args</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
     <span class="k">if</span> <span class="s1">&#39;alpha&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fill_args</span><span class="p">:</span>
         <span class="n">fill_args</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">obs_arr</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_args</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">obs_arr</span><span class="p">),</span> <span class="o">**</span><span class="n">plot_args</span><span class="p">)</span>
     <span class="n">interp_err</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x_err_arr</span><span class="p">,</span> <span class="n">obs_err_arr</span><span class="p">,</span>
                                             <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;quadratic&#39;</span><span class="p">)</span>
     <span class="n">obs_err_arr_int</span> <span class="o">=</span> <span class="n">interp_err</span><span class="p">(</span><span class="n">x_arr</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span>
-                    <span class="n">obs_arr</span> <span class="o">-</span> <span class="n">obs_err_arr_int</span><span class="p">,</span>
-                    <span class="n">obs_arr</span> <span class="o">+</span> <span class="n">obs_err_arr_int</span><span class="p">,</span>
+                    <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">obs_arr</span> <span class="o">-</span> <span class="n">obs_err_arr_int</span><span class="p">),</span>
+                    <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">obs_arr</span> <span class="o">+</span> <span class="n">obs_err_arr_int</span><span class="p">),</span>
                     <span class="o">**</span><span class="n">fill_args</span><span class="p">)</span>
 
 
@@ -1313,6 +1319,7 @@ table {
 
 <span class="k">def</span> <span class="nf">bin_plot_exp</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">col_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">divide_binwidth</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                 <span class="n">include_bins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">exclude_bins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">scale_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot all existing binned experimental measurements of an observable</span>
 <span class="sd">    dependending on a continuous parameter, e.g. $q^2$ (in the form of</span>
@@ -1339,6 +1346,8 @@ table {
 <span class="sd">      boundaries) not to include in the plot. By default, all measured bins</span>
 <span class="sd">      will be included. Should not be specified simultaneously with</span>
 <span class="sd">      `include_bins`.</span>
+<span class="sd">    - `scale_factor` (optional): factor by which all values will be multiplied.</span>
+<span class="sd">      Defaults to 1.</span>
 
 <span class="sd">    Additional keyword arguments are passed to the matplotlib errorbar function,</span>
 <span class="sd">    e.g. &#39;c&#39; for colour.</span>
@@ -1398,8 +1407,97 @@ table {
                     <span class="c1"># twice in the legend)</span>
                     <span class="n">kwargs_m</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span>
                     <span class="n">_experiment_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">dy_lower</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dy_lower</span><span class="p">)</span>
+            <span class="n">dy_upper</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dy_upper</span><span class="p">)</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="p">[</span><span class="n">dy_lower</span><span class="p">,</span> <span class="n">dy_upper</span><span class="p">],</span> <span class="n">xerr</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs_m</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">y</span><span class="p">,</span> <span class="n">bins</span>
+
+
+<span class="k">def</span> <span class="nf">diff_plot_exp</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">col_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">include_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">exclude_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">scale_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot all existing experimental measurements of an observable</span>
+<span class="sd">    dependending on a continuous parameter, e.g. $q^2$ (in the form of</span>
+<span class="sd">    coloured error bars).</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    - `col_dict` (optional): a dictionary to assign colours to specific</span>
+<span class="sd">      experiments, e.g. `{&#39;BaBar&#39;: &#39;b&#39;, &#39;Belle&#39;: &#39;r&#39;}`</span>
+<span class="sd">    - `include_measurements` (optional): a list of strings with measurement</span>
+<span class="sd">      names (see measurements.yml) to include in the plot. By default, all</span>
+<span class="sd">      existing measurements will be included.</span>
+<span class="sd">    - `include_x` (optional): a list of values</span>
+<span class="sd">      to include in the plot. By default, all measured values</span>
+<span class="sd">      will be included. Should not be specified simultaneously with</span>
+<span class="sd">      `exclude_x`.</span>
+<span class="sd">    - `exclude_x` (optional): a list of values</span>
+<span class="sd">      not to include in the plot. By default, all measured values</span>
+<span class="sd">      will be included. Should not be specified simultaneously with</span>
+<span class="sd">      `include_x`.</span>
+<span class="sd">    - `scale_factor` (optional): factor by which all values will be multiplied.</span>
+<span class="sd">      Defaults to 1.</span>
+
+<span class="sd">    Additional keyword arguments are passed to the matplotlib errorbar function,</span>
+<span class="sd">    e.g. &#39;c&#39; for colour.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs_name</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">obs</span><span class="o">.</span><span class="n">arguments</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Only observables that depend on a single variable are allowed&quot;</span><span class="p">)</span>
+    <span class="n">_experiment_labels</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># list of experiments appearing in the plot legend</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">m_name</span><span class="p">,</span> <span class="n">m_obj</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">include_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">m_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">include_measurements</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">obs_name_list</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
+        <span class="n">obs_name_list_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">o</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">obs_name_list</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">o</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">obs_name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">obs_name_list_x</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">central</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_1d_errors_rightleft</span><span class="p">()</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dy_lower</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dy_upper</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">obs_name_list_x</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">include_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">exclude_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Please only specify include_x or exclude_x, not both&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">X</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">include_x</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">exclude_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">exclude_x</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="n">xs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">central</span><span class="p">[(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">X</span><span class="p">)]</span>
+            <span class="n">e_right</span><span class="p">,</span> <span class="n">e_left</span> <span class="o">=</span> <span class="n">err</span><span class="p">[(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">X</span><span class="p">)]</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">dy_lower</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e_left</span><span class="p">)</span>
+            <span class="n">dy_upper</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e_right</span><span class="p">)</span>
+        <span class="n">kwargs_m</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># copy valid for this measurement only</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">or</span> <span class="n">y</span><span class="p">:</span> <span class="c1"># only if a data point exists</span>
+            <span class="k">if</span> <span class="n">col_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span> <span class="ow">in</span> <span class="n">col_dict</span><span class="p">:</span>
+                    <span class="n">col</span> <span class="o">=</span> <span class="n">col_dict</span><span class="p">[</span><span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span><span class="p">]</span>
+                    <span class="n">kwargs_m</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">col</span>
+            <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs_m</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_experiment_labels</span><span class="p">:</span>
+                    <span class="c1"># if there is no plot legend entry for the experiment yet,</span>
+                    <span class="c1"># add it and add the experiment to the list keeping track</span>
+                    <span class="c1"># of existing labels (we don&#39;t want an experiment to appear</span>
+                    <span class="c1"># twice in the legend)</span>
+                    <span class="n">kwargs_m</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span>
+                    <span class="n">_experiment_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">dy_lower</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dy_lower</span><span class="p">)</span>
+            <span class="n">dy_upper</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dy_upper</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="p">[</span><span class="n">dy_lower</span><span class="p">,</span> <span class="n">dy_upper</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs_m</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span><span class="p">,</span> <span class="n">xs</span>
+
 
 <span class="k">def</span> <span class="nf">density_contour_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">covariance_factor</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">n_sigma</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Generate the data for a plot with confidence contours of the density</span>
@@ -1945,7 +2043,7 @@ backward compatibility.</p></div>
       
   <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.bin_plot_exp">
-    <p>def <span class="ident">bin_plot_exp</span>(</p><p>obs_name, col_dict=None, divide_binwidth=False, include_measurements=None, include_bins=None, exclude_bins=None, **kwargs)</p>
+    <p>def <span class="ident">bin_plot_exp</span>(</p><p>obs_name, col_dict=None, divide_binwidth=False, include_measurements=None, include_bins=None, exclude_bins=None, scale_factor=1, **kwargs)</p>
     </div>
     
 
@@ -1975,6 +2073,8 @@ coloured crosses).</p>
   boundaries) not to include in the plot. By default, all measured bins
   will be included. Should not be specified simultaneously with
   <code>include_bins</code>.</li>
+<li><code>scale_factor</code> (optional): factor by which all values will be multiplied.
+  Defaults to 1.</li>
 </ul>
 <p>Additional keyword arguments are passed to the matplotlib errorbar function,
 e.g. 'c' for colour.</p></div>
@@ -1983,6 +2083,7 @@ e.g. 'c' for colour.</p></div>
   <div id="source-flavio.plots.plotfunctions.bin_plot_exp" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bin_plot_exp</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">col_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">divide_binwidth</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                 <span class="n">include_bins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">exclude_bins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">scale_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot all existing binned experimental measurements of an observable</span>
 <span class="sd">    dependending on a continuous parameter, e.g. $q^2$ (in the form of</span>
@@ -2009,6 +2110,8 @@ e.g. 'c' for colour.</p></div>
 <span class="sd">      boundaries) not to include in the plot. By default, all measured bins</span>
 <span class="sd">      will be included. Should not be specified simultaneously with</span>
 <span class="sd">      `include_bins`.</span>
+<span class="sd">    - `scale_factor` (optional): factor by which all values will be multiplied.</span>
+<span class="sd">      Defaults to 1.</span>
 
 <span class="sd">    Additional keyword arguments are passed to the matplotlib errorbar function,</span>
 <span class="sd">    e.g. &#39;c&#39; for colour.</span>
@@ -2068,6 +2171,9 @@ e.g. 'c' for colour.</p></div>
                     <span class="c1"># twice in the legend)</span>
                     <span class="n">kwargs_m</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span>
                     <span class="n">_experiment_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">dy_lower</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dy_lower</span><span class="p">)</span>
+            <span class="n">dy_upper</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dy_upper</span><span class="p">)</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="p">[</span><span class="n">dy_lower</span><span class="p">,</span> <span class="n">dy_upper</span><span class="p">],</span> <span class="n">xerr</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs_m</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">y</span><span class="p">,</span> <span class="n">bins</span>
 </pre></div>
@@ -2553,8 +2659,133 @@ axes2 = density_contour_joint(x2, y2, col=1, **axes1)</code></p></div>
   
       
   <div class="item">
+    <div class="name def" id="flavio.plots.plotfunctions.diff_plot_exp">
+    <p>def <span class="ident">diff_plot_exp</span>(</p><p>obs_name, col_dict=None, include_measurements=None, include_x=None, exclude_x=None, scale_factor=1, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Plot all existing experimental measurements of an observable
+dependending on a continuous parameter, e.g. $q^2$ (in the form of
+coloured error bars).</p>
+<p>Parameters:</p>
+<ul>
+<li><code>col_dict</code> (optional): a dictionary to assign colours to specific
+  experiments, e.g. <code>{'BaBar': 'b', 'Belle': 'r'}</code></li>
+<li><code>include_measurements</code> (optional): a list of strings with measurement
+  names (see measurements.yml) to include in the plot. By default, all
+  existing measurements will be included.</li>
+<li><code>include_x</code> (optional): a list of values
+  to include in the plot. By default, all measured values
+  will be included. Should not be specified simultaneously with
+  <code>exclude_x</code>.</li>
+<li><code>exclude_x</code> (optional): a list of values
+  not to include in the plot. By default, all measured values
+  will be included. Should not be specified simultaneously with
+  <code>include_x</code>.</li>
+<li><code>scale_factor</code> (optional): factor by which all values will be multiplied.
+  Defaults to 1.</li>
+</ul>
+<p>Additional keyword arguments are passed to the matplotlib errorbar function,
+e.g. 'c' for colour.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.diff_plot_exp', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.plots.plotfunctions.diff_plot_exp" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">diff_plot_exp</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">col_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">include_measurements</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">include_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">exclude_x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">scale_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot all existing experimental measurements of an observable</span>
+<span class="sd">    dependending on a continuous parameter, e.g. $q^2$ (in the form of</span>
+<span class="sd">    coloured error bars).</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    - `col_dict` (optional): a dictionary to assign colours to specific</span>
+<span class="sd">      experiments, e.g. `{&#39;BaBar&#39;: &#39;b&#39;, &#39;Belle&#39;: &#39;r&#39;}`</span>
+<span class="sd">    - `include_measurements` (optional): a list of strings with measurement</span>
+<span class="sd">      names (see measurements.yml) to include in the plot. By default, all</span>
+<span class="sd">      existing measurements will be included.</span>
+<span class="sd">    - `include_x` (optional): a list of values</span>
+<span class="sd">      to include in the plot. By default, all measured values</span>
+<span class="sd">      will be included. Should not be specified simultaneously with</span>
+<span class="sd">      `exclude_x`.</span>
+<span class="sd">    - `exclude_x` (optional): a list of values</span>
+<span class="sd">      not to include in the plot. By default, all measured values</span>
+<span class="sd">      will be included. Should not be specified simultaneously with</span>
+<span class="sd">      `include_x`.</span>
+<span class="sd">    - `scale_factor` (optional): factor by which all values will be multiplied.</span>
+<span class="sd">      Defaults to 1.</span>
+
+<span class="sd">    Additional keyword arguments are passed to the matplotlib errorbar function,</span>
+<span class="sd">    e.g. &#39;c&#39; for colour.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs_name</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">obs</span><span class="o">.</span><span class="n">arguments</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Only observables that depend on a single variable are allowed&quot;</span><span class="p">)</span>
+    <span class="n">_experiment_labels</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># list of experiments appearing in the plot legend</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">m_name</span><span class="p">,</span> <span class="n">m_obj</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Measurement</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">include_measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">m_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">include_measurements</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">obs_name_list</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">all_parameters</span>
+        <span class="n">obs_name_list_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">o</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">obs_name_list</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">o</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">obs_name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">obs_name_list_x</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">central</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_central_all</span><span class="p">()</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">get_1d_errors_rightleft</span><span class="p">()</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dy_lower</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dy_upper</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">obs_name_list_x</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">include_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">exclude_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Please only specify include_x or exclude_x, not both&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">X</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">include_x</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">exclude_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">exclude_x</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="n">xs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">central</span><span class="p">[(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">X</span><span class="p">)]</span>
+            <span class="n">e_right</span><span class="p">,</span> <span class="n">e_left</span> <span class="o">=</span> <span class="n">err</span><span class="p">[(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">X</span><span class="p">)]</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">dy_lower</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e_left</span><span class="p">)</span>
+            <span class="n">dy_upper</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e_right</span><span class="p">)</span>
+        <span class="n">kwargs_m</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># copy valid for this measurement only</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">or</span> <span class="n">y</span><span class="p">:</span> <span class="c1"># only if a data point exists</span>
+            <span class="k">if</span> <span class="n">col_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span> <span class="ow">in</span> <span class="n">col_dict</span><span class="p">:</span>
+                    <span class="n">col</span> <span class="o">=</span> <span class="n">col_dict</span><span class="p">[</span><span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span><span class="p">]</span>
+                    <span class="n">kwargs_m</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">col</span>
+            <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs_m</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_experiment_labels</span><span class="p">:</span>
+                    <span class="c1"># if there is no plot legend entry for the experiment yet,</span>
+                    <span class="c1"># add it and add the experiment to the list keeping track</span>
+                    <span class="c1"># of existing labels (we don&#39;t want an experiment to appear</span>
+                    <span class="c1"># twice in the legend)</span>
+                    <span class="n">kwargs_m</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span>
+                    <span class="n">_experiment_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_obj</span><span class="o">.</span><span class="n">experiment</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">dy_lower</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dy_lower</span><span class="p">)</span>
+            <span class="n">dy_upper</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dy_upper</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="p">[</span><span class="n">dy_lower</span><span class="p">,</span> <span class="n">dy_upper</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs_m</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span><span class="p">,</span> <span class="n">xs</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.diff_plot_th">
-    <p>def <span class="ident">diff_plot_th</span>(</p><p>obs_name, x_min, x_max, wc=None, steps=100, **kwargs)</p>
+    <p>def <span class="ident">diff_plot_th</span>(</p><p>obs_name, x_min, x_max, wc=None, steps=100, scale_factor=1, **kwargs)</p>
     </div>
     
 
@@ -2569,13 +2800,15 @@ a continuous parameter, e.g. $q^2$.</p>
   Wilson coefficients</li>
 <li><code>steps</code> (optional): number of steps in x. Defaults to 100. Less is
   faster but less precise.</li>
+<li><code>scale_factor</code> (optional): factor by which all values will be multiplied.
+  Defaults to 1.</li>
 </ul>
 <p>Additional keyword arguments are passed to the matplotlib plot function,
 e.g. 'c' for colour.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.diff_plot_th', this);">Show source &equiv;</a></p>
   <div id="source-flavio.plots.plotfunctions.diff_plot_th" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">diff_plot_th</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">diff_plot_th</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot the central theory prediction of an observable dependending on</span>
 <span class="sd">    a continuous parameter, e.g. $q^2$.</span>
 
@@ -2586,6 +2819,8 @@ e.g. 'c' for colour.</p></div>
 <span class="sd">      Wilson coefficients</span>
 <span class="sd">    - `steps` (optional): number of steps in x. Defaults to 100. Less is</span>
 <span class="sd">      faster but less precise.</span>
+<span class="sd">    - `scale_factor` (optional): factor by which all values will be multiplied.</span>
+<span class="sd">      Defaults to 1.</span>
 
 <span class="sd">    Additional keyword arguments are passed to the matplotlib plot function,</span>
 <span class="sd">    e.g. &#39;c&#39; for colour.</span>
@@ -2602,7 +2837,7 @@ e.g. 'c' for colour.</p></div>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
     <span class="k">if</span> <span class="s1">&#39;c&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s1">&#39;color&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">obs_arr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">obs_arr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2613,7 +2848,7 @@ e.g. 'c' for colour.</p></div>
       
   <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.diff_plot_th_err">
-    <p>def <span class="ident">diff_plot_th_err</span>(</p><p>obs_name, x_min, x_max, wc=None, steps=100, steps_err=5, N=100, threads=1, label=None, plot_args=None, fill_args=None)</p>
+    <p>def <span class="ident">diff_plot_th_err</span>(</p><p>obs_name, x_min, x_max, wc=None, steps=100, steps_err=5, N=100, threads=1, label=None, plot_args=None, fill_args=None, scale_factor=1)</p>
     </div>
     
 
@@ -2640,6 +2875,8 @@ with uncertainties as a function of this parameter.</p>
   to the matplotlib plot function, e.g. 'c' for colour.</li>
 <li><code>fill_args</code> (optional): dictionary with keyword arguments to be passed
   to the matplotlib fill_between function, e.g. 'facecolor'</li>
+<li><code>scale_factor</code> (optional): factor by which all values will be multiplied.
+  Defaults to 1.</li>
 </ul>
 <p>A word of caution regarding the <code>steps_err</code> option. By default, the
 uncertainty is only computed at 10 steps and is interpolated in
@@ -2652,7 +2889,8 @@ point and the interpolation might be inaccurate.</p></div>
   <div id="source-flavio.plots.plotfunctions.diff_plot_th_err" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">diff_plot_th_err</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">wc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
                         <span class="n">steps_err</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                        <span class="n">plot_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fill_args</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+                        <span class="n">plot_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fill_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                        <span class="n">scale_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot the theory prediction of an observable dependending on</span>
 <span class="sd">    a continuous parameter, e.g. $q^2$,</span>
 <span class="sd">    with uncertainties as a function of this parameter.</span>
@@ -2675,6 +2913,8 @@ point and the interpolation might be inaccurate.</p></div>
 <span class="sd">      to the matplotlib plot function, e.g. &#39;c&#39; for colour.</span>
 <span class="sd">    - `fill_args` (optional): dictionary with keyword arguments to be passed</span>
 <span class="sd">      to the matplotlib fill_between function, e.g. &#39;facecolor&#39;</span>
+<span class="sd">    - `scale_factor` (optional): factor by which all values will be multiplied.</span>
+<span class="sd">      Defaults to 1.</span>
 
 <span class="sd">    A word of caution regarding the `steps_err` option. By default, the</span>
 <span class="sd">    uncertainty is only computed at 10 steps and is interpolated in</span>
@@ -2706,13 +2946,13 @@ point and the interpolation might be inaccurate.</p></div>
         <span class="n">plot_args</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
     <span class="k">if</span> <span class="s1">&#39;alpha&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fill_args</span><span class="p">:</span>
         <span class="n">fill_args</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">obs_arr</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_args</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">obs_arr</span><span class="p">),</span> <span class="o">**</span><span class="n">plot_args</span><span class="p">)</span>
     <span class="n">interp_err</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x_err_arr</span><span class="p">,</span> <span class="n">obs_err_arr</span><span class="p">,</span>
                                             <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;quadratic&#39;</span><span class="p">)</span>
     <span class="n">obs_err_arr_int</span> <span class="o">=</span> <span class="n">interp_err</span><span class="p">(</span><span class="n">x_arr</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span>
-                    <span class="n">obs_arr</span> <span class="o">-</span> <span class="n">obs_err_arr_int</span><span class="p">,</span>
-                    <span class="n">obs_arr</span> <span class="o">+</span> <span class="n">obs_err_arr_int</span><span class="p">,</span>
+                    <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">obs_arr</span> <span class="o">-</span> <span class="n">obs_err_arr_int</span><span class="p">),</span>
+                    <span class="n">scale_factor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">obs_arr</span> <span class="o">+</span> <span class="n">obs_err_arr_int</span><span class="p">),</span>
                     <span class="o">**</span><span class="n">fill_args</span><span class="p">)</span>
 </pre></div>
 
