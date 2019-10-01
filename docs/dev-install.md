@@ -32,11 +32,9 @@ cd flavio
 and install the package with this command
 
 {% highlight bash %}
-pip3 install -e .[plotting,sampling,testing] --user
+python3 -m pip install -e .[plotting,testing] --user
 {% endhighlight %}
 
-(depending on your system, the Python 3 version of `pip` might also be
-called `pip-3.3` or just `pip`).
 The `-e` switch means that the package is installed in "development mode", so
 you can make modifications to the downloaded code and don't have to reinstall.
 This will install also all the extra dependencies needed for plotting, sampling,
@@ -52,12 +50,15 @@ Just go to the root directory of the package and run
 nosetests3
 {% endhighlight %}
 
-(or just `nosetests`, depending on your system).
+(or just `nosetests`, depending on your system. If none of them work, try `python3 -m nose`).
 The output should look something like this:
 {% highlight bash %}
-.........................................
+......................................................................
+......................................................................
+......................................................................
+...................................................
 ----------------------------------------------------------------------
-Ran 57 tests in 5.135s
+Ran 261 tests in 31.584s
 
 OK
 {% endhighlight %}
@@ -66,3 +67,6 @@ OK
 
 To upgrade your development installation, you simple have to `git pull`.
 The package is automatically kept up to date thanks to the `-e` flag used above.
+
+However, if dependencies change, you might have to repeat the above installation command
+with the `--upgrade` flag added to make sure the updated dependencies are installed.

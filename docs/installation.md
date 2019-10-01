@@ -19,11 +19,10 @@ The latest released version is available via [PyPI](https://pypi.python.org/), s
 you can install it simply by executing
 
 {% highlight bash %}
-pip3 install flavio
+python3 -m pip install flavio
 {% endhighlight %}
 
-(depending on your system, the Python 3 version of `pip` could also be called
-`pip-3.3` or just `pip`). You might want to add the `--user` switch to
+You might want to add the `--user` switch to
 install it in your home directory rather than system-wide.
 
 ## Install optional dependencies
@@ -33,11 +32,10 @@ if you want to use all the features of the package, you might want to install
 some additional Python packages. The command
 
 {% highlight bash %}
-pip3 install flavio[plotting,sampling]
+pip3 install flavio[plotting]
 {% endhighlight %}
 
-will install `matplotlib`, that is required for plotting, as well as some
-packages useful for Bayesian analyses.
+will install `matplotlib`, that is required for plotting.
 
 
 ## Upgrading flavio
@@ -46,5 +44,7 @@ If you have installed flavio using `pip`, it is trivial to upgrade it to
 a new version. Simply execute
 
 {% highlight bash %}
-pip3 install flavio --upgrade
+python3 -m pip install flavio --upgrade
 {% endhighlight %}
+
+(again optionally adding `--user`).
