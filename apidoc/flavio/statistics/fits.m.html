@@ -1075,6 +1075,7 @@ table {
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.set_description">set_description</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.del_instance">del_instance</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.find">find</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.BayesianFit.get_instance">get_instance</a></li>
   </ul>
 
@@ -1112,6 +1113,7 @@ table {
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.shortarray_to_dict">shortarray_to_dict</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.del_instance">del_instance</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.FastFit.find">find</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FastFit.get_instance">get_instance</a></li>
   </ul>
 
@@ -1135,6 +1137,7 @@ table {
     <li class="mono"><a href="#flavio.statistics.fits.Fit.set_description">set_description</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.Fit.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.Fit.del_instance">del_instance</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.Fit.find">find</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.Fit.get_instance">get_instance</a></li>
   </ul>
 
@@ -1159,6 +1162,7 @@ table {
     <li class="mono"><a href="#flavio.statistics.fits.FrequentistFit.set_description">set_description</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FrequentistFit.clear_all">clear_all</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FrequentistFit.del_instance">del_instance</a></li>
+    <li class="mono"><a href="#flavio.statistics.fits.FrequentistFit.find">find</a></li>
     <li class="mono"><a href="#flavio.statistics.fits.FrequentistFit.get_instance">get_instance</a></li>
   </ul>
 
@@ -1181,7 +1185,9 @@ table {
   <p>A fit is a collection of observables and parameters that can be used to
 perform statistical analyses within a particular statistical framework.</p>
 <p>Fits are instances of descendants of the <code>Fit</code> class (which is not meant
-to be used directly).</p>
+to be used directly)</p>
+<p>Note that this module has been deprecated as of flavio v1.6.0. Please
+use the <code>flavio.statistics.likelihood</code> module instead.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.fits" class="source">
@@ -1189,7 +1195,17 @@ to be used directly).</p>
 <span class="sd">perform statistical analyses within a particular statistical framework.</span>
 
 <span class="sd">Fits are instances of descendants of the `Fit` class (which is not meant</span>
-<span class="sd">to be used directly).&quot;&quot;&quot;</span>
+<span class="sd">to be used directly)</span>
+
+<span class="sd">Note that this module has been deprecated as of flavio v1.6.0. Please</span>
+<span class="sd">use the `flavio.statistics.likelihood` module instead.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The `flavio.statistics.fits` module has been deprecated&quot;</span>
+              <span class="s2">&quot; as of flavio v1.6.0. Please use the `flavio.statistics.likelihood`&quot;</span>
+              <span class="s2">&quot; module instead.&quot;</span><span class="p">,</span>
+              <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
 
 <span class="kn">import</span> <span class="nn">flavio</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -2710,6 +2726,31 @@ sampling the start_wc_priors distribution.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="flavio.statistics.fits.BayesianFit.find">
+    <p>def <span class="ident">find</span>(</p><p>cls, regex)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Find all instance names matching the regular expression <code>regex</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.BayesianFit.find', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.BayesianFit.find" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find all instance names matching the regular expression `regex`.&quot;&quot;&quot;</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">search</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instances</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.statistics.fits.BayesianFit.get_instance">
     <p>def <span class="ident">get_instance</span>(</p><p>cls, name)</p>
     </div>
@@ -4215,6 +4256,31 @@ sampling the start_wc_priors distribution.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="flavio.statistics.fits.FastFit.find">
+    <p>def <span class="ident">find</span>(</p><p>cls, regex)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Find all instance names matching the regular expression <code>regex</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FastFit.find', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.FastFit.find" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find all instance names matching the regular expression `regex`.&quot;&quot;&quot;</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">search</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instances</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.statistics.fits.FastFit.get_instance">
     <p>def <span class="ident">get_instance</span>(</p><p>cls, name)</p>
     </div>
@@ -4623,7 +4689,7 @@ sampling the start_wc_priors distribution.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.statistics.fits.Fit.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fbc2e148048&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None, fit_wc_eft=&#39;WET&#39;, fit_wc_basis=&#39;flavio&#39;)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, name, par_obj=&lt;flavio.classes.ParameterConstraints object at 0x7fe07ea11e48&gt;, fit_parameters=None, nuisance_parameters=None, observables=None, fit_wc_names=None, fit_wc_function=None, fit_wc_priors=None, input_scale=160.0, exclude_measurements=None, include_measurements=None, fit_wc_eft=&#39;WET&#39;, fit_wc_basis=&#39;flavio&#39;)</p>
     </div>
     
 
@@ -5321,6 +5387,31 @@ sampling the start_wc_priors distribution.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="flavio.statistics.fits.Fit.find">
+    <p>def <span class="ident">find</span>(</p><p>cls, regex)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Find all instance names matching the regular expression <code>regex</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.Fit.find', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.Fit.find" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find all instance names matching the regular expression `regex`.&quot;&quot;&quot;</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">search</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instances</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.statistics.fits.Fit.get_instance">
     <p>def <span class="ident">get_instance</span>(</p><p>cls, name)</p>
     </div>
@@ -5962,6 +6053,31 @@ sampling the start_wc_priors distribution.</p></div>
     <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">del_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
     <span class="k">del</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instances</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.statistics.fits.FrequentistFit.find">
+    <p>def <span class="ident">find</span>(</p><p>cls, regex)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Find all instance names matching the regular expression <code>regex</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.fits.FrequentistFit.find', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.fits.FrequentistFit.find" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find all instance names matching the regular expression `regex`.&quot;&quot;&quot;</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">search</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instances</span><span class="p">))</span>
 </pre></div>
 
   </div>

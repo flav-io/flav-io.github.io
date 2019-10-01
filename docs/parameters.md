@@ -109,6 +109,14 @@ of the parameter.
 | `B->K* BSZ a2_T2` | $a_2^{T_2}$ | BSZ form factor parametrization coefficient $a_2$ of $T_2$ |
 | `B->K* BSZ a2_T23` | $a_2^{T_{23}}$ | BSZ form factor parametrization coefficient $a_2$ of $T_{23}$ |
 | `B->K* BSZ a2_V` | $a_2^{V}$ | BSZ form factor parametrization coefficient $a_2$ of $V$ |
+| `B->gamma KM betaa` | $\beta_a$ | beta parameter for Fa form factor in KM parametrization |
+| `B->gamma KM betata` | $\beta_{ta}$ | beta parameter for Fta form factor in KM parametrization |
+| `B->gamma KM betatv` | $\beta_{tv}$ | beta parameter for Ftv form factor in KM parametrization |
+| `B->gamma KM betav` | $\beta_v$ | beta parameter for Fv form factor in KM parametrization |
+| `B->gamma KM deltaa` | $\Delta_a$ | Delta parameter for Fa form factor in KM parametrization |
+| `B->gamma KM deltata` | $\Delta_{ta}$ | Delta parameter for Fta form factor in KM parametrization |
+| `B->gamma KM deltatv` | $\Delta_{tv}$ | Delta parameter for Ftv form factor in KM parametrization |
+| `B->gamma KM deltav` | $\Delta_v$ | Delta parameter for Fv form factor in KM parametrization |
 | `B->omega BCL m0` | $m_{B^*}^{A_0}$ | Resonance mass for the $B\to \omega$ scalar form factor in BCL or BSZ parametrization |
 | `B->omega BCL m1+` | $m_{B^*}^{1^+}$ | Resonance mass for the $B\to \omega$ form factors $A_{12}$ and $T_{2,23}$ in BCL or BSZ parametrization |
 | `B->omega BCL m1-` | $m_{B^*}^{1^-}$ | Resonance mass for the $B\to \omega$ form factors $V$ and $T_1$ in BCL or BSZ parametrization |
@@ -267,6 +275,7 @@ of the parameter.
 | `Bs->phi BSZ a2_T2` | $a_2^{T_2}$ | BSZ form factor parametrization coefficient $a_2$ of $T_2$ |
 | `Bs->phi BSZ a2_T23` | $a_2^{T_{23}}$ | BSZ form factor parametrization coefficient $a_2$ of $T_{23}$ |
 | `Bs->phi BSZ a2_V` | $a_2^{V}$ | BSZ form factor parametrization coefficient $a_2$ of $V$ |
+| `Bs->phi LCSR T10` | $T_1(0)$ | Bs->phi T_1 parameter at q2=0 |
 | `Bs->phi deltaC7 a_+ Im` | $\text{Im}\,a^{\Delta_7}_+$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
 | `Bs->phi deltaC7 a_+ Re` | $\text{Re}\,a^{\Delta_7}_+$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
 | `Bs->phi deltaC7 a_- Im` | $\text{Im}\,a^{\Delta_7}_-$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at low $q^2$ |
@@ -315,6 +324,7 @@ of the parameter.
 | `GammaCapture Ti` | $\Gamma_\text{capture}(\phantom k^{48}_{22} \mathrm{Ti})$ | Capture rate of $\mu$ in $\phantom k^{48}_{22} \mathrm{Ti}$ |
 | `GammaW_had` | $\Gamma_W^\text{had}$ | Hadronic $W$ width in the SM |
 | `GammaW_lep` | $\Gamma_W^\text{lep}$ | Leptonic $W$ width in the SM |
+| `Gamma_phi` | $\Gamma_\phi$ | phi decay width |
 | `K+e3 delta_EM` | $\delta_\text{em}^{K^+e}$ | Relative electromagnetic correction to $K^+\to\pi^0 e^+\bar\nu$ decay rate |
 | `K+mu3 delta_EM` | $\delta_\text{em}^{K^+\mu}$ | Relative electromagnetic correction to $K^+\to\pi^0 \mu^+\bar\nu$ decay rate |
 | `K->pi D` | $D$ | Parameter in the dispersive parametrization of the $K\to\pi$ form factors |

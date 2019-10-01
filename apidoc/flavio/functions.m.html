@@ -1057,6 +1057,7 @@ table {
   <ul>
     <li class="mono"><a href="#flavio.functions.combine_measurements">combine_measurements</a></li>
     <li class="mono"><a href="#flavio.functions.get_dependent_parameters_sm">get_dependent_parameters_sm</a></li>
+    <li class="mono"><a href="#flavio.functions.get_dependent_wcs">get_dependent_wcs</a></li>
     <li class="mono"><a href="#flavio.functions.np_prediction">np_prediction</a></li>
     <li class="mono"><a href="#flavio.functions.np_uncertainty">np_uncertainty</a></li>
     <li class="mono"><a href="#flavio.functions.sm_covariance">sm_covariance</a></li>
@@ -1076,6 +1077,28 @@ table {
   <ul>
     <li class="mono"><a href="#flavio.functions.AwareDict.__init__">__init__</a></li>
     <li class="mono"><a href="#flavio.functions.AwareDict.copy">copy</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#flavio.functions.AwareWilson">AwareWilson</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.__init__">__init__</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.clear_cache">clear_cache</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.get_option">get_option</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.get_wc">get_wc</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.get_wcxf">get_wcxf</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.match_run">match_run</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.run_wcxf">run_wcxf</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.set_initial">set_initial</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.set_initial_wcxf">set_initial_wcxf</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.set_option">set_option</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.from_wc">from_wc</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.from_wilson">from_wilson</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.load_wc">load_wc</a></li>
+    <li class="mono"><a href="#flavio.functions.AwareWilson.set_default_option">set_default_option</a></li>
   </ul>
 
         </li>
@@ -1204,8 +1227,8 @@ top-level namespace.</p>
     <span class="k">return</span> <span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc_sm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">AwareDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generalization of dictionary that adds the key to the previously defined</span>
-<span class="sd">    set `pcalled` upon getting an item.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Generalization of dictionary that adds the key to the</span>
+<span class="sd">    set `akeys` upon getting an item.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize the instance.&quot;&quot;&quot;</span>
@@ -1226,6 +1249,19 @@ top-level namespace.</p>
     <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__copy__</span><span class="p">()</span>
 
+
+<span class="k">class</span> <span class="nc">AwareWilson</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Subclass of `flavio.WilsonCoefficients` that adds the arguments of calls</span>
+<span class="sd">    to its `match_run`  method to `atuples` attribute.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atuples</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">match_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atuples</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="p">)</span>
+
+
 <span class="k">def</span> <span class="nf">get_dependent_parameters_sm</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the set of parameters the SM prediction of the observable depends on.&quot;&quot;&quot;</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">Observable</span><span class="p">[</span><span class="n">obs_name</span><span class="p">]</span>
@@ -1238,6 +1274,26 @@ top-level namespace.</p>
     <span class="c1"># the dictionaries)</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">apar_central</span><span class="o">.</span><span class="n">akeys</span>
             <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+
+
+<span class="k">def</span> <span class="nf">get_dependent_wcs</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the EFT, basis, scale, and sector of Wilson coefficients</span>
+<span class="sd">    the NP prediction of the observable depends on.</span>
+
+<span class="sd">    Returns a set of tuples of the form</span>
+<span class="sd">    `(scale, eft, basis, sectors)`,</span>
+<span class="sd">    where sectors is a tuple of WCxf sectors or &#39;all&#39;.</span>
+
+<span class="sd">    Note that this function simply checks the arguments with which the</span>
+<span class="sd">    `match_run` method of the underlying `wilson.Wilson` instance is called.</span>
+<span class="sd">    Thus it is only guaranteed that the Wilson coefficients the observable</span>
+<span class="sd">    actually depends on are contained in these sectors.&quot;&quot;&quot;</span>
+    <span class="n">awc</span> <span class="o">=</span> <span class="n">AwareWilson</span><span class="p">()</span>
+    <span class="c1"># need at least one non-zero WC to make sure match_run is called at all</span>
+    <span class="n">awc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">1e-30</span><span class="p">},</span> <span class="mf">91.1876</span><span class="p">,</span> <span class="s1">&#39;SMEFT&#39;</span><span class="p">,</span> <span class="s1">&#39;Warsaw&#39;</span><span class="p">)</span>
+    <span class="n">np_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">awc</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">awc</span><span class="o">.</span><span class="n">atuples</span>
+
 
 <span class="k">def</span> <span class="nf">sm_error_budget</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the *relative* uncertainty of the Standard Model prediction due to</span>
@@ -1537,6 +1593,51 @@ multivariate measurement.</p></div>
     <span class="c1"># the dictionaries)</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">apar_central</span><span class="o">.</span><span class="n">akeys</span>
             <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">flavio</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">instances</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.functions.get_dependent_wcs">
+    <p>def <span class="ident">get_dependent_wcs</span>(</p><p>obs_name, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the EFT, basis, scale, and sector of Wilson coefficients
+the NP prediction of the observable depends on.</p>
+<p>Returns a set of tuples of the form
+<code>(scale, eft, basis, sectors)</code>,
+where sectors is a tuple of WCxf sectors or 'all'.</p>
+<p>Note that this function simply checks the arguments with which the
+<code>match_run</code> method of the underlying <code>wilson.Wilson</code> instance is called.
+Thus it is only guaranteed that the Wilson coefficients the observable
+actually depends on are contained in these sectors.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.get_dependent_wcs', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.get_dependent_wcs" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_dependent_wcs</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the EFT, basis, scale, and sector of Wilson coefficients</span>
+<span class="sd">    the NP prediction of the observable depends on.</span>
+
+<span class="sd">    Returns a set of tuples of the form</span>
+<span class="sd">    `(scale, eft, basis, sectors)`,</span>
+<span class="sd">    where sectors is a tuple of WCxf sectors or &#39;all&#39;.</span>
+
+<span class="sd">    Note that this function simply checks the arguments with which the</span>
+<span class="sd">    `match_run` method of the underlying `wilson.Wilson` instance is called.</span>
+<span class="sd">    Thus it is only guaranteed that the Wilson coefficients the observable</span>
+<span class="sd">    actually depends on are contained in these sectors.&quot;&quot;&quot;</span>
+    <span class="n">awc</span> <span class="o">=</span> <span class="n">AwareWilson</span><span class="p">()</span>
+    <span class="c1"># need at least one non-zero WC to make sure match_run is called at all</span>
+    <span class="n">awc</span><span class="o">.</span><span class="n">set_initial</span><span class="p">({</span><span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mf">1e-30</span><span class="p">},</span> <span class="mf">91.1876</span><span class="p">,</span> <span class="s1">&#39;SMEFT&#39;</span><span class="p">,</span> <span class="s1">&#39;Warsaw&#39;</span><span class="p">)</span>
+    <span class="n">np_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">awc</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">awc</span><span class="o">.</span><span class="n">atuples</span>
 </pre></div>
 
   </div>
@@ -1919,14 +2020,14 @@ depending on the observable (e.g. $q^2$-dependent observables).</p></div>
       <p id="flavio.functions.AwareDict" class="name">class <span class="ident">AwareDict</span></p>
       
   
-    <div class="desc"><p>Generalization of dictionary that adds the key to the previously defined
-set <code>pcalled</code> upon getting an item.</p></div>
+    <div class="desc"><p>Generalization of dictionary that adds the key to the
+set <code>akeys</code> upon getting an item.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareDict', this);">Show source &equiv;</a></p>
   <div id="source-flavio.functions.AwareDict" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AwareDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generalization of dictionary that adds the key to the previously defined</span>
-<span class="sd">    set `pcalled` upon getting an item.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Generalization of dictionary that adds the key to the</span>
+<span class="sd">    set `akeys` upon getting an item.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize the instance.&quot;&quot;&quot;</span>
@@ -2028,6 +2129,531 @@ set <code>pcalled</code> upon getting an item.</p></div>
 </div>
 
             </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="flavio.functions.AwareWilson" class="name">class <span class="ident">AwareWilson</span></p>
+      
+  
+    <div class="desc"><p>Subclass of <code>flavio.WilsonCoefficients</code> that adds the arguments of calls
+to its <code>match_run</code>  method to <code>atuples</code> attribute.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AwareWilson</span><span class="p">(</span><span class="n">flavio</span><span class="o">.</span><span class="n">WilsonCoefficients</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Subclass of `flavio.WilsonCoefficients` that adds the arguments of calls</span>
+<span class="sd">    to its `match_run`  method to `atuples` attribute.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atuples</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">match_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atuples</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#flavio.functions.AwareWilson">AwareWilson</a></li>
+          <li>flavio.physics.eft.WilsonCoefficients</li>
+          <li>wilson.classes.Wilson</li>
+          <li>wilson.classes.ConfigurableClass</li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, *args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialize the <code>Wilson</code> class.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>wcdict</code>: dictionary of Wilson coefficient values at the input scale.
+  The keys must exist as Wilson coefficients in the WCxf basis file.
+  The values must be real or complex numbers (not dictionaries with key
+  'Re'/'Im'!)</li>
+<li><code>scale</code>: input scale in GeV</li>
+<li><code>eft</code>: input EFT</li>
+<li><code>basis</code>: input basis</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">atuples</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.clear_cache">
+    <p>def <span class="ident">clear_cache</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.clear_cache', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.clear_cache" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">clear_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="p">{}</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.get_option">
+    <p>def <span class="ident">get_option</span>(</p><p>self, key)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the current value of the option <code>key</code> (string).</p>
+<p>Instance method, only refers to current instance.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.get_option', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.get_option" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the current value of the option `key` (string).</span>
+<span class="sd">    Instance method, only refers to current instance.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_options</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.get_wc">
+    <p>def <span class="ident">get_wc</span>(</p><p>self, sector, scale, par, eft=&#39;WET&#39;, basis=&#39;flavio&#39;, nf_out=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the values of the Wilson coefficients belonging to a specific
+sector (e.g. <code>bsmumu</code>) at a given scale.</p>
+<p>Returns a dictionary of WC values.</p>
+<p>Parameters:</p>
+<ul>
+<li>sector: string name of the sector as defined in the WCxf EFT instance</li>
+<li>scale: $\overline{    ext{MS}}$ renormalization scale</li>
+<li>par: dictionary of parameters</li>
+<li>eft: name of the EFT at the output scale</li>
+<li>basis: name of the output basis</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.get_wc', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.get_wc" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_wc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the values of the Wilson coefficients belonging to a specific</span>
+<span class="sd">    sector (e.g. `bsmumu`) at a given scale.</span>
+<span class="sd">    Returns a dictionary of WC values.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - sector: string name of the sector as defined in the WCxf EFT instance</span>
+<span class="sd">    - scale: $\overline{\text{MS}}$ renormalization scale</span>
+<span class="sd">    - par: dictionary of parameters</span>
+<span class="sd">    - eft: name of the EFT at the output scale</span>
+<span class="sd">    - basis: name of the output basis</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">wcxf_basis</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">Basis</span><span class="p">[</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">sector</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">all_wcs</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># translate from legacy flavio to wcxf sector if necessary</span>
+        <span class="n">wcxf_sector</span> <span class="o">=</span> <span class="n">sectors_flavio2wcxf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">sector</span><span class="p">)</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">wcxf_basis</span><span class="o">.</span><span class="n">sectors</span><span class="p">[</span><span class="n">wcxf_sector</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">wc_sm</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="n">wc_sm</span>
+    <span class="n">wc_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wcxf</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">nf_out</span><span class="p">)</span>
+    <span class="n">wc_out_dict</span> <span class="o">=</span> <span class="n">wc_sm</span>  <span class="c1"># initialize with zeros</span>
+    <span class="n">wc_out_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">wc_out</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>  <span class="c1"># overwrite non-zero entries</span>
+    <span class="k">return</span> <span class="n">wc_out_dict</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.get_wcxf">
+    <p>def <span class="ident">get_wcxf</span>(</p><p>self, sector, scale, par, eft=&#39;WET&#39;, basis=&#39;flavio&#39;, nf_out=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the values of the Wilson coefficients belonging to a specific
+sector (e.g. <code>bsmumu</code>) at a given scale.</p>
+<p>Returns a WCxf.WC instance.</p>
+<p>Parameters:</p>
+<ul>
+<li>sector: string name of the sector as defined in the WCxf EFT instance</li>
+<li>scale: $\overline{    ext{MS}}$ renormalization scale</li>
+<li>par: dictionary of parameters</li>
+<li>eft: name of the EFT at the output scale</li>
+<li>basis: name of the output basis</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.get_wcxf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.get_wcxf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the values of the Wilson coefficients belonging to a specific</span>
+<span class="sd">    sector (e.g. `bsmumu`) at a given scale.</span>
+<span class="sd">    Returns a WCxf.WC instance.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - sector: string name of the sector as defined in the WCxf EFT instance</span>
+<span class="sd">    - scale: $\overline{\text{MS}}$ renormalization scale</span>
+<span class="sd">    - par: dictionary of parameters</span>
+<span class="sd">    - eft: name of the EFT at the output scale</span>
+<span class="sd">    - basis: name of the output basis</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># nf_out is only present to preserve backwards compatibility</span>
+    <span class="k">if</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET&#39;</span>
+    <span class="k">elif</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET-4&#39;</span>
+    <span class="k">elif</span> <span class="n">nf_out</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">eft</span> <span class="o">=</span> <span class="s1">&#39;WET-3&#39;</span>
+    <span class="k">elif</span> <span class="n">nf_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid value: nf_out=&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nf_out</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">sector</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="n">mr_sectors</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># translate from legacy flavio to wcxf sector if necessary</span>
+        <span class="n">wcxf_sector</span> <span class="o">=</span> <span class="n">sectors_flavio2wcxf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">sector</span><span class="p">)</span>
+        <span class="n">mr_sectors</span> <span class="o">=</span> <span class="p">(</span><span class="n">wcxf_sector</span><span class="p">,)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wc</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="p">(</span><span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">{})</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="n">mr_sectors</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.match_run">
+    <p>def <span class="ident">match_run</span>(</p><p>self, scale, eft, basis, sectors=&#39;all&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Run the Wilson coefficients to a different scale
+(and possibly different EFT)
+and return them as <code>wcxf.WC</code> instance.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>scale</code>: output scale in GeV</li>
+<li><code>eft</code>: output EFT</li>
+<li><code>basis</code>: output basis</li>
+<li><code>sectors</code>: in the case of WET (or WET-4 or WET-3), a tuple of sector
+  names can be optionally provided. In this case, only the Wilson coefficients
+  from this sector(s) will be returned and all others discareded. This
+  can speed up the computation significantly if only a small number of sectors
+  is of interest. The sector names are defined in the WCxf basis file.</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.match_run', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.match_run" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">match_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">atuples</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">match_run</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">sectors</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.run_wcxf">
+    <p>def <span class="ident">run_wcxf</span>(</p><p>*args, **kwargs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.run_wcxf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.run_wcxf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">run_wcxf</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The method run_wcxf has been removed. Please use the match_run method of wilson.Wilson instead.&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.set_initial">
+    <p>def <span class="ident">set_initial</span>(</p><p>self, wc_dict, scale, eft=&#39;WET&#39;, basis=&#39;flavio&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Set initial values of Wilson coefficients.</p>
+<p>Parameters:</p>
+<ul>
+<li>wc_dict: dictionary where keys are Wilson coefficient name strings and
+  values are Wilson coefficient NP contribution values</li>
+<li>scale: $\overline{    ext{MS}}$ renormalization scale</li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.set_initial', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.set_initial" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wc_dict</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="s1">&#39;WET&#39;</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;flavio&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set initial values of Wilson coefficients.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - wc_dict: dictionary where keys are Wilson coefficient name strings and</span>
+<span class="sd">      values are Wilson coefficient NP contribution values</span>
+<span class="sd">    - scale: $\overline{\text{MS}}$ renormalization scale</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wcdict</span><span class="o">=</span><span class="n">wc_dict</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">basis</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.set_initial_wcxf">
+    <p>def <span class="ident">set_initial_wcxf</span>(</p><p>self, wc)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Set initial values of Wilson coefficients from a WCxf WC instance.</p>
+<p>If the instance is given in a basis other than the flavio basis,
+the translation is performed automatically, if implemented in the
+<code>wcxf</code> package.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.set_initial_wcxf', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.set_initial_wcxf" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_initial_wcxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set initial values of Wilson coefficients from a WCxf WC instance.</span>
+<span class="sd">    If the instance is given in a basis other than the flavio basis,</span>
+<span class="sd">    the translation is performed automatically, if implemented in the</span>
+<span class="sd">    `wcxf` package.&quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wcdict</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.set_option">
+    <p>def <span class="ident">set_option</span>(</p><p>self, key, value)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Set the option <code>key</code> (string) to <code>value</code>.</p>
+<p>Instance method, affects only current instance.
+This will clear the cache.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.set_option', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.set_option" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the option `key` (string) to `value`.</span>
+<span class="sd">    Instance method, affects only current instance.</span>
+<span class="sd">    This will clear the cache.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_option_schema</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">}))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">clear_cache</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="flavio.functions.AwareWilson.atuples" class="name">var <span class="ident">atuples</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.functions.AwareWilson.get_initial_wcxf" class="name">var <span class="ident">get_initial_wcxf</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Return a wcxf.WC instance in the flavio basis containing the initial
+values of the Wilson coefficients.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.functions.AwareWilson.parameters" class="name">var <span class="ident">parameters</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.from_wc">
+    <p>def <span class="ident">from_wc</span>(</p><p>cls, wc)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return a <code>Wilson</code> instance initialized by a <code>wcxf.WC</code> instance</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.from_wc', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.from_wc" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_wc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a `Wilson` instance initialized by a `wcxf.WC` instance&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">wcdict</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span> <span class="n">eft</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">eft</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">wc</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.from_wilson">
+    <p>def <span class="ident">from_wilson</span>(</p><p>cls, w, par_dict)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.from_wilson', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.from_wilson" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_wilson</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">w</span>
+    <span class="n">fwc</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+    <span class="n">fwc</span><span class="o">.</span><span class="n">set_initial_wcxf</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">wc</span><span class="p">)</span>
+    <span class="n">fwc</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">_cache</span>
+    <span class="n">fwc</span><span class="o">.</span><span class="n">_options</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">_options</span>
+    <span class="n">_ckm_options</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">par_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Vus&#39;</span><span class="p">,</span> <span class="s1">&#39;Vcb&#39;</span><span class="p">,</span> <span class="s1">&#39;Vub&#39;</span><span class="p">,</span> <span class="s1">&#39;delta&#39;</span><span class="p">]}</span>
+    <span class="k">if</span> <span class="n">fwc</span><span class="o">.</span><span class="n">get_option</span><span class="p">(</span><span class="s1">&#39;parameters&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">_ckm_options</span><span class="p">:</span>
+        <span class="n">fwc</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="n">_ckm_options</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fwc</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.load_wc">
+    <p>def <span class="ident">load_wc</span>(</p><p>cls, stream)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return a <code>Wilson</code> instance initialized by a WCxf file-like object</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.load_wc', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.load_wc" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">load_wc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a `Wilson` instance initialized by a WCxf file-like object&quot;&quot;&quot;</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">wcxf</span><span class="o">.</span><span class="n">WC</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_wc</span><span class="p">(</span><span class="n">wc</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.functions.AwareWilson.set_default_option">
+    <p>def <span class="ident">set_default_option</span>(</p><p>cls, key, value)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Class method. Set the default value of the option <code>key</code> (string)
+to <code>value</code> for all future instances of the class.</p>
+<p>Note that this does not affect existing instances or the instance
+called from.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.functions.AwareWilson.set_default_option', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.functions.AwareWilson.set_default_option" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">set_default_option</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class method. Set the default value of the option `key` (string)</span>
+<span class="sd">    to `value` for all future instances of the class.</span>
+<span class="sd">    Note that this does not affect existing instances or the instance</span>
+<span class="sd">    called from.&quot;&quot;&quot;</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">_default_options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_option_schema</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">}))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       </div>
       </div>
 

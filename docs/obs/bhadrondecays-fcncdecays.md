@@ -758,6 +758,8 @@ a scalar observable).
 | `<ACP>(B0->K*mumu)` | $\langle A_\text{CP}\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned Direct CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<AFB>(B0->K*mumu)` | $\langle A_\text{FB}\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned forward-backward asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<ATIm>(B0->K*mumu)` | $\langle A_T^\text{Im}\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned Transverse CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<Dmue_P4p>(B0->K*ll)` | $\langle D_{P_4^\prime}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $P_4^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
+| `<Dmue_P5p>(B0->K*ll)` | $\langle D_{P_5^\prime}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $P_5^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<FL>(B0->K*mumu)` | $\langle F_L\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned longitudinal polarization fraction in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<P1>(B0->K*mumu)` | $\langle P_1\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<P2>(B0->K*mumu)` | $\langle P_2\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
@@ -786,6 +788,8 @@ a scalar observable).
 | `ACP(B0->K*mumu)` | $A_\text{CP}(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Direct CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `AFB(B0->K*mumu)` | $A_\text{FB}(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Forward-backward asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `ATIm(B0->K*mumu)` | $A_T^\text{Im}(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Transverse CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
+| `Dmue_P4p(B0->K*ll)` | $D_{P_4^\prime}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $P_4^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
+| `Dmue_P5p(B0->K*ll)` | $D_{P_5^\prime}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $P_5^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `FL(B0->K*mumu)` | $F_L(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Longitudinal polarization fraction in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `P1(B0->K*mumu)` | $P_1(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `P2(B0->K*mumu)` | $P_2(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
@@ -882,6 +886,8 @@ a scalar observable).
 | `<ACP>(B0->K*ee)` | $\langle A_\text{CP}\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned Direct CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<AFB>(B0->K*ee)` | $\langle A_\text{FB}\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned forward-backward asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<ATIm>(B0->K*ee)` | $\langle A_T^\text{Im}\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned Transverse CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
+| `<Dmue_P4p>(B0->K*ll)` | $\langle D_{P_4^\prime}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $P_4^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
+| `<Dmue_P5p>(B0->K*ll)` | $\langle D_{P_5^\prime}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $P_5^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<FL>(B0->K*ee)` | $\langle F_L\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned longitudinal polarization fraction in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<P1>(B0->K*ee)` | $\langle P_1\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<P2>(B0->K*ee)` | $\langle P_2\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
@@ -909,6 +915,8 @@ a scalar observable).
 | `ACP(B0->K*ee)` | $A_\text{CP}(B^0\to K^{\ast 0}e^+e^-)$ | Direct CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `AFB(B0->K*ee)` | $A_\text{FB}(B^0\to K^{\ast 0}e^+e^-)$ | Forward-backward asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `ATIm(B0->K*ee)` | $A_T^\text{Im}(B^0\to K^{\ast 0}e^+e^-)$ | Transverse CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
+| `Dmue_P4p(B0->K*ll)` | $D_{P_4^\prime}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $P_4^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
+| `Dmue_P5p(B0->K*ll)` | $D_{P_5^\prime}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $P_5^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `FL(B0->K*ee)` | $F_L(B^0\to K^{\ast 0}e^+e^-)$ | Longitudinal polarization fraction in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `P1(B0->K*ee)` | $P_1(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `P2(B0->K*ee)` | $P_2(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
@@ -1323,6 +1331,44 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `ACP(B->Xgamma)` | $A_\text{CP}(B\to X_{s+d}\gamma)$ | Direct CP asymmetry in $B\to X_{s+d}\gamma$ for $E_\gamma>1.6$ GeV |  |
+
+
+## $B\to \ell^+\ell^-\gamma$
+
+### $\bar B^0\to\mu^+\mu^-\gamma$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<dBR/dq2>(B0->mumugamma)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\bar B^0\to\mu^+\mu^-\gamma)$ | Binned differential branching ratio of $\bar B^0\to\mu^+\mu^-\gamma$ | `q2min`, `q2max` |
+| `dBR/dq2(B0->mumugamma)` | $\frac{d\text{BR}}{dq^2}(\bar B^0\to\mu^+\mu^-\gamma)$ | Differential branching ratio of $\bar B^0\to\mu^+\mu^-\gamma$ | `q2` |
+
+
+### $\bar B^0\toe^+e^-\gamma$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<dBR/dq2>(B0->eegamma)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\bar B^0\toe^+e^-\gamma)$ | Binned differential branching ratio of $\bar B^0\toe^+e^-\gamma$ | `q2min`, `q2max` |
+| `dBR/dq2(B0->eegamma)` | $\frac{d\text{BR}}{dq^2}(\bar B^0\toe^+e^-\gamma)$ | Differential branching ratio of $\bar B^0\toe^+e^-\gamma$ | `q2` |
+
+
+### $\bar B_s\to\mu^+\mu^-\gamma$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<dBR/dq2>(Bs->mumugamma)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\bar B_s\to\mu^+\mu^-\gamma)$ | Binned differential branching ratio of $\bar B_s\to\mu^+\mu^-\gamma$ | `q2min`, `q2max` |
+| `dBR/dq2(Bs->mumugamma)` | $\frac{d\text{BR}}{dq^2}(\bar B_s\to\mu^+\mu^-\gamma)$ | Differential branching ratio of $\bar B_s\to\mu^+\mu^-\gamma$ | `q2` |
+
+
+### $\bar B_s\toe^+e^-\gamma$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<dBR/dq2>(Bs->eegamma)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\bar B_s\toe^+e^-\gamma)$ | Binned differential branching ratio of $\bar B_s\toe^+e^-\gamma$ | `q2min`, `q2max` |
+| `dBR/dq2(Bs->eegamma)` | $\frac{d\text{BR}}{dq^2}(\bar B_s\toe^+e^-\gamma)$ | Differential branching ratio of $\bar B_s\toe^+e^-\gamma$ | `q2` |
 
 
 ## $B\to\ell^+\ell^-$

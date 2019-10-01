@@ -1133,11 +1133,13 @@ table {
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_argument_format">test_argument_format</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_constraints_class">test_constraints_class</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_constraints_class_exclude">test_constraints_class_exclude</a></li>
+    <li class="mono"><a href="#flavio.test_classes.TestClasses.test_find">test_find</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_from_yaml_dict">test_from_yaml_dict</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_implementation_class">test_implementation_class</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_logprobability_single">test_logprobability_single</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_measurement_class">test_measurement_class</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_measurements_yaml">test_measurements_yaml</a></li>
+    <li class="mono"><a href="#flavio.test_classes.TestClasses.test_obs_get_meas">test_obs_get_meas</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_observable_class">test_observable_class</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_observable_from_function">test_observable_from_function</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_observable_taxonomy">test_observable_taxonomy</a></li>
@@ -1147,6 +1149,7 @@ table {
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_prediction_class">test_prediction_class</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_repr_meas">test_repr_meas</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_repr_obs">test_repr_obs</a></li>
+    <li class="mono"><a href="#flavio.test_classes.TestClasses.test_repr_par">test_repr_par</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.test_set_constraint">test_set_constraint</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.setUpClass">setUpClass</a></li>
     <li class="mono"><a href="#flavio.test_classes.TestClasses.tearDownClass">tearDownClass</a></li>
@@ -1522,6 +1525,17 @@ table {
                          <span class="s2">&quot;Observable(&#39;repr test&#39;, arguments=[&#39;blu&#39;])&quot;</span><span class="p">)</span>
         <span class="k">del</span> <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;repr test&#39;</span><span class="p">]</span>
 
+    <span class="k">def</span> <span class="nf">test_repr_par</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ptest</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;repr test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">ptest</span><span class="p">),</span>
+                         <span class="s2">&quot;Parameter(&#39;repr test&#39;)&quot;</span><span class="p">)</span>
+        <span class="n">ptest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+        <span class="n">ptest</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;bla&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;bla&quot;</span><span class="p">,</span> <span class="n">ptest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="n">ptest</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">&quot;blo&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;blo&quot;</span><span class="p">,</span> <span class="n">ptest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="k">del</span> <span class="n">Parameter</span><span class="p">[</span><span class="s1">&#39;repr test&#39;</span><span class="p">]</span>
+
     <span class="k">def</span> <span class="nf">test_argument_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
             <span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="s1">&#39;dont_exist&#39;</span><span class="p">)</span>
@@ -1547,6 +1561,31 @@ table {
                               <span class="s1">&#39;eps_K&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertDictEqual</span><span class="p">(</span><span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">,</span> <span class="s1">&#39;dict&#39;</span><span class="p">),</span>
                               <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;eps_K&#39;</span><span class="p">})</span>
+
+    <span class="k">def</span> <span class="nf">test_obs_get_meas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;eps_K&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">(),</span>
+            <span class="p">[</span><span class="s1">&#39;PDG kaon CPV&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;&lt;BR&gt;(B+-&gt;rholnu)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">()),</span>
+            <span class="nb">sorted</span><span class="p">([</span><span class="s1">&#39;Belle B+-&gt;rholnu 2013&#39;</span><span class="p">,</span> <span class="s1">&#39;BaBar B+-&gt;rholnu 2010&#39;</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;FL(B0-&gt;K*mumu)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">(),</span>
+            <span class="p">[]</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_find</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">class</span> <span class="nc">TestClass</span><span class="p">(</span><span class="n">NamedInstanceClass</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="n">TestClass</span><span class="p">(</span><span class="s1">&#39;test word 1&#39;</span><span class="p">)</span>
+        <span class="n">TestClass</span><span class="p">(</span><span class="s1">&#39;x test word 2&#39;</span><span class="p">)</span>
+        <span class="n">TestClass</span><span class="p">(</span><span class="s1">&#39;test 3&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">TestClass</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;word&#39;</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;test word 1&#39;</span><span class="p">,</span> <span class="s1">&#39;x test word 2&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">TestClass</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;^x&#39;</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;x test word 2&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">TestClass</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;s.*3&#39;</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;test 3&#39;</span><span class="p">])</span>
 </pre></div>
 
   </div>
@@ -1948,6 +1987,17 @@ in order to be run.</p>
                          <span class="s2">&quot;Observable(&#39;repr test&#39;, arguments=[&#39;blu&#39;])&quot;</span><span class="p">)</span>
         <span class="k">del</span> <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;repr test&#39;</span><span class="p">]</span>
 
+    <span class="k">def</span> <span class="nf">test_repr_par</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ptest</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;repr test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">ptest</span><span class="p">),</span>
+                         <span class="s2">&quot;Parameter(&#39;repr test&#39;)&quot;</span><span class="p">)</span>
+        <span class="n">ptest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+        <span class="n">ptest</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;bla&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;bla&quot;</span><span class="p">,</span> <span class="n">ptest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="n">ptest</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">&quot;blo&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;blo&quot;</span><span class="p">,</span> <span class="n">ptest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+        <span class="k">del</span> <span class="n">Parameter</span><span class="p">[</span><span class="s1">&#39;repr test&#39;</span><span class="p">]</span>
+
     <span class="k">def</span> <span class="nf">test_argument_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
             <span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="s1">&#39;dont_exist&#39;</span><span class="p">)</span>
@@ -1973,6 +2023,31 @@ in order to be run.</p>
                               <span class="s1">&#39;eps_K&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertDictEqual</span><span class="p">(</span><span class="n">Observable</span><span class="o">.</span><span class="n">argument_format</span><span class="p">(</span><span class="s1">&#39;eps_K&#39;</span><span class="p">,</span> <span class="s1">&#39;dict&#39;</span><span class="p">),</span>
                               <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;eps_K&#39;</span><span class="p">})</span>
+
+    <span class="k">def</span> <span class="nf">test_obs_get_meas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;eps_K&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">(),</span>
+            <span class="p">[</span><span class="s1">&#39;PDG kaon CPV&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;&lt;BR&gt;(B+-&gt;rholnu)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">()),</span>
+            <span class="nb">sorted</span><span class="p">([</span><span class="s1">&#39;Belle B+-&gt;rholnu 2013&#39;</span><span class="p">,</span> <span class="s1">&#39;BaBar B+-&gt;rholnu 2010&#39;</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;FL(B0-&gt;K*mumu)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">(),</span>
+            <span class="p">[]</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_find</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">class</span> <span class="nc">TestClass</span><span class="p">(</span><span class="n">NamedInstanceClass</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="n">TestClass</span><span class="p">(</span><span class="s1">&#39;test word 1&#39;</span><span class="p">)</span>
+        <span class="n">TestClass</span><span class="p">(</span><span class="s1">&#39;x test word 2&#39;</span><span class="p">)</span>
+        <span class="n">TestClass</span><span class="p">(</span><span class="s1">&#39;test 3&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">TestClass</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;word&#39;</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;test word 1&#39;</span><span class="p">,</span> <span class="s1">&#39;x test word 2&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">TestClass</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;^x&#39;</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;x test word 2&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">TestClass</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;s.*3&#39;</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;test 3&#39;</span><span class="p">])</span>
 </pre></div>
 
   </div>
@@ -2177,20 +2252,25 @@ compare almost equal.</p></div>
         <span class="k">return</span>
     <span class="k">if</span> <span class="n">delta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">places</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;specify delta or places not both&quot;</span><span class="p">)</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">first</span> <span class="o">-</span> <span class="n">second</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">delta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">first</span> <span class="o">-</span> <span class="n">second</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">delta</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">diff</span> <span class="o">&lt;=</span> <span class="n">delta</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">standardMsg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> != </span><span class="si">%s</span><span class="s1"> within </span><span class="si">%s</span><span class="s1"> delta&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_repr</span><span class="p">(</span><span class="n">first</span><span class="p">),</span>
-                                                    <span class="n">safe_repr</span><span class="p">(</span><span class="n">second</span><span class="p">),</span>
-                                                    <span class="n">safe_repr</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+        <span class="n">standardMsg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> != </span><span class="si">%s</span><span class="s1"> within </span><span class="si">%s</span><span class="s1"> delta (</span><span class="si">%s</span><span class="s1"> difference)&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">safe_repr</span><span class="p">(</span><span class="n">first</span><span class="p">),</span>
+            <span class="n">safe_repr</span><span class="p">(</span><span class="n">second</span><span class="p">),</span>
+            <span class="n">safe_repr</span><span class="p">(</span><span class="n">delta</span><span class="p">),</span>
+            <span class="n">safe_repr</span><span class="p">(</span><span class="n">diff</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">places</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">places</span> <span class="o">=</span> <span class="mi">7</span>
-        <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">second</span><span class="o">-</span><span class="n">first</span><span class="p">),</span> <span class="n">places</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">places</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">standardMsg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> != </span><span class="si">%s</span><span class="s1"> within </span><span class="si">%r</span><span class="s1"> places&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_repr</span><span class="p">(</span><span class="n">first</span><span class="p">),</span>
-                                                      <span class="n">safe_repr</span><span class="p">(</span><span class="n">second</span><span class="p">),</span>
-                                                      <span class="n">places</span><span class="p">)</span>
+        <span class="n">standardMsg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> != </span><span class="si">%s</span><span class="s1"> within </span><span class="si">%r</span><span class="s1"> places (</span><span class="si">%s</span><span class="s1"> difference)&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">safe_repr</span><span class="p">(</span><span class="n">first</span><span class="p">),</span>
+            <span class="n">safe_repr</span><span class="p">(</span><span class="n">second</span><span class="p">),</span>
+            <span class="n">places</span><span class="p">,</span>
+            <span class="n">safe_repr</span><span class="p">(</span><span class="n">diff</span><span class="p">))</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatMessage</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">standardMsg</span><span class="p">)</span>
     <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">failureException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
@@ -2236,8 +2316,8 @@ compare almost equal.</p></div>
     <div class="desc"><p>An unordered sequence comparison asserting that the same elements,
 regardless of order.  If the same element occurs more than once,
 it verifies that the elements occur the same number of times.</p>
-<div class="codehilite"><pre><span></span>self.assertEqual(Counter(list(first)),
-                 Counter(list(second)))
+<div class="codehilite"><pre><span></span><span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="k">first</span><span class="p">)),</span>
+                 <span class="n">Counter</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="k">second</span><span class="p">)))</span>
 </pre></div>
 
 
@@ -2738,11 +2818,11 @@ be a list of the matching formatted log messages and the
 <code>records</code> attribute will be a list of the corresponding LogRecord
 objects.</p>
 <p>Example::</p>
-<div class="codehilite"><pre><span></span>with self.assertLogs(&#39;foo&#39;, level=&#39;INFO&#39;) as cm:
-    logging.getLogger(&#39;foo&#39;).info(&#39;first message&#39;)
-    logging.getLogger(&#39;foo.bar&#39;).error(&#39;second message&#39;)
-self.assertEqual(cm.output, [&#39;INFO:foo:first message&#39;,
-                             &#39;ERROR:foo.bar:second message&#39;])
+<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertLogs</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="k">level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
+    <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">).</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;first message&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;foo.bar&#39;</span><span class="p">).</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;second message&#39;</span><span class="p">)</span>
+<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cm</span><span class="p">.</span><span class="k">output</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;INFO:foo:first message&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;ERROR:foo.bar:second message&#39;</span><span class="p">])</span>
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.test_classes.TestClasses.assertLogs', this);">Show source &equiv;</a></p>
@@ -2841,16 +2921,19 @@ as significant digits (measured from the most significant digit).</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">delta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">places</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;specify delta or places not both&quot;</span><span class="p">)</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">first</span> <span class="o">-</span> <span class="n">second</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">delta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">first</span> <span class="o">==</span> <span class="n">second</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">first</span> <span class="o">-</span> <span class="n">second</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">delta</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">first</span> <span class="o">==</span> <span class="n">second</span><span class="p">)</span> <span class="ow">and</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">delta</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">standardMsg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> == </span><span class="si">%s</span><span class="s1"> within </span><span class="si">%s</span><span class="s1"> delta&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_repr</span><span class="p">(</span><span class="n">first</span><span class="p">),</span>
-                                                    <span class="n">safe_repr</span><span class="p">(</span><span class="n">second</span><span class="p">),</span>
-                                                    <span class="n">safe_repr</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+        <span class="n">standardMsg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> == </span><span class="si">%s</span><span class="s1"> within </span><span class="si">%s</span><span class="s1"> delta (</span><span class="si">%s</span><span class="s1"> difference)&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">safe_repr</span><span class="p">(</span><span class="n">first</span><span class="p">),</span>
+            <span class="n">safe_repr</span><span class="p">(</span><span class="n">second</span><span class="p">),</span>
+            <span class="n">safe_repr</span><span class="p">(</span><span class="n">delta</span><span class="p">),</span>
+            <span class="n">safe_repr</span><span class="p">(</span><span class="n">diff</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">places</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">places</span> <span class="o">=</span> <span class="mi">7</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">first</span> <span class="o">==</span> <span class="n">second</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">round</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">second</span><span class="o">-</span><span class="n">first</span><span class="p">),</span> <span class="n">places</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">first</span> <span class="o">==</span> <span class="n">second</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">round</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">places</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">standardMsg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> == </span><span class="si">%s</span><span class="s1"> within </span><span class="si">%r</span><span class="s1"> places&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_repr</span><span class="p">(</span><span class="n">first</span><span class="p">),</span>
                                                      <span class="n">safe_repr</span><span class="p">(</span><span class="n">second</span><span class="p">),</span>
@@ -3066,8 +3149,8 @@ deemed to have suffered an error, exactly as for an
 unexpected exception.</p>
 <p>If called with the callable and arguments omitted, will return a
 context object used like this::</p>
-<div class="codehilite"><pre><span></span> with self.assertRaises(SomeException):
-     do_something()
+<div class="codehilite"><pre><span></span> <span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">):</span>
+     <span class="n">do_something</span><span class="p">()</span>
 </pre></div>
 
 
@@ -3076,10 +3159,10 @@ is used as a context object.</p>
 <p>The context manager keeps a reference to the exception as
 the 'exception' attribute. This allows you to inspect the
 exception after the assertion::</p>
-<div class="codehilite"><pre><span></span>with self.assertRaises(SomeException) as cm:
-    do_something()
-the_exception = cm.exception
-self.assertEqual(the_exception.error_code, 3)
+<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
+    <span class="n">do_something</span><span class="p">()</span>
+<span class="n">the_exception</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="k">exception</span>
+<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_exception</span><span class="p">.</span><span class="n">error_code</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.test_classes.TestClasses.assertRaises', this);">Show source &equiv;</a></p>
@@ -3130,7 +3213,7 @@ self.assertEqual(the_exception.error_code, 3)
     <div class="desc"><p>Asserts that the message in a raised exception matches a regex.</p>
 <p>Args:
     expected_exception: Exception class expected to be raised.
-    expected_regex: Regex (re pattern object or string) expected
+    expected_regex: Regex (re.Pattern object or string) expected
             to be found in error message.
     args: Function to be called and extra positional args.
     kwargs: Extra kwargs.
@@ -3144,7 +3227,7 @@ self.assertEqual(the_exception.error_code, 3)
     <span class="sd">&quot;&quot;&quot;Asserts that the message in a raised exception matches a regex.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        expected_exception: Exception class expected to be raised.</span>
-<span class="sd">        expected_regex: Regex (re pattern object or string) expected</span>
+<span class="sd">        expected_regex: Regex (re.Pattern object or string) expected</span>
 <span class="sd">                to be found in error message.</span>
 <span class="sd">        args: Function to be called and extra positional args.</span>
 <span class="sd">        kwargs: Extra kwargs.</span>
@@ -3495,8 +3578,8 @@ warning filtering rules in effect, it might be silenced, printed
 out, or raised as an exception.</p>
 <p>If called with the callable and arguments omitted, will return a
 context object used like this::</p>
-<div class="codehilite"><pre><span></span> with self.assertWarns(SomeWarning):
-     do_something()
+<div class="codehilite"><pre><span></span> <span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="n">SomeWarning</span><span class="p">):</span>
+     <span class="n">do_something</span><span class="p">()</span>
 </pre></div>
 
 
@@ -3507,10 +3590,10 @@ warning as the 'warning' attribute; similarly, the 'filename'
 and 'lineno' attributes give you information about the line
 of Python code from which the warning was triggered.
 This allows you to inspect the warning after the assertion::</p>
-<div class="codehilite"><pre><span></span>with self.assertWarns(SomeWarning) as cm:
-    do_something()
-the_warning = cm.warning
-self.assertEqual(the_warning.some_attribute, 147)
+<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="n">SomeWarning</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
+    <span class="n">do_something</span><span class="p">()</span>
+<span class="n">the_warning</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="n">warning</span>
+<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_warning</span><span class="p">.</span><span class="n">some_attribute</span><span class="p">,</span> <span class="mi">147</span><span class="p">)</span>
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.test_classes.TestClasses.assertWarns', this);">Show source &equiv;</a></p>
@@ -3562,7 +3645,7 @@ that only warnings whose messages also match the regular expression
 are considered successful matches.</p>
 <p>Args:
     expected_warning: Warning class expected to be triggered.
-    expected_regex: Regex (re pattern object or string) expected
+    expected_regex: Regex (re.Pattern object or string) expected
             to be found in error message.
     args: Function to be called and extra positional args.
     kwargs: Extra kwargs.
@@ -3579,7 +3662,7 @@ are considered successful matches.</p>
 <span class="sd">    are considered successful matches.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        expected_warning: Warning class expected to be triggered.</span>
-<span class="sd">        expected_regex: Regex (re pattern object or string) expected</span>
+<span class="sd">        expected_regex: Regex (re.Pattern object or string) expected</span>
 <span class="sd">                to be found in error message.</span>
 <span class="sd">        args: Function to be called and extra positional args.</span>
 <span class="sd">        kwargs: Extra kwargs.</span>
@@ -4116,12 +4199,12 @@ block, allowing further test code to be executed.</p></div>
 <span class="sd">    case as failed but resumes execution at the end of the enclosed</span>
 <span class="sd">    block, allowing further test code to be executed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outcome</span><span class="o">.</span><span class="n">result_supports_subtests</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outcome</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outcome</span><span class="o">.</span><span class="n">result_supports_subtests</span><span class="p">:</span>
         <span class="k">yield</span>
         <span class="k">return</span>
     <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subtest</span>
     <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">params_map</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">ChainMap</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params_map</span> <span class="o">=</span> <span class="n">_OrderedChainMap</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">params_map</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">new_child</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_subtest</span> <span class="o">=</span> <span class="n">_SubTest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">params_map</span><span class="p">)</span>
@@ -4325,6 +4408,34 @@ block, allowing further test code to be executed.</p></div>
   
             
   <div class="item">
+    <div class="name def" id="flavio.test_classes.TestClasses.test_find">
+    <p>def <span class="ident">test_find</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.test_classes.TestClasses.test_find', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.test_classes.TestClasses.test_find" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_find</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">TestClass</span><span class="p">(</span><span class="n">NamedInstanceClass</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="n">TestClass</span><span class="p">(</span><span class="s1">&#39;test word 1&#39;</span><span class="p">)</span>
+    <span class="n">TestClass</span><span class="p">(</span><span class="s1">&#39;x test word 2&#39;</span><span class="p">)</span>
+    <span class="n">TestClass</span><span class="p">(</span><span class="s1">&#39;test 3&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">TestClass</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;word&#39;</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;test word 1&#39;</span><span class="p">,</span> <span class="s1">&#39;x test word 2&#39;</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">TestClass</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;^x&#39;</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;x test word 2&#39;</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">TestClass</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;s.*3&#39;</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;test 3&#39;</span><span class="p">])</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="flavio.test_classes.TestClasses.test_from_yaml_dict">
     <p>def <span class="ident">test_from_yaml_dict</span>(</p><p>self)</p>
     </div>
@@ -4508,6 +4619,38 @@ block, allowing further test code to be executed.</p></div>
         <span class="n">mnew</span> <span class="o">=</span> <span class="n">Measurement</span><span class="o">.</span><span class="n">from_yaml_dict</span><span class="p">(</span><span class="n">yaml</span><span class="p">)</span>
         <span class="n">yaml2</span> <span class="o">=</span> <span class="n">mnew</span><span class="o">.</span><span class="n">get_yaml_dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">yaml</span><span class="p">,</span> <span class="n">yaml2</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.test_classes.TestClasses.test_obs_get_meas">
+    <p>def <span class="ident">test_obs_get_meas</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.test_classes.TestClasses.test_obs_get_meas', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.test_classes.TestClasses.test_obs_get_meas" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_obs_get_meas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+        <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;eps_K&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">(),</span>
+        <span class="p">[</span><span class="s1">&#39;PDG kaon CPV&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+        <span class="nb">sorted</span><span class="p">(</span><span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;&lt;BR&gt;(B+-&gt;rholnu)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">()),</span>
+        <span class="nb">sorted</span><span class="p">([</span><span class="s1">&#39;Belle B+-&gt;rholnu 2013&#39;</span><span class="p">,</span> <span class="s1">&#39;BaBar B+-&gt;rholnu 2010&#39;</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+        <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;FL(B0-&gt;K*mumu)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_measurements</span><span class="p">(),</span>
+        <span class="p">[]</span>
+    <span class="p">)</span>
 </pre></div>
 
   </div>
@@ -4796,6 +4939,35 @@ block, allowing further test code to be executed.</p></div>
     <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">mtest</span><span class="p">),</span>
                      <span class="s2">&quot;Observable(&#39;repr test&#39;, arguments=[&#39;blu&#39;])&quot;</span><span class="p">)</span>
     <span class="k">del</span> <span class="n">Observable</span><span class="p">[</span><span class="s1">&#39;repr test&#39;</span><span class="p">]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.test_classes.TestClasses.test_repr_par">
+    <p>def <span class="ident">test_repr_par</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.test_classes.TestClasses.test_repr_par', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.test_classes.TestClasses.test_repr_par" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_repr_par</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">ptest</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;repr test&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">ptest</span><span class="p">),</span>
+                     <span class="s2">&quot;Parameter(&#39;repr test&#39;)&quot;</span><span class="p">)</span>
+    <span class="n">ptest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">()</span>
+    <span class="n">ptest</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;bla&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;bla&quot;</span><span class="p">,</span> <span class="n">ptest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+    <span class="n">ptest</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="s2">&quot;blo&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;blo&quot;</span><span class="p">,</span> <span class="n">ptest</span><span class="o">.</span><span class="n">_repr_markdown_</span><span class="p">())</span>
+    <span class="k">del</span> <span class="n">Parameter</span><span class="p">[</span><span class="s1">&#39;repr test&#39;</span><span class="p">]</span>
 </pre></div>
 
   </div>

@@ -1063,6 +1063,7 @@ table {
   <ul>
     <li class="mono"><a href="#flavio.statistics.functions.delta_chi2">delta_chi2</a></li>
     <li class="mono"><a href="#flavio.statistics.functions.pull">pull</a></li>
+    <li class="mono"><a href="#flavio.statistics.functions.pvalue">pvalue</a></li>
   </ul>
 
     </li>
@@ -1112,7 +1113,7 @@ table {
     <span class="k">return</span> <span class="n">chi2_ndof</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cl_nsigma</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">pull</span><span class="p">(</span><span class="n">delta_chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the pull in Gaussian standard deviations correspondsing to</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the pull in Gaussian standard deviations corresponding to</span>
 <span class="sd">    a $\Delta\chi^2$ with `dof` degrees of freedom.</span>
 
 <span class="sd">    Example: For `dof=2` and `delta_chi2=2.3`, the result is roughly 1.0.</span>
@@ -1124,6 +1125,11 @@ table {
     <span class="n">chi2_ndof</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">dof</span><span class="p">)</span>
     <span class="n">cl_delta_chi2</span> <span class="o">=</span> <span class="n">chi2_ndof</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">delta_chi2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="n">cl_delta_chi2</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">pvalue</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the $p$-value corresponding to a $\chi^2$ with `dof` degrees</span>
+<span class="sd">    of freedom.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1184,7 +1190,7 @@ to <code>nsigma</code> Gaussian standard deviations.</p>
 
     
   
-    <div class="desc"><p>Compute the pull in Gaussian standard deviations correspondsing to
+    <div class="desc"><p>Compute the pull in Gaussian standard deviations corresponding to
 a $\Delta\chi^2$ with <code>dof</code> degrees of freedom.</p>
 <p>Example: For <code>dof=2</code> and <code>delta_chi2=2.3</code>, the result is roughly 1.0.</p>
 <p>This function is the inverse of the function <code>delta_chi2()</code></p></div>
@@ -1192,7 +1198,7 @@ a $\Delta\chi^2$ with <code>dof</code> degrees of freedom.</p>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.functions.pull', this);">Show source &equiv;</a></p>
   <div id="source-flavio.statistics.functions.pull" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">pull</span><span class="p">(</span><span class="n">delta_chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the pull in Gaussian standard deviations correspondsing to</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the pull in Gaussian standard deviations corresponding to</span>
 <span class="sd">    a $\Delta\chi^2$ with `dof` degrees of freedom.</span>
 
 <span class="sd">    Example: For `dof=2` and `delta_chi2=2.3`, the result is roughly 1.0.</span>
@@ -1204,6 +1210,31 @@ a $\Delta\chi^2$ with <code>dof</code> degrees of freedom.</p>
     <span class="n">chi2_ndof</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">dof</span><span class="p">)</span>
     <span class="n">cl_delta_chi2</span> <span class="o">=</span> <span class="n">chi2_ndof</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">delta_chi2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="n">cl_delta_chi2</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.statistics.functions.pvalue">
+    <p>def <span class="ident">pvalue</span>(</p><p>chi2, dof)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Compute the $p$-value corresponding to a $\chi^2$ with <code>dof</code> degrees
+of freedom.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.functions.pvalue', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.statistics.functions.pvalue" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">pvalue</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the $p$-value corresponding to a $\chi^2$ with `dof` degrees</span>
+<span class="sd">    of freedom.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
 </pre></div>
 
   </div>
