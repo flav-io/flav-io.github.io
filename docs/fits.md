@@ -1,11 +1,12 @@
 ---
 layout: default
-title: Fitting parameters or Wilson coefficients
+title: Likelihoods
 ---
 
-# Fitting parameters or Wilson coefficients
+# Likelihoods in parameter or Wilson coefficient space
 
-Fitting parameters or Wilson coefficicents from existing experimental data is one of the main purposes of flavio. The code is organized such as to allow the use of different statistical paradigms (frequentist vs. Bayesian) and arbitrary probability distributions.
+Providing likelihood functions in parameter or Wilson coefficient space
+from existing experimental data is one of the main purposes of flavio. The code is organized such as to allow the use of different statistical paradigms (frequentist vs. Bayesian) and arbitrary probability distributions.
 
 ## Introduction: statistical inference
 
@@ -46,7 +47,7 @@ $$\mathcal L_\text{p}(\vec\xi) = \mathcal L_\text{tot}(\vec\xi, \hat{\hat{\vec\n
 
 where $\hat{\hat{\vec\nu}}$ corresponds to the set of nuisance parameter maximizing the likelihood for a fixed value of $\vec\theta$. In practice, it requires performing a numerical optimization in $\vec\nu$ space on a grid of points in $\vec\theta$ space.
 
-### "Fast fit" approach
+### "Fast likelihood" approach
 
 Since both Bayesian marginalization and frequentist likelihood profiling are computationally quite demanding, flavio additionally introduces a simplified concept called a "fast fit" that is based on the approximation of assuming the likelihood to be of the form $\mathcal L =e^{-\chi^2(\vec\xi)/2}$, where
 
@@ -71,17 +72,21 @@ In flavio, statistical inference is based on the following concepts,
 
 - **probability distributions** (represented by the `ProbabilityDistribution` class) that are the building blocks of likelihoods,
 - **measurements** (represented by the `Measurement` class), that associate probability distributions to observables,
-- **fits** (represented by the `Fit` class) that define a set of fit parameters $\vec\xi$, nuisance parameters $\nu$, and measurements $x_i$ of interest and assemble the corresponding likelihood,
-- **fitters** that sample the likelihood of a given fit to obtain confidence intervals, credibility regions, best-fit values, and so on. This includes in particular Bayesian marginalization and frequentist likelihood profiling.
+- **likelihoods** (represented by the `Likelihood` class) that define a set observables,
+nuisance parameters $\nu$, and measurements $x_i$ of interest and assemble the corresponding likelihood.
+
+*Note that in earlier versions of flavio, the `flavio.statistics.fits` module provided the concepts of "fits" and "fitters". This module has been deprecated as of v1.6 and will be removed in the future.*
 
 Example: we want to determine the value of the CKM element $V_{cb}$ from the total branching ratio of $B\to D\ell\nu$. We need
 
 - an existing **measurement**, consisting of a  **probability distribution** (e.g. a normal distribution with a central value and standard deviation) associated to the observable `BR(B0->Dlnu)`,
 - **probability distributions** for all the other parameters entering the prediction, like the $b$ quark mass (these reside in the `ParameterConstraints` class),
-- a **fit** simply defining we are interested in fitting the parameter $V_{cb}$ from the existing measurement of the observable `BR(B0->Dlnu)` with a set of nuisance parameters (namely the remaining parameters the prediction depends on),
-- a **fitter** (defined in the `flavio.statistics.fitters` module) to determine the frequentist likelihood or Bayesian posterior probability for $V_{cb}$.
+- a **likelihood** simply defining we are interested in a likelihood function from the existing measurement of the observable `BR(B0->Dlnu)` with a set of nuisance parameters (namely all parameters the prediction depends on *except* $V_{cb}$),
 
-The first two points -- PDFs for measurements and input parameters -- are already included by default in flavio (but can be modified or extended by the user), while the last two points have to be specified by the user. The [Bayesian](bayesian.html), [frequentist](frequentist.html), and [fast fit](fastfit.html) approaches are discussed in more detail on seperate pages.
+The first two points -- PDFs for measurements and input parameters -- are already included by default in flavio (but can be modified or extended by the user), while the last point
+has to be specified by the user.
+
+Given the likelihood function, the user can use any Python fitting tool like [iminuit](https://iminuit.readthedocs.io/en/latest/), [scipy](https://scipy.org/), [emcee](https://emcee.readthedocs.iof), or [pypmc](https://github.com/fredRos/pypmc) (depending on the statistical approach) to determine the posterior probability or profile likelihood of the parameter of interest.
 
 ### Experimental data
 
@@ -101,4 +106,5 @@ Needless to say, you are welcome to add any missing measurements via a pull requ
 
 ### Wilson coefficients
 
-While the preceding discussion focused on fitting *parameters* $\vec\xi$, the equivalent applies also to fitting new physics contributions to Wilson coefficients. While parameters and Wilson coefficients are treated on a different footing in flavio, ...
+While the preceding discussion focused on fitting *parameters* $\vec\xi$, the equivalent applies also to fitting new physics contributions to Wilson coefficients. The provided likelihood function takes a parameter dictionary and an instance of `flavio.WilsonCoefficients` (or `wilson.Wilson`) as input, such that any dependence on
+parameters or Wilson coefficients can be investigated.

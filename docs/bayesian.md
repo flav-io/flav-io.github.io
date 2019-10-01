@@ -5,6 +5,8 @@ title: Bayesian inference
 
 # Bayesian inference
 
+**This page is outdated and needs to be rewritten to account for the replacement of the deprecated `flavio.statistics.fits` module by `flavio.statistics.likelihood`.**
+
 As discussed [above](fits.html), Bayesian inference is based on prior distributions for fit and nuisance parameters in addition to the liklihood and requires marginalization to determine the posterior distribution of the parameters of interest.
 
 ## Defining Bayesian fits

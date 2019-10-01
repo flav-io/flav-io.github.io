@@ -5,6 +5,8 @@ title: Frequentist fits
 
 # Frequentist fits
 
+**This page is outdated and needs to be rewritten to account for the replacement of the deprecated `flavio.statistics.fits` module by `flavio.statistics.likelihood`.**
+
 In frequentist statistics, the fit parameters (or Wilson coefficients) are treated as random quantities to be determined from data, not subject to a prior probability distribution. Thus the main difference to [Bayesian fits](bayesian.html) is that fit  parameters and Wilson coefficients are unconstrained. As discussed in the [introduction to inference in flavio](fits.html), the likelihood of the nuisance parameters is instead constructed in a similar way as for Bayesian fits, even though the statistical interpretation is different (the constraints are treated as pseudo-measurements rather than prior probability distributions).
 
 Instantiating a frequentist fit is analogous to the Bayesian case,
