@@ -1065,10 +1065,14 @@ table {
     <li class="mono"><a href="#flavio.physics.kdecays.kpilnu.BR_binned">BR_binned</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.kpilnu.BR_tot">BR_tot</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.kpilnu.BR_tot_function">BR_tot_function</a></li>
+    <li class="mono"><a href="#flavio.physics.kdecays.kpilnu.RT">RT</a></li>
+    <li class="mono"><a href="#flavio.physics.kdecays.kpilnu.RT_function">RT_function</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.kpilnu.dBRdq2">dBRdq2</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.kpilnu.dGdq2">dGdq2</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.kpilnu.get_angularcoeff">get_angularcoeff</a></li>
     <li class="mono"><a href="#flavio.physics.kdecays.kpilnu.get_ff">get_ff</a></li>
+    <li class="mono"><a href="#flavio.physics.kdecays.kpilnu.logC">logC</a></li>
+    <li class="mono"><a href="#flavio.physics.kdecays.kpilnu.logC_function">logC_function</a></li>
   </ul>
 
     </li>
@@ -1092,7 +1096,7 @@ table {
   <div id="source-flavio.physics.kdecays.kpilnu" class="source">
     <div class="codehilite"><pre><span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Functions for $K\to \pi\ell\nu$ decays.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">log</span>
 <span class="kn">import</span> <span class="nn">flavio</span>
 <span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">Observable</span><span class="p">,</span> <span class="n">Prediction</span>
 
@@ -1169,9 +1173,48 @@ table {
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">BR_tot</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
 
 
+<span class="k">def</span> <span class="nf">logC</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="n">mK</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_KL&#39;</span><span class="p">]</span>
+    <span class="n">mP</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_pi+&#39;</span><span class="p">]</span>
+    <span class="n">ml</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span> <span class="o">+</span> <span class="n">lep</span><span class="p">]</span>
+    <span class="n">q2</span> <span class="o">=</span> <span class="n">mK</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">mP</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="n">get_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;KL&#39;</span><span class="p">)</span>
+    <span class="n">ff0</span> <span class="o">=</span> <span class="n">get_ff</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;KL&#39;</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_rho0&#39;</span><span class="p">]</span>
+    <span class="n">ms</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">get_wceff_fccc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;su&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">ms</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">ml</span> <span class="o">/</span> <span class="n">q2</span> <span class="o">*</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;ap&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">real</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># mu/ms neglected</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;f0&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">ff0</span><span class="p">[</span><span class="s1">&#39;f0&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">((</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;pp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">real</span> <span class="o">/</span> <span class="p">(</span><span class="n">ms</span> <span class="o">+</span> <span class="n">mu</span><span class="p">)</span> <span class="o">+</span> <span class="n">A</span><span class="p">)</span> <span class="o">/</span> <span class="n">A</span>
+    <span class="k">return</span> <span class="n">log</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">RT</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="n">mK</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_KL&#39;</span><span class="p">]</span>
+    <span class="n">mP</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_pi+&#39;</span><span class="p">]</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_rho0&#39;</span><span class="p">]</span>
+    <span class="n">ms</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">get_wceff_fccc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;su&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">ms</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="n">get_ff</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;KL&#39;</span><span class="p">)</span>
+    <span class="n">BT</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;fT&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mK</span> <span class="o">/</span> <span class="p">(</span><span class="n">mK</span> <span class="o">+</span> <span class="n">mP</span><span class="p">)</span>  <span class="c1"># convert between tensor FF conventions</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">BT</span> <span class="o">/</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;f+&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;tp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+
+
+<span class="k">def</span> <span class="nf">logC_function</span><span class="p">(</span><span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">logC</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_</span>
+
+
+<span class="k">def</span> <span class="nf">RT_function</span><span class="p">(</span><span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">RT</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_</span>
+
+
 <span class="c1"># Observable and Prediction instances</span>
 
-<span class="n">_tex</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="s1">&#39;\mu&#39;</span><span class="p">,</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\ell&#39;</span><span class="p">}</span>
+<span class="n">_tex</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\mu&#39;</span><span class="p">,</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\ell&#39;</span><span class="p">}</span>
 <span class="n">_tex_br</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dBR/dq2&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\frac{d\text{BR}}{dq^2}&#39;</span><span class="p">,</span> <span class="s1">&#39;BR&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\text{BR}&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;BR&gt;&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\langle\text{BR}\rangle&#39;</span><span class="p">}</span>
 <span class="n">_args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dBR/dq2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;q2&#39;</span><span class="p">],</span> <span class="s1">&#39;BR&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;&lt;BR&gt;&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">]}</span>
 <span class="n">_hadr</span> <span class="o">=</span> <span class="p">{</span>
@@ -1179,10 +1222,13 @@ table {
 <span class="s1">&#39;KS-&gt;pi&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;K_S\to \pi^+&quot;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="s1">&#39;KS&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="s1">&#39;pi+&#39;</span><span class="p">,</span> <span class="p">},</span>
 <span class="s1">&#39;K+-&gt;pi&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;K^+\to \pi^0&quot;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="s1">&#39;K+&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="s1">&#39;pi0&#39;</span><span class="p">,</span> <span class="p">},</span>
 <span class="p">}</span>
+<span class="n">_hadr_lnC</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s1">&#39;K-&gt;pi&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;K\to \pi&quot;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="s1">&#39;KL&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="s1">&#39;pi+&#39;</span><span class="p">,</span> <span class="p">},</span>
+<span class="p">}</span>
 
 <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;l&#39;</span><span class="p">]:</span>
     <span class="k">for</span> <span class="n">M</span> <span class="ow">in</span> <span class="n">_hadr</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">_process_tex</span> <span class="o">=</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;^+\nu_&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span>
+        <span class="n">_process_tex</span> <span class="o">=</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;^+\nu&quot;</span>
         <span class="n">_process_taxonomy</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Process :: $s$ hadron decays :: Semi-leptonic tree-level decays :: $K\to P\ell\nu$ :: $&#39;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span>
 
         <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;BR(&quot;</span><span class="o">+</span><span class="n">M</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;nu)&quot;</span>
@@ -1191,6 +1237,21 @@ table {
         <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\text{BR}(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)$&quot;</span>
         <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span><span class="p">)</span>
         <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">BR_tot_function</span><span class="p">(</span><span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">],</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;P&#39;</span><span class="p">],</span> <span class="n">l</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">M</span> <span class="ow">in</span> <span class="n">_hadr_lnC</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;lnC(&quot;</span><span class="o">+</span><span class="n">M</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;nu)&quot;</span>
+        <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Effective scalar form factor in $&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\ln(C)(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)$&quot;</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span><span class="p">)</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">logC_function</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+
+        <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;RT(&quot;</span><span class="o">+</span><span class="n">M</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;nu)&quot;</span>
+        <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Tensor coupling in $&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$R_T(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)$&quot;</span>
+        <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span><span class="p">)</span>
+        <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">RT_function</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1280,6 +1341,57 @@ table {
   <div id="source-flavio.physics.kdecays.kpilnu.BR_tot_function" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">BR_tot_function</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">:</span> <span class="n">BR_tot</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.kdecays.kpilnu.RT">
+    <p>def <span class="ident">RT</span>(</p><p>wc_obj, par, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.kpilnu.RT', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.kdecays.kpilnu.RT" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">RT</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="n">mK</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_KL&#39;</span><span class="p">]</span>
+    <span class="n">mP</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_pi+&#39;</span><span class="p">]</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_rho0&#39;</span><span class="p">]</span>
+    <span class="n">ms</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">get_wceff_fccc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;su&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">ms</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="n">get_ff</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;KL&#39;</span><span class="p">)</span>
+    <span class="n">BT</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;fT&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mK</span> <span class="o">/</span> <span class="p">(</span><span class="n">mK</span> <span class="o">+</span> <span class="n">mP</span><span class="p">)</span>  <span class="c1"># convert between tensor FF conventions</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">BT</span> <span class="o">/</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;f+&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;tp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.kdecays.kpilnu.RT_function">
+    <p>def <span class="ident">RT_function</span>(</p><p>lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.kpilnu.RT_function', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.kdecays.kpilnu.RT_function" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">RT_function</span><span class="p">(</span><span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">RT</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_</span>
 </pre></div>
 
   </div>
@@ -1390,6 +1502,62 @@ table {
     <span class="k">elif</span> <span class="n">K</span> <span class="o">==</span> <span class="s1">&#39;K+&#39;</span><span class="p">:</span>
         <span class="c1"># isospin breaking correction for K+-&gt;pi0lnu: multiply all FFs by 1+delta</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;K-&gt;pi delta_K+pi0&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">ff_K0</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.kdecays.kpilnu.logC">
+    <p>def <span class="ident">logC</span>(</p><p>wc_obj, par, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.kpilnu.logC', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.kdecays.kpilnu.logC" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">logC</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="n">mK</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_KL&#39;</span><span class="p">]</span>
+    <span class="n">mP</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_pi+&#39;</span><span class="p">]</span>
+    <span class="n">ml</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span> <span class="o">+</span> <span class="n">lep</span><span class="p">]</span>
+    <span class="n">q2</span> <span class="o">=</span> <span class="n">mK</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">mP</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="n">get_ff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;KL&#39;</span><span class="p">)</span>
+    <span class="n">ff0</span> <span class="o">=</span> <span class="n">get_ff</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;KL&#39;</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_rho0&#39;</span><span class="p">]</span>
+    <span class="n">ms</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_ms</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">wilsoncoefficients</span><span class="o">.</span><span class="n">get_wceff_fccc</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="s1">&#39;su&#39;</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">ms</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">ml</span> <span class="o">/</span> <span class="n">q2</span> <span class="o">*</span> <span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;ap&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">real</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># mu/ms neglected</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;f0&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">ff0</span><span class="p">[</span><span class="s1">&#39;f0&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">((</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;pp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">real</span> <span class="o">/</span> <span class="p">(</span><span class="n">ms</span> <span class="o">+</span> <span class="n">mu</span><span class="p">)</span> <span class="o">+</span> <span class="n">A</span><span class="p">)</span> <span class="o">/</span> <span class="n">A</span>
+    <span class="k">return</span> <span class="n">log</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.kdecays.kpilnu.logC_function">
+    <p>def <span class="ident">logC_function</span>(</p><p>lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.kdecays.kpilnu.logC_function', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.kdecays.kpilnu.logC_function" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">logC_function</span><span class="p">(</span><span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">logC</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_</span>
 </pre></div>
 
   </div>

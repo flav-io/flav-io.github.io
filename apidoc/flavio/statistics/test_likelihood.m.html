@@ -2143,8 +2143,8 @@ compare almost equal.</p></div>
     <div class="desc"><p>An unordered sequence comparison asserting that the same elements,
 regardless of order.  If the same element occurs more than once,
 it verifies that the elements occur the same number of times.</p>
-<div class="codehilite"><pre><span></span><span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="k">first</span><span class="p">)),</span>
-                 <span class="n">Counter</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="k">second</span><span class="p">)))</span>
+<div class="codehilite"><pre><span></span>self.assertEqual(Counter(list(first)),
+                 Counter(list(second)))
 </pre></div>
 
 
@@ -2645,11 +2645,11 @@ be a list of the matching formatted log messages and the
 <code>records</code> attribute will be a list of the corresponding LogRecord
 objects.</p>
 <p>Example::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertLogs</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="k">level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">).</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;first message&#39;</span><span class="p">)</span>
-    <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;foo.bar&#39;</span><span class="p">).</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;second message&#39;</span><span class="p">)</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cm</span><span class="p">.</span><span class="k">output</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;INFO:foo:first message&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;ERROR:foo.bar:second message&#39;</span><span class="p">])</span>
+<div class="codehilite"><pre><span></span>with self.assertLogs(&#39;foo&#39;, level=&#39;INFO&#39;) as cm:
+    logging.getLogger(&#39;foo&#39;).info(&#39;first message&#39;)
+    logging.getLogger(&#39;foo.bar&#39;).error(&#39;second message&#39;)
+self.assertEqual(cm.output, [&#39;INFO:foo:first message&#39;,
+                             &#39;ERROR:foo.bar:second message&#39;])
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestCovariances.assertLogs', this);">Show source &equiv;</a></p>
@@ -2976,8 +2976,8 @@ deemed to have suffered an error, exactly as for an
 unexpected exception.</p>
 <p>If called with the callable and arguments omitted, will return a
 context object used like this::</p>
-<div class="codehilite"><pre><span></span> <span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">):</span>
-     <span class="n">do_something</span><span class="p">()</span>
+<div class="codehilite"><pre><span></span> with self.assertRaises(SomeException):
+     do_something()
 </pre></div>
 
 
@@ -2986,10 +2986,10 @@ is used as a context object.</p>
 <p>The context manager keeps a reference to the exception as
 the 'exception' attribute. This allows you to inspect the
 exception after the assertion::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">do_something</span><span class="p">()</span>
-<span class="n">the_exception</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="k">exception</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_exception</span><span class="p">.</span><span class="n">error_code</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span>with self.assertRaises(SomeException) as cm:
+    do_something()
+the_exception = cm.exception
+self.assertEqual(the_exception.error_code, 3)
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestCovariances.assertRaises', this);">Show source &equiv;</a></p>
@@ -3405,8 +3405,8 @@ warning filtering rules in effect, it might be silenced, printed
 out, or raised as an exception.</p>
 <p>If called with the callable and arguments omitted, will return a
 context object used like this::</p>
-<div class="codehilite"><pre><span></span> <span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="n">SomeWarning</span><span class="p">):</span>
-     <span class="n">do_something</span><span class="p">()</span>
+<div class="codehilite"><pre><span></span> with self.assertWarns(SomeWarning):
+     do_something()
 </pre></div>
 
 
@@ -3417,10 +3417,10 @@ warning as the 'warning' attribute; similarly, the 'filename'
 and 'lineno' attributes give you information about the line
 of Python code from which the warning was triggered.
 This allows you to inspect the warning after the assertion::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="n">SomeWarning</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">do_something</span><span class="p">()</span>
-<span class="n">the_warning</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="n">warning</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_warning</span><span class="p">.</span><span class="n">some_attribute</span><span class="p">,</span> <span class="mi">147</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span>with self.assertWarns(SomeWarning) as cm:
+    do_something()
+the_warning = cm.warning
+self.assertEqual(the_warning.some_attribute, 147)
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestCovariances.assertWarns', this);">Show source &equiv;</a></p>
@@ -4579,8 +4579,8 @@ compare almost equal.</p></div>
     <div class="desc"><p>An unordered sequence comparison asserting that the same elements,
 regardless of order.  If the same element occurs more than once,
 it verifies that the elements occur the same number of times.</p>
-<div class="codehilite"><pre><span></span><span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="k">first</span><span class="p">)),</span>
-                 <span class="n">Counter</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="k">second</span><span class="p">)))</span>
+<div class="codehilite"><pre><span></span>self.assertEqual(Counter(list(first)),
+                 Counter(list(second)))
 </pre></div>
 
 
@@ -5081,11 +5081,11 @@ be a list of the matching formatted log messages and the
 <code>records</code> attribute will be a list of the corresponding LogRecord
 objects.</p>
 <p>Example::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertLogs</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="k">level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">).</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;first message&#39;</span><span class="p">)</span>
-    <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;foo.bar&#39;</span><span class="p">).</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;second message&#39;</span><span class="p">)</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cm</span><span class="p">.</span><span class="k">output</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;INFO:foo:first message&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;ERROR:foo.bar:second message&#39;</span><span class="p">])</span>
+<div class="codehilite"><pre><span></span>with self.assertLogs(&#39;foo&#39;, level=&#39;INFO&#39;) as cm:
+    logging.getLogger(&#39;foo&#39;).info(&#39;first message&#39;)
+    logging.getLogger(&#39;foo.bar&#39;).error(&#39;second message&#39;)
+self.assertEqual(cm.output, [&#39;INFO:foo:first message&#39;,
+                             &#39;ERROR:foo.bar:second message&#39;])
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestFastLikelihood.assertLogs', this);">Show source &equiv;</a></p>
@@ -5412,8 +5412,8 @@ deemed to have suffered an error, exactly as for an
 unexpected exception.</p>
 <p>If called with the callable and arguments omitted, will return a
 context object used like this::</p>
-<div class="codehilite"><pre><span></span> <span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">):</span>
-     <span class="n">do_something</span><span class="p">()</span>
+<div class="codehilite"><pre><span></span> with self.assertRaises(SomeException):
+     do_something()
 </pre></div>
 
 
@@ -5422,10 +5422,10 @@ is used as a context object.</p>
 <p>The context manager keeps a reference to the exception as
 the 'exception' attribute. This allows you to inspect the
 exception after the assertion::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">do_something</span><span class="p">()</span>
-<span class="n">the_exception</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="k">exception</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_exception</span><span class="p">.</span><span class="n">error_code</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span>with self.assertRaises(SomeException) as cm:
+    do_something()
+the_exception = cm.exception
+self.assertEqual(the_exception.error_code, 3)
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestFastLikelihood.assertRaises', this);">Show source &equiv;</a></p>
@@ -5841,8 +5841,8 @@ warning filtering rules in effect, it might be silenced, printed
 out, or raised as an exception.</p>
 <p>If called with the callable and arguments omitted, will return a
 context object used like this::</p>
-<div class="codehilite"><pre><span></span> <span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="n">SomeWarning</span><span class="p">):</span>
-     <span class="n">do_something</span><span class="p">()</span>
+<div class="codehilite"><pre><span></span> with self.assertWarns(SomeWarning):
+     do_something()
 </pre></div>
 
 
@@ -5853,10 +5853,10 @@ warning as the 'warning' attribute; similarly, the 'filename'
 and 'lineno' attributes give you information about the line
 of Python code from which the warning was triggered.
 This allows you to inspect the warning after the assertion::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="n">SomeWarning</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">do_something</span><span class="p">()</span>
-<span class="n">the_warning</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="n">warning</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_warning</span><span class="p">.</span><span class="n">some_attribute</span><span class="p">,</span> <span class="mi">147</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span>with self.assertWarns(SomeWarning) as cm:
+    do_something()
+the_warning = cm.warning
+self.assertEqual(the_warning.some_attribute, 147)
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestFastLikelihood.assertWarns', this);">Show source &equiv;</a></p>
@@ -6973,8 +6973,8 @@ compare almost equal.</p></div>
     <div class="desc"><p>An unordered sequence comparison asserting that the same elements,
 regardless of order.  If the same element occurs more than once,
 it verifies that the elements occur the same number of times.</p>
-<div class="codehilite"><pre><span></span><span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="k">first</span><span class="p">)),</span>
-                 <span class="n">Counter</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="k">second</span><span class="p">)))</span>
+<div class="codehilite"><pre><span></span>self.assertEqual(Counter(list(first)),
+                 Counter(list(second)))
 </pre></div>
 
 
@@ -7475,11 +7475,11 @@ be a list of the matching formatted log messages and the
 <code>records</code> attribute will be a list of the corresponding LogRecord
 objects.</p>
 <p>Example::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertLogs</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="k">level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">).</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;first message&#39;</span><span class="p">)</span>
-    <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;foo.bar&#39;</span><span class="p">).</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;second message&#39;</span><span class="p">)</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cm</span><span class="p">.</span><span class="k">output</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;INFO:foo:first message&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;ERROR:foo.bar:second message&#39;</span><span class="p">])</span>
+<div class="codehilite"><pre><span></span>with self.assertLogs(&#39;foo&#39;, level=&#39;INFO&#39;) as cm:
+    logging.getLogger(&#39;foo&#39;).info(&#39;first message&#39;)
+    logging.getLogger(&#39;foo.bar&#39;).error(&#39;second message&#39;)
+self.assertEqual(cm.output, [&#39;INFO:foo:first message&#39;,
+                             &#39;ERROR:foo.bar:second message&#39;])
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestLikelihood.assertLogs', this);">Show source &equiv;</a></p>
@@ -7806,8 +7806,8 @@ deemed to have suffered an error, exactly as for an
 unexpected exception.</p>
 <p>If called with the callable and arguments omitted, will return a
 context object used like this::</p>
-<div class="codehilite"><pre><span></span> <span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">):</span>
-     <span class="n">do_something</span><span class="p">()</span>
+<div class="codehilite"><pre><span></span> with self.assertRaises(SomeException):
+     do_something()
 </pre></div>
 
 
@@ -7816,10 +7816,10 @@ is used as a context object.</p>
 <p>The context manager keeps a reference to the exception as
 the 'exception' attribute. This allows you to inspect the
 exception after the assertion::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">do_something</span><span class="p">()</span>
-<span class="n">the_exception</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="k">exception</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_exception</span><span class="p">.</span><span class="n">error_code</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span>with self.assertRaises(SomeException) as cm:
+    do_something()
+the_exception = cm.exception
+self.assertEqual(the_exception.error_code, 3)
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestLikelihood.assertRaises', this);">Show source &equiv;</a></p>
@@ -8235,8 +8235,8 @@ warning filtering rules in effect, it might be silenced, printed
 out, or raised as an exception.</p>
 <p>If called with the callable and arguments omitted, will return a
 context object used like this::</p>
-<div class="codehilite"><pre><span></span> <span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="n">SomeWarning</span><span class="p">):</span>
-     <span class="n">do_something</span><span class="p">()</span>
+<div class="codehilite"><pre><span></span> with self.assertWarns(SomeWarning):
+     do_something()
 </pre></div>
 
 
@@ -8247,10 +8247,10 @@ warning as the 'warning' attribute; similarly, the 'filename'
 and 'lineno' attributes give you information about the line
 of Python code from which the warning was triggered.
 This allows you to inspect the warning after the assertion::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="n">SomeWarning</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">do_something</span><span class="p">()</span>
-<span class="n">the_warning</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="n">warning</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_warning</span><span class="p">.</span><span class="n">some_attribute</span><span class="p">,</span> <span class="mi">147</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span>with self.assertWarns(SomeWarning) as cm:
+    do_something()
+the_warning = cm.warning
+self.assertEqual(the_warning.some_attribute, 147)
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestLikelihood.assertWarns', this);">Show source &equiv;</a></p>
@@ -9415,8 +9415,8 @@ compare almost equal.</p></div>
     <div class="desc"><p>An unordered sequence comparison asserting that the same elements,
 regardless of order.  If the same element occurs more than once,
 it verifies that the elements occur the same number of times.</p>
-<div class="codehilite"><pre><span></span><span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="k">first</span><span class="p">)),</span>
-                 <span class="n">Counter</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="k">second</span><span class="p">)))</span>
+<div class="codehilite"><pre><span></span>self.assertEqual(Counter(list(first)),
+                 Counter(list(second)))
 </pre></div>
 
 
@@ -9917,11 +9917,11 @@ be a list of the matching formatted log messages and the
 <code>records</code> attribute will be a list of the corresponding LogRecord
 objects.</p>
 <p>Example::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertLogs</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="k">level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">).</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;first message&#39;</span><span class="p">)</span>
-    <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;foo.bar&#39;</span><span class="p">).</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;second message&#39;</span><span class="p">)</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cm</span><span class="p">.</span><span class="k">output</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;INFO:foo:first message&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;ERROR:foo.bar:second message&#39;</span><span class="p">])</span>
+<div class="codehilite"><pre><span></span>with self.assertLogs(&#39;foo&#39;, level=&#39;INFO&#39;) as cm:
+    logging.getLogger(&#39;foo&#39;).info(&#39;first message&#39;)
+    logging.getLogger(&#39;foo.bar&#39;).error(&#39;second message&#39;)
+self.assertEqual(cm.output, [&#39;INFO:foo:first message&#39;,
+                             &#39;ERROR:foo.bar:second message&#39;])
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestMeasurementLikelihood.assertLogs', this);">Show source &equiv;</a></p>
@@ -10248,8 +10248,8 @@ deemed to have suffered an error, exactly as for an
 unexpected exception.</p>
 <p>If called with the callable and arguments omitted, will return a
 context object used like this::</p>
-<div class="codehilite"><pre><span></span> <span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">):</span>
-     <span class="n">do_something</span><span class="p">()</span>
+<div class="codehilite"><pre><span></span> with self.assertRaises(SomeException):
+     do_something()
 </pre></div>
 
 
@@ -10258,10 +10258,10 @@ is used as a context object.</p>
 <p>The context manager keeps a reference to the exception as
 the 'exception' attribute. This allows you to inspect the
 exception after the assertion::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">do_something</span><span class="p">()</span>
-<span class="n">the_exception</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="k">exception</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_exception</span><span class="p">.</span><span class="n">error_code</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span>with self.assertRaises(SomeException) as cm:
+    do_something()
+the_exception = cm.exception
+self.assertEqual(the_exception.error_code, 3)
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestMeasurementLikelihood.assertRaises', this);">Show source &equiv;</a></p>
@@ -10677,8 +10677,8 @@ warning filtering rules in effect, it might be silenced, printed
 out, or raised as an exception.</p>
 <p>If called with the callable and arguments omitted, will return a
 context object used like this::</p>
-<div class="codehilite"><pre><span></span> <span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="n">SomeWarning</span><span class="p">):</span>
-     <span class="n">do_something</span><span class="p">()</span>
+<div class="codehilite"><pre><span></span> with self.assertWarns(SomeWarning):
+     do_something()
 </pre></div>
 
 
@@ -10689,10 +10689,10 @@ warning as the 'warning' attribute; similarly, the 'filename'
 and 'lineno' attributes give you information about the line
 of Python code from which the warning was triggered.
 This allows you to inspect the warning after the assertion::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="n">SomeWarning</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">do_something</span><span class="p">()</span>
-<span class="n">the_warning</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="n">warning</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_warning</span><span class="p">.</span><span class="n">some_attribute</span><span class="p">,</span> <span class="mi">147</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span>with self.assertWarns(SomeWarning) as cm:
+    do_something()
+the_warning = cm.warning
+self.assertEqual(the_warning.some_attribute, 147)
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestMeasurementLikelihood.assertWarns', this);">Show source &equiv;</a></p>
@@ -11852,8 +11852,8 @@ compare almost equal.</p></div>
     <div class="desc"><p>An unordered sequence comparison asserting that the same elements,
 regardless of order.  If the same element occurs more than once,
 it verifies that the elements occur the same number of times.</p>
-<div class="codehilite"><pre><span></span><span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="k">first</span><span class="p">)),</span>
-                 <span class="n">Counter</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="k">second</span><span class="p">)))</span>
+<div class="codehilite"><pre><span></span>self.assertEqual(Counter(list(first)),
+                 Counter(list(second)))
 </pre></div>
 
 
@@ -12354,11 +12354,11 @@ be a list of the matching formatted log messages and the
 <code>records</code> attribute will be a list of the corresponding LogRecord
 objects.</p>
 <p>Example::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertLogs</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="k">level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">).</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;first message&#39;</span><span class="p">)</span>
-    <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;foo.bar&#39;</span><span class="p">).</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;second message&#39;</span><span class="p">)</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cm</span><span class="p">.</span><span class="k">output</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;INFO:foo:first message&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;ERROR:foo.bar:second message&#39;</span><span class="p">])</span>
+<div class="codehilite"><pre><span></span>with self.assertLogs(&#39;foo&#39;, level=&#39;INFO&#39;) as cm:
+    logging.getLogger(&#39;foo&#39;).info(&#39;first message&#39;)
+    logging.getLogger(&#39;foo.bar&#39;).error(&#39;second message&#39;)
+self.assertEqual(cm.output, [&#39;INFO:foo:first message&#39;,
+                             &#39;ERROR:foo.bar:second message&#39;])
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestParameterLikelihood.assertLogs', this);">Show source &equiv;</a></p>
@@ -12685,8 +12685,8 @@ deemed to have suffered an error, exactly as for an
 unexpected exception.</p>
 <p>If called with the callable and arguments omitted, will return a
 context object used like this::</p>
-<div class="codehilite"><pre><span></span> <span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">):</span>
-     <span class="n">do_something</span><span class="p">()</span>
+<div class="codehilite"><pre><span></span> with self.assertRaises(SomeException):
+     do_something()
 </pre></div>
 
 
@@ -12695,10 +12695,10 @@ is used as a context object.</p>
 <p>The context manager keeps a reference to the exception as
 the 'exception' attribute. This allows you to inspect the
 exception after the assertion::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">do_something</span><span class="p">()</span>
-<span class="n">the_exception</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="k">exception</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_exception</span><span class="p">.</span><span class="n">error_code</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span>with self.assertRaises(SomeException) as cm:
+    do_something()
+the_exception = cm.exception
+self.assertEqual(the_exception.error_code, 3)
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestParameterLikelihood.assertRaises', this);">Show source &equiv;</a></p>
@@ -13114,8 +13114,8 @@ warning filtering rules in effect, it might be silenced, printed
 out, or raised as an exception.</p>
 <p>If called with the callable and arguments omitted, will return a
 context object used like this::</p>
-<div class="codehilite"><pre><span></span> <span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="n">SomeWarning</span><span class="p">):</span>
-     <span class="n">do_something</span><span class="p">()</span>
+<div class="codehilite"><pre><span></span> with self.assertWarns(SomeWarning):
+     do_something()
 </pre></div>
 
 
@@ -13126,10 +13126,10 @@ warning as the 'warning' attribute; similarly, the 'filename'
 and 'lineno' attributes give you information about the line
 of Python code from which the warning was triggered.
 This allows you to inspect the warning after the assertion::</p>
-<div class="codehilite"><pre><span></span><span class="k">with</span> <span class="k">self</span><span class="p">.</span><span class="n">assertWarns</span><span class="p">(</span><span class="n">SomeWarning</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
-    <span class="n">do_something</span><span class="p">()</span>
-<span class="n">the_warning</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="n">warning</span>
-<span class="k">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_warning</span><span class="p">.</span><span class="n">some_attribute</span><span class="p">,</span> <span class="mi">147</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span>with self.assertWarns(SomeWarning) as cm:
+    do_something()
+the_warning = cm.warning
+self.assertEqual(the_warning.some_attribute, 147)
 </pre></div></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.statistics.test_likelihood.TestParameterLikelihood.assertWarns', this);">Show source &equiv;</a></p>

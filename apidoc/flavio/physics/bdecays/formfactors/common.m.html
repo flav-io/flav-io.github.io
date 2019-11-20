@@ -1059,6 +1059,13 @@ table {
 
     </li>
 
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.common.w_minus_1_pow_n">w_minus_1_pow_n</a></li>
+  </ul>
+
+    </li>
 
 
     </ul>
@@ -1110,6 +1117,29 @@ table {
     <span class="n">sq2</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">tp</span><span class="o">-</span><span class="n">q2</span><span class="p">)</span>
     <span class="n">st0</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">tp</span><span class="o">-</span><span class="n">t0</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">sq2</span><span class="o">-</span><span class="n">st0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">sq2</span><span class="o">+</span><span class="n">st0</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">order_z</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Monomial $(w-1)^n$ where $w$ is expressed in terms of $z$ as $w(z)$ and</span>
+<span class="sd">    the whole expression is expanded around $z=0$ until (including) power $z^m$,</span>
+<span class="sd">    where $m=$`order_z`.</span>
+
+<span class="sd">    The exact expression is $w(z)=(1 + 6 z + z^2)/(-1 + z)^2$.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">**</span><span class="mi">3</span><span class="p">])</span>  <span class="c1"># zs[i] = z**i</span>
+    <span class="k">if</span> <span class="n">order_z</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;(w-1)^n monomial only implemented until order_z=3.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;(w-1)^n monomial only implemented until n=3.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">24</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">256</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">512</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">a</span> <span class="o">*</span> <span class="n">zs</span><span class="p">)[:</span><span class="n">order_z</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># sum_i=0^order_z a[i] * z**i</span>
 </pre></div>
 
   </div>
@@ -1135,6 +1165,51 @@ table {
 
       </div>
 
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.formfactors.common.w_minus_1_pow_n">
+    <p>def <span class="ident">w_minus_1_pow_n</span>(</p><p>z, n, order_z)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Monomial $(w-1)^n$ where $w$ is expressed in terms of $z$ as $w(z)$ and
+the whole expression is expanded around $z=0$ until (including) power $z^m$,
+where $m=$<code>order_z</code>.</p>
+<p>The exact expression is $w(z)=(1 + 6 z + z^2)/(-1 + z)^2$.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.common.w_minus_1_pow_n', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.formfactors.common.w_minus_1_pow_n" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">order_z</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Monomial $(w-1)^n$ where $w$ is expressed in terms of $z$ as $w(z)$ and</span>
+<span class="sd">    the whole expression is expanded around $z=0$ until (including) power $z^m$,</span>
+<span class="sd">    where $m=$`order_z`.</span>
+
+<span class="sd">    The exact expression is $w(z)=(1 + 6 z + z^2)/(-1 + z)^2$.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">**</span><span class="mi">3</span><span class="p">])</span>  <span class="c1"># zs[i] = z**i</span>
+    <span class="k">if</span> <span class="n">order_z</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;(w-1)^n monomial only implemented until order_z=3.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;(w-1)^n monomial only implemented until n=3.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">24</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">256</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">512</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">a</span> <span class="o">*</span> <span class="n">zs</span><span class="p">)[:</span><span class="n">order_z</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># sum_i=0^order_z a[i] * z**i</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
 
 
   </section>

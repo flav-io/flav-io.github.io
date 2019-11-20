@@ -1069,6 +1069,7 @@ table {
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.AFB_tot_function">AFB_tot_function</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.BR_binned">BR_binned</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.BR_binned_costhV">BR_binned_costhV</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.BR_binned_costhV_function">BR_binned_costhV_function</a></li>
@@ -1090,6 +1091,9 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.FL_diff">FL_diff</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.FL_function">FL_function</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.FL_tot_function">FL_tot_function</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.FLt_tot_function">FLt_tot_function</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.I3_tot_function">I3_tot_function</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.Itot_norm">Itot_norm</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.dBR_dcosthV">dBR_dcosthV</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.dBR_dcosthV_function">dBR_dcosthV_function</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvlnu.dBR_dcosthl">dBR_dcosthl</a></li>
@@ -1320,6 +1324,17 @@ table {
     <span class="n">denom</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">nintegrate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">q2</span><span class="p">:</span> <span class="n">dBRdq2</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span>  <span class="n">A</span><span class="o">=</span><span class="bp">None</span><span class="p">),</span> <span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">denom</span>
 
+<span class="k">def</span> <span class="nf">Itot_norm</span><span class="p">(</span><span class="n">fct_J</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">q2</span><span class="p">):</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">get_angularcoeff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fct_J</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">obs_q2int</span><span class="p">(</span><span class="n">fct</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">fct_den</span><span class="p">(</span><span class="n">q2</span><span class="p">):</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">get_angularcoeff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dGdq2</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="n">obs_q2int</span><span class="p">(</span><span class="n">fct_den</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
+
 <span class="k">def</span> <span class="nf">dBR_dq2_dcosthl_binned</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">clmin</span><span class="p">,</span> <span class="n">clmax</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">kinem_allowed</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
         <span class="k">return</span> <span class="mi">0</span>
@@ -1478,6 +1493,28 @@ table {
         <span class="k">return</span> <span class="n">FL_binned</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">f</span>
 
+<span class="k">def</span> <span class="nf">FLt_tot_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">fct_J</span><span class="p">(</span><span class="n">J</span><span class="p">):</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">J</span><span class="p">[</span><span class="s1">&#39;2c&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">Itot_norm</span><span class="p">(</span><span class="n">fct_J</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span>
+
+<span class="k">def</span> <span class="nf">AFB_tot_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">fct_J</span><span class="p">(</span><span class="n">J</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">8</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">J</span><span class="p">[</span><span class="s1">&#39;6s&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">J</span><span class="p">[</span><span class="s1">&#39;6c&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">Itot_norm</span><span class="p">(</span><span class="n">fct_J</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span>
+
+<span class="k">def</span> <span class="nf">I3_tot_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">fct_J</span><span class="p">(</span><span class="n">J</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">J</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">Itot_norm</span><span class="p">(</span><span class="n">fct_J</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span>
+
+
 <span class="k">def</span> <span class="nf">BR_binned_costhl_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">lep</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="k">lambda</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">clmin</span><span class="p">,</span> <span class="n">clmax</span><span class="p">:</span> <span class="p">(</span>
@@ -1579,6 +1616,9 @@ table {
          <span class="s1">&#39;FL&#39;</span><span class="p">:</span> <span class="n">FL_function</span><span class="p">,</span>
          <span class="s1">&#39;&lt;FL&gt;&#39;</span><span class="p">:</span> <span class="n">FL_binned_function</span><span class="p">,</span>
          <span class="s1">&#39;FLtot&#39;</span><span class="p">:</span> <span class="n">FL_tot_function</span><span class="p">,</span>
+         <span class="s1">&#39;FLttot&#39;</span><span class="p">:</span> <span class="n">FLt_tot_function</span><span class="p">,</span>
+         <span class="s1">&#39;AFBtot&#39;</span><span class="p">:</span> <span class="n">AFB_tot_function</span><span class="p">,</span>
+         <span class="s1">&#39;I3tot&#39;</span><span class="p">:</span> <span class="n">I3_tot_function</span><span class="p">,</span>
          <span class="p">}</span>
 <span class="n">_desc</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dBR/dq2&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;$q^2$-differential&#39;</span><span class="p">,</span> <span class="s1">&#39;BR&#39;</span><span class="p">:</span> <span class="s1">&#39;Total&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;BR&gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;$q^2$-binned&#39;</span><span class="p">,</span>
          <span class="s1">&#39;dBR_L/dq2&#39;</span><span class="p">:</span> <span class="s1">&#39;Differential longitudinal&#39;</span><span class="p">,</span> <span class="s1">&#39;BR_L&#39;</span><span class="p">:</span> <span class="s1">&#39;Total longitudinal&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;BR_L&gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;Binned longitudinal&#39;</span><span class="p">,</span>
@@ -1592,6 +1632,9 @@ table {
          <span class="s1">&#39;FL&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;Differential longitudinal polarization fraction&#39;</span><span class="p">,</span>
          <span class="s1">&#39;&lt;FL&gt;&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;Binned longitudinal polarization fraction&#39;</span><span class="p">,</span>
          <span class="s1">&#39;FLtot&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;Total longitudinal polarization fraction&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;FLttot&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;Total longitudinal polarization fraction&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;AFBtot&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;Total forward-backward asymmetry&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;I3tot&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;$q^2$-integrated angular coefficient $I_3$&#39;</span><span class="p">,</span>
          <span class="p">}</span>
 <span class="n">_tex_br</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dBR/dq2&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\frac{d\text{BR}}{dq^2}&#39;</span><span class="p">,</span> <span class="s1">&#39;BR&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\text{BR}&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;BR&gt;&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\langle\text{BR}\rangle&#39;</span><span class="p">,</span>
            <span class="s1">&#39;dBR_L/dq2&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\frac{d\text{BR}_L}{dq^2}&#39;</span><span class="p">,</span> <span class="s1">&#39;BR_L&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\text{BR}_L&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;BR_L&gt;&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\langle\text{BR}_L\rangle&#39;</span><span class="p">,</span>
@@ -1605,6 +1648,9 @@ table {
            <span class="s1">&#39;FL&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;F_L&#39;</span><span class="p">,</span>
            <span class="s1">&#39;&lt;FL&gt;&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\langle F_L\rangle&#39;</span><span class="p">,</span>
            <span class="s1">&#39;FLtot&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;F_L&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;FLttot&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\widetilde{F}_L&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;AFBtot&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;A_\text{FB}&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;I3tot&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;I_3&#39;</span><span class="p">,</span>
             <span class="p">}</span>
 <span class="n">_args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dBR/dq2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;q2&#39;</span><span class="p">],</span> <span class="s1">&#39;BR&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;&lt;BR&gt;&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">],</span>
          <span class="s1">&#39;dBR_L/dq2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;q2&#39;</span><span class="p">],</span> <span class="s1">&#39;BR_L&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;&lt;BR_L&gt;&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">],</span>
@@ -1618,6 +1664,9 @@ table {
          <span class="s1">&#39;FL&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;q2&#39;</span><span class="p">],</span>
          <span class="s1">&#39;&lt;FL&gt;&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;q2min&#39;</span><span class="p">,</span> <span class="s1">&#39;q2max&#39;</span><span class="p">],</span>
          <span class="s1">&#39;FLtot&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+         <span class="s1">&#39;FLttot&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+         <span class="s1">&#39;AFBtot&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+         <span class="s1">&#39;I3tot&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
          <span class="p">}</span>
 <span class="n">_hadr</span> <span class="o">=</span> <span class="p">{</span>
 <span class="s1">&#39;B0-&gt;D*&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;B^0\to D^{\ast -}&quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="s1">&#39;D*+&#39;</span><span class="p">,</span> <span class="p">},</span>
@@ -1643,7 +1692,7 @@ table {
                <span class="s1">&#39;dBR_T/dq2&#39;</span><span class="p">,</span> <span class="s1">&#39;BR_T&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;BR_T&gt;&#39;</span><span class="p">,</span>
                <span class="s1">&#39;&lt;BR&gt;/&lt;cl&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;BR&gt;/&lt;cV&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;BR&gt;/&lt;phi&gt;&#39;</span><span class="p">,</span>
                <span class="s1">&#39;dBR/dcl&#39;</span><span class="p">,</span> <span class="s1">&#39;dBR/dcV&#39;</span><span class="p">,</span> <span class="s1">&#39;dBR/dphi&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;&lt;FL&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;FL&#39;</span><span class="p">,</span> <span class="s1">&#39;FLtot&#39;</span><span class="p">]:</span>
+               <span class="s1">&#39;&lt;FL&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;FL&#39;</span><span class="p">,</span> <span class="s1">&#39;FLtot&#39;</span><span class="p">,</span> <span class="s1">&#39;FLttot&#39;</span><span class="p">,</span> <span class="s1">&#39;AFBtot&#39;</span><span class="p">,</span> <span class="s1">&#39;I3tot&#39;</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">M</span> <span class="ow">in</span> <span class="n">_hadr</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">_process_tex</span> <span class="o">=</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;^+\nu_&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span>
             <span class="n">_obs_name</span> <span class="o">=</span> <span class="n">br</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span><span class="o">+</span><span class="n">M</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;nu)&quot;</span>
@@ -1778,6 +1827,31 @@ table {
       </div>
 
     <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvlnu.AFB_tot_function">
+    <p>def <span class="ident">AFB_tot_function</span>(</p><p>B, V, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvlnu.AFB_tot_function', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvlnu.AFB_tot_function" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">AFB_tot_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">fct_J</span><span class="p">(</span><span class="n">J</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">8</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">J</span><span class="p">[</span><span class="s1">&#39;6s&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">J</span><span class="p">[</span><span class="s1">&#39;6c&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">Itot_norm</span><span class="p">(</span><span class="n">fct_J</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
       
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.bvlnu.BR_binned">
@@ -2269,6 +2343,85 @@ table {
         <span class="n">q2min</span> <span class="o">=</span> <span class="n">ml</span><span class="o">**</span><span class="mi">2</span>
         <span class="k">return</span> <span class="n">FL_binned</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">f</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvlnu.FLt_tot_function">
+    <p>def <span class="ident">FLt_tot_function</span>(</p><p>B, V, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvlnu.FLt_tot_function', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvlnu.FLt_tot_function" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">FLt_tot_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">fct_J</span><span class="p">(</span><span class="n">J</span><span class="p">):</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">J</span><span class="p">[</span><span class="s1">&#39;2c&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">Itot_norm</span><span class="p">(</span><span class="n">fct_J</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvlnu.I3_tot_function">
+    <p>def <span class="ident">I3_tot_function</span>(</p><p>B, V, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvlnu.I3_tot_function', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvlnu.I3_tot_function" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">I3_tot_function</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">fct_J</span><span class="p">(</span><span class="n">J</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">J</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">Itot_norm</span><span class="p">(</span><span class="n">fct_J</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvlnu.Itot_norm">
+    <p>def <span class="ident">Itot_norm</span>(</p><p>fct_J, wc_obj, par, B, V, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvlnu.Itot_norm', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvlnu.Itot_norm" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Itot_norm</span><span class="p">(</span><span class="n">fct_J</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">q2</span><span class="p">):</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">get_angularcoeff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fct_J</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">obs_q2int</span><span class="p">(</span><span class="n">fct</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">fct_den</span><span class="p">(</span><span class="n">q2</span><span class="p">):</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">get_angularcoeff</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dGdq2</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="n">obs_q2int</span><span class="p">(</span><span class="n">fct_den</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
 </pre></div>
 
   </div>

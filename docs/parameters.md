@@ -53,7 +53,6 @@ of the parameter.
 | `B->D BCL a2_f0` | $a_2^{(0)}$ | BCL $B\to D$ form factor parametrization coefficient $a_2$ of $f_0$ |
 | `B->D BCL m+` | $m_{B^*}^{f_+}$ | Resonance mass for the $B\to D$ vector and tensor form factors in BCL parametrization |
 | `B->D BCL m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B\to D$ scalar form factor in BCL parametrization |
-| `B->D CLN deltac_h+` | $\delta_{\epsilon_c^2}^{h_+}$ | Power correction to $B\to D$ HQET form factor $h_+$ |
 | `B->D IW a_T` | $a_T^{B\to D}$ | Relative power correction to the $B\to D$ tensor form factor from the improved Isgur-Wise relation |
 | `B->D* BCL m0` | $m_{B^*}^{A_0}$ | Resonance mass for the $B\to D^*$ scalar form factor in BCL or BSZ parametrization |
 | `B->D* BCL m1+` | $m_{B^*}^{1^+}$ | Resonance mass for the $B\to D^*$ form factors $A_{12}$ and $T_{2,23}$ in BCL or BSZ parametrization |
@@ -61,8 +60,6 @@ of the parameter.
 | `B->D* CLN R_0(1)` | $R_0(1)$ | Ratio of CLN form factors at $w=1$ |
 | `B->D* CLN R_1(1)` | $R_1(1)$ | Ratio of CLN form factors at $w=1$ |
 | `B->D* CLN R_2(1)` | $R_2(1)$ | Ratio of CLN form factors at $w=1$ |
-| `B->D* CLN deltac_hA1` | $\delta_{\epsilon_c^2}^{h_{A_1}}$ | Power correction to $B\to D^*$ HQET form factor $h_{A_1}$ |
-| `B->D* CLN deltac_hT1` | $\delta_{\epsilon_c^2}^{h_{T_1}}$ | Power correction to $B\to D^*$ HQET form factor $h_{T_1}$ |
 | `B->D* CLN h_A1(1)` | $h_{A_1}(1)$ | Universal CLN form factor at $w=1$ |
 | `B->D* CLN rho2` | $\rho^2$ | Shape parameter in the CLN form factor parametrization |
 | `B->D* IW a_T1` | $a_{T_1}^{B\to D^*}$ | Relative power correction to the $B\to D^*$ tensor form factor $T_1$ from the improved Isgur-Wise relation |
@@ -302,15 +299,50 @@ of the parameter.
 | `Bs->phi deltaC9 c_- Re` | $\text{Re}\,c^{\Delta_9}_-$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at high $q^2$ |
 | `Bs->phi deltaC9 c_0 Im` | $\text{Im}\,c^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at high $q^2$ |
 | `Bs->phi deltaC9 c_0 Re` | $\text{Re}\,c^{\Delta_9}_0$ | Parameter for subleading hadronic effects in $B_s\to \phi\ell^+\ell^-$ at high $q^2$ |
-| `CLN c_xi` | $c_\xi$ | Parameter of leading Isgur-Wise function $\xi(w)=1-\rho^2_\xi(w-1)+c_\xi(w-1)^2$ |
-| `CLN rho2_xi` | $\rho^2_\xi$ | Slope parameter of leading Isgur-Wise function $\xi(w)=1-\rho^2_\xi(w-1)+c_\xi(w-1)^2$ |
+| `CLN c_xi` | $c_\xi$ | Parameter of leading Isgur-Wise function $\xi(w)=1-\rho^2_\xi(w-1)+c_\xi(w-1)^2+\ldots$ |
+| `CLN l_1(1)` | $\ell_1(1)$ | $O(\epsilon_c^2)$ power correction to $B\to D^{(*)}$ HQET form factors |
+| `CLN l_2(1)` | $\ell_2(1)$ | $O(\epsilon_c^2)$ power correction to $B\to D^{(*)}$ HQET form factors |
+| `CLN l_3(1)` | $\ell_3(1)$ | $O(\epsilon_c^2)$ power correction to $B\to D^{(*)}$ HQET form factors |
+| `CLN l_4(1)` | $\ell_4(1)$ | $O(\epsilon_c^2)$ power correction to $B\to D^{(*)}$ HQET form factors |
+| `CLN l_5(1)` | $\ell_5(1)$ | $O(\epsilon_c^2)$ power correction to $B\to D^{(*)}$ HQET form factors |
+| `CLN l_6(1)` | $\ell_6(1)$ | $O(\epsilon_c^2)$ power correction to $B\to D^{(*)}$ HQET form factors |
+| `CLN lp_1(1)` | $\ell_1'(1)$ | $O(\epsilon_c^2)$ power correction to $B\to D^{(*)}$ HQET form factors |
+| `CLN lp_2(1)` | $\ell_2'(1)$ | $O(\epsilon_c^2)$ power correction to $B\to D^{(*)}$ HQET form factors |
+| `CLN lp_3(1)` | $\ell_3'(1)$ | $O(\epsilon_c^2)$ power correction to $B\to D^{(*)}$ HQET form factors |
+| `CLN lp_4(1)` | $\ell_4'(1)$ | $O(\epsilon_c^2)$ power correction to $B\to D^{(*)}$ HQET form factors |
+| `CLN lp_5(1)` | $\ell_5'(1)$ | $O(\epsilon_c^2)$ power correction to $B\to D^{(*)}$ HQET form factors |
+| `CLN lp_6(1)` | $\ell_6'(1)$ | $O(\epsilon_c^2)$ power correction to $B\to D^{(*)}$ HQET form factors |
+| `CLN rho2_xi` | $\rho^2_\xi$ | Slope parameter of leading Isgur-Wise function $\xi(w)=1-\rho^2_\xi(w-1)+\ldots$ |
+| `CLN xi3` | $\xi^{(3)}$ | Parameter of leading Isgur-Wise function $\xi(w)=1-\rho^2_\xi(w-1)+c_\xi(w-1)^2+\xi^{(3)}(w-1)^3/6$ |
 | `C_BXlnu` | $C$ |  |
 | `D Al` | $D$ | Overlap integral corresponding to the photon/Z contribution |
 | `D Au` | $D$ | Overlap integral corresponding to the photon/Z contribution |
 | `D Ti` | $D$ | Overlap integral corresponding to the photon/Z contribution |
+| `D->K BCL m+` | $m_{D^*}^{f_+}$ | Resonance mass for the $D\to K$ vector and tensor form factors in BCL parametrization |
+| `D->K BCL m0` | $m_{D^*}^{f_0}$ | Resonance mass for the $D\to K$ scalar form factor in BCL parametrization |
+| `D->K BSZ a0_f+` | $a_0^{f_+}$ | BSZ form factor parametrization coefficient $a_0$ of $f_+$ |
+| `D->K BSZ a0_fT` | $a_0^{f_T}$ | BSZ form factor parametrization coefficient $a_0$ of $f_T$ |
+| `D->K BSZ a1_f+` | $a_1^{f_+}$ | BSZ form factor parametrization coefficient $a_1$ of $f_+$ |
+| `D->K BSZ a1_f0` | $a_1^{f_0}$ | BSZ form factor parametrization coefficient $a_1$ of $f_0$ |
+| `D->K BSZ a1_fT` | $a_1^{f_T}$ | BSZ form factor parametrization coefficient $a_1$ of $f_T$ |
+| `D->K BSZ a2_f+` | $a_2^{f_+}$ | BSZ form factor parametrization coefficient $a_2$ of $f_+$ |
+| `D->K BSZ a2_f0` | $a_2^{f_0}$ | BSZ form factor parametrization coefficient $a_2$ of $f_0$ |
+| `D->K BSZ a2_fT` | $a_2^{f_T}$ | BSZ form factor parametrization coefficient $a_2$ of $f_T$ |
+| `D->pi BCL m+` | $m_{D^*}^{f_+}$ | Resonance mass for the $D\to \pi$ vector and tensor form factors in BCL parametrization |
+| `D->pi BCL m0` | $m_{D^*}^{f_0}$ | Resonance mass for the $D\to \pi$ scalar form factor in BCL parametrization |
+| `D->pi BSZ a0_f+` | $a_0^{f_+}$ | BSZ form factor parametrization coefficient $a_0$ of $f_+$ |
+| `D->pi BSZ a0_fT` | $a_0^{f_T}$ | BSZ form factor parametrization coefficient $a_0$ of $f_T$ |
+| `D->pi BSZ a1_f+` | $a_1^{f_+}$ | BSZ form factor parametrization coefficient $a_1$ of $f_+$ |
+| `D->pi BSZ a1_f0` | $a_1^{f_0}$ | BSZ form factor parametrization coefficient $a_1$ of $f_0$ |
+| `D->pi BSZ a1_fT` | $a_1^{f_T}$ | BSZ form factor parametrization coefficient $a_1$ of $f_T$ |
+| `D->pi BSZ a2_f+` | $a_2^{f_+}$ | BSZ form factor parametrization coefficient $a_2$ of $f_+$ |
+| `D->pi BSZ a2_f0` | $a_2^{f_0}$ | BSZ form factor parametrization coefficient $a_2$ of $f_0$ |
+| `D->pi BSZ a2_fT` | $a_2^{f_T}$ | BSZ form factor parametrization coefficient $a_2$ of $f_T$ |
 | `DeltaGamma/Gamma_B0` | $\Delta \Gamma_d/\Gamma_d$ | Relative decay width difference in the $B_s$ system |
 | `DeltaGamma/Gamma_Bs` | $\Delta \Gamma_s/\Gamma_s$ | Relative decay width difference in the $B_s$ system |
 | `DeltaM_K0` | $\Delta M_K$ | Mass difference in the $K^0$ system |
+| `DeltaRA` | $\Delta_R^A$ | Relative radiative correction to the SM Gamow-Teller beta decay rate |
+| `DeltaRV` | $\Delta_R^V$ | Relative radiative correction to the SM Fermi beta decay rate |
 | `GF` | $G_F$ | Fermi constant |
 | `Gamma12_B0_a` | $a$ | Coefficient in the approximate equality $\Delta \Gamma_d/M_{12}^d=10^{-4}[c+a\frac{\lambda_u}{\lambda_t}]$ |
 | `Gamma12_B0_c` | $c$ | Coefficient in the approximate equality $\Delta \Gamma_d/M_{12}^d=10^{-4}[c+a\frac{\lambda_u}{\lambda_t}]$ |
@@ -361,6 +393,8 @@ of the parameter.
 | `Kpipi M2 9` | $\langle Q_9 \rangle_2$ | $K\to (\pi\pi)_{I=2}$ matrix element of $Q_9$ |
 | `Kpipi M2 SLL1_d` | $\langle Q_1^{\text{SLL},d} \rangle_2$ | $K\to (\pi\pi)_{I=2}$ matrix element of $Q_1^{\text{SLL},d}$ |
 | `Kpipi M2 SLL2_d` | $\langle Q_2^{\text{SLL},d} \rangle_2$ | $K\to (\pi\pi)_{I=2}$ matrix element of $Q_2^{\text{SLL},d}$ |
+| `Lambda->p f_1(0)` | $f_1(0)$ | $\Lambda\to p$ vector form factor $f_1$ at $q^2=0$ |
+| `Lambda->p g_1(0)` | $g_1(0)$ | $\Lambda\to p$ axial vector form factor $g_1$ at $q^2=0$ |
 | `Lambda->ppi alpha_-` | $\alpha_-$ | $\Lambda\to p \pi^-$ decay parameter |
 | `Lambdab->Lambda SSE a0_fA0` | $a_0^{f^A_0}$ | SSE form factor parametrization coefficient $a_0$ of $f^A_0$ |
 | `Lambdab->Lambda SSE a0_fAt` | $a_0^{f^A_t}$ | SSE form factor parametrization coefficient $a_0$ of $f^A_t$ |
@@ -462,6 +496,14 @@ of the parameter.
 | `a_e SM` | $a_e^\text{SM}$ | SM prediction for the anomalous magnetic moment of the electron |
 | `a_mu SM` | $a_\mu^\text{SM}$ | SM prediction for the anomalous magnetic moment of the muon |
 | `a_tau SM` | $a_\tau^\text{SM}$ | SM prediction for the anomalous magnetic moment of the tau |
+| `alpha_CS(HfF)` | $\alpha_{C_S}^\text{HfF}$ | Coefficient of the scalar coupling contribution to the Hafnium fluoride energy shift |
+| `alpha_CS(ThO)` | $\alpha_{C_S}^\text{ThO}$ | Coefficient of the scalar coupling contribution to the Thorium monoxide energy shift |
+| `alpha_CS(Tl)` | $\alpha_{C_S}^\text{Tl}$ | Coefficient of the scalar coupling contribution to the Thallium EDM |
+| `alpha_CS(YbF)` | $\alpha_{C_S}^\text{YbF}$ | Coefficient of the scalar coupling contribution to the Ytterbium fluoride energy shift |
+| `alpha_de(HfF)` | $\alpha_{d_e}^\text{HfF}$ | Coefficient of the electron EDM contribution to the Hafnium fluoride energy shift |
+| `alpha_de(ThO)` | $\alpha_{d_e}^\text{ThO}$ | Coefficient of the electron EDM contribution to the Thorium monoxide energy shift |
+| `alpha_de(Tl)` | $\alpha_{d_e}^\text{Tl}$ | Coefficient of the electron EDM contribution to the Thallium EDM |
+| `alpha_de(YbF)` | $\alpha_{d_e}^\text{YbF}$ | Coefficient of the electron EDM contribution to the Ytterbium fluoride energy shift |
 | `alpha_e` | $\alpha_e(m_Z)$ | electromagnetic fine structure constant in the $\overline{\text{MS}}$ scheme at the scale $m_Z$ |
 | `alpha_s` | $\alpha_s(m_Z)$ | strong coupling constant in the $\overline{\text{MS}}$ scheme at the scale $m_Z$ |
 | `bag_B0_1` | $B_1^{(d)}$ | $B^0$ bag parameter of $O_1$ in the $\overline{\text{MS}}$ scheme at $m_b$ |
@@ -496,10 +538,13 @@ of the parameter.
 | `c4_pi+munu` | $c_4^{(\pi)}(m_\mu)$ | Chiral perturbation theory coefficient in $\pi^+\to\mu^+\nu$ |
 | `chi_2(1)` | $\chi_2(1)$ | Subleading Isgur-Wise function $\chi_2$ at $w=1$ |
 | `chi_2p(1)` | $\chi_2\'(1)$ | Derivative of subleading Isgur-Wise function $\chi_2$ at $w=1$ |
+| `chi_2pp(1)` | $\chi_2\'\'(1)$ | 2nd derivative of subleading Isgur-Wise function $\chi_2$ at $w=1$ |
 | `chi_3p(1)` | $\chi_3\'(1)$ | Derivative of subleading Isgur-Wise function $\chi_3$ at $w=1$ |
+| `chi_3pp(1)` | $\chi_3\'\'(1)$ | 3rd derivative of subleading Isgur-Wise function $\chi_3$ at $w=1$ |
 | `chi_disp(KL->gammagamma)` | $\chi_\text{disp}$ | Dispersive part of the $K_L\to\gamma\gamma$ amplitude |
 | `delta` | $\delta$ | CKM phase $\delta$ in radians |
 | `deltaPcu` | $\delta P_{c,u}$ | Contributions to the $K^+\to\pi^+\nu\bar\nu$ amplitude not described by the dimension-6 effective Hamiltonian. |
+| `deltaRp_n` | $\delta R^\prime$ | Long-distance radiative correction to neutron beta decay |
 | `delta_BXdee high` | $\delta_{bdee}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_de^+e^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXdee low` | $\delta_{bdee}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_de^+e^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXdgamma` | $\delta_{bd\gamma}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders, interpolation, and non-perturbative effects in $B\to X_d\gamma$. The relative uncertainty is $1+\delta$. |
@@ -520,6 +565,7 @@ of the parameter.
 | `delta_Gammanu` | $\delta_{\Gamma_\nu}$ | Uncertainty in the SM $Z$ partial width to neutrinos in GeV |
 | `delta_Gammatau` | $\delta_{\Gamma_\tau}$ | Uncertainty in the SM $Z$ partial width to tau leptons in GeV |
 | `delta_Gammau` | $\delta_{\Gamma_u}$ | Uncertainty in the SM $Z$ partial width to up quarks in GeV |
+| `delta_deltaRp_Z2` | $\delta(\delta R^\prime) / Z^2$ | Uncertainty on the structure-indipendent radiative correction to beta decay divided by $Z^2 |
 | `delta_mN` | $\delta m_N$ | QCD contribution to the neutron-proton mass difference |
 | `eps_K` | $\|\epsilon_K\|$ | Measured value of $\|\epsilon_K\|$ |
 | `epsp a` | $a$ | Parameter for isospin breaking corrections to $\epsilon\'/\epsilon$ |
@@ -530,6 +576,7 @@ of the parameter.
 | `eta_tt_Bs` | $\eta_B$ | SM QCD correction factor for $B_s$ mixing |
 | `eta_tt_K0` | $\eta_{tt}$ | SM QCD correction factor for the top contribution to $K^0$ mixing |
 | `etap(1)` | $\eta\'(1)$ | Derivative of subleading Isgur-Wise function $\eta$ at $w=1$ |
+| `etapp(1)` | $\eta\'\'(1)$ | 2nd derivative of subleading Isgur-Wise function $\eta$ at $w=1$ |
 | `f_B+` | $f_{B^\pm}$ | $B^\pm$ decay constant |
 | `f_B0` | $f_{B^0}$ | $B^0$ decay constant |
 | `f_Bc` | $f_{B_c}$ | $B_c$ decay constant |
@@ -541,6 +588,7 @@ of the parameter.
 | `f_K*0` | $f_{K^{*0}}$ | $K^{*0}$ decay constant |
 | `f_K+` | $f_{K^\pm}$ | Charged kaon decay constant |
 | `f_K0` | $f_{K^0}$ | Neutral kaon decay constant |
+| `f_n` | $f_n$ | Statistical rate function for neutron beta decay |
 | `f_omega` | $f_{\omega}$ | $\omega$ decay constant |
 | `f_perp_K*+` | $f^\perp_{K^{\pm}}$ | Transverse $K^{*\pm}$ decay constant at 2 GeV in the 3-flavour scheme |
 | `f_perp_K*0` | $f^\perp_{K^{*0}}$ | Transverse $K^{*0}$ decay constant at 2 GeV in the 3-flavour scheme |

@@ -1072,11 +1072,14 @@ table {
     <li class="mono"><a href="#flavio.physics.bdecays.formfactors.hqet.CV1">CV1</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.formfactors.hqet.CV2">CV2</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.formfactors.hqet.CV3">CV3</a></li>
-    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.hqet.L">L</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.hqet.Lz">Lz</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.hqet.ell">ell</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.hqet.ell_i">ell_i</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.formfactors.hqet.get_hqet_parameters">get_hqet_parameters</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.formfactors.hqet.omega_minus">omega_minus</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.formfactors.hqet.omega_plus">omega_plus</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.formfactors.hqet.r">r</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.formfactors.hqet.xi">xi</a></li>
   </ul>
 
     </li>
@@ -1104,28 +1107,48 @@ table {
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">from</span> <span class="nn">flavio.math.functions</span> <span class="kn">import</span> <span class="n">li2</span>
 <span class="kn">from</span> <span class="nn">flavio.physics.running</span> <span class="kn">import</span> <span class="n">running</span>
+<span class="kn">from</span> <span class="nn">flavio.physics.bdecays.formfactors</span> <span class="kn">import</span> <span class="n">common</span>
 
 
-<span class="k">def</span> <span class="nf">get_hqet_parameters</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_hqet_parameters</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
     <span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">alphas</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="c1"># The scale here is fixed to 2.7 GeV ~ sqrt(m_b^pole * m_c^pole)</span>
+    <span class="n">alphas</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">2.7</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="n">p</span><span class="p">[</span><span class="s1">&#39;ash&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alphas</span> <span class="o">/</span> <span class="n">pi</span>
-    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
-    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">3.4</span>
     <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb1S&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_mb_1S</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb1S&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">alphas</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">3.4</span>
     <span class="n">mBbar</span> <span class="o">=</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_B0&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_B*0&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">4</span>
     <span class="c1"># eq. (25); note the comment about the renormalon cancellation thereafter</span>
-    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;Lambdabar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mBbar</span> <span class="o">-</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb1S&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;lambda_1&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb1S&#39;</span><span class="p">])</span>
+    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;Lambdabar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mBbar</span> <span class="o">-</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;lambda_1&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb1S&#39;</span><span class="p">])</span>
     <span class="n">p</span><span class="p">[</span><span class="s1">&#39;epsc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;Lambdabar&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mc&#39;</span><span class="p">])</span>
     <span class="n">p</span><span class="p">[</span><span class="s1">&#39;epsb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;Lambdabar&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">])</span>
     <span class="n">p</span><span class="p">[</span><span class="s1">&#39;zc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mc&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">p</span>
 
-<span class="k">def</span> <span class="nf">L</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
-    <span class="n">chi2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_2(1)&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_2p(1)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">chi3</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_3p(1)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">eta</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta(1)&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;etap(1)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">xi</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">rho2</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">xi3</span><span class="p">,</span> <span class="n">order_z</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Leading-order Isgur-Wise function:</span>
+<span class="sd">    </span>
+<span class="sd">    $$\xi(z)=1-\rho^2 (w-1) + c (w-1)^2 + \xi^{(3)} (w-1)^3/6</span>
+<span class="sd">    </span>
+<span class="sd">    where w=w(z) is expanded in $z$ up to an including terms of order</span>
+<span class="sd">    `z**order_z`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xi</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span>
+          <span class="o">-</span> <span class="n">rho2</span>    <span class="o">*</span> <span class="n">common</span><span class="o">.</span><span class="n">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order_z</span><span class="o">=</span><span class="n">order_z</span><span class="p">)</span>
+          <span class="o">+</span> <span class="n">c</span>       <span class="o">*</span> <span class="n">common</span><span class="o">.</span><span class="n">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">order_z</span><span class="o">=</span><span class="n">order_z</span><span class="p">)</span>
+          <span class="o">+</span> <span class="n">xi3</span> <span class="o">/</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">common</span><span class="o">.</span><span class="n">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">order_z</span><span class="o">=</span><span class="n">order_z</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">xi</span>
+
+
+<span class="k">def</span> <span class="nf">Lz</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">order_z</span><span class="p">):</span>
+    <span class="n">w_minus_1</span>    <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order_z</span><span class="o">=</span><span class="n">order_z</span><span class="p">)</span>
+    <span class="n">w_minus_1_sq</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">order_z</span><span class="o">=</span><span class="n">order_z</span><span class="p">)</span>
+    <span class="n">chi2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_2(1)&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_2p(1)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">w_minus_1</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_2pp(1)&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">w_minus_1_sq</span>
+    <span class="n">chi3</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_3p(1)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">w_minus_1</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_3pp(1)&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">w_minus_1_sq</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta(1)&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;etap(1)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">w_minus_1</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;etapp(1)&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">w_minus_1_sq</span>
     <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># w is not expanded in the kinematical factors</span>
     <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">chi2</span> <span class="o">+</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">chi3</span>
     <span class="n">d</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="n">chi3</span>
     <span class="n">d</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">chi2</span>
@@ -1133,6 +1156,18 @@ table {
     <span class="n">d</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="n">d</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">eta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">w</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">d</span>
+
+
+<span class="k">def</span> <span class="nf">ell_i</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">order_z</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sub-sub-leading power correction $\ell_i(w(z))$.&quot;&quot;&quot;</span>
+    <span class="n">w_minus_1</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order_z</span><span class="o">=</span><span class="n">order_z</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;CLN l_{}(1)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">+</span> <span class="n">w_minus_1</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;CLN lp_{}(1)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">ell</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">order_z</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sub-sub-leading power correction $\ell_{i}(w(z))$ for $i=1\ldots6$ as dictionary.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="n">ell_i</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">order_z</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)}</span>
+
 
 
 <span class="k">def</span> <span class="nf">r</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
@@ -1543,21 +1578,24 @@ table {
   
       
   <div class="item">
-    <div class="name def" id="flavio.physics.bdecays.formfactors.hqet.L">
-    <p>def <span class="ident">L</span>(</p><p>par, w)</p>
+    <div class="name def" id="flavio.physics.bdecays.formfactors.hqet.Lz">
+    <p>def <span class="ident">Lz</span>(</p><p>par, w, z, order_z)</p>
     </div>
     
 
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.hqet.L', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.bdecays.formfactors.hqet.L" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">L</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
-    <span class="n">chi2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_2(1)&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_2p(1)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">chi3</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_3p(1)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">eta</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta(1)&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;etap(1)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.hqet.Lz', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.formfactors.hqet.Lz" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">Lz</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">order_z</span><span class="p">):</span>
+    <span class="n">w_minus_1</span>    <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order_z</span><span class="o">=</span><span class="n">order_z</span><span class="p">)</span>
+    <span class="n">w_minus_1_sq</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">order_z</span><span class="o">=</span><span class="n">order_z</span><span class="p">)</span>
+    <span class="n">chi2</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_2(1)&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_2p(1)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">w_minus_1</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_2pp(1)&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">w_minus_1_sq</span>
+    <span class="n">chi3</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_3p(1)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">w_minus_1</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;chi_3pp(1)&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">w_minus_1_sq</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta(1)&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;etap(1)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">w_minus_1</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;etapp(1)&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">w_minus_1_sq</span>
     <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># w is not expanded in the kinematical factors</span>
     <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">chi2</span> <span class="o">+</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">chi3</span>
     <span class="n">d</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="n">chi3</span>
     <span class="n">d</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">chi2</span>
@@ -1574,8 +1612,55 @@ table {
   
       
   <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.formfactors.hqet.ell">
+    <p>def <span class="ident">ell</span>(</p><p>par, z, order_z)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Sub-sub-leading power correction $\ell_{i}(w(z))$ for $i=1\ldots6$ as dictionary.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.hqet.ell', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.formfactors.hqet.ell" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ell</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">order_z</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sub-sub-leading power correction $\ell_{i}(w(z))$ for $i=1\ldots6$ as dictionary.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="n">ell_i</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">order_z</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)}</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.formfactors.hqet.ell_i">
+    <p>def <span class="ident">ell_i</span>(</p><p>i, par, z, order_z)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Sub-sub-leading power correction $\ell_i(w(z))$.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.hqet.ell_i', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.formfactors.hqet.ell_i" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ell_i</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">order_z</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sub-sub-leading power correction $\ell_i(w(z))$.&quot;&quot;&quot;</span>
+    <span class="n">w_minus_1</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order_z</span><span class="o">=</span><span class="n">order_z</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;CLN l_{}(1)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">+</span> <span class="n">w_minus_1</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;CLN lp_{}(1)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.physics.bdecays.formfactors.hqet.get_hqet_parameters">
-    <p>def <span class="ident">get_hqet_parameters</span>(</p><p>par, scale)</p>
+    <p>def <span class="ident">get_hqet_parameters</span>(</p><p>par)</p>
     </div>
     
 
@@ -1584,16 +1669,17 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.hqet.get_hqet_parameters', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.formfactors.hqet.get_hqet_parameters" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_hqet_parameters</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_hqet_parameters</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
     <span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">alphas</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
+    <span class="c1"># The scale here is fixed to 2.7 GeV ~ sqrt(m_b^pole * m_c^pole)</span>
+    <span class="n">alphas</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">2.7</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="mi">5</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="n">p</span><span class="p">[</span><span class="s1">&#39;ash&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alphas</span> <span class="o">/</span> <span class="n">pi</span>
-    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_mb_pole</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
-    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">3.4</span>
     <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb1S&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_mb_1S</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb1S&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">alphas</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">3.4</span>
     <span class="n">mBbar</span> <span class="o">=</span> <span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_B0&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_B*0&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">4</span>
     <span class="c1"># eq. (25); note the comment about the renormalon cancellation thereafter</span>
-    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;Lambdabar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mBbar</span> <span class="o">-</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb1S&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;lambda_1&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb1S&#39;</span><span class="p">])</span>
+    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;Lambdabar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mBbar</span> <span class="o">-</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;lambda_1&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb1S&#39;</span><span class="p">])</span>
     <span class="n">p</span><span class="p">[</span><span class="s1">&#39;epsc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;Lambdabar&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mc&#39;</span><span class="p">])</span>
     <span class="n">p</span><span class="p">[</span><span class="s1">&#39;epsb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;Lambdabar&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">])</span>
     <span class="n">p</span><span class="p">[</span><span class="s1">&#39;zc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mc&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span>
@@ -1663,6 +1749,42 @@ table {
     <span class="k">if</span> <span class="n">w</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">log</span><span class="p">(</span><span class="n">w</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">w</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">w</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.formfactors.hqet.xi">
+    <p>def <span class="ident">xi</span>(</p><p>z, rho2, c, xi3, order_z)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Leading-order Isgur-Wise function:</p>
+<p>$$\xi(z)=1-\rho^2 (w-1) + c (w-1)^2 + \xi^{(3)} (w-1)^3/6</p>
+<p>where w=w(z) is expanded in $z$ up to an including terms of order
+<code>z**order_z</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.hqet.xi', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.formfactors.hqet.xi" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">xi</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">rho2</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">xi3</span><span class="p">,</span> <span class="n">order_z</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Leading-order Isgur-Wise function:</span>
+<span class="sd">    </span>
+<span class="sd">    $$\xi(z)=1-\rho^2 (w-1) + c (w-1)^2 + \xi^{(3)} (w-1)^3/6</span>
+<span class="sd">    </span>
+<span class="sd">    where w=w(z) is expanded in $z$ up to an including terms of order</span>
+<span class="sd">    `z**order_z`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xi</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span>
+          <span class="o">-</span> <span class="n">rho2</span>    <span class="o">*</span> <span class="n">common</span><span class="o">.</span><span class="n">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order_z</span><span class="o">=</span><span class="n">order_z</span><span class="p">)</span>
+          <span class="o">+</span> <span class="n">c</span>       <span class="o">*</span> <span class="n">common</span><span class="o">.</span><span class="n">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">order_z</span><span class="o">=</span><span class="n">order_z</span><span class="p">)</span>
+          <span class="o">+</span> <span class="n">xi3</span> <span class="o">/</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">common</span><span class="o">.</span><span class="n">w_minus_1_pow_n</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">order_z</span><span class="o">=</span><span class="n">order_z</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">xi</span>
 </pre></div>
 
   </div>

@@ -51,13 +51,21 @@ of this page.
 
 - [Non-leptonic decays](obs/bhadrondecays-nonleptonicdecays.html) (2 observables)
 
-- [Semi-leptonic tree-level decays](obs/bhadrondecays-semileptonictreeleveldecays.html) (614 observables)
+- [Semi-leptonic tree-level decays](obs/bhadrondecays-semileptonictreeleveldecays.html) (686 observables)
 
 
 ### $c$ hadron decays
 
 
 - [Leptonic tree-level decays](obs/chadrondecays-leptonictreeleveldecays.html) (6 observables)
+
+- [Semi-leptonic tree-level decays](obs/chadrondecays-semileptonictreeleveldecays.html) (52 observables)
+
+
+### $e^+e^-$ scattering
+
+
+- [$e^+e^-\to VV$](obs/eescattering-eetovv.html) (2 observables)
 
 
 ### $s$ hadron decays
@@ -69,15 +77,27 @@ of this page.
 
 - [Non-leptonic decays](obs/shadrondecays-nonleptonicdecays.html) (1 observable)
 
-- [Semi-leptonic tree-level decays](obs/shadrondecays-semileptonictreeleveldecays.html) (9 observables)
+- [Semi-leptonic tree-level decays](obs/shadrondecays-semileptonictreeleveldecays.html) (18 observables)
 
 
 ### Dipole moments
 
 
+- [Atomic electric dipole moments](obs/dipolemoments-atomicelectricdipolemoments.html) (1 observable)
+
 - [Lepton anomalous magnetic moments](obs/dipolemoments-leptonanomalousmagneticmoments.html) (3 observables)
 
+- [Molecular energy shifts](obs/dipolemoments-molecularenergyshifts.html) (3 observables)
+
 - [Nucleon electric dipole moments](obs/dipolemoments-nucleonelectricdipolemoments.html) (1 observable)
+
+
+### Higgs production and decay
+
+
+- [$h\to VV$](obs/higgsproductionanddecay-htovv.html) (30 observables)
+
+- [$h\to ff$](obs/higgsproductionanddecay-htoff.html) (24 observables)
 
 
 ### Meson-antimeson mixing
@@ -90,6 +110,12 @@ of this page.
 - [ $D^0$-$\bar D^0$ mixing](obs/mesonantimesonmixing-dbardmixing.html) (8 observables)
 
 - [ $K^0$-$\bar K^0$ mixing](obs/mesonantimesonmixing-kbarkmixing.html) (1 observable)
+
+
+### Nucleon decays
+
+
+- [Beta decays](obs/nucleondecays-betadecays.html) (25 observables)
 
 
 ### Unflavoured meson decays
