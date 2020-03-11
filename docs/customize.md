@@ -81,7 +81,7 @@ There are two ways to modify them.
 Either you directly change the dictionary `flavio.config` by running, e.g.,
 
 {% highlight python %}
-flavio.config['CKM matrix'] = 'Wolfenstein'
+flavio.config['implementation']['CKM matrix'] = 'Wolfenstein'
 {% endhighlight %}
 
 or you copy the YAML file linked above (or a subset of it), modify it at will,
