@@ -617,13 +617,13 @@ of the parameter.
 | `m_B0` | $m_{B^{0}}$ | $B^{0}$ mass |
 | `m_Bc` | $m_{B_{c}}$ | $B_{c}$ mass |
 | `m_Bs` | $m_{B_{s}}$ | $B_{s}$ mass |
-| `m_Bs*` | $m_{B^{*}_{s}}$ | $B^{*}_{s}$ mass |
-| `m_D*+` | $m_{D^{*}}$ | $D^{*}$ mass |
-| `m_D*0` | $m_{D^{*}}$ | $D^{*}$ mass |
+| `m_Bs*` | $m_{B_{s}^{*}}$ | $B_{s}^{*}$ mass |
+| `m_D*+` | $m_{D^{*+}}$ | $D^{*+}$ mass |
+| `m_D*0` | $m_{D^{*0}}$ | $D^{*0}$ mass |
 | `m_D+` | $m_{D^{+}}$ | $D^{+}$ mass |
 | `m_D0` | $m_{D^{0}}$ | $D^{0}$ mass |
 | `m_Ds` | $m_{D_{s}}$ | $D_{s}$ mass |
-| `m_Ds*` | $m_{D^{*}_{s}}$ | $D^{*}_{s}$ mass |
+| `m_Ds*` | $m_{D_{s}^{*}}$ | $D_{s}^{*}$ mass |
 | `m_J/psi` | $m_{J/\psi}$ | $J/\psi$ mass |
 | `m_K*+` | $m_{K^{*+}}$ | $K^{*+}$ mass |
 | `m_K*0` | $m_{K^{*0}}$ | $K^{*0}$ mass |
@@ -642,7 +642,7 @@ of the parameter.
 | `m_d` | $m_{d}(2\,\text{GeV})$ | $d$ quark mass in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `m_e` | $m_{e}$ | $e$ mass |
 | `m_eta` | $m_{\eta}$ | $\eta$ mass |
-| `m_f0` | $m_{f}$ | $f$ mass |
+| `m_f0` | $m_{f_{0}}$ | $f_{0}$ mass |
 | `m_h` | $m_{H}$ | $H$ mass |
 | `m_mu` | $m_{\mu}$ | $\mu$ mass |
 | `m_n` | $m_{n}$ | $n$ mass |
@@ -675,7 +675,7 @@ of the parameter.
 | `tau_Bc` | $\tau_{B_{c}}$ | $B_{c}$ lifetime |
 | `tau_Bc_SM` | $\tau_{B_c}^\text{SM}$ | Standard Model prediction for the $B_c$ lifetime |
 | `tau_Bs` | $\tau_{B_{s}}$ | $B_{s}$ lifetime |
-| `tau_D*+` | $\tau_{D^{*}}$ | $D^{*}$ lifetime |
+| `tau_D*+` | $\tau_{D^{*+}}$ | $D^{*+}$ lifetime |
 | `tau_D+` | $\tau_{D^{+}}$ | $D^{+}$ lifetime |
 | `tau_D0` | $\tau_{D^{0}}$ | $D^{0}$ lifetime |
 | `tau_Ds` | $\tau_{D_{s}}$ | $D_{s}$ lifetime |
@@ -691,7 +691,7 @@ of the parameter.
 | `tau_W` | $\tau_{W}$ | $W$ lifetime |
 | `tau_Z` | $\tau_{Z}$ | $Z$ lifetime |
 | `tau_eta` | $\tau_{\eta}$ | $\eta$ lifetime |
-| `tau_f0` | $\tau_{f}$ | $f$ lifetime |
+| `tau_f0` | $\tau_{f_{0}}$ | $f_{0}$ lifetime |
 | `tau_mu` | $\tau_{\mu}$ | $\mu$ lifetime |
 | `tau_n` | $\tau_{n}$ | $n$ lifetime |
 | `tau_omega` | $\tau_{\omega}$ | $\omega$ lifetime |

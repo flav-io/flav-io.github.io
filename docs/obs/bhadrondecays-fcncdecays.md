@@ -1153,6 +1153,7 @@ a scalar observable).
 |------|--------|-------------|-----------|
 | `ACP(B0->K*gamma)` | $A_{CP}(B^0\to K^{*0}\gamma)$ | Direct CP asymmetry of $B^0\to K^{*0}\gamma$ |  |
 | `BR(B0->K*gamma)` | $\text{BR}(B^0\to K^{*0}\gamma)$ | Branching ratio of $B^0\to K^{*0}\gamma$ |  |
+| `BR(B0->K*gamma)/BR(Bs->phigamma)` | $\frac{\text{BR}(B^0\to K^{*0}\gamma)}{\overline{\text{BR}}(B_s\to \phi\gamma)}$ | Ratio of branching ratio of $B^0\to K^{*0}\gamma$ and time-integrated branching ratio of $B_s\to \phi\gamma$ |  |
 | `S_K*gamma` | $S_{K^{*}\gamma}$ | Mixing-induced CP asymmetry in $B^0\to K^{*0}\gamma$ |  |
 
 
@@ -1163,6 +1164,7 @@ a scalar observable).
 |------|--------|-------------|-----------|
 | `ACP(Bs->phigamma)` | $A_{CP}(B_s\to \phi\gamma)$ | Direct CP asymmetry of $B_s\to \phi\gamma$ |  |
 | `ADeltaGamma(Bs->phigamma)` | $A_{\Delta\Gamma}(B_s\to \phi\gamma)$ | Mass-eigenstate rate asymmetry in $B_s\to \phi\gamma$ |  |
+| `BR(B0->K*gamma)/BR(Bs->phigamma)` | $\frac{\text{BR}(B^0\to K^{*0}\gamma)}{\overline{\text{BR}}(B_s\to \phi\gamma)}$ | Ratio of branching ratio of $B^0\to K^{*0}\gamma$ and time-integrated branching ratio of $B_s\to \phi\gamma$ |  |
 | `BR(Bs->phigamma)` | $\overline{\text{BR}}(B_s\to \phi\gamma)$ | Time-integrated branching ratio of $B_s\to \phi\gamma$ |  |
 | `S_phigamma` | $S_{\phi\gamma}$ | Mixing-induced CP asymmetry in $B_s\to \phi\gamma$ |  |
 
