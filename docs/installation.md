@@ -7,7 +7,7 @@ title: Installation
 
 Since flavio is a Python package that does not need compilation, installation
 is fairly simple. The following will assume that you already have
-Python version 3.5 or above and the Python package manager `pip` installed on your system.
+Python version 3.6 or above and the Python package manager `pip` installed on your system.
 
 **Note:** If you plan to modify the code and potentially contribute your changes back to
 the community, you might follow the steps described in [development install](dev-install.html)
