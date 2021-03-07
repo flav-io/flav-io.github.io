@@ -860,8 +860,13 @@ table {
   </style>
 
   <style type="text/css">
-  .codehilite .hll { background-color: #ffffcc }
-.codehilite  { background: #f8f8f8; }
+  pre { line-height: 125%; margin: 0; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
 .codehilite .c { color: #408080; font-style: italic } /* Comment */
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
@@ -1056,8 +1061,6 @@ table {
     <li class="mono"><a href="#flavio.parameters.class_from_string">class_from_string</a></li>
     <li class="mono"><a href="#flavio.parameters.config">config</a></li>
     <li class="mono"><a href="#flavio.parameters.default_parameters">default_parameters</a></li>
-    <li class="mono"><a href="#flavio.parameters.pdg_include">pdg_include</a></li>
-    <li class="mono"><a href="#flavio.parameters.pdg_translate">pdg_translate</a></li>
   </ul>
 
     </li>
@@ -1075,6 +1078,35 @@ table {
 
     </li>
 
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#flavio.parameters.FlavioParticle">FlavioParticle</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.__init__">__init__</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.describe">describe</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.invert">invert</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.all">all</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.dump_table">dump_table</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.empty">empty</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.find">find</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.findall">findall</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.flavio_all">flavio_all</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.from_evtgen_name">from_evtgen_name</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.from_flavio_name">from_flavio_name</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.from_pdgid">from_pdgid</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.from_string">from_string</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.from_string_list">from_string_list</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.load_table">load_table</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.table_loaded">table_loaded</a></li>
+    <li class="mono"><a href="#flavio.parameters.FlavioParticle.table_names">table_names</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
 
     </ul>
   </div>
@@ -1103,15 +1135,16 @@ table {
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">flavio.measurements</span> <span class="kn">import</span> <span class="n">_fix_correlation_matrix</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+<span class="kn">from</span> <span class="nn">particle</span> <span class="kn">import</span> <span class="n">Particle</span><span class="p">,</span> <span class="n">data</span> <span class="k">as</span> <span class="n">p_data</span>
 
 
 <span class="k">def</span> <span class="nf">_read_yaml_object_metadata</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
     <span class="n">parameters</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;description&#39;</span> <span class="ow">in</span> <span class="n">info</span> <span class="ow">and</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;description&#39;</span> <span class="ow">in</span> <span class="n">info</span> <span class="ow">and</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">p</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s1">&#39;tex&#39;</span> <span class="ow">in</span> <span class="n">info</span> <span class="ow">and</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;tex&#39;</span> <span class="ow">in</span> <span class="n">info</span> <span class="ow">and</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">p</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span>
 
 <span class="k">def</span> <span class="nf">read_file_metadata</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
@@ -1184,169 +1217,166 @@ table {
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">constraints</span><span class="o">.</span><span class="n">get_yaml_dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">)</span>
 
+<span class="k">class</span> <span class="nc">FlavioParticle</span><span class="p">(</span><span class="n">Particle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This class extends the `particle.Particle` class.</span>
 
-<span class="c1"># particles from the PDG data file whose mass we&#39;re interested in)</span>
-<span class="n">pdg_include</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;B(s)&#39;</span><span class="p">,</span> <span class="s1">&#39;B(c)&#39;</span><span class="p">,</span> <span class="s1">&#39;B(s)*&#39;</span><span class="p">,</span> <span class="s1">&#39;B*+&#39;</span><span class="p">,</span> <span class="s1">&#39;B*0&#39;</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;D(s)&#39;</span><span class="p">,</span> <span class="s1">&#39;D(s)*&#39;</span><span class="p">,</span> <span class="s1">&#39;D+&#39;</span><span class="p">,</span> <span class="s1">&#39;D0&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;J/psi(1S)&#39;</span><span class="p">,</span> <span class="s1">&#39;K(L)&#39;</span><span class="p">,</span> <span class="s1">&#39;K(S)&#39;</span><span class="p">,</span> <span class="s1">&#39;K*(892)+&#39;</span><span class="p">,</span> <span class="s1">&#39;K*(892)0&#39;</span><span class="p">,</span> <span class="s1">&#39;K+&#39;</span><span class="p">,</span> <span class="s1">&#39;K0&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;Lambda&#39;</span><span class="p">,</span> <span class="s1">&#39;Lambda(b)&#39;</span><span class="p">,</span> <span class="s1">&#39;Lambda(c)&#39;</span><span class="p">,</span> <span class="s1">&#39;omega(782)&#39;</span><span class="p">,</span> <span class="s1">&#39;D*(2007)&#39;</span><span class="p">,</span> <span class="s1">&#39;D*(2010)&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;W&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span>  <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="s1">&#39;f(0)(980)&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;mu&#39;</span><span class="p">,</span>  <span class="s1">&#39;phi(1020)&#39;</span><span class="p">,</span> <span class="s1">&#39;pi+&#39;</span><span class="p">,</span> <span class="s1">&#39;pi0&#39;</span><span class="p">,</span> <span class="s1">&#39;psi(2S)&#39;</span><span class="p">,</span> <span class="s1">&#39;rho(770)+&#39;</span><span class="p">,</span> <span class="s1">&#39;rho(770)0&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">,</span> <span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">]</span>
-<span class="c1"># dictionary translating PDG particle names to the ones in the code.</span>
-<span class="n">pdg_translate</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;B(s)&#39;</span><span class="p">:</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;B(c)&#39;</span><span class="p">:</span> <span class="s1">&#39;Bc&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;D(s)&#39;</span><span class="p">:</span> <span class="s1">&#39;Ds&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;B(s)*&#39;</span><span class="p">:</span> <span class="s1">&#39;Bs*&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;D(s)*&#39;</span><span class="p">:</span> <span class="s1">&#39;Ds*&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;D*(2007)&#39;</span> <span class="p">:</span> <span class="s1">&#39;D*0&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;D*(2010)&#39;</span> <span class="p">:</span> <span class="s1">&#39;D*+&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;J/psi(1S)&#39;</span><span class="p">:</span> <span class="s1">&#39;J/psi&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;K(L)&#39;</span><span class="p">:</span> <span class="s1">&#39;KL&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;K(S)&#39;</span><span class="p">:</span> <span class="s1">&#39;KS&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;K*(892)+&#39;</span><span class="p">:</span> <span class="s1">&#39;K*+&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;K*(892)0&#39;</span><span class="p">:</span> <span class="s1">&#39;K*0&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;phi(1020)&#39;</span><span class="p">:</span> <span class="s1">&#39;phi&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;rho(770)0&#39;</span><span class="p">:</span> <span class="s1">&#39;rho0&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;rho(770)+&#39;</span><span class="p">:</span> <span class="s1">&#39;rho+&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;f(0)(980)&#39;</span><span class="p">:</span> <span class="s1">&#39;f0&#39;</span><span class="p">,</span>
-    <span class="s2">&quot;eta&#39;(958)&quot;</span><span class="p">:</span> <span class="s2">&quot;eta&#39;&quot;</span><span class="p">,</span>
-    <span class="s1">&#39;omega(782)&#39;</span><span class="p">:</span> <span class="s1">&#39;omega&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Lambda(b)&#39;</span> <span class="p">:</span> <span class="s1">&#39;Lambdab&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Lambda(c)&#39;</span> <span class="p">:</span> <span class="s1">&#39;Lambdac&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Higgs&#39;</span> <span class="p">:</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="c1"># this is necessary for the 2013 data file</span>
-    <span class="s1">&#39;H&#39;</span> <span class="p">:</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span>
-    <span class="p">}</span>
+<span class="sd">    Additional class methods</span>
+<span class="sd">    ------------------------</span>
+<span class="sd">    - from_flavio_name(flavio_name)</span>
+<span class="sd">      returns a class instance for a given `flavio_name`</span>
+<span class="sd">    - flavio_all()</span>
+<span class="sd">      returns a set of all class instances used in flavio</span>
 
-<span class="k">def</span> <span class="nf">_read_pdg_masswidth</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read the PDG mass and width table and return a dictionary.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    filname : string</span>
-<span class="sd">        Path to the PDG data file, e.g. &#39;data/pdg/mass_width_2015.mcd&#39;</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    particles : dict</span>
-<span class="sd">        A dictionary where the keys are the particle names with the charge</span>
-<span class="sd">        appended in case of a multiplet with different masses, e.g. &#39;t&#39;</span>
-<span class="sd">        for the top quark, &#39;K+&#39; and &#39;K0&#39; for kaons.</span>
-<span class="sd">        The value of the dictionary is again a dictionary with the following</span>
-<span class="sd">        keys:</span>
-<span class="sd">        - &#39;id&#39;: PDG particle ID</span>
-<span class="sd">        - &#39;mass&#39;: list with the mass, postitive and negative error in GeV</span>
-<span class="sd">        - &#39;width&#39;: list with the width, postitive and negative error in GeV</span>
-<span class="sd">        - &#39;name&#39;: same as the key</span>
+<span class="sd">    Additional properties</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">    - flavio_name</span>
+<span class="sd">      the particle name as used in flavio if defined, otherwise `None`</span>
+<span class="sd">    - latex_name_simplified</span>
+<span class="sd">      a simplified version of the latex name returned by `latex_name`</span>
+<span class="sd">    - flavio_m</span>
+<span class="sd">      a tuple with data on the particle mass as used in flavio, containing</span>
+<span class="sd">      entries `name`, `tex`, `description`, `central`, `right`, `left`</span>
+<span class="sd">    - flavio_tau</span>
+<span class="sd">      a tuple with data on the particle lifetime as used in flavio, containing</span>
+<span class="sd">      entries `name`, `tex`, `description`, `central`, `right`, `left`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio.physics&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
-    <span class="n">particles_by_name</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
-        <span class="k">if</span>  <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">mass</span> <span class="o">=</span> <span class="p">((</span><span class="n">line</span><span class="p">[</span><span class="mi">33</span><span class="p">:</span><span class="mi">51</span><span class="p">]),</span> <span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">52</span><span class="p">:</span><span class="mi">60</span><span class="p">]),</span> <span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">61</span><span class="p">:</span><span class="mi">69</span><span class="p">]))</span>
-        <span class="k">if</span> <span class="n">mass</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-            <span class="c1"># if mass is empty, go to next line</span>
-            <span class="c1"># (necessasry for 2019 neutrino entries)</span>
-            <span class="k">continue</span>
-        <span class="n">mass</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mass</span><span class="p">]</span>
-        <span class="n">width</span> <span class="o">=</span> <span class="p">((</span><span class="n">line</span><span class="p">[</span><span class="mi">70</span><span class="p">:</span><span class="mi">88</span><span class="p">]),</span> <span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">89</span><span class="p">:</span><span class="mi">97</span><span class="p">]),</span> <span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">98</span><span class="p">:</span><span class="mi">106</span><span class="p">]))</span>
-        <span class="k">if</span>  <span class="n">width</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-            <span class="n">width</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">width</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">width</span><span class="p">]</span>
-        <span class="n">ids</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">32</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-        <span class="n">charges</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">107</span><span class="p">:</span><span class="mi">128</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">charges</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">id_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ids</span><span class="p">):</span>
-            <span class="n">particle</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">particle_charge</span> <span class="o">=</span> <span class="n">charges</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="n">particle</span><span class="p">[</span><span class="n">particle_charge</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">particle</span><span class="p">[</span><span class="n">particle_charge</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">id_</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="n">particle</span><span class="p">[</span><span class="n">particle_charge</span><span class="p">][</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">mass</span>
-            <span class="n">particle</span><span class="p">[</span><span class="n">particle_charge</span><span class="p">][</span><span class="s1">&#39;charge&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">particle_charge</span>
-            <span class="n">particle</span><span class="p">[</span><span class="n">particle_charge</span><span class="p">][</span><span class="s1">&#39;width&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">width</span>
-            <span class="n">particle_name</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">107</span><span class="p">:</span><span class="mi">128</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">particle</span><span class="p">[</span><span class="n">particle_charge</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">particle_name</span>
-            <span class="k">if</span> <span class="n">particle_name</span> <span class="ow">in</span> <span class="n">particles_by_name</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">particles_by_name</span><span class="p">[</span><span class="n">particle_name</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">particle</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">particles_by_name</span><span class="p">[</span><span class="n">particle_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">particle</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span> <span class="n">k</span> <span class="o">+</span> <span class="n">kk</span><span class="p">:</span> <span class="n">vv</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">particles_by_name</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">kk</span><span class="p">,</span> <span class="n">vv</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">}</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="n">k</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">particles_by_name</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">})</span>
-    <span class="k">return</span> <span class="n">result</span>
 
-<span class="k">def</span> <span class="nf">_pdg_particle_string_to_tex</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
-    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^([A-Za-z]+)([\*+-0]*)(?:\((\d*[A-Za-z]+)\))*(?:\((\d+)\))*([\*+-0]*)$&quot;</span><span class="p">)</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">string</span><span class="o">==</span><span class="s1">&#39;J/psi(1S)&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;J/\psi&#39;</span>
-        <span class="k">return</span> <span class="n">string</span>
-    <span class="n">sup</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-    <span class="n">sub</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">out</span>
-    <span class="k">if</span> <span class="n">sup</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">sup</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">out</span> <span class="o">+=</span> <span class="sa">r</span><span class="s1">&#39;^{&#39;</span> <span class="o">+</span> <span class="n">sup</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;}&#39;</span>
-    <span class="k">if</span> <span class="n">sub</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">sub</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">out</span> <span class="o">+=</span> <span class="sa">r</span><span class="s1">&#39;_{&#39;</span> <span class="o">+</span> <span class="n">sub</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;}&#39;</span>
-    <span class="k">return</span> <span class="n">out</span>
+    <span class="n">PDG_PARTICLES</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Bs&#39;</span><span class="p">:</span> <span class="mi">531</span><span class="p">,</span>
+        <span class="s1">&#39;Bc&#39;</span><span class="p">:</span> <span class="mi">541</span><span class="p">,</span>
+        <span class="s1">&#39;Bs*&#39;</span><span class="p">:</span> <span class="mi">533</span><span class="p">,</span>
+        <span class="s1">&#39;B*+&#39;</span><span class="p">:</span> <span class="mi">523</span><span class="p">,</span>
+        <span class="s1">&#39;B*0&#39;</span><span class="p">:</span> <span class="mi">513</span><span class="p">,</span>
+        <span class="s1">&#39;B+&#39;</span><span class="p">:</span> <span class="mi">521</span><span class="p">,</span>
+        <span class="s1">&#39;B0&#39;</span><span class="p">:</span> <span class="mi">511</span><span class="p">,</span>
+        <span class="s1">&#39;Ds&#39;</span><span class="p">:</span> <span class="mi">431</span><span class="p">,</span>
+        <span class="s1">&#39;Ds*&#39;</span><span class="p">:</span> <span class="mi">433</span><span class="p">,</span>
+        <span class="s1">&#39;D+&#39;</span><span class="p">:</span> <span class="mi">411</span><span class="p">,</span>
+        <span class="s1">&#39;D0&#39;</span><span class="p">:</span> <span class="mi">421</span><span class="p">,</span>
+        <span class="s1">&#39;h&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+        <span class="s1">&#39;J/psi&#39;</span><span class="p">:</span> <span class="mi">443</span><span class="p">,</span>
+        <span class="s1">&#39;KL&#39;</span><span class="p">:</span> <span class="mi">130</span><span class="p">,</span>
+        <span class="s1">&#39;KS&#39;</span><span class="p">:</span> <span class="mi">310</span><span class="p">,</span>
+        <span class="s1">&#39;K*+&#39;</span><span class="p">:</span> <span class="mi">323</span><span class="p">,</span>
+        <span class="s1">&#39;K*0&#39;</span><span class="p">:</span> <span class="mi">313</span><span class="p">,</span>
+        <span class="s1">&#39;K+&#39;</span><span class="p">:</span> <span class="mi">321</span><span class="p">,</span>
+        <span class="s1">&#39;K0&#39;</span><span class="p">:</span> <span class="mi">311</span><span class="p">,</span>
+        <span class="s1">&#39;Lambda&#39;</span><span class="p">:</span> <span class="mi">3122</span><span class="p">,</span>
+        <span class="s1">&#39;Lambdab&#39;</span><span class="p">:</span> <span class="mi">5122</span><span class="p">,</span>
+        <span class="s1">&#39;Lambdac&#39;</span><span class="p">:</span> <span class="mi">4122</span><span class="p">,</span>
+        <span class="s1">&#39;omega&#39;</span><span class="p">:</span> <span class="mi">223</span><span class="p">,</span>
+        <span class="s1">&#39;D*0&#39;</span><span class="p">:</span> <span class="mi">423</span><span class="p">,</span>
+        <span class="s1">&#39;D*+&#39;</span><span class="p">:</span> <span class="mi">413</span><span class="p">,</span>
+        <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+        <span class="s1">&#39;Z&#39;</span><span class="p">:</span> <span class="mi">23</span><span class="p">,</span>
+        <span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+        <span class="s1">&#39;eta&#39;</span><span class="p">:</span> <span class="mi">221</span><span class="p">,</span>
+        <span class="s1">&#39;f0&#39;</span><span class="p">:</span> <span class="mi">9010221</span><span class="p">,</span>
+        <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+        <span class="s1">&#39;phi&#39;</span><span class="p">:</span> <span class="mi">333</span><span class="p">,</span>
+        <span class="s1">&#39;pi+&#39;</span><span class="p">:</span> <span class="mi">211</span><span class="p">,</span>
+        <span class="s1">&#39;pi0&#39;</span><span class="p">:</span> <span class="mi">111</span><span class="p">,</span>
+        <span class="s1">&#39;psi(2S)&#39;</span><span class="p">:</span> <span class="mi">100443</span><span class="p">,</span>
+        <span class="s1">&#39;rho+&#39;</span><span class="p">:</span> <span class="mi">213</span><span class="p">,</span>
+        <span class="s1">&#39;rho0&#39;</span><span class="p">:</span> <span class="mi">113</span><span class="p">,</span>
+        <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="s1">&#39;tau&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+        <span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="mi">2212</span><span class="p">,</span>
+        <span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="mi">2112</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">_pdg_particles_inv</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">PDG_PARTICLES</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">_pdg_tex_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s2">&quot;^([A-Za-z</span><span class="se">\\</span><span class="s2">/]+)&quot;</span> <span class="c1"># latin or greek letters or slash</span>
+        <span class="sa">r</span><span class="s2">&quot;(?:_\{(.*?)\})*&quot;</span> <span class="c1"># _{...}</span>
+        <span class="sa">r</span><span class="s2">&quot;(?:\^\{(.*?)\})*&quot;</span> <span class="c1"># ^{...}</span>
+        <span class="sa">r</span><span class="s2">&quot;(?:\((.*?)\))*&quot;</span> <span class="c1"># (...)</span>
+        <span class="sa">r</span><span class="s2">&quot;(?:\^\{(.*?)\})*&quot;</span> <span class="c1"># ^{...}</span>
+    <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_flavio_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">flavio_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_pdgid</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">PDG_PARTICLES</span><span class="p">[</span><span class="n">flavio_name</span><span class="p">])</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">flavio_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">particle</span> <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">flavio_name</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">flavio_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pdg_particles_inv</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pdgid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">latex_name_simplified</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pdg_tex_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latex_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">latex_name</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">sub</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">sup</span> <span class="o">=</span> <span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">par</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sub</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;W&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">mu&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">tau&#39;</span><span class="p">):</span>
+            <span class="c1"># remove superscripts +-0 and keep only *</span>
+            <span class="n">sup</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span> <span class="k">if</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="n">sup</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sub</span> <span class="ow">and</span> <span class="n">par</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">par</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;J/</span><span class="se">\\</span><span class="s1">psi&#39;</span><span class="p">:</span>
+            <span class="c1"># subscript absent and parantheses contain letter but not for &#39;J/\\psi&#39;</span>
+            <span class="n">sub</span> <span class="o">=</span> <span class="n">par</span>
+        <span class="n">sub_tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;_{&#39;</span> <span class="o">+</span> <span class="n">sub</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;}&#39;</span> <span class="k">if</span> <span class="n">sub</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">sup_tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^{&#39;</span> <span class="o">+</span> <span class="n">sup</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;}&#39;</span> <span class="k">if</span> <span class="n">sup</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">name</span> <span class="o">+</span> <span class="n">sub_tex</span> <span class="o">+</span> <span class="n">sup_tex</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">flavio_m</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;m_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">flavio_name</span>
+        <span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$m_{&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">latex_name_simplified</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span>
+        <span class="n">pole_mass</span> <span class="o">=</span> <span class="s1">&#39; quark pole&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">$</span><span class="si">{}</span><span class="s1"> mass&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">latex_name_simplified</span><span class="p">,</span> <span class="n">pole_mass</span>
+        <span class="p">)</span>
+        <span class="n">central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="o">*</span><span class="mf">1e-3</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_upper</span><span class="o">*</span><span class="mf">1e-3</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_lower</span><span class="o">*</span><span class="mf">1e-3</span>
+        <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">tex</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">central</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">left</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">flavio_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_upper</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_lower</span><span class="p">}</span> <span class="o">&amp;</span> <span class="p">{</span><span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;tau_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">flavio_name</span>
+        <span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$\tau_{&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">latex_name_simplified</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">$ lifetime&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latex_name_simplified</span><span class="p">)</span>
+        <span class="n">G_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">*</span><span class="mf">1e-3</span>
+        <span class="n">G_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_upper</span><span class="o">*</span><span class="mf">1e-3</span>
+        <span class="n">G_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_lower</span><span class="o">*</span><span class="mf">1e-3</span>
+        <span class="n">central</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">G_central</span> <span class="c1"># life time = 1/width</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">G_right</span><span class="o">/</span><span class="n">G_central</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">G_left</span><span class="o">/</span><span class="n">G_central</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">tex</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">central</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">left</span>
 
 <span class="k">def</span> <span class="nf">read_pdg</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read particle masses and widths from the PDG data file of a given year.&quot;&quot;&quot;</span>
-    <span class="n">particles</span> <span class="o">=</span> <span class="n">_read_pdg_masswidth</span><span class="p">(</span><span class="s1">&#39;data/pdg/mass_width_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.mcd&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="n">pdg_include</span><span class="p">:</span>
-        <span class="n">parameter_name</span> <span class="o">=</span> <span class="s1">&#39;m_&#39;</span> <span class="o">+</span> <span class="n">pdg_translate</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">particle</span><span class="p">,</span> <span class="n">particle</span><span class="p">)</span> <span class="c1"># translate if necessary</span>
-        <span class="n">tex_name</span> <span class="o">=</span> <span class="n">_pdg_particle_string_to_tex</span><span class="p">(</span><span class="n">particle</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># if parameter already exists, remove existing constraints on it</span>
-            <span class="n">m</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="c1"># otherwise, create it</span>
-            <span class="n">m</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="n">m</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$m_{&#39;</span> <span class="o">+</span> <span class="n">tex_name</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span>
-        <span class="k">if</span> <span class="n">tex_name</span> <span class="o">==</span><span class="s1">&#39;t&#39;</span><span class="p">:</span>
-            <span class="n">m</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span> <span class="o">+</span> <span class="n">tex_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;$ quark pole mass&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">m</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span> <span class="o">+</span> <span class="n">tex_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;$ mass&#39;</span>
-        <span class="n">m_central</span><span class="p">,</span> <span class="n">m_right</span><span class="p">,</span> <span class="n">m_left</span> <span class="o">=</span> <span class="n">particles</span><span class="p">[</span><span class="n">particle</span><span class="p">][</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span>
-        <span class="n">m_left</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">m_left</span><span class="p">)</span> <span class="c1"># make left error positive</span>
-        <span class="k">if</span> <span class="n">m_right</span> <span class="o">==</span> <span class="n">m_left</span><span class="p">:</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter_name</span><span class="p">],</span>
-                <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">m_central</span><span class="p">,</span> <span class="n">m_right</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter_name</span><span class="p">],</span>
-                <span class="n">AsymmetricNormalDistribution</span><span class="p">(</span><span class="n">m_central</span><span class="p">,</span>
-                <span class="n">right_deviation</span><span class="o">=</span><span class="n">m_right</span><span class="p">,</span> <span class="n">left_deviation</span><span class="o">=</span><span class="n">m_left</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">particles</span><span class="p">[</span><span class="n">particle</span><span class="p">][</span><span class="s1">&#39;width&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># 0 is for particles where the width is unknown (e.g. B*)</span>
-            <span class="k">continue</span>
-        <span class="n">G_central</span><span class="p">,</span> <span class="n">G_right</span><span class="p">,</span> <span class="n">G_left</span> <span class="o">=</span> <span class="n">particles</span><span class="p">[</span><span class="n">particle</span><span class="p">][</span><span class="s1">&#39;width&#39;</span><span class="p">]</span>
-        <span class="n">G_left</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">G_left</span><span class="p">)</span> <span class="c1"># make left error positive</span>
-        <span class="n">parameter_name</span> <span class="o">=</span> <span class="s1">&#39;tau_&#39;</span> <span class="o">+</span> <span class="n">pdg_translate</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">particle</span><span class="p">,</span> <span class="n">particle</span><span class="p">)</span> <span class="c1"># translate if necessary</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># if parameter already exists, remove existing constraints on it</span>
-            <span class="n">tau</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="c1"># otherwise, create it</span>
-            <span class="n">tau</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="n">tau</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$\tau_{&#39;</span> <span class="o">+</span> <span class="n">tex_name</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span>
-        <span class="n">tau</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span> <span class="o">+</span> <span class="n">tex_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;$ lifetime&#39;</span>
-        <span class="n">tau_central</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">G_central</span> <span class="c1"># life time = 1/width</span>
-        <span class="n">tau_left</span> <span class="o">=</span> <span class="n">G_left</span><span class="o">/</span><span class="n">G_central</span><span class="o">**</span><span class="mi">2</span>
-        <span class="n">tau_right</span> <span class="o">=</span> <span class="n">G_right</span><span class="o">/</span><span class="n">G_central</span><span class="o">**</span><span class="mi">2</span>
-        <span class="k">if</span> <span class="n">tau_left</span> <span class="o">==</span> <span class="n">tau_right</span><span class="p">:</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter_name</span><span class="p">],</span>
-                <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">tau_central</span><span class="p">,</span> <span class="n">tau_right</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter_name</span><span class="p">],</span>
-                <span class="n">AsymmetricNormalDistribution</span><span class="p">(</span><span class="n">tau_central</span><span class="p">,</span>
-                    <span class="n">right_deviation</span><span class="o">=</span><span class="n">tau_right</span><span class="p">,</span> <span class="n">left_deviation</span><span class="o">=</span><span class="n">tau_left</span><span class="p">))</span>
+    <span class="n">FlavioParticle</span><span class="o">.</span><span class="n">load_table</span><span class="p">(</span><span class="n">p_data</span><span class="o">.</span><span class="n">open_text</span><span class="p">(</span><span class="n">p_data</span><span class="p">,</span> <span class="s2">&quot;particle</span><span class="si">{}</span><span class="s2">.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">year</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="n">FlavioParticle</span><span class="o">.</span><span class="n">flavio_all</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">flavio_m</span><span class="p">,</span> <span class="n">particle</span><span class="o">.</span><span class="n">flavio_tau</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">tex</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">central</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># if parameter already exists, remove existing constraints on it</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">constraints</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="c1"># otherwise, create it</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="n">tex</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
+            <span class="k">if</span> <span class="n">right</span> <span class="o">==</span> <span class="n">left</span><span class="p">:</span>
+                <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">name</span><span class="p">],</span>
+                    <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">central</span><span class="p">,</span> <span class="n">right</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">name</span><span class="p">],</span>
+                    <span class="n">AsymmetricNormalDistribution</span><span class="p">(</span><span class="n">central</span><span class="p">,</span>
+                    <span class="n">right_deviation</span><span class="o">=</span><span class="n">right</span><span class="p">,</span> <span class="n">left_deviation</span><span class="o">=</span><span class="n">left</span><span class="p">))</span>
 
 
 
@@ -1355,27 +1385,8 @@ table {
 <span class="c1"># Create the object</span>
 <span class="n">default_parameters</span> <span class="o">=</span> <span class="n">ParameterConstraints</span><span class="p">()</span>
 
-<span class="c1"># Read the parameter metadata from the default YAML data file</span>
-<span class="n">_read_yaml_object_metadata</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;data/parameters_metadata.yml&#39;</span><span class="p">),</span> <span class="n">default_parameters</span><span class="p">)</span>
-
-<span class="c1"># Read the uncorrelated parameter values from the default YAML data file</span>
-<span class="n">_read_yaml_object_values</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;data/parameters_uncorrelated.yml&#39;</span><span class="p">),</span> <span class="n">default_parameters</span><span class="p">)</span>
-
-<span class="c1"># Read the correlated parameter values from the default YAML data file</span>
-<span class="n">_read_yaml_object_values_correlated</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;data/parameters_correlated.yml&#39;</span><span class="p">),</span> <span class="n">default_parameters</span><span class="p">)</span>
-
-<span class="c1"># Read the parameters from the default PDG data file</span>
-<span class="n">read_pdg</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="n">default_parameters</span><span class="p">)</span>
-
-<span class="c1"># Read default parameters for B-&gt;V form factors</span>
-<span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_v</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">bsz_load</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="s1">&#39;LCSR&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;B-&gt;omega&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;rho&#39;</span><span class="p">),</span> <span class="n">default_parameters</span><span class="p">)</span>
-<span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_v</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">bsz_load</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="s1">&#39;LCSR-Lattice&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;B-&gt;K*&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs-&gt;phi&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs-&gt;K*&#39;</span><span class="p">),</span> <span class="n">default_parameters</span><span class="p">)</span>
-
-<span class="c1"># Read default parameters for B-&gt;V form factors</span>
-<span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_p</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">gkvd_load</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;LCSR-Lattice&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;B-&gt;K&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;pi&#39;</span><span class="p">),</span> <span class="n">default_parameters</span><span class="p">)</span>
-
-<span class="c1"># Read default parameters for Lambdab-&gt;Lambda form factors</span>
-<span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">lambdab_12</span><span class="o">.</span><span class="n">lattice_parameters</span><span class="o">.</span><span class="n">lattice_load_ho</span><span class="p">(</span><span class="n">default_parameters</span><span class="p">)</span>
+<span class="c1"># read default parameters</span>
+<span class="n">default_parameters</span><span class="o">.</span><span class="n">read_default</span><span class="p">()</span>
 </pre></div>
 
   </div>
@@ -1402,22 +1413,6 @@ table {
       </div>
       <div class="item">
       <p id="flavio.parameters.default_parameters" class="name">var <span class="ident">default_parameters</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.parameters.pdg_include" class="name">var <span class="ident">pdg_include</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="flavio.parameters.pdg_translate" class="name">var <span class="ident">pdg_translate</span></p>
       
   
   <div class="source_cont">
@@ -1541,55 +1536,28 @@ table {
   <div id="source-flavio.parameters.read_pdg" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">read_pdg</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read particle masses and widths from the PDG data file of a given year.&quot;&quot;&quot;</span>
-    <span class="n">particles</span> <span class="o">=</span> <span class="n">_read_pdg_masswidth</span><span class="p">(</span><span class="s1">&#39;data/pdg/mass_width_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.mcd&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="n">pdg_include</span><span class="p">:</span>
-        <span class="n">parameter_name</span> <span class="o">=</span> <span class="s1">&#39;m_&#39;</span> <span class="o">+</span> <span class="n">pdg_translate</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">particle</span><span class="p">,</span> <span class="n">particle</span><span class="p">)</span> <span class="c1"># translate if necessary</span>
-        <span class="n">tex_name</span> <span class="o">=</span> <span class="n">_pdg_particle_string_to_tex</span><span class="p">(</span><span class="n">particle</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># if parameter already exists, remove existing constraints on it</span>
-            <span class="n">m</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="c1"># otherwise, create it</span>
-            <span class="n">m</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="n">m</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$m_{&#39;</span> <span class="o">+</span> <span class="n">tex_name</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span>
-        <span class="k">if</span> <span class="n">tex_name</span> <span class="o">==</span><span class="s1">&#39;t&#39;</span><span class="p">:</span>
-            <span class="n">m</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span> <span class="o">+</span> <span class="n">tex_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;$ quark pole mass&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">m</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span> <span class="o">+</span> <span class="n">tex_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;$ mass&#39;</span>
-        <span class="n">m_central</span><span class="p">,</span> <span class="n">m_right</span><span class="p">,</span> <span class="n">m_left</span> <span class="o">=</span> <span class="n">particles</span><span class="p">[</span><span class="n">particle</span><span class="p">][</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span>
-        <span class="n">m_left</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">m_left</span><span class="p">)</span> <span class="c1"># make left error positive</span>
-        <span class="k">if</span> <span class="n">m_right</span> <span class="o">==</span> <span class="n">m_left</span><span class="p">:</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter_name</span><span class="p">],</span>
-                <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">m_central</span><span class="p">,</span> <span class="n">m_right</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter_name</span><span class="p">],</span>
-                <span class="n">AsymmetricNormalDistribution</span><span class="p">(</span><span class="n">m_central</span><span class="p">,</span>
-                <span class="n">right_deviation</span><span class="o">=</span><span class="n">m_right</span><span class="p">,</span> <span class="n">left_deviation</span><span class="o">=</span><span class="n">m_left</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">particles</span><span class="p">[</span><span class="n">particle</span><span class="p">][</span><span class="s1">&#39;width&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># 0 is for particles where the width is unknown (e.g. B*)</span>
-            <span class="k">continue</span>
-        <span class="n">G_central</span><span class="p">,</span> <span class="n">G_right</span><span class="p">,</span> <span class="n">G_left</span> <span class="o">=</span> <span class="n">particles</span><span class="p">[</span><span class="n">particle</span><span class="p">][</span><span class="s1">&#39;width&#39;</span><span class="p">]</span>
-        <span class="n">G_left</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">G_left</span><span class="p">)</span> <span class="c1"># make left error positive</span>
-        <span class="n">parameter_name</span> <span class="o">=</span> <span class="s1">&#39;tau_&#39;</span> <span class="o">+</span> <span class="n">pdg_translate</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">particle</span><span class="p">,</span> <span class="n">particle</span><span class="p">)</span> <span class="c1"># translate if necessary</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># if parameter already exists, remove existing constraints on it</span>
-            <span class="n">tau</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="c1"># otherwise, create it</span>
-            <span class="n">tau</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span>
-        <span class="n">tau</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$\tau_{&#39;</span> <span class="o">+</span> <span class="n">tex_name</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span>
-        <span class="n">tau</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span> <span class="o">+</span> <span class="n">tex_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;$ lifetime&#39;</span>
-        <span class="n">tau_central</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">G_central</span> <span class="c1"># life time = 1/width</span>
-        <span class="n">tau_left</span> <span class="o">=</span> <span class="n">G_left</span><span class="o">/</span><span class="n">G_central</span><span class="o">**</span><span class="mi">2</span>
-        <span class="n">tau_right</span> <span class="o">=</span> <span class="n">G_right</span><span class="o">/</span><span class="n">G_central</span><span class="o">**</span><span class="mi">2</span>
-        <span class="k">if</span> <span class="n">tau_left</span> <span class="o">==</span> <span class="n">tau_right</span><span class="p">:</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter_name</span><span class="p">],</span>
-                <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">tau_central</span><span class="p">,</span> <span class="n">tau_right</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">parameter_name</span><span class="p">],</span>
-                <span class="n">AsymmetricNormalDistribution</span><span class="p">(</span><span class="n">tau_central</span><span class="p">,</span>
-                    <span class="n">right_deviation</span><span class="o">=</span><span class="n">tau_right</span><span class="p">,</span> <span class="n">left_deviation</span><span class="o">=</span><span class="n">tau_left</span><span class="p">))</span>
+    <span class="n">FlavioParticle</span><span class="o">.</span><span class="n">load_table</span><span class="p">(</span><span class="n">p_data</span><span class="o">.</span><span class="n">open_text</span><span class="p">(</span><span class="n">p_data</span><span class="p">,</span> <span class="s2">&quot;particle</span><span class="si">{}</span><span class="s2">.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">year</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="n">FlavioParticle</span><span class="o">.</span><span class="n">flavio_all</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">flavio_m</span><span class="p">,</span> <span class="n">particle</span><span class="o">.</span><span class="n">flavio_tau</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">tex</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">central</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># if parameter already exists, remove existing constraints on it</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">constraints</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="c1"># otherwise, create it</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="n">tex</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
+            <span class="k">if</span> <span class="n">right</span> <span class="o">==</span> <span class="n">left</span><span class="p">:</span>
+                <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">name</span><span class="p">],</span>
+                    <span class="n">NormalDistribution</span><span class="p">(</span><span class="n">central</span><span class="p">,</span> <span class="n">right</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">constraints</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">([</span><span class="n">name</span><span class="p">],</span>
+                    <span class="n">AsymmetricNormalDistribution</span><span class="p">(</span><span class="n">central</span><span class="p">,</span>
+                    <span class="n">right_deviation</span><span class="o">=</span><span class="n">right</span><span class="p">,</span> <span class="n">left_deviation</span><span class="o">=</span><span class="n">left</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1622,6 +1590,1538 @@ table {
   </div>
   
 
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="flavio.parameters.FlavioParticle" class="name">class <span class="ident">FlavioParticle</span></p>
+      
+  
+    <div class="desc"><p>This class extends the <code>particle.Particle</code> class.</p>
+<h2>Additional class methods</h2>
+<ul>
+<li>from_flavio_name(flavio_name)
+  returns a class instance for a given <code>flavio_name</code></li>
+<li>flavio_all()
+  returns a set of all class instances used in flavio</li>
+</ul>
+<h2>Additional properties</h2>
+<ul>
+<li>flavio_name
+  the particle name as used in flavio if defined, otherwise <code>None</code></li>
+<li>latex_name_simplified
+  a simplified version of the latex name returned by <code>latex_name</code></li>
+<li>flavio_m
+  a tuple with data on the particle mass as used in flavio, containing
+  entries <code>name</code>, <code>tex</code>, <code>description</code>, <code>central</code>, <code>right</code>, <code>left</code></li>
+<li>flavio_tau
+  a tuple with data on the particle lifetime as used in flavio, containing
+  entries <code>name</code>, <code>tex</code>, <code>description</code>, <code>central</code>, <code>right</code>, <code>left</code></li>
+</ul></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FlavioParticle</span><span class="p">(</span><span class="n">Particle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This class extends the `particle.Particle` class.</span>
+
+<span class="sd">    Additional class methods</span>
+<span class="sd">    ------------------------</span>
+<span class="sd">    - from_flavio_name(flavio_name)</span>
+<span class="sd">      returns a class instance for a given `flavio_name`</span>
+<span class="sd">    - flavio_all()</span>
+<span class="sd">      returns a set of all class instances used in flavio</span>
+
+<span class="sd">    Additional properties</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">    - flavio_name</span>
+<span class="sd">      the particle name as used in flavio if defined, otherwise `None`</span>
+<span class="sd">    - latex_name_simplified</span>
+<span class="sd">      a simplified version of the latex name returned by `latex_name`</span>
+<span class="sd">    - flavio_m</span>
+<span class="sd">      a tuple with data on the particle mass as used in flavio, containing</span>
+<span class="sd">      entries `name`, `tex`, `description`, `central`, `right`, `left`</span>
+<span class="sd">    - flavio_tau</span>
+<span class="sd">      a tuple with data on the particle lifetime as used in flavio, containing</span>
+<span class="sd">      entries `name`, `tex`, `description`, `central`, `right`, `left`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">PDG_PARTICLES</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Bs&#39;</span><span class="p">:</span> <span class="mi">531</span><span class="p">,</span>
+        <span class="s1">&#39;Bc&#39;</span><span class="p">:</span> <span class="mi">541</span><span class="p">,</span>
+        <span class="s1">&#39;Bs*&#39;</span><span class="p">:</span> <span class="mi">533</span><span class="p">,</span>
+        <span class="s1">&#39;B*+&#39;</span><span class="p">:</span> <span class="mi">523</span><span class="p">,</span>
+        <span class="s1">&#39;B*0&#39;</span><span class="p">:</span> <span class="mi">513</span><span class="p">,</span>
+        <span class="s1">&#39;B+&#39;</span><span class="p">:</span> <span class="mi">521</span><span class="p">,</span>
+        <span class="s1">&#39;B0&#39;</span><span class="p">:</span> <span class="mi">511</span><span class="p">,</span>
+        <span class="s1">&#39;Ds&#39;</span><span class="p">:</span> <span class="mi">431</span><span class="p">,</span>
+        <span class="s1">&#39;Ds*&#39;</span><span class="p">:</span> <span class="mi">433</span><span class="p">,</span>
+        <span class="s1">&#39;D+&#39;</span><span class="p">:</span> <span class="mi">411</span><span class="p">,</span>
+        <span class="s1">&#39;D0&#39;</span><span class="p">:</span> <span class="mi">421</span><span class="p">,</span>
+        <span class="s1">&#39;h&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+        <span class="s1">&#39;J/psi&#39;</span><span class="p">:</span> <span class="mi">443</span><span class="p">,</span>
+        <span class="s1">&#39;KL&#39;</span><span class="p">:</span> <span class="mi">130</span><span class="p">,</span>
+        <span class="s1">&#39;KS&#39;</span><span class="p">:</span> <span class="mi">310</span><span class="p">,</span>
+        <span class="s1">&#39;K*+&#39;</span><span class="p">:</span> <span class="mi">323</span><span class="p">,</span>
+        <span class="s1">&#39;K*0&#39;</span><span class="p">:</span> <span class="mi">313</span><span class="p">,</span>
+        <span class="s1">&#39;K+&#39;</span><span class="p">:</span> <span class="mi">321</span><span class="p">,</span>
+        <span class="s1">&#39;K0&#39;</span><span class="p">:</span> <span class="mi">311</span><span class="p">,</span>
+        <span class="s1">&#39;Lambda&#39;</span><span class="p">:</span> <span class="mi">3122</span><span class="p">,</span>
+        <span class="s1">&#39;Lambdab&#39;</span><span class="p">:</span> <span class="mi">5122</span><span class="p">,</span>
+        <span class="s1">&#39;Lambdac&#39;</span><span class="p">:</span> <span class="mi">4122</span><span class="p">,</span>
+        <span class="s1">&#39;omega&#39;</span><span class="p">:</span> <span class="mi">223</span><span class="p">,</span>
+        <span class="s1">&#39;D*0&#39;</span><span class="p">:</span> <span class="mi">423</span><span class="p">,</span>
+        <span class="s1">&#39;D*+&#39;</span><span class="p">:</span> <span class="mi">413</span><span class="p">,</span>
+        <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+        <span class="s1">&#39;Z&#39;</span><span class="p">:</span> <span class="mi">23</span><span class="p">,</span>
+        <span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+        <span class="s1">&#39;eta&#39;</span><span class="p">:</span> <span class="mi">221</span><span class="p">,</span>
+        <span class="s1">&#39;f0&#39;</span><span class="p">:</span> <span class="mi">9010221</span><span class="p">,</span>
+        <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+        <span class="s1">&#39;phi&#39;</span><span class="p">:</span> <span class="mi">333</span><span class="p">,</span>
+        <span class="s1">&#39;pi+&#39;</span><span class="p">:</span> <span class="mi">211</span><span class="p">,</span>
+        <span class="s1">&#39;pi0&#39;</span><span class="p">:</span> <span class="mi">111</span><span class="p">,</span>
+        <span class="s1">&#39;psi(2S)&#39;</span><span class="p">:</span> <span class="mi">100443</span><span class="p">,</span>
+        <span class="s1">&#39;rho+&#39;</span><span class="p">:</span> <span class="mi">213</span><span class="p">,</span>
+        <span class="s1">&#39;rho0&#39;</span><span class="p">:</span> <span class="mi">113</span><span class="p">,</span>
+        <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="s1">&#39;tau&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+        <span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="mi">2212</span><span class="p">,</span>
+        <span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="mi">2112</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">_pdg_particles_inv</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">PDG_PARTICLES</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">_pdg_tex_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s2">&quot;^([A-Za-z</span><span class="se">\\</span><span class="s2">/]+)&quot;</span> <span class="c1"># latin or greek letters or slash</span>
+        <span class="sa">r</span><span class="s2">&quot;(?:_\{(.*?)\})*&quot;</span> <span class="c1"># _{...}</span>
+        <span class="sa">r</span><span class="s2">&quot;(?:\^\{(.*?)\})*&quot;</span> <span class="c1"># ^{...}</span>
+        <span class="sa">r</span><span class="s2">&quot;(?:\((.*?)\))*&quot;</span> <span class="c1"># (...)</span>
+        <span class="sa">r</span><span class="s2">&quot;(?:\^\{(.*?)\})*&quot;</span> <span class="c1"># ^{...}</span>
+    <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_flavio_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">flavio_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_pdgid</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">PDG_PARTICLES</span><span class="p">[</span><span class="n">flavio_name</span><span class="p">])</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">flavio_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">particle</span> <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">flavio_name</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">flavio_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pdg_particles_inv</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pdgid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">latex_name_simplified</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pdg_tex_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latex_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">latex_name</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">sub</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">sup</span> <span class="o">=</span> <span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">par</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sub</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;W&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">mu&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">tau&#39;</span><span class="p">):</span>
+            <span class="c1"># remove superscripts +-0 and keep only *</span>
+            <span class="n">sup</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span> <span class="k">if</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="n">sup</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sub</span> <span class="ow">and</span> <span class="n">par</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">par</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;J/</span><span class="se">\\</span><span class="s1">psi&#39;</span><span class="p">:</span>
+            <span class="c1"># subscript absent and parantheses contain letter but not for &#39;J/\\psi&#39;</span>
+            <span class="n">sub</span> <span class="o">=</span> <span class="n">par</span>
+        <span class="n">sub_tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;_{&#39;</span> <span class="o">+</span> <span class="n">sub</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;}&#39;</span> <span class="k">if</span> <span class="n">sub</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">sup_tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^{&#39;</span> <span class="o">+</span> <span class="n">sup</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;}&#39;</span> <span class="k">if</span> <span class="n">sup</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">name</span> <span class="o">+</span> <span class="n">sub_tex</span> <span class="o">+</span> <span class="n">sup_tex</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">flavio_m</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;m_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">flavio_name</span>
+        <span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$m_{&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">latex_name_simplified</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span>
+        <span class="n">pole_mass</span> <span class="o">=</span> <span class="s1">&#39; quark pole&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">$</span><span class="si">{}</span><span class="s1"> mass&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">latex_name_simplified</span><span class="p">,</span> <span class="n">pole_mass</span>
+        <span class="p">)</span>
+        <span class="n">central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="o">*</span><span class="mf">1e-3</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_upper</span><span class="o">*</span><span class="mf">1e-3</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_lower</span><span class="o">*</span><span class="mf">1e-3</span>
+        <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">tex</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">central</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">left</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">flavio_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_upper</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_lower</span><span class="p">}</span> <span class="o">&amp;</span> <span class="p">{</span><span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;tau_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">flavio_name</span>
+        <span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$\tau_{&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">latex_name_simplified</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">$ lifetime&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latex_name_simplified</span><span class="p">)</span>
+        <span class="n">G_central</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">*</span><span class="mf">1e-3</span>
+        <span class="n">G_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_upper</span><span class="o">*</span><span class="mf">1e-3</span>
+        <span class="n">G_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_lower</span><span class="o">*</span><span class="mf">1e-3</span>
+        <span class="n">central</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">G_central</span> <span class="c1"># life time = 1/width</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">G_right</span><span class="o">/</span><span class="n">G_central</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">G_left</span><span class="o">/</span><span class="n">G_central</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">tex</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">central</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">left</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#flavio.parameters.FlavioParticle">FlavioParticle</a></li>
+          <li>particle.particle.particle.Particle</li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.PDG_PARTICLES" class="name">var <span class="ident">PDG_PARTICLES</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, pdgid, pdg_name, mass=-1.0, mass_upper=-1.0, mass_lower=-1.0, width=-1.0, width_upper=-1.0, width_lower=-1.0, three_charge=&lt;Charge.u: 50&gt;, I=None, G=&lt;Parity.u: 5&gt;, P=&lt;Parity.u: 5&gt;, C=&lt;Parity.u: 5&gt;, anti_flag=&lt;Inv.Same: 0&gt;, rank=0, status=&lt;Status.NotInPDT: 4&gt;, quarks=&#39;&#39;, latex_name=&#39;Unknown&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Method generated by attrs for class Particle.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pdgid</span><span class="p">,</span> <span class="n">pdg_name</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">mass_upper</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;mass_upper&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">mass_lower</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;mass_lower&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">width_upper</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;width_upper&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">width_lower</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;width_lower&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">three_charge</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;_three_charge&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">I</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">G</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">anti_flag</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;anti_flag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">quarks</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;quarks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">latex_name</span><span class="o">=</span><span class="n">attr_dict</span><span class="p">[</span><span class="s1">&#39;latex_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pdgid</span> <span class="o">=</span> <span class="n">__attr_converter_pdgid</span><span class="p">(</span><span class="n">pdgid</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pdg_name</span> <span class="o">=</span> <span class="n">pdg_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">__attr_converter_mass</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mass_upper</span> <span class="o">=</span> <span class="n">__attr_converter_mass_upper</span><span class="p">(</span><span class="n">mass_upper</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mass_lower</span> <span class="o">=</span> <span class="n">__attr_converter_mass_lower</span><span class="p">(</span><span class="n">mass_lower</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">__attr_converter_width</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">width_upper</span> <span class="o">=</span> <span class="n">__attr_converter_width_upper</span><span class="p">(</span><span class="n">width_upper</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">width_lower</span> <span class="o">=</span> <span class="n">__attr_converter_width_lower</span><span class="p">(</span><span class="n">width_lower</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_three_charge</span> <span class="o">=</span> <span class="n">__attr_converter__three_charge</span><span class="p">(</span><span class="n">three_charge</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">I</span> <span class="o">=</span> <span class="n">__attr_converter_I</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">G</span> <span class="o">=</span> <span class="n">__attr_converter_G</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">__attr_converter_P</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">C</span> <span class="o">=</span> <span class="n">__attr_converter_C</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">anti_flag</span> <span class="o">=</span> <span class="n">__attr_converter_anti_flag</span><span class="p">(</span><span class="n">anti_flag</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">=</span> <span class="n">rank</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">__attr_converter_status</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">quarks</span> <span class="o">=</span> <span class="n">__attr_converter_quarks</span><span class="p">(</span><span class="n">quarks</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">latex_name</span> <span class="o">=</span> <span class="n">latex_name</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.describe">
+    <p>def <span class="ident">describe</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Make a nice high-density string for a particle's properties.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.describe', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.describe" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># type: () -&gt; str</span>
+    <span class="s2">&quot;Make a nice high-density string for a particle&#39;s properties.&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdgid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Name: Unknown&quot;</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Name: </span><span class="si">{self!s:&lt;14}</span><span class="s2"> ID: </span><span class="si">{self.pdgid:&lt;12}</span><span class="s2"> Latex: </span><span class="si">{latex_name}</span><span class="s2"></span>
+<span class="s2">  = </span><span class="si">{mass}</span><span class="s2"></span>
+<span class="s2">th_or_lifetime}</span>
+<span class="s2">harge)        = </span><span class="si">{Q:&lt;6}</span><span class="s2">  J (total angular) = </span><span class="si">{self.J!s:&lt;7}</span><span class="s2">  P (space parity) = </span><span class="si">{P}</span><span class="s2"></span>
+<span class="s2">harge parity) = </span><span class="si">{C:&lt;6}</span><span class="s2">  I (isospin)       = </span><span class="si">{self.I!s:&lt;7}</span><span class="s2">  G (G-parity)     = </span><span class="si">{G}</span><span class="s2"></span>
+<span class="s2">format(</span>
+<span class="s2">        self=self,</span>
+<span class="s2">        G=Parity_undo[self.G],</span>
+<span class="s2">        C=Parity_undo[self.C],</span>
+<span class="s2">        Q=self._str_charge(),</span>
+<span class="s2">        P=Parity_undo[self.P],</span>
+<span class="s2">        mass=self._str_mass(),</span>
+<span class="s2">        width_or_lifetime=self._width_or_lifetime(),</span>
+<span class="s2">        latex_name=self._repr_latex_(),</span>
+<span class="s2">    )</span>
+<span class="s2">    if self.spin_type != SpinType.Unknown:</span>
+<span class="s2">        val += &quot;    SpinType: </span><span class="si">{self.spin_type!s}</span><span class="se">\n</span><span class="s2">&quot;.format(self=self)</span>
+<span class="s2">    if self.quarks:</span>
+<span class="s2">        val += &quot;    Quarks: </span><span class="si">{self.quarks}</span><span class="se">\n</span><span class="s2">&quot;.format(self=self)</span>
+<span class="s2">    val += &quot;    Antiparticle name: </span><span class="si">{iself.name}</span><span class="s2"> (antiparticle status: </span><span class="si">{self.anti_flag.name}</span><span class="s2">)&quot;.format(</span>
+<span class="s2">        iself=self.invert(), self=self</span>
+<span class="s2">    )</span>
+<span class="s2">    return val</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.invert">
+    <p>def <span class="ident">invert</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the antiparticle.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.invert', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.invert" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">invert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># type: () -&gt; Particle</span>
+    <span class="s2">&quot;Get the antiparticle.&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">anti_flag</span> <span class="o">==</span> <span class="n">Inv</span><span class="o">.</span><span class="n">Barred</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">anti_flag</span> <span class="o">==</span> <span class="n">Inv</span><span class="o">.</span><span class="n">ChargeInv</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">three_charge</span> <span class="o">!=</span> <span class="n">Charge</span><span class="o">.</span><span class="n">o</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_pdgid</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">pdgid</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.C" class="name">var <span class="ident">C</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.G" class="name">var <span class="ident">G</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.I" class="name">var <span class="ident">I</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.J" class="name">var <span class="ident">J</span></p>
+            
+
+            
+  
+    <div class="desc"><p>The total spin J quantum number.</p>
+<p>Note that the returned value corresponds to that effectively encoded
+in the particle PDG ID.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.L" class="name">var <span class="ident">L</span></p>
+            
+
+            
+  
+    <div class="desc"><p>The orbital angular momentum L quantum number (None if not a meson).</p>
+<p>Note that the returned value corresponds to that effectively encoded
+in the particle PDG ID.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.P" class="name">var <span class="ident">P</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.S" class="name">var <span class="ident">S</span></p>
+            
+
+            
+  
+    <div class="desc"><p>The spin S quantum number (None if not a meson).</p>
+<p>Note that the returned value corresponds to that effectively encoded
+in the particle PDG ID.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.anti_flag" class="name">var <span class="ident">anti_flag</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.charge" class="name">var <span class="ident">charge</span></p>
+            
+
+            
+  
+    <div class="desc"><p>The particle charge, in units of the positron charge.</p>
+<p>Design note: the particle charge can also be retrieved from the particle PDG ID.
+To allow for user-defined particles, it is necessary to rather store
+the particle charge in the data tables themselves.
+Consistency of both ways of retrieving the particle charge is guaranteed
+for all PDG table particles.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.ctau" class="name">var <span class="ident">ctau</span></p>
+            
+
+            
+  
+    <div class="desc"><p>The particle c*tau, in millimeters.</p>
+<p>None is returned if the particle width (stored in the DB) is unknown.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.evtgen_name" class="name">var <span class="ident">evtgen_name</span></p>
+            
+
+            
+  
+    <div class="desc"><p>This is the name used in EvtGen.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.flavio_m" class="name">var <span class="ident">flavio_m</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.flavio_name" class="name">var <span class="ident">flavio_name</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.flavio_tau" class="name">var <span class="ident">flavio_tau</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.html_name" class="name">var <span class="ident">html_name</span></p>
+            
+
+            
+  
+    <div class="desc"><p>This is the name using HTML instead of LaTeX.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.is_name_barred" class="name">var <span class="ident">is_name_barred</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Check to see if particle is inverted (hence is it an antiparticle)
+and has a bar in its name.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.is_self_conjugate" class="name">var <span class="ident">is_self_conjugate</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Is the particle self-conjugate, i.e. its own antiparticle?</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.is_unflavoured_meson" class="name">var <span class="ident">is_unflavoured_meson</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Unflavoured mesons are self-conjugate (hence zero-charge) mesons
+with all their flavour (strange, charm, bottom and top) quantum numbers equal to zero.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.latex_name" class="name">var <span class="ident">latex_name</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.latex_name_simplified" class="name">var <span class="ident">latex_name_simplified</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.lifetime" class="name">var <span class="ident">lifetime</span></p>
+            
+
+            
+  
+    <div class="desc"><p>The particle lifetime, in nanoseconds.</p>
+<p>None is returned if the particle width (stored in the DB) is unknown.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.mass" class="name">var <span class="ident">mass</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.mass_lower" class="name">var <span class="ident">mass_lower</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.mass_upper" class="name">var <span class="ident">mass_upper</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+    <div class="desc"><p>The nice name, with charge added, and a tilde for an antiparticle, if relevant.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.pdg_name" class="name">var <span class="ident">pdg_name</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.pdgid" class="name">var <span class="ident">pdgid</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.programmatic_name" class="name">var <span class="ident">programmatic_name</span></p>
+            
+
+            
+  
+    <div class="desc"><p>This name could be used for a variable name.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.quarks" class="name">var <span class="ident">quarks</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.rank" class="name">var <span class="ident">rank</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.spin_type" class="name">var <span class="ident">spin_type</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Access the SpinType enum.</p>
+<p>Note that this is relevant for bosons only. SpinType.NonDefined is returned otherwise.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.status" class="name">var <span class="ident">status</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.three_charge" class="name">var <span class="ident">three_charge</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Three times the particle charge (charge * 3), in units of the positron charge.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.width" class="name">var <span class="ident">width</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.width_lower" class="name">var <span class="ident">width_lower</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.parameters.FlavioParticle.width_upper" class="name">var <span class="ident">width_upper</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.all">
+    <p>def <span class="ident">all</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Access, hence get hold of, the internal particle data CSV table,
+loading it from the default location if no table has yet been loaded.
+All <code>Particle</code> (instances) are returned as a list.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.all', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.all" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="c1"># type: () -&gt; Set[Particle]</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Access, hence get hold of, the internal particle data CSV table,</span>
+<span class="sd">    loading it from the default location if no table has yet been loaded.</span>
+<span class="sd">    All `Particle` (instances) are returned as a list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">table_loaded</span><span class="p">():</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">load_table</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_table</span> <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">set</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.dump_table">
+    <p>def <span class="ident">dump_table</span>(</p><p>cls, exclusive_fields=(), exclude_fields=(), n_rows=-1, filter_fn=None, filename=None, tablefmt=&#39;simple&#39;, floatfmt=&#39;.12g&#39;, numalign=&#39;decimal&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Dump the internal particle data CSV table,
+loading it from the default location if no table has yet been loaded.</p>
+<p>The table attributes are those of the class. By default all attributes
+are used as table fields. Their complete list is:
+    pdgid
+    pdg_name
+    mass
+    mass_upper
+    mass_lower
+    width
+    width_upper
+    width_lower
+    three_charge
+    I
+    G
+    P
+    C
+    anti_flag
+    rank
+    status
+    quarks
+    latex_name</p>
+<p>Optionally dump to a file.</p>
+<h2>Parameters</h2>
+<p>exclusive_fields: list, optional, default is []
+    Exclusive list of fields to print out.
+exclude_fields: list, optional, default is []
+    List of table fields to exclude in the printout.
+    Relevant only when exclusive_fields is not given.
+n_rows: int, optional, defaults to all rows
+    Number of table rows to print out.
+filter_fn: function, optional, default is None
+    Apply a filter to each particle.
+    See findall(...) for typical use cases.
+filename: str, optional, default is None
+    Name of file where to dump the table.
+    By default the table is dumped to stdout.
+tablefmt: str, optional, default is 'simple'
+    Table formatting option, see the tabulate's package
+    tabulate function for a description of available options.
+    The most common options are:
+    'plain', 'simple', 'grid', 'rst', 'html', 'latex'.
+floatfmt: str, optional, default is '.12g'
+    Number formatting, see the tabulate's package
+    tabulate function for a description of available options.
+numalign: str or None, oprional, default is 'decimal'
+    Column alignment for numbers, see the tabulate's package
+    tabulate function for a description of available options.</p>
+<h2>Returns</h2>
+<p>str or None if filename is None or not, respectively.</p>
+<h2>Note</h2>
+<p>Uses the <code>tabulate</code> package.</p>
+<h2>Examples</h2>
+<p>print(Particle.dump_table())
+print(Particle.dump_table(n_rows=5))
+print(Particle.dump_table(exclusive_fields=['pdgid', 'pdg_name']))
+print(Particle.dump_table(filter_fn=lambda p: p.pdgid.has_bottom))
+Particle.dump_table(filename='output.txt', tablefmt='rst')</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.dump_table', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.dump_table" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">dump_table</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">exclusive_fields</span><span class="o">=</span><span class="p">(),</span>  <span class="c1"># type: Iterable[str]</span>
+    <span class="n">exclude_fields</span><span class="o">=</span><span class="p">(),</span>  <span class="c1"># type: Iterable[str]</span>
+    <span class="n">n_rows</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">filter_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[Callable[[Particle], bool]]</span>
+    <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[str]</span>
+    <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">,</span>
+    <span class="n">floatfmt</span><span class="o">=</span><span class="s2">&quot;.12g&quot;</span><span class="p">,</span>
+    <span class="n">numalign</span><span class="o">=</span><span class="s2">&quot;decimal&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="c1"># type: (...) -&gt; Optional[str]</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dump the internal particle data CSV table,</span>
+<span class="sd">    loading it from the default location if no table has yet been loaded.</span>
+<span class="sd">    The table attributes are those of the class. By default all attributes</span>
+<span class="sd">    are used as table fields. Their complete list is:</span>
+<span class="sd">        pdgid</span>
+<span class="sd">        pdg_name</span>
+<span class="sd">        mass</span>
+<span class="sd">        mass_upper</span>
+<span class="sd">        mass_lower</span>
+<span class="sd">        width</span>
+<span class="sd">        width_upper</span>
+<span class="sd">        width_lower</span>
+<span class="sd">        three_charge</span>
+<span class="sd">        I</span>
+<span class="sd">        G</span>
+<span class="sd">        P</span>
+<span class="sd">        C</span>
+<span class="sd">        anti_flag</span>
+<span class="sd">        rank</span>
+<span class="sd">        status</span>
+<span class="sd">        quarks</span>
+<span class="sd">        latex_name</span>
+<span class="sd">    Optionally dump to a file.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    exclusive_fields: list, optional, default is []</span>
+<span class="sd">        Exclusive list of fields to print out.</span>
+<span class="sd">    exclude_fields: list, optional, default is []</span>
+<span class="sd">        List of table fields to exclude in the printout.</span>
+<span class="sd">        Relevant only when exclusive_fields is not given.</span>
+<span class="sd">    n_rows: int, optional, defaults to all rows</span>
+<span class="sd">        Number of table rows to print out.</span>
+<span class="sd">    filter_fn: function, optional, default is None</span>
+<span class="sd">        Apply a filter to each particle.</span>
+<span class="sd">        See findall(...) for typical use cases.</span>
+<span class="sd">    filename: str, optional, default is None</span>
+<span class="sd">        Name of file where to dump the table.</span>
+<span class="sd">        By default the table is dumped to stdout.</span>
+<span class="sd">    tablefmt: str, optional, default is &#39;simple&#39;</span>
+<span class="sd">        Table formatting option, see the tabulate&#39;s package</span>
+<span class="sd">        tabulate function for a description of available options.</span>
+<span class="sd">        The most common options are:</span>
+<span class="sd">        &#39;plain&#39;, &#39;simple&#39;, &#39;grid&#39;, &#39;rst&#39;, &#39;html&#39;, &#39;latex&#39;.</span>
+<span class="sd">    floatfmt: str, optional, default is &#39;.12g&#39;</span>
+<span class="sd">        Number formatting, see the tabulate&#39;s package</span>
+<span class="sd">        tabulate function for a description of available options.</span>
+<span class="sd">    numalign: str or None, oprional, default is &#39;decimal&#39;</span>
+<span class="sd">        Column alignment for numbers, see the tabulate&#39;s package</span>
+<span class="sd">        tabulate function for a description of available options.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str or None if filename is None or not, respectively.</span>
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    Uses the `tabulate` package.</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    print(Particle.dump_table())</span>
+<span class="sd">    print(Particle.dump_table(n_rows=5))</span>
+<span class="sd">    print(Particle.dump_table(exclusive_fields=[&#39;pdgid&#39;, &#39;pdg_name&#39;]))</span>
+<span class="sd">    print(Particle.dump_table(filter_fn=lambda p: p.pdgid.has_bottom))</span>
+<span class="sd">    Particle.dump_table(filename=&#39;output.txt&#39;, tablefmt=&#39;rst&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">table_loaded</span><span class="p">():</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">load_table</span><span class="p">()</span>
+    <span class="c1"># Get all table headers from the class attributes</span>
+    <span class="n">tbl_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">Particle</span><span class="o">.</span><span class="n">__attrs_attrs__</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+    <span class="c1"># ... and replace &#39;_three_charge&#39; with the better, public property</span>
+    <span class="n">tbl_names</span><span class="p">[</span><span class="n">tbl_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;_three_charge&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="s2">&quot;three_charge&quot;</span>
+    <span class="k">if</span> <span class="n">exclusive_fields</span><span class="p">:</span>
+        <span class="n">tbl_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">exclusive_fields</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">fld</span> <span class="ow">in</span> <span class="n">exclude_fields</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">tbl_names</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fld</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+    <span class="c1"># Start with the full table</span>
+    <span class="n">tbl_all</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+    <span class="c1"># Apply a filter, if specified</span>
+    <span class="k">if</span> <span class="n">filter_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tbl_all</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">filter_fn</span><span class="p">)</span>
+    <span class="c1"># In any case, only dump a given number of rows?</span>
+    <span class="k">if</span> <span class="n">n_rows</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">tbl_all</span> <span class="o">=</span> <span class="n">tbl_all</span><span class="p">[:</span><span class="n">n_rows</span><span class="p">]</span>
+    <span class="c1"># Build all table rows</span>
+    <span class="n">tbl</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">tbl_all</span><span class="p">:</span>
+        <span class="n">tbl</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">tbl_names</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>  <span class="c1"># Conversion to handle pathlib on Python &lt; 3.6</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="n">tabulate</span><span class="p">(</span>
+                    <span class="n">tbl</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="n">tbl_names</span><span class="p">,</span>
+                    <span class="n">tablefmt</span><span class="o">=</span><span class="n">tablefmt</span><span class="p">,</span>
+                    <span class="n">floatfmt</span><span class="o">=</span><span class="n">floatfmt</span><span class="p">,</span>
+                    <span class="n">numalign</span><span class="o">=</span><span class="n">numalign</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">file</span><span class="o">=</span><span class="n">outfile</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tabulate</span><span class="p">(</span>
+            <span class="n">tbl</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">tbl_names</span><span class="p">,</span>
+            <span class="n">tablefmt</span><span class="o">=</span><span class="n">tablefmt</span><span class="p">,</span>
+            <span class="n">floatfmt</span><span class="o">=</span><span class="n">floatfmt</span><span class="p">,</span>
+            <span class="n">numalign</span><span class="o">=</span><span class="n">numalign</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.empty">
+    <p>def <span class="ident">empty</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Make a new empty particle.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.empty', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.empty" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="c1"># type: () -&gt; Particle</span>
+    <span class="s2">&quot;Make a new empty particle.&quot;</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span> <span class="n">anti_flag</span><span class="o">=</span><span class="n">Inv</span><span class="o">.</span><span class="n">Same</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.find">
+    <p>def <span class="ident">find</span>(</p><p>cls, *args, **search_terms)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Require that the search returns one and only one result.
+The method otherwise raises a ParticleNotFound or RuntimeError exception.</p>
+<p>See <code>findall</code> for full listing of parameters.</p>
+<h2>Raises</h2>
+<p>ParticleNotFound
+    If no matching particle is found in the loaded data table(s).
+RuntimeError
+    If too many particles match the search criteria.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.find', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.find" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">search_terms</span><span class="p">):</span>
+    <span class="c1"># type: (...) -&gt; Particle</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Require that the search returns one and only one result.</span>
+<span class="sd">    The method otherwise raises a ParticleNotFound or RuntimeError exception.</span>
+<span class="sd">    See `findall` for full listing of parameters.</span>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ParticleNotFound</span>
+<span class="sd">        If no matching particle is found in the loaded data table(s).</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If too many particles match the search criteria.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">search_terms</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ParticleNotFound</span><span class="p">(</span>
+            <span class="s2">&quot;Did not find particle matching query: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">search_terms</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Found too many particles&quot;</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.findall">
+    <p>def <span class="ident">findall</span>(</p><p>cls, filter_fn=None, particle=None, **search_terms)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Search for a particle, returning a list of candidates.</p>
+<p>The first and only positional argument is given each particle
+candidate, and returns True/False. Example:</p>
+<div class="codehilite"><pre><span></span><span class="err">&gt;&gt;&gt; Particle.findall(lambda p: &#39;p&#39; in p.name)    # doctest: +SKIP</span>
+<span class="err"># Returns list of all particles with p somewhere in name</span>
+</pre></div>
+
+
+<p>You can pass particle=True/False to force a particle or antiparticle.
+If this is not callable, it will do a "fuzzy" search on the name. So this is identical:</p>
+<div class="codehilite"><pre><span></span><span class="err">&gt;&gt;&gt; Particle.findall(&#39;p&#39;)    # doctest: +SKIP</span>
+<span class="err"># Returns list of all particles with p somewhere in name (same as example above)</span>
+</pre></div>
+
+
+<p>You can also pass keyword arguments, which are either called with the
+matching property if they are callable, or are compared if they are not.
+This would do an exact search on the name, instead of a fuzzy search:</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<h1>Returns proton and antiproton only</h1>
+<p>Particle.findall(pdg_name='p')    # doctest: +NORMALIZE_WHITESPACE
+   [<Particle: name="p", pdgid=2212, mass=938.272081 ± 0.000006 MeV>,
+    <Particle: name="p~", pdgid=-2212, mass=938.272081 ± 0.000006 MeV>,
+    <Particle: name="p", pdgid=1000010010, mass=938.272081 ± 0.000006 MeV>,
+    <Particle: name="p~", pdgid=-1000010010, mass=938.272081 ± 0.000006 MeV>]</p>
+<h1>Returns proton only</h1>
+<p>Particle.findall(pdg_name='p', particle=True)    # doctest: +NORMALIZE_WHITESPACE
+   [<Particle: name="p", pdgid=2212, mass=938.272081 ± 0.000006 MeV>,
+   <Particle: name="p", pdgid=1000010010, mass=938.272081 ± 0.000006 MeV>]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Versatile searches require a (lambda) function as argument:</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<h1>Get all neutral beauty hadrons</h1>
+<p>Particle.findall(lambda p: p.pdgid.has_bottom and p.charge==0)    # doctest: +SKIP</p>
+<h1>Trivially find all pseudoscalar charm mesons</h1>
+<p>Particle.findall(lambda p: p.pdgid.is_meson and p.pdgid.has_charm and p.spin_type==SpinType.PseudoScalar)  # doctest: +SKIP</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>See also <code>find</code>, which throws an exception if the particle is not found or too many are found.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.findall', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.findall" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">findall</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">filter_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[Callable[[Particle], bool]]</span>
+    <span class="n">particle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[bool]</span>
+    <span class="o">**</span><span class="n">search_terms</span>  <span class="c1"># type: Any</span>
+<span class="p">):</span>
+    <span class="c1"># type: (...) -&gt; List[Particle]</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for a particle, returning a list of candidates.</span>
+<span class="sd">    The first and only positional argument is given each particle</span>
+<span class="sd">    candidate, and returns True/False. Example:</span>
+<span class="sd">        &gt;&gt;&gt; Particle.findall(lambda p: &#39;p&#39; in p.name)    # doctest: +SKIP</span>
+<span class="sd">        # Returns list of all particles with p somewhere in name</span>
+<span class="sd">    You can pass particle=True/False to force a particle or antiparticle.</span>
+<span class="sd">    If this is not callable, it will do a &quot;fuzzy&quot; search on the name. So this is identical:</span>
+<span class="sd">        &gt;&gt;&gt; Particle.findall(&#39;p&#39;)    # doctest: +SKIP</span>
+<span class="sd">        # Returns list of all particles with p somewhere in name (same as example above)</span>
+<span class="sd">    You can also pass keyword arguments, which are either called with the</span>
+<span class="sd">    matching property if they are callable, or are compared if they are not.</span>
+<span class="sd">    This would do an exact search on the name, instead of a fuzzy search:</span>
+<span class="sd">       &gt;&gt;&gt; # Returns proton and antiproton only</span>
+<span class="sd">       &gt;&gt;&gt; Particle.findall(pdg_name=&#39;p&#39;)    # doctest: +NORMALIZE_WHITESPACE</span>
+<span class="sd">       [&lt;Particle: name=&quot;p&quot;, pdgid=2212, mass=938.272081 ± 0.000006 MeV&gt;,</span>
+<span class="sd">        &lt;Particle: name=&quot;p~&quot;, pdgid=-2212, mass=938.272081 ± 0.000006 MeV&gt;,</span>
+<span class="sd">        &lt;Particle: name=&quot;p&quot;, pdgid=1000010010, mass=938.272081 ± 0.000006 MeV&gt;,</span>
+<span class="sd">        &lt;Particle: name=&quot;p~&quot;, pdgid=-1000010010, mass=938.272081 ± 0.000006 MeV&gt;]</span>
+<span class="sd">       &gt;&gt;&gt; # Returns proton only</span>
+<span class="sd">       &gt;&gt;&gt; Particle.findall(pdg_name=&#39;p&#39;, particle=True)    # doctest: +NORMALIZE_WHITESPACE</span>
+<span class="sd">       [&lt;Particle: name=&quot;p&quot;, pdgid=2212, mass=938.272081 ± 0.000006 MeV&gt;,</span>
+<span class="sd">       &lt;Particle: name=&quot;p&quot;, pdgid=1000010010, mass=938.272081 ± 0.000006 MeV&gt;]</span>
+<span class="sd">    Versatile searches require a (lambda) function as argument:</span>
+<span class="sd">    &gt;&gt;&gt; # Get all neutral beauty hadrons</span>
+<span class="sd">    &gt;&gt;&gt; Particle.findall(lambda p: p.pdgid.has_bottom and p.charge==0)    # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Trivially find all pseudoscalar charm mesons</span>
+<span class="sd">    &gt;&gt;&gt; Particle.findall(lambda p: p.pdgid.is_meson and p.pdgid.has_charm and p.spin_type==SpinType.PseudoScalar)  # doctest: +SKIP</span>
+<span class="sd">    See also ``find``, which throws an exception if the particle is not found or too many are found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Note that particle can be called by position to keep compatibility with Python 2, but that behavior should</span>
+    <span class="c1"># not be used and will be removed when support for Python 2.7 is dropped.</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="c1"># Filter out values</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="c1"># At this point, continue if a match fails</span>
+        <span class="c1"># particle=True is particle, False is antiparticle, and None is both</span>
+        <span class="k">if</span> <span class="n">particle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">particle</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="n">particle</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="c1"># If a filter function is passed, evaluate and skip if False</span>
+        <span class="k">if</span> <span class="n">filter_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">filter_fn</span><span class="p">):</span>
+                <span class="c1"># Just skip exceptions, which are there for good reasons</span>
+                <span class="c1"># Example: calls to Particle.ctau for particles given</span>
+                <span class="c1">#          default negative, and hence invalid, widths</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">filter_fn</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>  <span class="c1"># skip checks such as &#39;lambda p: p.width &gt; 0&#39;,</span>
+                    <span class="k">continue</span>  <span class="c1"># which fail when width=None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">filter_fn</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+                    <span class="k">continue</span>
+        <span class="c1"># At this point, if you break, you will not add a match</span>
+        <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">search_terms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># If pvalue cannot be accessed, skip this particle</span>
+            <span class="c1"># (invalid lifetime, for example)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">pvalue</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">term</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="c1"># Callables are supported</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">(</span><span class="n">pvalue</span><span class="p">):</span>
+                        <span class="k">break</span>
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>  <span class="c1"># catch issues with None values</span>
+                    <span class="k">break</span>
+            <span class="c1"># And, finally, just compare if nothing else matched</span>
+            <span class="k">elif</span> <span class="n">pvalue</span> <span class="o">!=</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="c1"># If the loop was not broken</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="c1"># Matches are sorted so the top one is &quot;best&quot;</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.flavio_all">
+    <p>def <span class="ident">flavio_all</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.flavio_all', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.flavio_all" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">flavio_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">particle</span> <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">flavio_name</span><span class="p">}</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.from_evtgen_name">
+    <p>def <span class="ident">from_evtgen_name</span>(</p><p>cls, name)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get a particle from an EvtGen particle name, as in .dec decay files.</p>
+<h2>Raises</h2>
+<p>ParticleNotFound
+    If <code>from_pdgid</code> returns no match.
+MatchingIDNotFound
+    If the matching EvtGen name - PDG ID done internally is unsuccessful.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.from_evtgen_name', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.from_evtgen_name" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_evtgen_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="c1"># type: (str) -&gt; Particle</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a particle from an EvtGen particle name, as in .dec decay files.</span>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ParticleNotFound</span>
+<span class="sd">        If `from_pdgid` returns no match.</span>
+<span class="sd">    MatchingIDNotFound</span>
+<span class="sd">        If the matching EvtGen name - PDG ID done internally is unsuccessful.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_pdgid</span><span class="p">(</span><span class="n">EvtGenName2PDGIDBiMap</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.from_flavio_name">
+    <p>def <span class="ident">from_flavio_name</span>(</p><p>cls, flavio_name)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.from_flavio_name', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.from_flavio_name" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_flavio_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">flavio_name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_pdgid</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">PDG_PARTICLES</span><span class="p">[</span><span class="n">flavio_name</span><span class="p">])</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.from_pdgid">
+    <p>def <span class="ident">from_pdgid</span>(</p><p>cls, value)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get a particle from a PDGID. Uses by default the package
+extended PDG data table.</p>
+<h2>Raises</h2>
+<p>InvalidParticle
+    If the input PDG ID is an invalid identification code.
+ParticleNotFound
+    If no matching PDG ID is found in the loaded data table(s).</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.from_pdgid', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.from_pdgid" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_pdgid</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="c1"># type: (SupportsInt) -&gt; Particle</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a particle from a PDGID. Uses by default the package</span>
+<span class="sd">    extended PDG data table.</span>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    InvalidParticle</span>
+<span class="sd">        If the input PDG ID is an invalid identification code.</span>
+<span class="sd">    ParticleNotFound</span>
+<span class="sd">        If no matching PDG ID is found in the loaded data table(s).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InvalidParticle</span><span class="p">(</span><span class="s2">&quot;Input PDGID </span><span class="si">{0}</span><span class="s2"> is invalid!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">pdgid</span> <span class="o">==</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">item</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ParticleNotFound</span><span class="p">(</span><span class="s2">&quot;Could not find PDGID </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.from_string">
+    <p>def <span class="ident">from_string</span>(</p><p>cls, name)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get a particle from a PDG style name - returns the best match.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.from_string', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.from_string" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="c1"># type: (str) -&gt; Particle</span>
+    <span class="s2">&quot;Get a particle from a PDG style name - returns the best match.&quot;</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_string_list</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">matches</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ParticleNotFound</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> not found in particle table&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.from_string_list">
+    <p>def <span class="ident">from_string_list</span>(</p><p>cls, name)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get a list of particles from a PDG style name.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.from_string_list', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.from_string_list" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_string_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="c1"># type: (str) -&gt; List[Particle]</span>
+    <span class="s2">&quot;Get a list of particles from a PDG style name.&quot;</span>
+    <span class="c1"># Forcible override</span>
+    <span class="n">particle</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">short_name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="k">if</span> <span class="s2">&quot;~&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+        <span class="n">short_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">particle</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1"># Try the simplest searches first</span>
+    <span class="n">list_can</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">particle</span><span class="o">=</span><span class="n">particle</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">list_can</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">list_can</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">list_can</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pdg_name</span><span class="o">=</span><span class="n">short_name</span><span class="p">,</span> <span class="n">particle</span><span class="o">=</span><span class="n">particle</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">list_can</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">list_can</span>
+    <span class="n">mat_str</span> <span class="o">=</span> <span class="n">getname</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">short_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mat_str</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">mat</span> <span class="o">=</span> <span class="n">mat_str</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">particle</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">mat</span><span class="p">[</span><span class="s2">&quot;bar&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;bar&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_group_dict_list</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ParticleNotFound</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.load_table">
+    <p>def <span class="ident">load_table</span>(</p><p>cls, filename=None, append=False, _name=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Load a particle data CSV table. Optionally append to the existing data already loaded if append=True.
+As a special case, if this is called with append=True and the table is not loaded, the default will
+be loaded first before appending (set append=False if you don't want this behavior).</p>
+<p>A parameter is also included that should be considered private for now. It is _name, which
+will override the filename for the stored filename in _table_names.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.load_table', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.load_table" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">load_table</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># type: (Union[None, str, TextIO], bool, Optional[str]) -&gt; None</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a particle data CSV table. Optionally append to the existing data already loaded if append=True.</span>
+<span class="sd">    As a special case, if this is called with append=True and the table is not loaded, the default will</span>
+<span class="sd">    be loaded first before appending (set append=False if you don&#39;t want this behavior).</span>
+<span class="sd">    A parameter is also included that should be considered private for now. It is _name, which</span>
+<span class="sd">    will override the filename for the stored filename in _table_names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">append</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">table_loaded</span><span class="p">():</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">load_table</span><span class="p">(</span><span class="n">append</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># default load</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">append</span><span class="p">:</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_table</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_table_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Tell MyPy that this is true</span>
+    <span class="k">assert</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_table_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">data</span><span class="o">.</span><span class="n">open_text</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;particle2020.csv&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">load_table</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="n">append</span><span class="p">,</span> <span class="n">_name</span><span class="o">=</span><span class="s2">&quot;particle2020.csv&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">data</span><span class="o">.</span><span class="n">open_text</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;nuclei2020.csv&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">load_table</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_name</span><span class="o">=</span><span class="s2">&quot;nuclei2020.csv&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;read&quot;</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_table_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+        <span class="c1"># Conversion to handle pathlib on Python &lt; 3.6:</span>
+        <span class="n">open_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>  <span class="c1"># Tell typing that this is true</span>
+        <span class="n">tmp_name</span> <span class="o">=</span> <span class="n">_name</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_table_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">tmp_name</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="si">{0!r}</span><span class="s2"> </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_table_names</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="n">open_file</span> <span class="o">=</span> <span class="n">filename</span>
+    <span class="k">with</span> <span class="n">open_file</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">l</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">r</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">])</span>
+                <span class="c1"># Replace the previous value if it exists</span>
+                <span class="c1"># We can remove an int; ignore typing thinking we need a particle</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_table</span><span class="p">:</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">_table</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_table</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                    <span class="bp">cls</span><span class="p">(</span>
+                        <span class="n">pdgid</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                        <span class="n">mass</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;Mass&quot;</span><span class="p">]),</span>
+                        <span class="n">mass_upper</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;MassUpper&quot;</span><span class="p">]),</span>
+                        <span class="n">mass_lower</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;MassLower&quot;</span><span class="p">]),</span>
+                        <span class="n">width</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;Width&quot;</span><span class="p">]),</span>
+                        <span class="n">width_upper</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;WidthUpper&quot;</span><span class="p">]),</span>
+                        <span class="n">width_lower</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;WidthLower&quot;</span><span class="p">]),</span>
+                        <span class="n">I</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;I&quot;</span><span class="p">],</span>
+                        <span class="n">G</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;G&quot;</span><span class="p">]),</span>
+                        <span class="n">P</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;P&quot;</span><span class="p">]),</span>
+                        <span class="n">C</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]),</span>
+                        <span class="n">anti_flag</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;Anti&quot;</span><span class="p">]),</span>
+                        <span class="n">three_charge</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;Charge&quot;</span><span class="p">]),</span>
+                        <span class="n">rank</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;Rank&quot;</span><span class="p">]),</span>
+                        <span class="n">status</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;Status&quot;</span><span class="p">]),</span>
+                        <span class="n">pdg_name</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">],</span>
+                        <span class="n">quarks</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;Quarks&quot;</span><span class="p">],</span>
+                        <span class="n">latex_name</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;Latex&quot;</span><span class="p">],</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">pass</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.table_loaded">
+    <p>def <span class="ident">table_loaded</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Check to see if the table is loaded.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.table_loaded', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.table_loaded" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">table_loaded</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="c1"># type: () -&gt; bool</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check to see if the table is loaded.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="flavio.parameters.FlavioParticle.table_names">
+    <p>def <span class="ident">table_names</span>(</p><p>cls)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the list of names loaded.</p>
+<h2>Note</h2>
+<p>Calling this class method will load the default table,
+if no table has so far been loaded.
+Check with table_loaded() first if you don't want this loading
+to be triggered by the call.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.parameters.FlavioParticle.table_names', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.parameters.FlavioParticle.table_names" class="source">
+    <div class="codehilite"><pre><span></span><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">table_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="c1"># type: () -&gt; Tuple[str, ...]</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the list of names loaded.</span>
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    Calling this class method will load the default table,</span>
+<span class="sd">    if no table has so far been loaded.</span>
+<span class="sd">    Check with table_loaded() first if you don&#39;t want this loading</span>
+<span class="sd">    to be triggered by the call.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_table_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">load_table</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_table_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_table_names</span><span class="p">)</span>  <span class="c1"># make a copy to avoid user manipulation</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
 
   </section>
 

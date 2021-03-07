@@ -860,8 +860,13 @@ table {
   </style>
 
   <style type="text/css">
-  .codehilite .hll { background-color: #ffffcc }
-.codehilite  { background: #f8f8f8; }
+  pre { line-height: 125%; margin: 0; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
 .codehilite .c { color: #408080; font-style: italic } /* Comment */
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
@@ -1088,12 +1093,13 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_p.bcl', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.formfactors.b_p.bcl" class="source">
     <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">flavio</span>
 <span class="kn">from</span> <span class="nn">flavio.physics.bdecays.formfactors.common</span> <span class="kn">import</span> <span class="n">z</span>
 <span class="kn">from</span> <span class="nn">flavio.physics.bdecays.formfactors.b_p.isgurwise</span> <span class="kn">import</span> <span class="n">isgur_wise</span>
 
 <span class="k">def</span> <span class="nf">pole</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="n">mres</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">mres</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mres</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mres</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mres</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">q2</span><span class="o">/</span><span class="n">mres</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
@@ -1107,23 +1113,24 @@ table {
 <span class="n">process_dict</span><span class="p">[</span><span class="s1">&#39;B-&gt;pi&#39;</span><span class="p">]</span> <span class="o">=</span>   <span class="p">{</span><span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="s1">&#39;pi0&#39;</span><span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">param_fplusT</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">param_fplusT</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">Z</span> <span class="o">=</span> <span class="n">z</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="p">)</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_i</span><span class="p">)</span>
     <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span> <span class="n">a_i</span> <span class="o">*</span> <span class="p">(</span><span class="n">Z</span><span class="o">**</span><span class="n">k</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">k</span><span class="o">/</span><span class="n">n</span> <span class="o">*</span> <span class="n">Z</span><span class="o">**</span><span class="n">n</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">param_f0</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">param_f0</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">Z</span> <span class="o">=</span> <span class="n">z</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="p">)</span>
     <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a_i</span><span class="p">))</span>
     <span class="k">return</span> <span class="p">(</span> <span class="n">a_i</span> <span class="o">*</span> <span class="n">Z</span><span class="o">**</span><span class="n">k</span> <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">ff</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">ff</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Central value of $B\to P$ form factors in the standard convention</span>
 <span class="sd">    and BCL parametrization (arXiv:0807.2722).</span>
 
 <span class="sd">    The standard convention defines the form factors $f_+$, $f_0$, and $f_T$.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flavio</span><span class="o">.</span><span class="n">citations</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;Bourrely:2008za&quot;</span><span class="p">)</span>
     <span class="n">pd</span> <span class="o">=</span> <span class="n">process_dict</span><span class="p">[</span><span class="n">process</span><span class="p">]</span>
     <span class="n">mpl</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; BCL m+&#39;</span><span class="p">]</span>
     <span class="n">m0</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; BCL m0&#39;</span><span class="p">]</span>
@@ -1146,11 +1153,12 @@ table {
     <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;f0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pole</span><span class="p">(</span><span class="s1">&#39;f0&#39;</span><span class="p">,</span> <span class="n">m0</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span> <span class="o">*</span> <span class="n">param_f0</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="s1">&#39;f0&#39;</span><span class="p">],</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ff</span>
 
-<span class="k">def</span> <span class="nf">ff_isgurwise</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">ff_isgurwise</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Central value of $B\to P$ form factors in the standard convention</span>
 <span class="sd">    and BCL parametrization (arXiv:0807.2722) for $f_0$ and $f_+$, but using</span>
 <span class="sd">    an improved Isgur-Wise relation in the heavy quark limit for $f_T$.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flavio</span><span class="o">.</span><span class="n">citations</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;Bourrely:2008za&quot;</span><span class="p">)</span>
     <span class="n">pd</span> <span class="o">=</span> <span class="n">process_dict</span><span class="p">[</span><span class="n">process</span><span class="p">]</span>
     <span class="n">mpl</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; BCL m+&#39;</span><span class="p">]</span>
     <span class="n">m0</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; BCL m0&#39;</span><span class="p">]</span>
@@ -1204,12 +1212,13 @@ and BCL parametrization (arXiv:0807.2722).</p>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_p.bcl.ff', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.formfactors.b_p.bcl.ff" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ff</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ff</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Central value of $B\to P$ form factors in the standard convention</span>
 <span class="sd">    and BCL parametrization (arXiv:0807.2722).</span>
 
 <span class="sd">    The standard convention defines the form factors $f_+$, $f_0$, and $f_T$.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flavio</span><span class="o">.</span><span class="n">citations</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;Bourrely:2008za&quot;</span><span class="p">)</span>
     <span class="n">pd</span> <span class="o">=</span> <span class="n">process_dict</span><span class="p">[</span><span class="n">process</span><span class="p">]</span>
     <span class="n">mpl</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; BCL m+&#39;</span><span class="p">]</span>
     <span class="n">m0</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; BCL m0&#39;</span><span class="p">]</span>
@@ -1253,11 +1262,12 @@ an improved Isgur-Wise relation in the heavy quark limit for $f_T$.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_p.bcl.ff_isgurwise', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.formfactors.b_p.bcl.ff_isgurwise" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ff_isgurwise</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">ff_isgurwise</span><span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Central value of $B\to P$ form factors in the standard convention</span>
 <span class="sd">    and BCL parametrization (arXiv:0807.2722) for $f_0$ and $f_+$, but using</span>
 <span class="sd">    an improved Isgur-Wise relation in the heavy quark limit for $f_T$.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flavio</span><span class="o">.</span><span class="n">citations</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;Bourrely:2008za&quot;</span><span class="p">)</span>
     <span class="n">pd</span> <span class="o">=</span> <span class="n">process_dict</span><span class="p">[</span><span class="n">process</span><span class="p">]</span>
     <span class="n">mpl</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; BCL m+&#39;</span><span class="p">]</span>
     <span class="n">m0</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="n">process</span> <span class="o">+</span> <span class="s1">&#39; BCL m0&#39;</span><span class="p">]</span>
@@ -1297,7 +1307,7 @@ an improved Isgur-Wise relation in the heavy quark limit for $f_T$.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_p.bcl.param_f0', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.formfactors.b_p.bcl.param_f0" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">param_f0</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">param_f0</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">Z</span> <span class="o">=</span> <span class="n">z</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="p">)</span>
     <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a_i</span><span class="p">))</span>
     <span class="k">return</span> <span class="p">(</span> <span class="n">a_i</span> <span class="o">*</span> <span class="n">Z</span><span class="o">**</span><span class="n">k</span> <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -1320,7 +1330,7 @@ an improved Isgur-Wise relation in the heavy quark limit for $f_T$.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_p.bcl.param_fplusT', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.formfactors.b_p.bcl.param_fplusT" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">param_fplusT</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">param_fplusT</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">a_i</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">Z</span> <span class="o">=</span> <span class="n">z</span><span class="p">(</span><span class="n">mB</span><span class="p">,</span> <span class="n">mP</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">t0</span><span class="p">)</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_i</span><span class="p">)</span>
     <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
@@ -1345,7 +1355,7 @@ an improved Isgur-Wise relation in the heavy quark limit for $f_T$.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.formfactors.b_p.bcl.pole', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.formfactors.b_p.bcl.pole" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">pole</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="n">mres</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">mres</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mres</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mres</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mres</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">q2</span><span class="o">/</span><span class="n">mres</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>

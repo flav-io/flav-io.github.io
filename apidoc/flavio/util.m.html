@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>flavio.plots.config API documentation</title>
-    <meta name="description" content="Default configuration options for `matplotlib`" />
+    <title>flavio.util API documentation</title>
+    <meta name="description" content="" />
 
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400' rel='stylesheet' type='text/css'>
@@ -1056,6 +1056,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <h1>Index</h1>
     <ul id="index">
 
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#flavio.util.extract_citations">extract_citations</a></li>
+    <li class="mono"><a href="#flavio.util.get_datapath">get_datapath</a></li>
+  </ul>
+
+    </li>
 
 
     </ul>
@@ -1069,22 +1077,57 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">flavio.plots.config</span> module</h1>
-  <p>Default configuration options for <code>matplotlib</code></p>
+  <h1 class="title"><span class="name">flavio.util</span> module</h1>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.config', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.plots.config" class="source">
-    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Default configuration options for `matplotlib`&quot;&quot;&quot;</span>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.util', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.util" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">pkgutil</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">ast</span>
 
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rc</span><span class="p">,</span> <span class="n">rcParams</span>
 
-<span class="n">rc</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">usetex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;family&#39;</span><span class="p">:</span><span class="s1">&#39;serif&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;serif&#39;</span><span class="p">:[</span><span class="s1">&#39;Computer Modern Roman&#39;</span><span class="p">,</span><span class="s1">&#39;cmu serif&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.serif&#39;</span><span class="p">]})</span>
-<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;xtick.labelsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;ytick.labelsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.labelsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
-<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;text.latex.preamble&#39;</span><span class="p">]</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\usepackage</span><span class="si">{amsmath}</span><span class="s2">&quot;</span>
+<span class="k">def</span> <span class="nf">get_datapath</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="n">resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Rewrite of pkgutil.get_data() that just returns the file path.</span>
+
+<span class="sd">    Taken from https://stackoverflow.com/a/13773912&quot;&quot;&quot;</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_loader</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="s1">&#39;get_data&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">package</span><span class="p">)</span> <span class="ow">or</span> <span class="n">loader</span><span class="o">.</span><span class="n">load_module</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mod</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="c1"># Modify the resource name to be compatible with the loader.get_data</span>
+    <span class="c1"># signature - an os.path format &quot;filename&quot; starting with the dirname of</span>
+    <span class="c1"># the package&#39;s __file__</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">parts</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">resource_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">parts</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">resource_name</span>
+
+<span class="k">def</span> <span class="nf">extract_citations</span><span class="p">():</span>
+    <span class="n">string_in_parantheses_matcher</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">r</span><span class="s1">&#39;\(\s*[rfuRFU]{0,2}&quot;.*?(?&lt;!</span><span class="se">\\</span><span class="s1">)&quot;\s*\)&#39;</span> <span class="c1"># string between (&quot; &quot;)</span>
+        <span class="s1">&#39;|&#39;</span>
+        <span class="sa">r</span><span class="s2">&quot;\(\s*[rfuRFU]{0,2}&#39;.*?(?&lt;!</span><span class="se">\\</span><span class="s2">)&#39;\s*\)&quot;</span> <span class="c1"># string between (&#39; &#39;)</span>
+    <span class="p">)</span>
+    <span class="n">regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">fr</span><span class="s1">&#39;\.register(</span><span class="si">{</span><span class="n">string_in_parantheses_matcher</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="n">flavio_dir</span> <span class="o">=</span> <span class="n">get_datapath</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">generator_py_files</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">((</span>
+        <span class="p">(</span>   <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;.py&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">flavio_dir</span><span class="p">)</span>
+    <span class="p">))</span>
+    <span class="n">citations</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">generator_py_files</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">citations</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">((</span>
+                <span class="p">{</span><span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">regexp</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">line</span><span class="p">)}</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span>
+            <span class="p">)))</span>
+    <span class="k">return</span> <span class="n">citations</span>
 </pre></div>
 
   </div>
@@ -1093,6 +1136,84 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 
   <section id="section-items">
 
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="flavio.util.extract_citations">
+    <p>def <span class="ident">extract_citations</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.util.extract_citations', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.util.extract_citations" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">extract_citations</span><span class="p">():</span>
+    <span class="n">string_in_parantheses_matcher</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">r</span><span class="s1">&#39;\(\s*[rfuRFU]{0,2}&quot;.*?(?&lt;!</span><span class="se">\\</span><span class="s1">)&quot;\s*\)&#39;</span> <span class="c1"># string between (&quot; &quot;)</span>
+        <span class="s1">&#39;|&#39;</span>
+        <span class="sa">r</span><span class="s2">&quot;\(\s*[rfuRFU]{0,2}&#39;.*?(?&lt;!</span><span class="se">\\</span><span class="s2">)&#39;\s*\)&quot;</span> <span class="c1"># string between (&#39; &#39;)</span>
+    <span class="p">)</span>
+    <span class="n">regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">fr</span><span class="s1">&#39;\.register(</span><span class="si">{</span><span class="n">string_in_parantheses_matcher</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="n">flavio_dir</span> <span class="o">=</span> <span class="n">get_datapath</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">generator_py_files</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">((</span>
+        <span class="p">(</span>   <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;.py&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">flavio_dir</span><span class="p">)</span>
+    <span class="p">))</span>
+    <span class="n">citations</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">generator_py_files</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">citations</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">((</span>
+                <span class="p">{</span><span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">regexp</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">line</span><span class="p">)}</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span>
+            <span class="p">)))</span>
+    <span class="k">return</span> <span class="n">citations</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.util.get_datapath">
+    <p>def <span class="ident">get_datapath</span>(</p><p>package, resource)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Rewrite of pkgutil.get_data() that just returns the file path.</p>
+<p>Taken from https://stackoverflow.com/a/13773912</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.util.get_datapath', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.util.get_datapath" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_datapath</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="n">resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Rewrite of pkgutil.get_data() that just returns the file path.</span>
+
+<span class="sd">    Taken from https://stackoverflow.com/a/13773912&quot;&quot;&quot;</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_loader</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="s1">&#39;get_data&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">package</span><span class="p">)</span> <span class="ow">or</span> <span class="n">loader</span><span class="o">.</span><span class="n">load_module</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mod</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="c1"># Modify the resource name to be compatible with the loader.get_data</span>
+    <span class="c1"># signature - an os.path format &quot;filename&quot; starting with the dirname of</span>
+    <span class="c1"># the package&#39;s __file__</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">parts</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">resource_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">parts</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">resource_name</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
 
 
   </section>
