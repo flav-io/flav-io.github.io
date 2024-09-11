@@ -1058,8 +1058,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables.D_obs">D_obs</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables.M">M</a></li>
-    <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables.Pp">Pp</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables.config">config</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables.l">l</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables.meson_ff">meson_ff</a></li>
@@ -1948,23 +1948,26 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
         <span class="n">make_obs_lfur</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
 
 
-<span class="c1"># define LFU differences D_P4p,5p</span>
+<span class="c1"># define LFU differences D_P4p,5p and D_AFB</span>
 <span class="k">def</span> <span class="nf">diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">x</span><span class="o">-</span><span class="n">y</span>
 
 
-<span class="k">for</span> <span class="n">Pp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;P4p&#39;</span><span class="p">,</span> <span class="s1">&#39;P5p&#39;</span><span class="p">]:</span>
-    <span class="n">tex</span> <span class="o">=</span> <span class="n">_observables_pprime</span><span class="p">[</span><span class="n">Pp</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;Dmue_</span><span class="si">{}</span><span class="s1">(B0-&gt;K*ll)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Pp</span><span class="p">),</span>
-                                    <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(B0-&gt;K*mumu)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Pp</span><span class="p">),</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(B0-&gt;K*ee)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Pp</span><span class="p">)],</span>
+<span class="k">for</span> <span class="n">D_obs</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;P4p&#39;</span><span class="p">,</span> <span class="s1">&#39;P5p&#39;</span><span class="p">,</span> <span class="s1">&#39;AFB&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">D_obs</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;AFB&#39;</span><span class="p">]:</span>
+        <span class="n">tex</span> <span class="o">=</span> <span class="n">_observables</span><span class="p">[</span><span class="n">D_obs</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tex</span> <span class="o">=</span> <span class="n">_observables_pprime</span><span class="p">[</span><span class="n">D_obs</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;Dmue_</span><span class="si">{}</span><span class="s1">(B0-&gt;K*ll)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">D_obs</span><span class="p">),</span>
+                                    <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(B0-&gt;K*mumu)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">D_obs</span><span class="p">),</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(B0-&gt;K*ee)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">D_obs</span><span class="p">)],</span>
                                     <span class="n">diff</span><span class="p">)</span>
     <span class="n">obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Difference of angular observable $</span><span class="si">{}</span><span class="s2">$ in $B^0\to K^{{\ast 0}}\mu^+\mu^-$ and $B^0\to K^{{\ast 0}}e^+e^-$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tex</span><span class="p">))</span>
     <span class="n">obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$D_{{</span><span class="si">{}</span><span class="s2">}}^{{\mu e}}(B^0\to K^{{\ast 0}}\ell^+\ell^-)$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tex</span><span class="p">)</span>
     <span class="n">obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Process :: $b$ hadron decays :: FCNC decays :: $B\to V\ell^+\ell^-$ :: $B^0\to K^{\ast 0}e^+e^-$&quot;</span><span class="p">)</span>
     <span class="n">obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Process :: $b$ hadron decays :: FCNC decays :: $B\to V\ell^+\ell^-$ :: $B^0\to K^{\ast 0}\mu^+\mu^-$&quot;</span><span class="p">)</span>
 
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;&lt;Dmue_</span><span class="si">{}</span><span class="s1">&gt;(B0-&gt;K*ll)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Pp</span><span class="p">),</span>
-                                    <span class="p">[</span><span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">&gt;(B0-&gt;K*mumu)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Pp</span><span class="p">),</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">&gt;(B0-&gt;K*ee)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Pp</span><span class="p">)],</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;&lt;Dmue_</span><span class="si">{}</span><span class="s1">&gt;(B0-&gt;K*ll)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">D_obs</span><span class="p">),</span>
+                                    <span class="p">[</span><span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">&gt;(B0-&gt;K*mumu)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">D_obs</span><span class="p">),</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">&gt;(B0-&gt;K*ee)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">D_obs</span><span class="p">)],</span>
                                     <span class="n">diff</span><span class="p">)</span>
     <span class="n">obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Binned difference of angular observable $</span><span class="si">{}</span><span class="s2">$ in $B^0\to K^{{\ast 0}}\mu^+\mu^-$ and $B^0\to K^{{\ast 0}}e^+e^-$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tex</span><span class="p">))</span>
     <span class="n">obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\langle D_{{</span><span class="si">{}</span><span class="s2">}}^{{\mu e}} \rangle(B^0\to K^{{\ast 0}}\ell^+\ell^-)$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tex</span><span class="p">)</span>
@@ -1979,7 +1982,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p id="flavio.physics.bdecays.bvll.observables.M" class="name">var <span class="ident">M</span></p>
+      <p id="flavio.physics.bdecays.bvll.observables.D_obs" class="name">var <span class="ident">D_obs</span></p>
       
   
   <div class="source_cont">
@@ -1987,7 +1990,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 
       </div>
       <div class="item">
-      <p id="flavio.physics.bdecays.bvll.observables.Pp" class="name">var <span class="ident">Pp</span></p>
+      <p id="flavio.physics.bdecays.bvll.observables.M" class="name">var <span class="ident">M</span></p>
       
   
   <div class="source_cont">

@@ -1077,6 +1077,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables_bs.S_experiment_num_Bs">S_experiment_num_Bs</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables_bs.S_theory_num_Bs">S_theory_num_Bs</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables_bs.bsvll_dbrdq2">bsvll_dbrdq2</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables_bs.bsvll_dbrdq2_19_func">bsvll_dbrdq2_19_func</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables_bs.bsvll_dbrdq2_func">bsvll_dbrdq2_func</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables_bs.bsvll_dbrdq2_int">bsvll_dbrdq2_int</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bvll.observables_bs.bsvll_dbrdq2_int_func">bsvll_dbrdq2_int_func</a></li>
@@ -1117,6 +1118,7 @@ see arXiv:1502.05509.</p>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">observables</span>
 <span class="kn">from</span> <span class="nn">flavio.classes</span> <span class="kn">import</span> <span class="n">Observable</span><span class="p">,</span> <span class="n">Prediction</span>
 <span class="kn">import</span> <span class="nn">cmath</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="k">def</span> <span class="nf">bsvll_obs</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="n">ml</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">lep</span><span class="p">]</span>
@@ -1232,6 +1234,18 @@ see arXiv:1502.05509.</p>
         <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">denom</span>
     <span class="k">return</span> <span class="n">fct</span>
 
+<span class="c1"># function for the LHCb (1804.07167) Bs-&gt;K*0 integrated branching ratio</span>
+<span class="k">def</span> <span class="nf">bsvll_dbrdq2_19_func</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;The predictions in the region of narrow charmonium resonances are not meaningful.*&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;The QCDF corrections should not be trusted*&quot;</span><span class="p">)</span>
+
+            <span class="n">q2max</span> <span class="o">=</span> <span class="mi">19</span>
+            <span class="n">q2min</span> <span class="o">=</span> <span class="mf">0.1</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;delta_BsKstarmumu&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">bsvll_dbrdq2_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fct</span>
+
 <span class="c1"># Observable and Prediction instances</span>
 
 <span class="n">_tex</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="s1">&#39;\mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\tau&#39;</span><span class="p">}</span>
@@ -1243,6 +1257,7 @@ see arXiv:1502.05509.</p>
 <span class="p">}</span>
 <span class="n">_hadr</span> <span class="o">=</span> <span class="p">{</span>
 <span class="s1">&#39;Bs-&gt;phi&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;B_s\to \phi &quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="s1">&#39;phi&#39;</span><span class="p">,</span> <span class="p">},</span>
+<span class="s1">&#39;Bs-&gt;K*0&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;B_s\to K^* &quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;Bs&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="s1">&#39;K*0&#39;</span><span class="p">,</span> <span class="p">},</span>
 <span class="p">}</span>
 <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;tau&#39;</span><span class="p">]:</span>
     <span class="k">for</span> <span class="n">M</span> <span class="ow">in</span> <span class="n">_hadr</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -1283,6 +1298,15 @@ see arXiv:1502.05509.</p>
         <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\frac{d\overline{\text</span><span class="si">{BR}</span><span class="s2">}}{dq^2}(&quot;</span> <span class="o">+</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-)$&quot;</span>
         <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span><span class="p">)</span>
         <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">bsvll_dbrdq2_func</span><span class="p">(</span><span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;V&#39;</span><span class="p">],</span> <span class="n">l</span><span class="p">))</span>
+
+        <span class="c1"># for Bs-&gt;K*0 mu mu we add a separate observable for the measurement in 1804.07167</span>
+        <span class="k">if</span> <span class="n">M</span> <span class="o">==</span> <span class="s1">&#39;Bs-&gt;K*0&#39;</span> <span class="ow">and</span> <span class="n">l</span> <span class="o">==</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span>
+            <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;BR_LHCb(&quot;</span><span class="o">+</span><span class="n">M</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
+            <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_obs_name</span><span class="p">)</span>
+            <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Branching ratio of $&quot;</span> <span class="o">+</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-$ measured by LHCb in 2018&quot;</span><span class="p">)</span>
+            <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\overline{\text</span><span class="si">{BR}</span><span class="s2">}(&quot;</span> <span class="o">+</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;tex&#39;</span><span class="p">]</span> <span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="sa">r</span><span class="s2">&quot;^+&quot;</span><span class="o">+</span><span class="n">_tex</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;^-)$&quot;</span>
+            <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span><span class="p">)</span>
+            <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">bsvll_dbrdq2_19_func</span><span class="p">(</span><span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;V&#39;</span><span class="p">],</span> <span class="n">l</span><span class="p">))</span>
 
 <span class="c1"># Lepton flavour ratios</span>
 <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;mu&#39;</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;tau&#39;</span><span class="p">,</span><span class="s1">&#39;mu&#39;</span><span class="p">),]:</span>
@@ -1492,6 +1516,35 @@ see arXiv:1502.05509.</p>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bsvll_dbrdq2</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="n">tauB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">tauB</span> <span class="o">*</span> <span class="n">bsvll_obs</span><span class="p">(</span><span class="n">dGdq2_ave_Bs</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bvll.observables_bs.bsvll_dbrdq2_19_func">
+    <p>def <span class="ident">bsvll_dbrdq2_19_func</span>(</p><p>B, P, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bvll.observables_bs.bsvll_dbrdq2_19_func', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bvll.observables_bs.bsvll_dbrdq2_19_func" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bsvll_dbrdq2_19_func</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;The predictions in the region of narrow charmonium resonances are not meaningful.*&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;The QCDF corrections should not be trusted*&quot;</span><span class="p">)</span>
+
+            <span class="n">q2max</span> <span class="o">=</span> <span class="mi">19</span>
+            <span class="n">q2min</span> <span class="o">=</span> <span class="mf">0.1</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">par</span><span class="p">[</span><span class="s1">&#39;delta_BsKstarmumu&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">bsvll_dbrdq2_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fct</span>
 </pre></div>
 
   </div>

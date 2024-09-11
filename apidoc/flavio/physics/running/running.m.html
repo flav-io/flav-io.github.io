@@ -1083,6 +1083,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <li class="mono"><a href="#flavio.physics.running.running.get_mq">get_mq</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_ms">get_ms</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_mt">get_mt</a></li>
+    <li class="mono"><a href="#flavio.physics.running.running.get_mt_mt">get_mt_mt</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_mu">get_mu</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_nf">get_nf</a></li>
     <li class="mono"><a href="#flavio.physics.running.running.get_wilson">get_wilson</a></li>
@@ -1380,6 +1381,21 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <span class="k">return</span> <span class="n">crd</span><span class="o">.</span><span class="n">mOS2mMS</span><span class="p">(</span><span class="n">mt_pole</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 
 
+<span class="k">def</span> <span class="nf">get_mt_mt</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get the scale invariant top quark mass mt(mt).&quot;&quot;&quot;</span>
+    <span class="n">mt_pole</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_t&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">_get_mt_mt</span><span class="p">(</span><span class="n">mt_pole</span><span class="o">=</span><span class="n">mt_pole</span><span class="p">,</span>
+                      <span class="n">alpha_s</span><span class="o">=</span><span class="n">get_alpha_s</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mt_pole</span><span class="p">))</span>
+
+
+<span class="c1"># cached version</span>
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">][</span><span class="s1">&#39;cache size&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">_get_mt_mt</span><span class="p">(</span><span class="n">mt_pole</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get the scale invariant top quark mass mt(mt).&quot;&quot;&quot;</span>
+    <span class="n">crd</span> <span class="o">=</span> <span class="n">rundec</span><span class="o">.</span><span class="n">CRunDec</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">crd</span><span class="o">.</span><span class="n">mOS2mSI</span><span class="p">(</span><span class="n">mt_pole</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+
 <span class="k">def</span> <span class="nf">make_wilson_rge_derivative</span><span class="p">(</span><span class="n">adm</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">adm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -1390,7 +1406,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
         <span class="n">c</span> <span class="o">=</span> <span class="n">c_real</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">complex</span><span class="p">)</span>
         <span class="n">d_alpha</span> <span class="o">=</span> <span class="n">betafunctions</span><span class="o">.</span><span class="n">beta_qcd_qed</span><span class="p">([</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">],</span> <span class="n">mu</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span>
         <span class="n">d_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">adm</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="n">mu</span>
-        <span class="n">d_c_real</span> <span class="o">=</span> <span class="n">d_c</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">d_c_real</span> <span class="o">=</span> <span class="n">d_c</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d_c_real</span><span class="p">,</span> <span class="n">d_alpha</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">derivative_nf</span><span class="p">(</span><span class="n">nf</span><span class="p">):</span>
         <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="n">derivative</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span>
@@ -1404,7 +1420,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">alpha_in</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="n">nf_out</span><span class="p">)</span>
     <span class="c1"># x is (c_1, ..., c_N, alpha_s, alpha_e)</span>
-    <span class="n">c_in_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c_in</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="n">c_in_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c_in</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">x_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_in_real</span><span class="p">,</span> <span class="p">[</span><span class="n">alpha_in</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">],</span> <span class="n">alpha_in</span><span class="p">[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]])</span>
     <span class="n">sol</span> <span class="o">=</span> <span class="n">rg_evolve_sm</span><span class="p">(</span><span class="n">x_in</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="n">nf_out</span><span class="p">)</span>
     <span class="n">c_out</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
@@ -1904,6 +1920,31 @@ formula from the $\overline{\mathrm{MS}}$ mass.</p></div>
   
       
   <div class="item">
+    <div class="name def" id="flavio.physics.running.running.get_mt_mt">
+    <p>def <span class="ident">get_mt_mt</span>(</p><p>par)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Get the scale invariant top quark mass mt(mt).</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.running.running.get_mt_mt', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.running.running.get_mt_mt" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_mt_mt</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get the scale invariant top quark mass mt(mt).&quot;&quot;&quot;</span>
+    <span class="n">mt_pole</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_t&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">_get_mt_mt</span><span class="p">(</span><span class="n">mt_pole</span><span class="o">=</span><span class="n">mt_pole</span><span class="p">,</span>
+                      <span class="n">alpha_s</span><span class="o">=</span><span class="n">get_alpha_s</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">mt_pole</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="flavio.physics.running.running.get_mu">
     <p>def <span class="ident">get_mu</span>(</p><p>par, scale, nf_out=None)</p>
     </div>
@@ -1986,7 +2027,7 @@ $$\mu\frac{d}{d\mu} \vec C = \gamma^T(n_f, \alpha_s, \alpha_e) \vec C$$</p></div
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">alpha_in</span> <span class="o">=</span> <span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="n">nf_out</span><span class="p">)</span>
     <span class="c1"># x is (c_1, ..., c_N, alpha_s, alpha_e)</span>
-    <span class="n">c_in_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c_in</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="n">c_in_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c_in</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">x_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_in_real</span><span class="p">,</span> <span class="p">[</span><span class="n">alpha_in</span><span class="p">[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">],</span> <span class="n">alpha_in</span><span class="p">[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]])</span>
     <span class="n">sol</span> <span class="o">=</span> <span class="n">rg_evolve_sm</span><span class="p">(</span><span class="n">x_in</span><span class="p">,</span> <span class="n">derivative_nf</span><span class="p">,</span> <span class="n">scale_in</span><span class="p">,</span> <span class="n">scale_out</span><span class="p">,</span> <span class="n">nf_out</span><span class="o">=</span><span class="n">nf_out</span><span class="p">)</span>
     <span class="n">c_out</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
@@ -2020,7 +2061,7 @@ $$\mu\frac{d}{d\mu} \vec C = \gamma^T(n_f, \alpha_s, \alpha_e) \vec C$$</p></div
         <span class="n">c</span> <span class="o">=</span> <span class="n">c_real</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">complex</span><span class="p">)</span>
         <span class="n">d_alpha</span> <span class="o">=</span> <span class="n">betafunctions</span><span class="o">.</span><span class="n">beta_qcd_qed</span><span class="p">([</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">],</span> <span class="n">mu</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span>
         <span class="n">d_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">adm</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">alpha_s</span><span class="p">,</span> <span class="n">alpha_e</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="n">mu</span>
-        <span class="n">d_c_real</span> <span class="o">=</span> <span class="n">d_c</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">d_c_real</span> <span class="o">=</span> <span class="n">d_c</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d_c_real</span><span class="p">,</span> <span class="n">d_alpha</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">derivative_nf</span><span class="p">(</span><span class="n">nf</span><span class="p">):</span>
         <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="n">derivative</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span>

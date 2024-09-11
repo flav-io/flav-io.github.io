@@ -1078,6 +1078,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <li class="mono"><a href="#flavio.physics.bdecays.bpll.FH_cpaverage_num">FH_cpaverage_num</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bpll.FH_num">FH_num</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bpll.bpll_dbrdq2">bpll_dbrdq2</a></li>
+    <li class="mono"><a href="#flavio.physics.bdecays.bpll.bpll_dbrdq2_Belle_func">bpll_dbrdq2_Belle_func</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bpll.bpll_dbrdq2_func">bpll_dbrdq2_func</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bpll.bpll_dbrdq2_int">bpll_dbrdq2_int</a></li>
     <li class="mono"><a href="#flavio.physics.bdecays.bpll.bpll_dbrdq2_int_func">bpll_dbrdq2_int_func</a></li>
@@ -1148,6 +1149,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 
 <span class="c1"># get subleading hadronic contribution</span>
 <span class="k">def</span> <span class="nf">get_subleading</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;B&#39;</span> <span class="ow">in</span> <span class="n">B</span> <span class="ow">and</span> <span class="s1">&#39;pi&#39;</span> <span class="ow">in</span> <span class="n">P</span><span class="p">:</span>
+        <span class="c1"># skip subleading correction for B-&gt;pi decays</span>
+        <span class="k">return</span> <span class="p">{}</span>
     <span class="k">if</span> <span class="n">q2</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
         <span class="n">sub_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">P</span> <span class="o">+</span> <span class="s1">&#39;ll subleading effects at low q2&#39;</span>
         <span class="k">return</span> <span class="n">AuxiliaryQuantity</span><span class="p">[</span><span class="n">sub_name</span><span class="p">]</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>
@@ -1269,6 +1273,19 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
         <span class="k">return</span> <span class="n">bpll_dbrdq2_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fct</span>
 
+<span class="k">def</span> <span class="nf">bpll_dbrdq2_Belle_func</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;The predictions in the region of narrow charmonium resonances are not meaningful&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;The QCDF corrections should not be trusted .*&quot;</span><span class="p">)</span>
+            <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+            <span class="n">mP</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">P</span><span class="p">]</span>
+            <span class="n">ml</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">lep</span><span class="p">]</span>
+            <span class="n">ml</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">lep</span><span class="p">]</span>
+            <span class="n">q2max</span> <span class="o">=</span> <span class="p">(</span><span class="n">mB</span><span class="o">-</span><span class="n">mP</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+            <span class="n">q2min</span> <span class="o">=</span> <span class="p">(</span><span class="n">ml</span><span class="o">+</span><span class="n">ml</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+            <span class="k">return</span> <span class="n">bpll_dbrdq2_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">epsrel</span><span class="o">=</span><span class="mf">0.0002</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fct</span>
 
 <span class="k">def</span> <span class="nf">bpll_dbrdq2_func</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
@@ -1326,6 +1343,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 <span class="n">_hadr</span> <span class="o">=</span> <span class="p">{</span>
 <span class="s1">&#39;B0-&gt;K&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;B^0\to K^0&quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="s1">&#39;K0&#39;</span><span class="p">,</span> <span class="p">},</span>
 <span class="s1">&#39;B+-&gt;K&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;B^\pm\to K^\pm &quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="s1">&#39;K+&#39;</span><span class="p">,</span> <span class="p">},</span>
+<span class="s1">&#39;B0-&gt;pi&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\bar B^0\to \pi^0&quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="s1">&#39;pi0&#39;</span><span class="p">,</span> <span class="p">},</span>
+<span class="s1">&#39;B+-&gt;pi&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;B^\pm\to \pi^\pm &quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="s1">&#39;pi+&#39;</span><span class="p">,</span> <span class="p">},</span>
 <span class="p">}</span>
 <span class="n">_hadr_lfv</span> <span class="o">=</span> <span class="p">{</span>
 <span class="s1">&#39;B0-&gt;K&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\bar B^0\to \bar K^0&quot;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="s1">&#39;K0&#39;</span><span class="p">,</span> <span class="p">},</span>
@@ -1375,6 +1394,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
         <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\frac{d\text</span><span class="si">{BR}</span><span class="s2">}{dq^2}(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)$&quot;</span>
         <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span><span class="p">)</span>
         <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">bpll_dbrdq2_func</span><span class="p">(</span><span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;P&#39;</span><span class="p">],</span> <span class="n">l</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="s1">&#39;e&#39;</span> <span class="ow">and</span> <span class="n">M</span> <span class="o">==</span> <span class="s1">&#39;B+-&gt;pi&#39;</span><span class="p">:</span>
+            <span class="n">_obs_name</span> <span class="o">=</span> <span class="s2">&quot;BR_Belle(&quot;</span><span class="o">+</span><span class="n">M</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;)&quot;</span>
+            <span class="n">_obs</span> <span class="o">=</span> <span class="n">Observable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">_obs_name</span><span class="p">)</span>
+            <span class="n">_obs</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Branching ratio of $&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
+            <span class="n">_obs</span><span class="o">.</span><span class="n">tex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\text</span><span class="si">{BR}</span><span class="s2">(&quot;</span> <span class="o">+</span> <span class="n">_process_tex</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)$&quot;</span>
+            <span class="n">_obs</span><span class="o">.</span><span class="n">add_taxonomy</span><span class="p">(</span><span class="n">_process_taxonomy</span><span class="p">)</span>
+            <span class="n">Prediction</span><span class="p">(</span><span class="n">_obs_name</span><span class="p">,</span> <span class="n">bpll_dbrdq2_Belle_func</span><span class="p">(</span><span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">_hadr</span><span class="p">[</span><span class="n">M</span><span class="p">][</span><span class="s1">&#39;P&#39;</span><span class="p">],</span> <span class="n">l</span><span class="p">))</span>
 
         <span class="c1"># only for tau: total branching ratio</span>
         <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="s1">&#39;tau&#39;</span><span class="p">:</span>
@@ -1586,6 +1613,38 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
         <span class="k">return</span> <span class="n">dBR</span> <span class="o">/</span> <span class="mf">2.</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">dBR</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="flavio.physics.bdecays.bpll.bpll_dbrdq2_Belle_func">
+    <p>def <span class="ident">bpll_dbrdq2_Belle_func</span>(</p><p>B, P, lep)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bpll.bpll_dbrdq2_Belle_func', this);">Show source &equiv;</a></p>
+  <div id="source-flavio.physics.bdecays.bpll.bpll_dbrdq2_Belle_func" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bpll_dbrdq2_Belle_func</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fct</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;The predictions in the region of narrow charmonium resonances are not meaningful&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;The QCDF corrections should not be trusted .*&quot;</span><span class="p">)</span>
+            <span class="n">mB</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">B</span><span class="p">]</span>
+            <span class="n">mP</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">P</span><span class="p">]</span>
+            <span class="n">ml</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">lep</span><span class="p">]</span>
+            <span class="n">ml</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">lep</span><span class="p">]</span>
+            <span class="n">q2max</span> <span class="o">=</span> <span class="p">(</span><span class="n">mB</span><span class="o">-</span><span class="n">mP</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+            <span class="n">q2min</span> <span class="o">=</span> <span class="p">(</span><span class="n">ml</span><span class="o">+</span><span class="n">ml</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+            <span class="k">return</span> <span class="n">bpll_dbrdq2_int</span><span class="p">(</span><span class="n">q2min</span><span class="p">,</span> <span class="n">q2max</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">epsrel</span><span class="o">=</span><span class="mf">0.0002</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">q2max</span><span class="o">-</span><span class="n">q2min</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fct</span>
 </pre></div>
 
   </div>
@@ -1960,6 +2019,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.bpll.get_subleading', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.bpll.get_subleading" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_subleading</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">par_dict</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">lep</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;B&#39;</span> <span class="ow">in</span> <span class="n">B</span> <span class="ow">and</span> <span class="s1">&#39;pi&#39;</span> <span class="ow">in</span> <span class="n">P</span><span class="p">:</span>
+        <span class="c1"># skip subleading correction for B-&gt;pi decays</span>
+        <span class="k">return</span> <span class="p">{}</span>
     <span class="k">if</span> <span class="n">q2</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
         <span class="n">sub_name</span> <span class="o">=</span> <span class="n">B</span><span class="o">+</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">+</span><span class="n">P</span> <span class="o">+</span> <span class="s1">&#39;ll subleading effects at low q2&#39;</span>
         <span class="k">return</span> <span class="n">AuxiliaryQuantity</span><span class="p">[</span><span class="n">sub_name</span><span class="p">]</span><span class="o">.</span><span class="n">prediction</span><span class="p">(</span><span class="n">par_dict</span><span class="o">=</span><span class="n">par_dict</span><span class="p">,</span> <span class="n">wc_obj</span><span class="o">=</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">cp_conjugate</span><span class="o">=</span><span class="n">cp_conjugate</span><span class="p">)</span>

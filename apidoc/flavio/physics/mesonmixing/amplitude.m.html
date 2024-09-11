@@ -1113,7 +1113,12 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 
 <span class="k">def</span> <span class="nf">matrixelements</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns a dictionary with the values of the matrix elements of the</span>
-<span class="sd">    $\Delta F=2$ operators.&quot;&quot;&quot;</span>
+<span class="sd">    $\Delta F=2$ operators.</span>
+<span class="sd">    </span>
+<span class="sd">    Note that the normalisation factor 1/2M from M_12 is included here,</span>
+<span class="sd">    so the returned values of the matrix elements are really    </span>
+<span class="sd">    $$\langle Q \rangle = \frac{\langle M | Q |\bar M\rangle}{2M_M}$$</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mM</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
     <span class="n">fM</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;f_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
     <span class="n">BM</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;bag_&#39;</span> <span class="o">+</span> <span class="n">meson</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
@@ -1146,15 +1151,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="n">meson</span> <span class="o">+</span> <span class="s1">&#39; mixing&#39;</span><span class="p">]</span>
     <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="n">me_rgi</span> <span class="o">=</span> <span class="n">me</span><span class="p">[</span><span class="s1">&#39;CVLL&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">bag_msbar2rgi</span><span class="p">(</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
-    <span class="n">C_tt</span><span class="p">,</span> <span class="n">C_cc</span><span class="p">,</span> <span class="n">C_ct</span> <span class="o">=</span> <span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
-    <span class="n">eta_tt</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_tt_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
-    <span class="n">M12</span>  <span class="o">=</span> <span class="o">-</span> <span class="p">(</span><span class="n">eta_tt</span><span class="o">*</span><span class="n">C_tt</span><span class="p">)</span> <span class="o">*</span> <span class="n">me_rgi</span>
-    <span class="c1"># charm contribution only needed for K mixing! Negligible for B and Bs.</span>
-    <span class="k">if</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;K0&#39;</span><span class="p">:</span>
-        <span class="n">eta_cc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_cc_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
-        <span class="n">eta_ct</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_ct_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
-        <span class="n">M12</span> <span class="o">=</span> <span class="n">M12</span> <span class="o">-</span> <span class="p">(</span><span class="n">eta_cc</span><span class="o">*</span><span class="n">C_cc</span> <span class="o">+</span> <span class="n">eta_ct</span><span class="o">*</span><span class="n">C_ct</span><span class="p">)</span> <span class="o">*</span> <span class="n">me_rgi</span>
-    <span class="k">return</span> <span class="n">M12</span>
+    <span class="n">cvll_d_SM_rgi</span> <span class="o">=</span> <span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span> <span class="n">cvll_d_SM_rgi</span> <span class="o">*</span> <span class="n">me_rgi</span>
 
 
 <span class="k">def</span> <span class="nf">M12</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
@@ -1426,15 +1424,8 @@ switched in the above definition, leading to a complex conjugation.)</p></div>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;renormalization scale&#39;</span><span class="p">][</span><span class="n">meson</span> <span class="o">+</span> <span class="s1">&#39; mixing&#39;</span><span class="p">]</span>
     <span class="n">alpha_s</span> <span class="o">=</span> <span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_s&#39;</span><span class="p">]</span>
     <span class="n">me_rgi</span> <span class="o">=</span> <span class="n">me</span><span class="p">[</span><span class="s1">&#39;CVLL&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">bag_msbar2rgi</span><span class="p">(</span><span class="n">alpha_s</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
-    <span class="n">C_tt</span><span class="p">,</span> <span class="n">C_cc</span><span class="p">,</span> <span class="n">C_ct</span> <span class="o">=</span> <span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
-    <span class="n">eta_tt</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_tt_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
-    <span class="n">M12</span>  <span class="o">=</span> <span class="o">-</span> <span class="p">(</span><span class="n">eta_tt</span><span class="o">*</span><span class="n">C_tt</span><span class="p">)</span> <span class="o">*</span> <span class="n">me_rgi</span>
-    <span class="c1"># charm contribution only needed for K mixing! Negligible for B and Bs.</span>
-    <span class="k">if</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;K0&#39;</span><span class="p">:</span>
-        <span class="n">eta_cc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_cc_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
-        <span class="n">eta_ct</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_ct_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
-        <span class="n">M12</span> <span class="o">=</span> <span class="n">M12</span> <span class="o">-</span> <span class="p">(</span><span class="n">eta_cc</span><span class="o">*</span><span class="n">C_cc</span> <span class="o">+</span> <span class="n">eta_ct</span><span class="o">*</span><span class="n">C_ct</span><span class="p">)</span> <span class="o">*</span> <span class="n">me_rgi</span>
-    <span class="k">return</span> <span class="n">M12</span>
+    <span class="n">cvll_d_SM_rgi</span> <span class="o">=</span> <span class="n">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span> <span class="n">cvll_d_SM_rgi</span> <span class="o">*</span> <span class="n">me_rgi</span>
 </pre></div>
 
   </div>
@@ -1478,13 +1469,21 @@ switched in the above definition, leading to a complex conjugation.)</p></div>
     
   
     <div class="desc"><p>Returns a dictionary with the values of the matrix elements of the
-$\Delta F=2$ operators.</p></div>
+$\Delta F=2$ operators.</p>
+<p>Note that the normalisation factor 1/2M from M_12 is included here,
+so the returned values of the matrix elements are really  <br />
+$$\langle Q \rangle = \frac{\langle M | Q |\bar M\rangle}{2M_M}$$</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.amplitude.matrixelements', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.mesonmixing.amplitude.matrixelements" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">matrixelements</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns a dictionary with the values of the matrix elements of the</span>
-<span class="sd">    $\Delta F=2$ operators.&quot;&quot;&quot;</span>
+<span class="sd">    $\Delta F=2$ operators.</span>
+<span class="sd">    </span>
+<span class="sd">    Note that the normalisation factor 1/2M from M_12 is included here,</span>
+<span class="sd">    so the returned values of the matrix elements are really    </span>
+<span class="sd">    $$\langle Q \rangle = \frac{\langle M | Q |\bar M\rangle}{2M_M}$$</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mM</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
     <span class="n">fM</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;f_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
     <span class="n">BM</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;bag_&#39;</span> <span class="o">+</span> <span class="n">meson</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>

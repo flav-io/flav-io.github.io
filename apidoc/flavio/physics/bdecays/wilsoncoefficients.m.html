@@ -1136,24 +1136,30 @@ as tree-level $B$ decays</p>
 <span class="n">wcsm_nf5</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">scales</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
 <span class="c1"># di-&gt;djnunu Wilson coefficient</span>
-<span class="k">def</span> <span class="nf">CL_SM</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">CL_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;SM Wilson coefficient for $d_i\to d_j\nu\bar\nu$ transitions.</span>
 
 <span class="sd">    This is implemented as an approximate formula as a function of the top</span>
 <span class="sd">    mass.&quot;&quot;&quot;</span>
-    <span class="c1"># EW NLO corrections arXiv:1009.0947</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="mf">120.</span> <span class="c1"># &lt;- result has very little sensitivity to high matching scale</span>
-    <span class="n">mt</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="c1"># # EW NLO corrections arXiv:1009.0947</span>
+    <span class="c1"># scale = 120. # &lt;- result has very little sensitivity to high matching scale</span>
+    <span class="c1"># mt = flavio.physics.running.running.get_mt(par, scale)</span>
+    <span class="c1"># Xt0_165 = 1.50546 # LO result for mt=165, scale=120</span>
+    <span class="c1"># Xt0 = Xt0_165 * (1 + 1.14064 * (mt/165. - 1)) # LO</span>
+    <span class="c1"># Xt1 = Xt0_165 * (-0.031435 - 0.139303 * (mt/165. - 1)) # QCD NLO</span>
+    <span class="c1"># # (4.3), (4.4) of 1009.0947: NLO EW</span>
+    <span class="c1"># flavio.citations.register(&quot;Brod:2010hi&quot;)</span>
+    <span class="c1"># XtEW = Xt0 * (1 - 1.11508 + 1.12316*1.15338**(mt/165.)-0.179454*(mt/165)) - 1</span>
+    <span class="c1"># XtEW = XtEW * 0.00062392534457616328 # &lt;- alpha_em/4pi at 120 GeV</span>
+    <span class="c1"># Xt = Xt0 + Xt1 + XtEW</span>
+
     <span class="n">s2w</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;s2w&#39;</span><span class="p">]</span>
-    <span class="n">Xt0_165</span> <span class="o">=</span> <span class="mf">1.50546</span> <span class="c1"># LO result for mt=165, scale=120</span>
-    <span class="n">Xt0</span> <span class="o">=</span> <span class="n">Xt0_165</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1.14064</span> <span class="o">*</span> <span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mf">165.</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># LO</span>
-    <span class="n">Xt1</span> <span class="o">=</span> <span class="n">Xt0_165</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.031435</span> <span class="o">-</span> <span class="mf">0.139303</span> <span class="o">*</span> <span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mf">165.</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># QCD NLO</span>
-    <span class="c1"># (4.3), (4.4) of 1009.0947: NLO EW</span>
-    <span class="n">flavio</span><span class="o">.</span><span class="n">citations</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;Brod:2010hi&quot;</span><span class="p">)</span>
-    <span class="n">XtEW</span> <span class="o">=</span> <span class="n">Xt0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">1.11508</span> <span class="o">+</span> <span class="mf">1.12316</span><span class="o">*</span><span class="mf">1.15338</span><span class="o">**</span><span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mf">165.</span><span class="p">)</span><span class="o">-</span><span class="mf">0.179454</span><span class="o">*</span><span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mi">165</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
-    <span class="n">XtEW</span> <span class="o">=</span> <span class="n">XtEW</span> <span class="o">*</span> <span class="mf">0.00062392534457616328</span> <span class="c1"># &lt;- alpha_em/4pi at 120 GeV</span>
-    <span class="n">Xt</span> <span class="o">=</span> <span class="n">Xt0</span> <span class="o">+</span> <span class="n">Xt1</span> <span class="o">+</span> <span class="n">XtEW</span>
-    <span class="k">return</span> <span class="o">-</span><span class="n">Xt</span><span class="o">/</span><span class="n">s2w</span>
+    <span class="n">Xt</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;Xt_di-&gt;djnunu&#39;</span><span class="p">]</span>
+    <span class="n">CL_SM</span> <span class="o">=</span> <span class="o">-</span><span class="n">Xt</span><span class="o">/</span><span class="n">s2w</span>
+    <span class="c1"># CL_SM * alpha_e is scale invariant</span>
+    <span class="n">alpha_e_scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
+    <span class="n">alpha_e_mZ</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="mf">91.1876</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">CL_SM</span> <span class="o">*</span> <span class="n">alpha_e_mZ</span><span class="o">/</span><span class="n">alpha_e_scale</span>
 
 
 <span class="c1"># names of SM DeltaF=1 Wilson coefficients needed for wctot_dict</span>
@@ -1323,10 +1329,10 @@ as tree-level $B$ decays</p>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;vp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVR_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">c_sm</span> <span class="o">+</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVL_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;ap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVR_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSR_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;sp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSL_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSR_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;pp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSL_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSR_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;sp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSL_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSR_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;pp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSL_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;tp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CT_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">c</span>
@@ -1426,7 +1432,7 @@ as tree-level $B$ decays</p>
       
   <div class="item">
     <div class="name def" id="flavio.physics.bdecays.wilsoncoefficients.CL_SM">
-    <p>def <span class="ident">CL_SM</span>(</p><p>par)</p>
+    <p>def <span class="ident">CL_SM</span>(</p><p>par, scale)</p>
     </div>
     
 
@@ -1438,24 +1444,30 @@ mass.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.bdecays.wilsoncoefficients.CL_SM', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.bdecays.wilsoncoefficients.CL_SM" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">CL_SM</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">CL_SM</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;SM Wilson coefficient for $d_i\to d_j\nu\bar\nu$ transitions.</span>
 
 <span class="sd">    This is implemented as an approximate formula as a function of the top</span>
 <span class="sd">    mass.&quot;&quot;&quot;</span>
-    <span class="c1"># EW NLO corrections arXiv:1009.0947</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="mf">120.</span> <span class="c1"># &lt;- result has very little sensitivity to high matching scale</span>
-    <span class="n">mt</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="c1"># # EW NLO corrections arXiv:1009.0947</span>
+    <span class="c1"># scale = 120. # &lt;- result has very little sensitivity to high matching scale</span>
+    <span class="c1"># mt = flavio.physics.running.running.get_mt(par, scale)</span>
+    <span class="c1"># Xt0_165 = 1.50546 # LO result for mt=165, scale=120</span>
+    <span class="c1"># Xt0 = Xt0_165 * (1 + 1.14064 * (mt/165. - 1)) # LO</span>
+    <span class="c1"># Xt1 = Xt0_165 * (-0.031435 - 0.139303 * (mt/165. - 1)) # QCD NLO</span>
+    <span class="c1"># # (4.3), (4.4) of 1009.0947: NLO EW</span>
+    <span class="c1"># flavio.citations.register(&quot;Brod:2010hi&quot;)</span>
+    <span class="c1"># XtEW = Xt0 * (1 - 1.11508 + 1.12316*1.15338**(mt/165.)-0.179454*(mt/165)) - 1</span>
+    <span class="c1"># XtEW = XtEW * 0.00062392534457616328 # &lt;- alpha_em/4pi at 120 GeV</span>
+    <span class="c1"># Xt = Xt0 + Xt1 + XtEW</span>
+
     <span class="n">s2w</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;s2w&#39;</span><span class="p">]</span>
-    <span class="n">Xt0_165</span> <span class="o">=</span> <span class="mf">1.50546</span> <span class="c1"># LO result for mt=165, scale=120</span>
-    <span class="n">Xt0</span> <span class="o">=</span> <span class="n">Xt0_165</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1.14064</span> <span class="o">*</span> <span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mf">165.</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># LO</span>
-    <span class="n">Xt1</span> <span class="o">=</span> <span class="n">Xt0_165</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.031435</span> <span class="o">-</span> <span class="mf">0.139303</span> <span class="o">*</span> <span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mf">165.</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># QCD NLO</span>
-    <span class="c1"># (4.3), (4.4) of 1009.0947: NLO EW</span>
-    <span class="n">flavio</span><span class="o">.</span><span class="n">citations</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;Brod:2010hi&quot;</span><span class="p">)</span>
-    <span class="n">XtEW</span> <span class="o">=</span> <span class="n">Xt0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">1.11508</span> <span class="o">+</span> <span class="mf">1.12316</span><span class="o">*</span><span class="mf">1.15338</span><span class="o">**</span><span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mf">165.</span><span class="p">)</span><span class="o">-</span><span class="mf">0.179454</span><span class="o">*</span><span class="p">(</span><span class="n">mt</span><span class="o">/</span><span class="mi">165</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
-    <span class="n">XtEW</span> <span class="o">=</span> <span class="n">XtEW</span> <span class="o">*</span> <span class="mf">0.00062392534457616328</span> <span class="c1"># &lt;- alpha_em/4pi at 120 GeV</span>
-    <span class="n">Xt</span> <span class="o">=</span> <span class="n">Xt0</span> <span class="o">+</span> <span class="n">Xt1</span> <span class="o">+</span> <span class="n">XtEW</span>
-    <span class="k">return</span> <span class="o">-</span><span class="n">Xt</span><span class="o">/</span><span class="n">s2w</span>
+    <span class="n">Xt</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;Xt_di-&gt;djnunu&#39;</span><span class="p">]</span>
+    <span class="n">CL_SM</span> <span class="o">=</span> <span class="o">-</span><span class="n">Xt</span><span class="o">/</span><span class="n">s2w</span>
+    <span class="c1"># CL_SM * alpha_e is scale invariant</span>
+    <span class="n">alpha_e_scale</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
+    <span class="n">alpha_e_mZ</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="mf">91.1876</span><span class="p">)[</span><span class="s1">&#39;alpha_e&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">CL_SM</span> <span class="o">*</span> <span class="n">alpha_e_mZ</span><span class="o">/</span><span class="n">alpha_e_scale</span>
 </pre></div>
 
   </div>
@@ -1606,10 +1618,10 @@ in the convention appropriate for the generalized angular distributions.</p></di
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;vp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVR_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">c_sm</span> <span class="o">+</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVL_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;ap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CVR_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSR_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;sp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSL_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSR_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
-    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;pp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSL_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSR_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;sp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSL_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSR_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="n">c</span><span class="p">[</span><span class="s1">&#39;pp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CSL_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span><span class="o">/</span><span class="mf">2.</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
     <span class="n">c</span><span class="p">[</span><span class="s1">&#39;tp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wc</span><span class="p">[</span><span class="s1">&#39;CT_&#39;</span><span class="o">+</span><span class="n">qqlnu</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">c</span>

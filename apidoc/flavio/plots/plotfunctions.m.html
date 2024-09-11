@@ -1121,28 +1121,25 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 <span class="k">def</span> <span class="nf">error_budget_pie</span><span class="p">(</span><span class="n">err_dict</span><span class="p">,</span> <span class="n">other_cutoff</span><span class="o">=</span><span class="mf">0.03</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Pie chart of an observable&#39;s error budget.</span>
 
+<span class="sd">    The wedges are labelled with the relative error contributions and the</span>
+<span class="sd">    names of the parameters. The area of each wedge is proportional to the</span>
+<span class="sd">    squared error contribution such that the total area of the pie</span>
+<span class="sd">    corresponds to the squared total error.</span>
+
 <span class="sd">    Parameters:</span>
 
-<span class="sd">    - `err_dict`: Dictionary as return from `flavio.sm_error_budget`</span>
-<span class="sd">    - `other_cutoff`: If an individual error contribution divided by the total</span>
-<span class="sd">      error is smaller than this number, it is lumped under &quot;other&quot;. Defaults</span>
-<span class="sd">      to 0.03.</span>
-
-<span class="sd">    Note that for uncorrelated parameters, the total uncertainty is the squared</span>
-<span class="sd">    sum of the individual uncertainties, so the relative size of the wedges does</span>
-<span class="sd">    not correspond to the relative contribution to the total uncertainty.</span>
-
-<span class="sd">    If the uncertainties of individual parameters are correlated, the total</span>
-<span class="sd">    uncertainty can be larger or smaller than the squared sum of the individual</span>
-<span class="sd">    uncertainties, so the representation can be misleading.</span>
+<span class="sd">    - `err_dict`: Dictionary as returned by `flavio.sm_error_budget`.</span>
+<span class="sd">    - `other_cutoff`: If an individual squared error contribution divided by the</span>
+<span class="sd">    squared total error is smaller than this number, it is lumped under &quot;other&quot;.</span>
+<span class="sd">    Defaults to 0.03.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">err_tot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">err_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="c1"># linear sum of individual errors</span>
+    <span class="n">var_tot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">v</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">err_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="c1"># total variance from sum of squared individual errors</span>
     <span class="n">err_dict_sorted</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">err_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="o">-</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">fracs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">small_frac</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">err_dict_sorted</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">frac</span> <span class="o">=</span> <span class="n">value</span><span class="o">/</span><span class="n">err_tot</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">value</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">var_tot</span> <span class="c1"># variance fraction</span>
         <span class="k">if</span> <span class="n">frac</span> <span class="o">&gt;</span> <span class="n">other_cutoff</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -1158,15 +1155,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
             <span class="n">small_frac</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">small_frac</span><span class="p">:</span>
         <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;other&#39;</span><span class="p">)</span>
-        <span class="c1"># the fraction for the &quot;other&quot; errors is obtained by adding them in quadrature</span>
-        <span class="n">fracs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">small_frac</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
-    <span class="c1"># initially, the fractions had been calculated assuming that they add to</span>
-    <span class="c1"># one, but adding the &quot;other&quot; errors in quadrature changed that - correct</span>
-    <span class="c1"># all the fractions to account for this</span>
-    <span class="n">corr</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fracs</span><span class="p">)</span>
-    <span class="n">fracs</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">/</span><span class="n">corr</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fracs</span><span class="p">]</span>
+        <span class="n">fracs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">small_frac</span><span class="p">))</span>
     <span class="k">def</span> <span class="nf">my_autopct</span><span class="p">(</span><span class="n">pct</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;</span><span class="si">{p:.2g}</span><span class="s1">\%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">pct</span><span class="o">*</span><span class="n">err_tot</span><span class="p">)</span>
+        <span class="c1"># use individual errors as labels</span>
+        <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;</span><span class="si">{p:.2g}</span><span class="s1">\%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">pct</span><span class="o">*</span><span class="n">var_tot</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">fracs</span><span class="p">,</span>
         <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
@@ -1255,10 +1247,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <span class="n">x_err_arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">wc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span> <span class="c1"># SM Wilson coefficients</span>
-        <span class="n">obs_err_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_err_arr</span><span class="p">]</span>
+        <span class="n">obs_err_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_err_arr</span><span class="p">]</span>
         <span class="n">obs_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_arr</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">obs_err_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_err_arr</span><span class="p">]</span>
+        <span class="n">obs_err_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_err_arr</span><span class="p">]</span>
         <span class="n">obs_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_arr</span><span class="p">]</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
     <span class="n">plot_args</span> <span class="o">=</span> <span class="n">plot_args</span> <span class="ow">or</span> <span class="p">{}</span>
@@ -1609,8 +1601,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <span class="k">return</span> <span class="n">contour</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">likelihood_contour_data</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span>
-              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">likelihood_contour_data</span><span class="p">(</span>
+        <span class="n">log_likelihood</span><span class="p">,</span>
+        <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+        <span class="n">xscale</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">yscale</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+        <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Generate data required to plot coloured confidence contours (or bands)</span>
 <span class="sd">    given a log likelihood function.</span>
 
@@ -1619,6 +1614,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 <span class="sd">    - `log_likelihood`: function returning the logarithm of the likelihood.</span>
 <span class="sd">      Can e.g. be the method of the same name of a FastFit instance.</span>
 <span class="sd">    - `x_min`, `x_max`, `y_min`, `y_max`: data boundaries</span>
+<span class="sd">    - `xscale`, `yscale`: `linear` (default) or `log` scale</span>
 <span class="sd">    - `n_sigma`: plot confidence level corresponding to this number of standard</span>
 <span class="sd">      deviations. Either a number (defaults to 1) or a tuple to plot several</span>
 <span class="sd">      contours.</span>
@@ -1630,8 +1626,22 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 <span class="sd">    implementation, e.g. from `multiprocess` or `schwimmbad`). Overrides the</span>
 <span class="sd">    `threads` argument.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
-    <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">xscale</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+        <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">xscale</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">x_min</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">x_max</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`x_min` and `x_max` have to be positive if `xscale` is set to `log`.&quot;</span><span class="p">)</span>
+        <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x_min</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x_max</span><span class="p">),</span> <span class="n">steps</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`xscale` must be &#39;linear&#39; or &#39;log&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">yscale</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+        <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">yscale</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">y_min</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">y_max</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`y_min` and `y_max` have to be positive if `yscale` is set to `log`.&quot;</span><span class="p">)</span>
+        <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">y_min</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">y_max</span><span class="p">),</span> <span class="n">steps</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`yscale` must be &#39;linear&#39; or &#39;log&#39;.&quot;</span><span class="p">)</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="nd">@np</span><span class="o">.</span><span class="n">vectorize</span>
@@ -1702,7 +1712,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <span class="k">if</span> <span class="s1">&#39;pre_calculated_z&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">contour_kwargs</span> <span class="o">=</span> <span class="n">likelihood_contour_data</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span>
                       <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span>
-                      <span class="n">n_sigma</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="o">**</span><span class="n">data_kwargs</span><span class="p">)</span>
+                      <span class="n">n_sigma</span><span class="o">=</span><span class="n">n_sigma</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span> <span class="o">**</span><span class="n">data_kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">contour_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;pre_calculated_z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
@@ -1796,7 +1806,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
         <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levelsf</span><span class="p">,</span> <span class="o">**</span><span class="n">_contourf_args</span><span class="p">)</span>
     <span class="n">CS</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="o">**</span><span class="n">_contour_args</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">CS</span><span class="o">.</span><span class="n">collections</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">handle</span> <span class="o">=</span> <span class="n">CS</span><span class="o">.</span><span class="n">legend_elements</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">handle</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_container</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">CS</span>
 
 
@@ -2034,7 +2046,7 @@ backward compatibility.</p></div>
     <span class="k">if</span> <span class="s1">&#39;pre_calculated_z&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">contour_kwargs</span> <span class="o">=</span> <span class="n">likelihood_contour_data</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span>
                       <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span>
-                      <span class="n">n_sigma</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="o">**</span><span class="n">data_kwargs</span><span class="p">)</span>
+                      <span class="n">n_sigma</span><span class="o">=</span><span class="n">n_sigma</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span> <span class="o">**</span><span class="n">data_kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">contour_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;pre_calculated_z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
@@ -2405,7 +2417,9 @@ arrays.</p>
         <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levelsf</span><span class="p">,</span> <span class="o">**</span><span class="n">_contourf_args</span><span class="p">)</span>
     <span class="n">CS</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="o">**</span><span class="n">_contour_args</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">CS</span><span class="o">.</span><span class="n">collections</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">handle</span> <span class="o">=</span> <span class="n">CS</span><span class="o">.</span><span class="n">legend_elements</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">handle</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_container</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">CS</span>
 </pre></div>
 
@@ -2969,10 +2983,10 @@ point and the interpolation might be inaccurate.</p></div>
     <span class="n">x_err_arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">wc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">wc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">eft</span><span class="o">.</span><span class="n">_wc_sm</span> <span class="c1"># SM Wilson coefficients</span>
-        <span class="n">obs_err_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_err_arr</span><span class="p">]</span>
+        <span class="n">obs_err_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_err_arr</span><span class="p">]</span>
         <span class="n">obs_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">sm_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_arr</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">obs_err_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_err_arr</span><span class="p">]</span>
+        <span class="n">obs_err_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">np_uncertainty</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_err_arr</span><span class="p">]</span>
         <span class="n">obs_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">flavio</span><span class="o">.</span><span class="n">np_prediction</span><span class="p">(</span><span class="n">obs_name</span><span class="p">,</span> <span class="n">wc</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_arr</span><span class="p">]</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
     <span class="n">plot_args</span> <span class="o">=</span> <span class="n">plot_args</span> <span class="ow">or</span> <span class="p">{}</span>
@@ -3006,47 +3020,42 @@ point and the interpolation might be inaccurate.</p></div>
     
   
     <div class="desc"><p>Pie chart of an observable's error budget.</p>
+<p>The wedges are labelled with the relative error contributions and the
+names of the parameters. The area of each wedge is proportional to the
+squared error contribution such that the total area of the pie
+corresponds to the squared total error.</p>
 <p>Parameters:</p>
 <ul>
-<li><code>err_dict</code>: Dictionary as return from <code>flavio.sm_error_budget</code></li>
-<li><code>other_cutoff</code>: If an individual error contribution divided by the total
-  error is smaller than this number, it is lumped under "other". Defaults
-  to 0.03.</li>
-</ul>
-<p>Note that for uncorrelated parameters, the total uncertainty is the squared
-sum of the individual uncertainties, so the relative size of the wedges does
-not correspond to the relative contribution to the total uncertainty.</p>
-<p>If the uncertainties of individual parameters are correlated, the total
-uncertainty can be larger or smaller than the squared sum of the individual
-uncertainties, so the representation can be misleading.</p></div>
+<li><code>err_dict</code>: Dictionary as returned by <code>flavio.sm_error_budget</code>.</li>
+<li><code>other_cutoff</code>: If an individual squared error contribution divided by the
+squared total error is smaller than this number, it is lumped under "other".
+Defaults to 0.03.</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.error_budget_pie', this);">Show source &equiv;</a></p>
   <div id="source-flavio.plots.plotfunctions.error_budget_pie" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">error_budget_pie</span><span class="p">(</span><span class="n">err_dict</span><span class="p">,</span> <span class="n">other_cutoff</span><span class="o">=</span><span class="mf">0.03</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Pie chart of an observable&#39;s error budget.</span>
 
+<span class="sd">    The wedges are labelled with the relative error contributions and the</span>
+<span class="sd">    names of the parameters. The area of each wedge is proportional to the</span>
+<span class="sd">    squared error contribution such that the total area of the pie</span>
+<span class="sd">    corresponds to the squared total error.</span>
+
 <span class="sd">    Parameters:</span>
 
-<span class="sd">    - `err_dict`: Dictionary as return from `flavio.sm_error_budget`</span>
-<span class="sd">    - `other_cutoff`: If an individual error contribution divided by the total</span>
-<span class="sd">      error is smaller than this number, it is lumped under &quot;other&quot;. Defaults</span>
-<span class="sd">      to 0.03.</span>
-
-<span class="sd">    Note that for uncorrelated parameters, the total uncertainty is the squared</span>
-<span class="sd">    sum of the individual uncertainties, so the relative size of the wedges does</span>
-<span class="sd">    not correspond to the relative contribution to the total uncertainty.</span>
-
-<span class="sd">    If the uncertainties of individual parameters are correlated, the total</span>
-<span class="sd">    uncertainty can be larger or smaller than the squared sum of the individual</span>
-<span class="sd">    uncertainties, so the representation can be misleading.</span>
+<span class="sd">    - `err_dict`: Dictionary as returned by `flavio.sm_error_budget`.</span>
+<span class="sd">    - `other_cutoff`: If an individual squared error contribution divided by the</span>
+<span class="sd">    squared total error is smaller than this number, it is lumped under &quot;other&quot;.</span>
+<span class="sd">    Defaults to 0.03.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">err_tot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">err_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="c1"># linear sum of individual errors</span>
+    <span class="n">var_tot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">v</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">err_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="c1"># total variance from sum of squared individual errors</span>
     <span class="n">err_dict_sorted</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">err_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="o">-</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">fracs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">small_frac</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">err_dict_sorted</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">frac</span> <span class="o">=</span> <span class="n">value</span><span class="o">/</span><span class="n">err_tot</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">value</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">var_tot</span> <span class="c1"># variance fraction</span>
         <span class="k">if</span> <span class="n">frac</span> <span class="o">&gt;</span> <span class="n">other_cutoff</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -3062,15 +3071,10 @@ uncertainties, so the representation can be misleading.</p></div>
             <span class="n">small_frac</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">small_frac</span><span class="p">:</span>
         <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;other&#39;</span><span class="p">)</span>
-        <span class="c1"># the fraction for the &quot;other&quot; errors is obtained by adding them in quadrature</span>
-        <span class="n">fracs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">small_frac</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
-    <span class="c1"># initially, the fractions had been calculated assuming that they add to</span>
-    <span class="c1"># one, but adding the &quot;other&quot; errors in quadrature changed that - correct</span>
-    <span class="c1"># all the fractions to account for this</span>
-    <span class="n">corr</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fracs</span><span class="p">)</span>
-    <span class="n">fracs</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">/</span><span class="n">corr</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fracs</span><span class="p">]</span>
+        <span class="n">fracs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">small_frac</span><span class="p">))</span>
     <span class="k">def</span> <span class="nf">my_autopct</span><span class="p">(</span><span class="n">pct</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;</span><span class="si">{p:.2g}</span><span class="s1">\%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">pct</span><span class="o">*</span><span class="n">err_tot</span><span class="p">)</span>
+        <span class="c1"># use individual errors as labels</span>
+        <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;</span><span class="si">{p:.2g}</span><span class="s1">\%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">pct</span><span class="o">*</span><span class="n">var_tot</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">fracs</span><span class="p">,</span>
         <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
@@ -3200,7 +3204,7 @@ and allow to control the presentation of the plot (see docstring of
       
   <div class="item">
     <div class="name def" id="flavio.plots.plotfunctions.likelihood_contour_data">
-    <p>def <span class="ident">likelihood_contour_data</span>(</p><p>log_likelihood, x_min, x_max, y_min, y_max, n_sigma=1, steps=20, threads=1, pool=None)</p>
+    <p>def <span class="ident">likelihood_contour_data</span>(</p><p>log_likelihood, x_min, x_max, y_min, y_max)</p>
     </div>
     
 
@@ -3213,6 +3217,7 @@ given a log likelihood function.</p>
 <li><code>log_likelihood</code>: function returning the logarithm of the likelihood.
   Can e.g. be the method of the same name of a FastFit instance.</li>
 <li><code>x_min</code>, <code>x_max</code>, <code>y_min</code>, <code>y_max</code>: data boundaries</li>
+<li><code>xscale</code>, <code>yscale</code>: <code>linear</code> (default) or <code>log</code> scale</li>
 <li><code>n_sigma</code>: plot confidence level corresponding to this number of standard
   deviations. Either a number (defaults to 1) or a tuple to plot several
   contours.</li>
@@ -3227,8 +3232,11 @@ implementation, e.g. from <code>multiprocess</code> or <code>schwimmbad</code>).
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.plots.plotfunctions.likelihood_contour_data', this);">Show source &equiv;</a></p>
   <div id="source-flavio.plots.plotfunctions.likelihood_contour_data" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">likelihood_contour_data</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span>
-              <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">likelihood_contour_data</span><span class="p">(</span>
+        <span class="n">log_likelihood</span><span class="p">,</span>
+        <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+        <span class="n">xscale</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">yscale</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+        <span class="n">n_sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Generate data required to plot coloured confidence contours (or bands)</span>
 <span class="sd">    given a log likelihood function.</span>
 
@@ -3237,6 +3245,7 @@ implementation, e.g. from <code>multiprocess</code> or <code>schwimmbad</code>).
 <span class="sd">    - `log_likelihood`: function returning the logarithm of the likelihood.</span>
 <span class="sd">      Can e.g. be the method of the same name of a FastFit instance.</span>
 <span class="sd">    - `x_min`, `x_max`, `y_min`, `y_max`: data boundaries</span>
+<span class="sd">    - `xscale`, `yscale`: `linear` (default) or `log` scale</span>
 <span class="sd">    - `n_sigma`: plot confidence level corresponding to this number of standard</span>
 <span class="sd">      deviations. Either a number (defaults to 1) or a tuple to plot several</span>
 <span class="sd">      contours.</span>
@@ -3248,8 +3257,22 @@ implementation, e.g. from <code>multiprocess</code> or <code>schwimmbad</code>).
 <span class="sd">    implementation, e.g. from `multiprocess` or `schwimmbad`). Overrides the</span>
 <span class="sd">    `threads` argument.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
-    <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">xscale</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+        <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">xscale</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">x_min</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">x_max</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`x_min` and `x_max` have to be positive if `xscale` is set to `log`.&quot;</span><span class="p">)</span>
+        <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x_min</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x_max</span><span class="p">),</span> <span class="n">steps</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`xscale` must be &#39;linear&#39; or &#39;log&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">yscale</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+        <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">yscale</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">y_min</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">y_max</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`y_min` and `y_max` have to be positive if `yscale` is set to `log`.&quot;</span><span class="p">)</span>
+        <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">y_min</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">y_max</span><span class="p">),</span> <span class="n">steps</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`yscale` must be &#39;linear&#39; or &#39;log&#39;.&quot;</span><span class="p">)</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="nd">@np</span><span class="o">.</span><span class="n">vectorize</span>

@@ -1447,13 +1447,20 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
         <span class="sd">&quot;&quot;&quot;Returns a list of all parameters/observables constrained.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">constraint</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">is_parameter_constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the constraint on one or several parameters/observables.</span>
 
 <span class="sd">        `constraint` must be an instance of a child of ProbabilityDistribution.</span>
 
 <span class="sd">        Note that if there already exists a constraint, it will be removed.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">is_parameter_constraint</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span> <span class="c1"># check if parameter object already exists</span>
+                    <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+                <span class="k">except</span><span class="p">:</span> <span class="c1"># otherwise, create a new one</span>
+                    <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span> <span class="c1"># if parameter exists, remove existing constraints</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
             <span class="c1"># remove constraint if there is one</span>
             <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
@@ -1804,14 +1811,15 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
         <span class="n">_read_yaml_object_values_correlated</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;data/parameters_correlated.yml&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
 
         <span class="c1"># Read the parameters from the default PDG data file</span>
-        <span class="n">read_pdg</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">read_pdg</span><span class="p">(</span><span class="mi">2022</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
         <span class="c1"># Read default parameters for B-&gt;V form factors</span>
         <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_v</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">bsz_load</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="s1">&#39;LCSR&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;B-&gt;omega&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;rho&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
         <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_v</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">bsz_load</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="s1">&#39;LCSR-Lattice&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;B-&gt;K*&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs-&gt;phi&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs-&gt;K*&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
 
         <span class="c1"># Read default parameters for B-&gt;P form factors</span>
-        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_p</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">gkvd_load</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;LCSR-Lattice&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;B-&gt;K&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;pi&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_p</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">load_ffs_eos</span><span class="p">(</span><span class="s1">&#39;data/arXiv-2305-06301v1/BSZ-parameters-N2.yaml&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;K::FormFactors[parametric,BSZ]@GRvDV:2023A&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;::alpha\^(.*)_(.*)@BSZ2015&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39; BSZ a\2_\1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> <span class="c1"># B-&gt;K</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_p</span><span class="o">.</span><span class="n">bcl_parameters_lmvd</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="s1">&#39;data/arXiv-2102.07233v2/LCSR-LQCD_mod_BCL_params_K=4.yaml&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> <span class="c1"># B-&gt;pi</span>
 
         <span class="c1"># Read default parameters for Lambdab-&gt;Lambda form factors</span>
         <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">lambdab_12</span><span class="o">.</span><span class="n">lattice_parameters</span><span class="o">.</span><span class="n">lattice_load_ho</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -2552,13 +2560,20 @@ documentation.</p></div>
         <span class="sd">&quot;&quot;&quot;Returns a list of all parameters/observables constrained.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">constraint</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">is_parameter_constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the constraint on one or several parameters/observables.</span>
 
 <span class="sd">        `constraint` must be an instance of a child of ProbabilityDistribution.</span>
 
 <span class="sd">        Note that if there already exists a constraint, it will be removed.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">is_parameter_constraint</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span> <span class="c1"># check if parameter object already exists</span>
+                    <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+                <span class="k">except</span><span class="p">:</span> <span class="c1"># otherwise, create a new one</span>
+                    <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span> <span class="c1"># if parameter exists, remove existing constraints</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
             <span class="c1"># remove constraint if there is one</span>
             <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
@@ -2919,7 +2934,7 @@ documentation.</p></div>
             
   <div class="item">
     <div class="name def" id="flavio.classes.Constraints.add_constraint">
-    <p>def <span class="ident">add_constraint</span>(</p><p>self, parameters, constraint)</p>
+    <p>def <span class="ident">add_constraint</span>(</p><p>self, parameters, constraint, is_parameter_constraint=None)</p>
     </div>
     
 
@@ -2931,11 +2946,18 @@ documentation.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Constraints.add_constraint', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Constraints.add_constraint" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">constraint</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">is_parameter_constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Set the constraint on one or several parameters/observables.</span>
 <span class="sd">    `constraint` must be an instance of a child of ProbabilityDistribution.</span>
 <span class="sd">    Note that if there already exists a constraint, it will be removed.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_parameter_constraint</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span> <span class="c1"># check if parameter object already exists</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span> <span class="c1"># otherwise, create a new one</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1"># if parameter exists, remove existing constraints</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
         <span class="c1"># remove constraint if there is one</span>
         <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
@@ -4101,7 +4123,7 @@ ProbabilityDistribution and <code>observables</code> is a list of either
             
   <div class="item">
     <div class="name def" id="flavio.classes.Measurement.add_constraint">
-    <p>def <span class="ident">add_constraint</span>(</p><p>self, parameters, constraint)</p>
+    <p>def <span class="ident">add_constraint</span>(</p><p>self, parameters, constraint, is_parameter_constraint=None)</p>
     </div>
     
 
@@ -4113,11 +4135,18 @@ ProbabilityDistribution and <code>observables</code> is a list of either
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.Measurement.add_constraint', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.Measurement.add_constraint" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">constraint</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">is_parameter_constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Set the constraint on one or several parameters/observables.</span>
 <span class="sd">    `constraint` must be an instance of a child of ProbabilityDistribution.</span>
 <span class="sd">    Note that if there already exists a constraint, it will be removed.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_parameter_constraint</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span> <span class="c1"># check if parameter object already exists</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span> <span class="c1"># otherwise, create a new one</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1"># if parameter exists, remove existing constraints</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
         <span class="c1"># remove constraint if there is one</span>
         <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
@@ -6247,14 +6276,15 @@ theory parameters represented by instances of the <code>Parameter</code> class.<
         <span class="n">_read_yaml_object_values_correlated</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;data/parameters_correlated.yml&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
 
         <span class="c1"># Read the parameters from the default PDG data file</span>
-        <span class="n">read_pdg</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">read_pdg</span><span class="p">(</span><span class="mi">2022</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
         <span class="c1"># Read default parameters for B-&gt;V form factors</span>
         <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_v</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">bsz_load</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="s1">&#39;LCSR&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;B-&gt;omega&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;rho&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
         <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_v</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">bsz_load</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="s1">&#39;LCSR-Lattice&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;B-&gt;K*&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs-&gt;phi&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs-&gt;K*&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
 
         <span class="c1"># Read default parameters for B-&gt;P form factors</span>
-        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_p</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">gkvd_load</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;LCSR-Lattice&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;B-&gt;K&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;pi&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_p</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">load_ffs_eos</span><span class="p">(</span><span class="s1">&#39;data/arXiv-2305-06301v1/BSZ-parameters-N2.yaml&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;K::FormFactors[parametric,BSZ]@GRvDV:2023A&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;::alpha\^(.*)_(.*)@BSZ2015&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39; BSZ a\2_\1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> <span class="c1"># B-&gt;K</span>
+        <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_p</span><span class="o">.</span><span class="n">bcl_parameters_lmvd</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="s1">&#39;data/arXiv-2102.07233v2/LCSR-LQCD_mod_BCL_params_K=4.yaml&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> <span class="c1"># B-&gt;pi</span>
 
         <span class="c1"># Read default parameters for Lambdab-&gt;Lambda form factors</span>
         <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">lambdab_12</span><span class="o">.</span><span class="n">lattice_parameters</span><span class="o">.</span><span class="n">lattice_load_ho</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -6297,7 +6327,7 @@ theory parameters represented by instances of the <code>Parameter</code> class.<
             
   <div class="item">
     <div class="name def" id="flavio.classes.ParameterConstraints.add_constraint">
-    <p>def <span class="ident">add_constraint</span>(</p><p>self, parameters, constraint)</p>
+    <p>def <span class="ident">add_constraint</span>(</p><p>self, parameters, constraint, is_parameter_constraint=None)</p>
     </div>
     
 
@@ -6309,11 +6339,18 @@ theory parameters represented by instances of the <code>Parameter</code> class.<
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.ParameterConstraints.add_constraint', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.ParameterConstraints.add_constraint" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">constraint</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">is_parameter_constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Set the constraint on one or several parameters/observables.</span>
 <span class="sd">    `constraint` must be an instance of a child of ProbabilityDistribution.</span>
 <span class="sd">    Note that if there already exists a constraint, it will be removed.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_parameter_constraint</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span> <span class="c1"># check if parameter object already exists</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span> <span class="c1"># otherwise, create a new one</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1"># if parameter exists, remove existing constraints</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
         <span class="c1"># remove constraint if there is one</span>
         <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
@@ -6792,12 +6829,13 @@ containing the parameter list of each constraint (e.g. 'parameters',
     <span class="c1"># Read the correlated parameter values from the default YAML data file</span>
     <span class="n">_read_yaml_object_values_correlated</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;flavio&#39;</span><span class="p">,</span> <span class="s1">&#39;data/parameters_correlated.yml&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
     <span class="c1"># Read the parameters from the default PDG data file</span>
-    <span class="n">read_pdg</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="n">read_pdg</span><span class="p">(</span><span class="mi">2022</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
     <span class="c1"># Read default parameters for B-&gt;V form factors</span>
     <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_v</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">bsz_load</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="s1">&#39;LCSR&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;B-&gt;omega&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;rho&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
     <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_v</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">bsz_load</span><span class="p">(</span><span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="s1">&#39;LCSR-Lattice&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;B-&gt;K*&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs-&gt;phi&#39;</span><span class="p">,</span> <span class="s1">&#39;Bs-&gt;K*&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
     <span class="c1"># Read default parameters for B-&gt;P form factors</span>
-    <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_p</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">gkvd_load</span><span class="p">(</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;LCSR-Lattice&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;B-&gt;K&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;pi&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_p</span><span class="o">.</span><span class="n">bsz_parameters</span><span class="o">.</span><span class="n">load_ffs_eos</span><span class="p">(</span><span class="s1">&#39;data/arXiv-2305-06301v1/BSZ-parameters-N2.yaml&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&gt;K::FormFactors[parametric,BSZ]@GRvDV:2023A&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;::alpha\^(.*)_(.*)@BSZ2015&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39; BSZ a\2_\1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> <span class="c1"># B-&gt;K</span>
+    <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">b_p</span><span class="o">.</span><span class="n">bcl_parameters_lmvd</span><span class="o">.</span><span class="n">load_parameters</span><span class="p">(</span><span class="s1">&#39;data/arXiv-2102.07233v2/LCSR-LQCD_mod_BCL_params_K=4.yaml&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> <span class="c1"># B-&gt;pi</span>
     <span class="c1"># Read default parameters for Lambdab-&gt;Lambda form factors</span>
     <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">bdecays</span><span class="o">.</span><span class="n">formfactors</span><span class="o">.</span><span class="n">lambdab_12</span><span class="o">.</span><span class="n">lattice_parameters</span><span class="o">.</span><span class="n">lattice_load_ho</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </pre></div>
@@ -7273,7 +7311,7 @@ pname: [...],  # required, list of constrained parameters
             
   <div class="item">
     <div class="name def" id="flavio.classes.WilsonCoefficientPriors.add_constraint">
-    <p>def <span class="ident">add_constraint</span>(</p><p>self, parameters, constraint)</p>
+    <p>def <span class="ident">add_constraint</span>(</p><p>self, parameters, constraint, is_parameter_constraint=None)</p>
     </div>
     
 
@@ -7285,11 +7323,18 @@ pname: [...],  # required, list of constrained parameters
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.classes.WilsonCoefficientPriors.add_constraint', this);">Show source &equiv;</a></p>
   <div id="source-flavio.classes.WilsonCoefficientPriors.add_constraint" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">constraint</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">is_parameter_constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Set the constraint on one or several parameters/observables.</span>
 <span class="sd">    `constraint` must be an instance of a child of ProbabilityDistribution.</span>
 <span class="sd">    Note that if there already exists a constraint, it will be removed.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_parameter_constraint</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span> <span class="c1"># check if parameter object already exists</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span> <span class="c1"># otherwise, create a new one</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1"># if parameter exists, remove existing constraints</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
         <span class="c1"># remove constraint if there is one</span>
         <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">remove_constraint</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>

@@ -1060,8 +1060,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
   <ul>
     <li class="mono"><a href="#flavio.physics.test_ckm.A">A</a></li>
     <li class="mono"><a href="#flavio.physics.test_ckm.Vcb">Vcb</a></li>
+    <li class="mono"><a href="#flavio.physics.test_ckm.Vcd_complex">Vcd_complex</a></li>
+    <li class="mono"><a href="#flavio.physics.test_ckm.Vtd_complex">Vtd_complex</a></li>
     <li class="mono"><a href="#flavio.physics.test_ckm.Vub">Vub</a></li>
     <li class="mono"><a href="#flavio.physics.test_ckm.Vus">Vus</a></li>
+    <li class="mono"><a href="#flavio.physics.test_ckm.beta">beta</a></li>
+    <li class="mono"><a href="#flavio.physics.test_ckm.c12">c12</a></li>
+    <li class="mono"><a href="#flavio.physics.test_ckm.c13">c13</a></li>
+    <li class="mono"><a href="#flavio.physics.test_ckm.c23">c23</a></li>
     <li class="mono"><a href="#flavio.physics.test_ckm.delta">delta</a></li>
     <li class="mono"><a href="#flavio.physics.test_ckm.eta">eta</a></li>
     <li class="mono"><a href="#flavio.physics.test_ckm.etabar">etabar</a></li>
@@ -1070,6 +1076,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <li class="mono"><a href="#flavio.physics.test_ckm.rho">rho</a></li>
     <li class="mono"><a href="#flavio.physics.test_ckm.rho_minus_i_eta">rho_minus_i_eta</a></li>
     <li class="mono"><a href="#flavio.physics.test_ckm.rhobar">rhobar</a></li>
+    <li class="mono"><a href="#flavio.physics.test_ckm.rhobar_plus_i_etabar">rhobar_plus_i_etabar</a></li>
+    <li class="mono"><a href="#flavio.physics.test_ckm.s12">s12</a></li>
+    <li class="mono"><a href="#flavio.physics.test_ckm.s13">s13</a></li>
+    <li class="mono"><a href="#flavio.physics.test_ckm.s23">s23</a></li>
     <li class="mono"><a href="#flavio.physics.test_ckm.t12">t12</a></li>
     <li class="mono"><a href="#flavio.physics.test_ckm.t13">t13</a></li>
     <li class="mono"><a href="#flavio.physics.test_ckm.t23">t23</a></li>
@@ -1184,6 +1194,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 <span class="kn">import</span> <span class="nn">cmath</span>
 <span class="kn">from</span> <span class="nn">flavio.physics.ckm</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">ckmutil.ckm</span> <span class="kn">import</span> <span class="n">gamma_to_delta</span>
 
 <span class="c1"># some values close to the real ones</span>
 <span class="n">Vus</span> <span class="o">=</span> <span class="mf">0.22</span>
@@ -1192,34 +1203,50 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 <span class="n">gamma</span> <span class="o">=</span> <span class="n">radians</span><span class="p">(</span><span class="mf">70.</span><span class="p">)</span> <span class="c1"># 70° in radians</span>
 
 <span class="c1"># converting to other parametrizations</span>
-<span class="n">t12</span> <span class="o">=</span> <span class="n">asin</span><span class="p">(</span><span class="n">Vus</span><span class="p">)</span>
-<span class="n">t13</span> <span class="o">=</span> <span class="n">asin</span><span class="p">(</span><span class="n">Vub</span><span class="p">)</span>
-<span class="n">t23</span> <span class="o">=</span> <span class="n">asin</span><span class="p">(</span><span class="n">Vcb</span><span class="p">)</span><span class="o">/</span><span class="n">cos</span><span class="p">(</span><span class="n">t13</span><span class="p">)</span>
-<span class="n">delta</span> <span class="o">=</span> <span class="n">gamma</span>
+<span class="n">s13</span> <span class="o">=</span> <span class="n">Vub</span>
+<span class="n">c13</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">s13</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">s12</span> <span class="o">=</span> <span class="n">Vus</span><span class="o">/</span><span class="n">c13</span>
+<span class="n">c12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">s12</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">s23</span> <span class="o">=</span> <span class="n">Vcb</span><span class="o">/</span><span class="n">c13</span>
+<span class="n">c23</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">s23</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">t12</span> <span class="o">=</span> <span class="n">asin</span><span class="p">(</span><span class="n">s12</span><span class="p">)</span>
+<span class="n">t13</span> <span class="o">=</span> <span class="n">asin</span><span class="p">(</span><span class="n">s13</span><span class="p">)</span>
+<span class="n">t23</span> <span class="o">=</span> <span class="n">asin</span><span class="p">(</span><span class="n">s23</span><span class="p">)</span>
+<span class="n">delta</span> <span class="o">=</span> <span class="n">gamma_to_delta</span><span class="p">(</span><span class="n">t12</span><span class="p">,</span> <span class="n">t13</span><span class="p">,</span> <span class="n">t23</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
 <span class="n">laC</span> <span class="o">=</span> <span class="n">Vus</span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">t23</span><span class="p">)</span><span class="o">/</span><span class="n">laC</span><span class="o">**</span><span class="mi">2</span>
-<span class="n">rho_minus_i_eta</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">t13</span><span class="p">)</span> <span class="o">*</span> <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">delta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">laC</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">s23</span><span class="o">/</span><span class="n">laC</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">rho_minus_i_eta</span> <span class="o">=</span> <span class="n">s13</span> <span class="o">*</span> <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">delta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">laC</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">rho</span> <span class="o">=</span> <span class="n">rho_minus_i_eta</span><span class="o">.</span><span class="n">real</span>
 <span class="n">eta</span> <span class="o">=</span> <span class="o">-</span><span class="n">rho_minus_i_eta</span><span class="o">.</span><span class="n">imag</span>
-<span class="n">rhobar</span> <span class="o">=</span> <span class="n">rho</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">laC</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
-<span class="n">etabar</span> <span class="o">=</span> <span class="n">eta</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">laC</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
+<span class="n">rhobar_plus_i_etabar</span> <span class="o">=</span> <span class="p">(</span> <span class="c1"># e.q. Eq. (92) in arXiv:2206.07501</span>
+    <span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">laC</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">rho</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">eta</span><span class="p">)</span><span class="o">/</span>
+    <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">A</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">laC</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">laC</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">A</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">laC</span><span class="o">**</span><span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">rho</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">eta</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="n">rhobar</span> <span class="o">=</span> <span class="n">rhobar_plus_i_etabar</span><span class="o">.</span><span class="n">real</span>
+<span class="n">etabar</span> <span class="o">=</span> <span class="n">rhobar_plus_i_etabar</span><span class="o">.</span><span class="n">imag</span>
+<span class="n">Vcd_complex</span> <span class="o">=</span> <span class="o">-</span> <span class="n">s12</span><span class="o">*</span><span class="n">c23</span> <span class="o">-</span> <span class="n">c12</span><span class="o">*</span><span class="n">s23</span><span class="o">*</span><span class="n">s13</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">delta</span><span class="p">)</span>
+<span class="n">Vtd_complex</span> <span class="o">=</span> <span class="n">s12</span><span class="o">*</span><span class="n">s23</span> <span class="o">-</span> <span class="n">c12</span><span class="o">*</span><span class="n">c23</span><span class="o">*</span><span class="n">s13</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">delta</span><span class="p">)</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="o">-</span><span class="n">Vcd_complex</span><span class="o">/</span><span class="n">Vtd_complex</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">TestCKM</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="n">v_s</span> <span class="o">=</span> <span class="n">ckm_standard</span><span class="p">(</span><span class="n">t12</span><span class="p">,</span> <span class="n">t13</span><span class="p">,</span> <span class="n">t23</span><span class="p">,</span> <span class="n">delta</span><span class="p">)</span>
     <span class="n">v_w</span> <span class="o">=</span> <span class="n">ckm_wolfenstein</span><span class="p">(</span><span class="n">laC</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">rhobar</span><span class="p">,</span> <span class="n">etabar</span><span class="p">)</span>
     <span class="n">v_t</span> <span class="o">=</span> <span class="n">ckm_tree</span><span class="p">(</span><span class="n">Vus</span><span class="p">,</span> <span class="n">Vub</span><span class="p">,</span> <span class="n">Vcb</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+    <span class="n">v_b</span> <span class="o">=</span> <span class="n">ckm_beta_gamma</span><span class="p">(</span><span class="n">Vus</span><span class="p">,</span> <span class="n">Vcb</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
     <span class="n">par_s</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">t12</span><span class="o">=</span><span class="n">t12</span><span class="p">,</span><span class="n">t13</span><span class="o">=</span><span class="n">t13</span><span class="p">,</span><span class="n">t23</span><span class="o">=</span><span class="n">t23</span><span class="p">,</span><span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
     <span class="n">par_w</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">laC</span><span class="o">=</span><span class="n">laC</span><span class="p">,</span><span class="n">A</span><span class="o">=</span><span class="n">A</span><span class="p">,</span><span class="n">rhobar</span><span class="o">=</span><span class="n">rhobar</span><span class="p">,</span><span class="n">etabar</span><span class="o">=</span><span class="n">etabar</span><span class="p">)</span>
-    <span class="n">par_t</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Vus</span><span class="o">=</span><span class="n">Vus</span><span class="p">,</span><span class="n">Vub</span><span class="o">=</span><span class="n">Vub</span><span class="p">,</span><span class="n">Vcb</span><span class="o">=</span><span class="n">Vcb</span><span class="p">,</span><span class="n">delta</span><span class="o">=</span><span class="n">gamma</span><span class="p">)</span>
+    <span class="n">par_t</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Vus</span><span class="o">=</span><span class="n">Vus</span><span class="p">,</span><span class="n">Vub</span><span class="o">=</span><span class="n">Vub</span><span class="p">,</span><span class="n">Vcb</span><span class="o">=</span><span class="n">Vcb</span><span class="p">,</span><span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_ckm_parametrizations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">v_s</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">v_w</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">v_b</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_ckm_unitarity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_w</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">v_w</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_s</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">v_s</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_b</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">v_b</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_get_ckm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># np.testing.assert_array_equal(get_ckm(self.par_s), self.v_s)</span>
@@ -1276,6 +1303,22 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 
       </div>
       <div class="item">
+      <p id="flavio.physics.test_ckm.Vcd_complex" class="name">var <span class="ident">Vcd_complex</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.test_ckm.Vtd_complex" class="name">var <span class="ident">Vtd_complex</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
       <p id="flavio.physics.test_ckm.Vub" class="name">var <span class="ident">Vub</span></p>
       
   
@@ -1285,6 +1328,38 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
       </div>
       <div class="item">
       <p id="flavio.physics.test_ckm.Vus" class="name">var <span class="ident">Vus</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.test_ckm.beta" class="name">var <span class="ident">beta</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.test_ckm.c12" class="name">var <span class="ident">c12</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.test_ckm.c13" class="name">var <span class="ident">c13</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.test_ckm.c23" class="name">var <span class="ident">c23</span></p>
       
   
   <div class="source_cont">
@@ -1356,6 +1431,38 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 
       </div>
       <div class="item">
+      <p id="flavio.physics.test_ckm.rhobar_plus_i_etabar" class="name">var <span class="ident">rhobar_plus_i_etabar</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.test_ckm.s12" class="name">var <span class="ident">s12</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.test_ckm.s13" class="name">var <span class="ident">s13</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.test_ckm.s23" class="name">var <span class="ident">s23</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
       <p id="flavio.physics.test_ckm.t12" class="name">var <span class="ident">t12</span></p>
       
   
@@ -1419,18 +1526,21 @@ in order to be run.</p>
     <span class="n">v_s</span> <span class="o">=</span> <span class="n">ckm_standard</span><span class="p">(</span><span class="n">t12</span><span class="p">,</span> <span class="n">t13</span><span class="p">,</span> <span class="n">t23</span><span class="p">,</span> <span class="n">delta</span><span class="p">)</span>
     <span class="n">v_w</span> <span class="o">=</span> <span class="n">ckm_wolfenstein</span><span class="p">(</span><span class="n">laC</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">rhobar</span><span class="p">,</span> <span class="n">etabar</span><span class="p">)</span>
     <span class="n">v_t</span> <span class="o">=</span> <span class="n">ckm_tree</span><span class="p">(</span><span class="n">Vus</span><span class="p">,</span> <span class="n">Vub</span><span class="p">,</span> <span class="n">Vcb</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+    <span class="n">v_b</span> <span class="o">=</span> <span class="n">ckm_beta_gamma</span><span class="p">(</span><span class="n">Vus</span><span class="p">,</span> <span class="n">Vcb</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
     <span class="n">par_s</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">t12</span><span class="o">=</span><span class="n">t12</span><span class="p">,</span><span class="n">t13</span><span class="o">=</span><span class="n">t13</span><span class="p">,</span><span class="n">t23</span><span class="o">=</span><span class="n">t23</span><span class="p">,</span><span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
     <span class="n">par_w</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">laC</span><span class="o">=</span><span class="n">laC</span><span class="p">,</span><span class="n">A</span><span class="o">=</span><span class="n">A</span><span class="p">,</span><span class="n">rhobar</span><span class="o">=</span><span class="n">rhobar</span><span class="p">,</span><span class="n">etabar</span><span class="o">=</span><span class="n">etabar</span><span class="p">)</span>
-    <span class="n">par_t</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Vus</span><span class="o">=</span><span class="n">Vus</span><span class="p">,</span><span class="n">Vub</span><span class="o">=</span><span class="n">Vub</span><span class="p">,</span><span class="n">Vcb</span><span class="o">=</span><span class="n">Vcb</span><span class="p">,</span><span class="n">delta</span><span class="o">=</span><span class="n">gamma</span><span class="p">)</span>
+    <span class="n">par_t</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Vus</span><span class="o">=</span><span class="n">Vus</span><span class="p">,</span><span class="n">Vub</span><span class="o">=</span><span class="n">Vub</span><span class="p">,</span><span class="n">Vcb</span><span class="o">=</span><span class="n">Vcb</span><span class="p">,</span><span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_ckm_parametrizations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">v_s</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">v_w</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">v_b</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_ckm_unitarity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_w</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">v_w</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_s</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">v_s</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_b</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">v_b</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">test_get_ckm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># np.testing.assert_array_equal(get_ckm(self.par_s), self.v_s)</span>
@@ -1528,6 +1638,16 @@ in order to be run.</p>
             </div>
             <div class="item">
             <p id="flavio.physics.test_ckm.TestCKM.par_w" class="name">var <span class="ident">par_w</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="flavio.physics.test_ckm.TestCKM.v_b" class="name">var <span class="ident">v_b</span></p>
             
 
             
@@ -3781,6 +3901,7 @@ block, allowing further test code to be executed.</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">test_ckm_parametrizations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">v_s</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">v_w</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">v_b</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -3804,6 +3925,7 @@ block, allowing further test code to be executed.</p></div>
     <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">v_t</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_w</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">v_w</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_s</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">v_s</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_b</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">v_b</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 </pre></div>
 
   </div>

@@ -1059,6 +1059,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
       
   <ul>
     <li class="mono"><a href="#flavio.physics.betadecays.ft.Dd">Dd</a></li>
+    <li class="mono"><a href="#flavio.physics.betadecays.ft.Q_EC">Q_EC</a></li>
     <li class="mono"><a href="#flavio.physics.betadecays.ft.coeff">coeff</a></li>
     <li class="mono"><a href="#flavio.physics.betadecays.ft.coeffs">coeffs</a></li>
     <li class="mono"><a href="#flavio.physics.betadecays.ft.coeffs_mE">coeffs_mE</a></li>
@@ -1358,6 +1359,26 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 <span class="p">}</span>
 
 
+<span class="c1"># Transition energies in MeV (Table I of Hardy:2020qwl)</span>
+<span class="c1"># Used for the calculation of the deltaNS uncertainties</span>
+<span class="n">Q_EC</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s2">&quot;10C&quot;</span><span class="p">:</span>   <span class="mf">1907.994e-3</span><span class="p">,</span>
+<span class="s2">&quot;14O&quot;</span><span class="p">:</span>   <span class="mf">2831.543e-3</span><span class="p">,</span>
+<span class="s2">&quot;22Mg&quot;</span><span class="p">:</span>  <span class="mf">4124.49e-3</span><span class="p">,</span>
+<span class="s2">&quot;26mAl&quot;</span><span class="p">:</span> <span class="mf">4232.72e-3</span><span class="p">,</span>
+<span class="s2">&quot;34Cl&quot;</span><span class="p">:</span>  <span class="mf">5491.662e-3</span><span class="p">,</span>
+<span class="s2">&quot;34Ar&quot;</span><span class="p">:</span>  <span class="mf">6061.83e-3</span><span class="p">,</span>
+<span class="s2">&quot;38mK&quot;</span><span class="p">:</span>  <span class="mf">6044.240e-3</span><span class="p">,</span>
+<span class="s2">&quot;38Ca&quot;</span><span class="p">:</span>  <span class="mf">6612.12e-3</span><span class="p">,</span>
+<span class="s2">&quot;42Sc&quot;</span><span class="p">:</span>  <span class="mf">6426.34e-3</span><span class="p">,</span>
+<span class="s2">&quot;46V&quot;</span><span class="p">:</span>   <span class="mf">7052.45e-3</span><span class="p">,</span>
+<span class="s2">&quot;50Mn&quot;</span><span class="p">:</span>  <span class="mf">7634.453e-3</span><span class="p">,</span>
+<span class="s2">&quot;54Co&quot;</span><span class="p">:</span>  <span class="mf">8244.38e-3</span><span class="p">,</span>
+<span class="s2">&quot;62Ga&quot;</span><span class="p">:</span>  <span class="mf">9181.07e-3</span><span class="p">,</span>
+<span class="s2">&quot;74Rb&quot;</span><span class="p">:</span>  <span class="mf">10416.8e-3</span><span class="p">,</span>
+<span class="p">}</span>
+
+
 <span class="k">def</span> <span class="nf">Ft_superallowed</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">wc_obj</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Corrected $\mathcal{F}t$ value of the beta decay of isotope `A`.&quot;&quot;&quot;</span>
     <span class="n">MF</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -1372,7 +1393,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <span class="n">GF</span> <span class="o">=</span> <span class="n">GFeff</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
     <span class="n">pre</span> <span class="o">=</span> <span class="n">GF</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">Vud</span>
     <span class="n">ddRp</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;delta_deltaRp_Z2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">Z</span><span class="o">**</span><span class="mi">2</span>  <span class="c1"># relative uncertainty on \delta R&#39; (universal)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ddRp</span><span class="p">)</span> <span class="o">*</span> <span class="n">K</span><span class="p">(</span><span class="n">par</span><span class="p">)</span> <span class="o">/</span> <span class="n">Xi</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">me_E</span><span class="p">)</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pre</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">ddNS_A</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;delta_deltaNS,A&#39;</span><span class="p">]</span> <span class="c1"># systematic uncertainty on \delta_NS,A</span>
+    <span class="c1"># systematic uncertainty on \delta_NS,E for a specific decay</span>
+    <span class="n">ddNS_E</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;delta_deltaNS,E_QEC&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">Q_EC</span><span class="p">[</span><span class="n">A</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ddRp</span> <span class="o">+</span> <span class="n">ddNS_A</span> <span class="o">+</span> <span class="n">ddNS_E</span><span class="p">)</span> <span class="o">*</span> <span class="n">K</span><span class="p">(</span><span class="n">par</span><span class="p">)</span> <span class="o">/</span> <span class="n">Xi</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">me_E</span><span class="p">)</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pre</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
 
 
 <span class="k">class</span> <span class="nc">NeutronObservable</span><span class="p">:</span>
@@ -1549,6 +1573,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
       <p id="flavio.physics.betadecays.ft.Dd" class="name">var <span class="ident">Dd</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="flavio.physics.betadecays.ft.Q_EC" class="name">var <span class="ident">Q_EC</span></p>
       
   
   <div class="source_cont">
@@ -1859,7 +1891,10 @@ The sign <code>s</code> is + for the electron and - for the positron.</p></div>
     <span class="n">GF</span> <span class="o">=</span> <span class="n">GFeff</span><span class="p">(</span><span class="n">wc_obj</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
     <span class="n">pre</span> <span class="o">=</span> <span class="n">GF</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">Vud</span>
     <span class="n">ddRp</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;delta_deltaRp_Z2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">Z</span><span class="o">**</span><span class="mi">2</span>  <span class="c1"># relative uncertainty on \delta R&#39; (universal)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ddRp</span><span class="p">)</span> <span class="o">*</span> <span class="n">K</span><span class="p">(</span><span class="n">par</span><span class="p">)</span> <span class="o">/</span> <span class="n">Xi</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">me_E</span><span class="p">)</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pre</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">ddNS_A</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;delta_deltaNS,A&#39;</span><span class="p">]</span> <span class="c1"># systematic uncertainty on \delta_NS,A</span>
+    <span class="c1"># systematic uncertainty on \delta_NS,E for a specific decay</span>
+    <span class="n">ddNS_E</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;delta_deltaNS,E_QEC&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">Q_EC</span><span class="p">[</span><span class="n">A</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ddRp</span> <span class="o">+</span> <span class="n">ddNS_A</span> <span class="o">+</span> <span class="n">ddNS_E</span><span class="p">)</span> <span class="o">*</span> <span class="n">K</span><span class="p">(</span><span class="n">par</span><span class="p">)</span> <span class="o">/</span> <span class="n">Xi</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">me_E</span><span class="p">)</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pre</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
 </pre></div>
 
   </div>

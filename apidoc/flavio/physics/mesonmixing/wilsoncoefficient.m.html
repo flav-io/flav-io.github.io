@@ -1058,6 +1058,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
+    <li class="mono"><a href="#flavio.physics.mesonmixing.wilsoncoefficient.config">config</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.wilsoncoefficient.meson_quark">meson_quark</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.wilsoncoefficient.pi">pi</a></li>
   </ul>
@@ -1070,7 +1071,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <li class="mono"><a href="#flavio.physics.mesonmixing.wilsoncoefficient.F_box">F_box</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.wilsoncoefficient.S0_box">S0_box</a></li>
     <li class="mono"><a href="#flavio.physics.mesonmixing.wilsoncoefficient.cvll_d">cvll_d</a></li>
-    <li class="mono"><a href="#flavio.physics.mesonmixing.wilsoncoefficient.df2_prefactor">df2_prefactor</a></li>
   </ul>
 
     </li>
@@ -1098,6 +1098,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 <span class="kn">from</span> <span class="nn">flavio.physics.mesonmixing.common</span> <span class="kn">import</span> <span class="n">meson_quark</span>
 <span class="kn">from</span> <span class="nn">flavio.physics</span> <span class="kn">import</span> <span class="n">ckm</span>
 <span class="kn">import</span> <span class="nn">flavio</span>
+<span class="kn">from</span> <span class="nn">flavio.config</span> <span class="kn">import</span> <span class="n">config</span>
 
 <span class="k">def</span> <span class="nf">F_box</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;$\Delta F=2$ box loop function.</span>
@@ -1110,7 +1111,13 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 <span class="sd">    - `y`:</span>
 <span class="sd">        $m_{u_j}^2/m_W^2$</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y</span> <span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">y</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span> <span class="o">+</span> <span class="n">x</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">((</span><span class="mi">4</span><span class="o">+</span><span class="mi">4</span> <span class="o">*</span> <span class="n">x</span><span class="o">-</span><span class="mi">15</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
               <span class="o">+</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="o">+</span><span class="mi">4</span> <span class="o">*</span> <span class="n">x</span><span class="o">+</span><span class="mi">3</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">))</span>
     <span class="k">return</span> <span class="p">((</span><span class="mi">4</span><span class="o">-</span><span class="mi">7</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="n">x</span><span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="n">y</span><span class="o">+</span><span class="mi">4</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
@@ -1122,13 +1129,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
     <span class="n">flavio</span><span class="o">.</span><span class="n">citations</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;Inami:1980fz&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">F_box</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="n">F_box</span><span class="p">(</span><span class="n">xu</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span> <span class="o">-</span> <span class="n">F_box</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span> <span class="o">-</span> <span class="n">F_box</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">df2_prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
-    <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
-    <span class="n">mW</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_W&#39;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="o">-</span><span class="n">GF</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">mW</span><span class="o">**</span><span class="mi">2</span>
-
-
-<span class="k">def</span> <span class="nf">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">160</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Contributions to the Standard Model Wilson coefficient $C_V^{LL}$</span>
 <span class="sd">    for $B^0$, $B_s$, and $K$ mixing at the matching scale.</span>
 
@@ -1146,25 +1147,50 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    a tuple of three complex numbers `(C_tt, C_cc, C_ct)` that contain the top-,</span>
-<span class="sd">    charm-, and charm-top-contribution to the Wilson coefficient. This</span>
-<span class="sd">    separation is necessary as they run differently.</span>
+<span class="sd">    C_V^{LL} RI Wilson coefficient including QCD correction factors</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">mt</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="n">mc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mc</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="n">mu</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">mt</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mt_mt</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">mc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s2">&quot;m_c&quot;</span><span class="p">]</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s2">&quot;m_u&quot;</span><span class="p">]</span>
     <span class="n">mW</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_W&#39;</span><span class="p">]</span>
     <span class="n">xt</span> <span class="o">=</span> <span class="n">mt</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">mW</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">xc</span> <span class="o">=</span> <span class="n">mc</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">mW</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">xu</span> <span class="o">=</span> <span class="n">mu</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">mW</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">di_dj</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[</span><span class="n">meson</span><span class="p">]</span>
-    <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
-    <span class="n">xi_c</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
-    <span class="n">N</span> <span class="o">=</span> <span class="n">df2_prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
-    <span class="n">C_cc</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">xi_c</span><span class="o">**</span><span class="mi">2</span>     <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">xc</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
-    <span class="n">C_tt</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">xi_t</span><span class="o">**</span><span class="mi">2</span>     <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xt</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
-    <span class="n">C_ct</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="mi">2</span><span class="o">*</span><span class="n">xi_c</span><span class="o">*</span><span class="n">xi_t</span> <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">C_tt</span><span class="p">,</span> <span class="n">C_cc</span><span class="p">,</span> <span class="n">C_ct</span><span class="p">)</span>
+    <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="o">-</span><span class="n">GF</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">mW</span><span class="o">**</span><span class="mi">2</span>
+    <span class="c1"># charm contribution only needed for K mixing! Negligible for B and Bs.</span>
+    <span class="k">if</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;K0&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;implementation&#39;</span><span class="p">][</span><span class="s1">&#39;K mixing unitarity&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ut&#39;</span><span class="p">:</span>
+            <span class="c1"># use u-t unitarity (1911.06822)</span>
+            <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+            <span class="n">xi_u</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+            <span class="n">C_tt</span> <span class="o">=</span>  <span class="n">xi_t</span><span class="o">**</span><span class="mi">2</span>    <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xt</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xc</span><span class="p">)</span>
+            <span class="n">C_ut</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">xi_u</span><span class="o">*</span><span class="n">xi_t</span> <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xu</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xc</span><span class="p">)</span>
+            <span class="n">C_uu</span> <span class="o">=</span>  <span class="n">xi_u</span><span class="o">**</span><span class="mi">2</span>    <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xu</span><span class="p">,</span> <span class="n">xu</span><span class="p">,</span> <span class="n">xc</span><span class="p">)</span> <span class="c1"># Im(C_uu) = 0</span>
+            <span class="n">eta_tt</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_tt_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="o">+</span><span class="s1">&#39;_ut&#39;</span><span class="p">]</span>
+            <span class="n">eta_ut</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_ut_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="o">+</span><span class="s1">&#39;_ut&#39;</span><span class="p">]</span>
+            <span class="n">eta_uu</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_uu_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="o">+</span><span class="s1">&#39;_ut&#39;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="n">eta_tt</span><span class="o">*</span><span class="n">C_tt</span> <span class="o">+</span> <span class="n">eta_ut</span><span class="o">*</span><span class="n">C_ut</span> <span class="o">+</span> <span class="n">eta_uu</span><span class="o">*</span><span class="n">C_uu</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;implementation&#39;</span><span class="p">][</span><span class="s1">&#39;K mixing unitarity&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ct&#39;</span><span class="p">:</span>
+            <span class="c1"># use traditional c-t unitarity</span>
+            <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+            <span class="n">xi_c</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+            <span class="n">C_tt</span> <span class="o">=</span>  <span class="n">xi_t</span><span class="o">**</span><span class="mi">2</span>    <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xt</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
+            <span class="n">C_ct</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">xi_c</span><span class="o">*</span><span class="n">xi_t</span> <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
+            <span class="n">C_cc</span> <span class="o">=</span>  <span class="n">xi_c</span><span class="o">**</span><span class="mi">2</span>    <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">xc</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
+            <span class="n">eta_tt</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_tt_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+            <span class="n">eta_ct</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_ct_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+            <span class="n">eta_cc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_cc_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="n">eta_tt</span><span class="o">*</span><span class="n">C_tt</span> <span class="o">+</span> <span class="n">eta_ct</span><span class="o">*</span><span class="n">C_ct</span> <span class="o">+</span> <span class="n">eta_cc</span><span class="o">*</span><span class="n">C_cc</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown value for K mixing unitarity: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;implementation&#39;</span><span class="p">][</span><span class="s1">&#39;K mixing unitarity&#39;</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># use traditional c-t unitarity</span>
+        <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+        <span class="n">C_tt</span> <span class="o">=</span> <span class="n">xi_t</span><span class="o">**</span><span class="mi">2</span>     <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xt</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
+        <span class="n">eta_tt</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_tt_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">N</span> <span class="o">*</span> <span class="n">eta_tt</span> <span class="o">*</span> <span class="n">C_tt</span>
 </pre></div>
 
   </div>
@@ -1173,6 +1199,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="flavio.physics.mesonmixing.wilsoncoefficient.config" class="name">var <span class="ident">config</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
       <div class="item">
       <p id="flavio.physics.mesonmixing.wilsoncoefficient.meson_quark" class="name">var <span class="ident">meson_quark</span></p>
       
@@ -1222,7 +1256,13 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
 <span class="sd">    - `y`:</span>
 <span class="sd">        $m_{u_j}^2/m_W^2$</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y</span> <span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">y</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span> <span class="o">+</span> <span class="n">x</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">((</span><span class="mi">4</span><span class="o">+</span><span class="mi">4</span> <span class="o">*</span> <span class="n">x</span><span class="o">-</span><span class="mi">15</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
               <span class="o">+</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="o">+</span><span class="mi">4</span> <span class="o">*</span> <span class="n">x</span><span class="o">+</span><span class="mi">3</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">))</span>
     <span class="k">return</span> <span class="p">((</span><span class="mi">4</span><span class="o">-</span><span class="mi">7</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="n">x</span><span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="n">y</span><span class="o">+</span><span class="mi">4</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
@@ -1262,7 +1302,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px
       
   <div class="item">
     <div class="name def" id="flavio.physics.mesonmixing.wilsoncoefficient.cvll_d">
-    <p>def <span class="ident">cvll_d</span>(</p><p>par, meson, scale=160)</p>
+    <p>def <span class="ident">cvll_d</span>(</p><p>par, meson)</p>
     </div>
     
 
@@ -1281,13 +1321,11 @@ where $O_V^{LL} = (\bar d_L^i\gamma^\mu d_L^j)^2$ with $i&lt;j$.</p>
     should be one of <code>'B0'</code>, <code>'Bs'</code>, or <code>'K0'</code></li>
 </ul>
 <h2>Returns</h2>
-<p>a tuple of three complex numbers <code>(C_tt, C_cc, C_ct)</code> that contain the top-,
-charm-, and charm-top-contribution to the Wilson coefficient. This
-separation is necessary as they run differently.</p></div>
+<p>C_V^{LL} RI Wilson coefficient including QCD correction factors</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.wilsoncoefficient.cvll_d', this);">Show source &equiv;</a></p>
   <div id="source-flavio.physics.mesonmixing.wilsoncoefficient.cvll_d" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">160</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cvll_d</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">meson</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Contributions to the Standard Model Wilson coefficient $C_V^{LL}$</span>
 <span class="sd">    for $B^0$, $B_s$, and $K$ mixing at the matching scale.</span>
 
@@ -1305,48 +1343,50 @@ separation is necessary as they run differently.</p></div>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    a tuple of three complex numbers `(C_tt, C_cc, C_ct)` that contain the top-,</span>
-<span class="sd">    charm-, and charm-top-contribution to the Wilson coefficient. This</span>
-<span class="sd">    separation is necessary as they run differently.</span>
+<span class="sd">    C_V^{LL} RI Wilson coefficient including QCD correction factors</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">mt</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mt</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="n">mc</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mc</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="n">mu</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mu</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">mt</span> <span class="o">=</span> <span class="n">flavio</span><span class="o">.</span><span class="n">physics</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">running</span><span class="o">.</span><span class="n">get_mt_mt</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
+    <span class="n">mc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s2">&quot;m_c&quot;</span><span class="p">]</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s2">&quot;m_u&quot;</span><span class="p">]</span>
     <span class="n">mW</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_W&#39;</span><span class="p">]</span>
     <span class="n">xt</span> <span class="o">=</span> <span class="n">mt</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">mW</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">xc</span> <span class="o">=</span> <span class="n">mc</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">mW</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">xu</span> <span class="o">=</span> <span class="n">mu</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">mW</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">di_dj</span> <span class="o">=</span> <span class="n">meson_quark</span><span class="p">[</span><span class="n">meson</span><span class="p">]</span>
-    <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
-    <span class="n">xi_c</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
-    <span class="n">N</span> <span class="o">=</span> <span class="n">df2_prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
-    <span class="n">C_cc</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">xi_c</span><span class="o">**</span><span class="mi">2</span>     <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">xc</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
-    <span class="n">C_tt</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">xi_t</span><span class="o">**</span><span class="mi">2</span>     <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xt</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
-    <span class="n">C_ct</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="mi">2</span><span class="o">*</span><span class="n">xi_c</span><span class="o">*</span><span class="n">xi_t</span> <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">C_tt</span><span class="p">,</span> <span class="n">C_cc</span><span class="p">,</span> <span class="n">C_ct</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="flavio.physics.mesonmixing.wilsoncoefficient.df2_prefactor">
-    <p>def <span class="ident">df2_prefactor</span>(</p><p>par)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-flavio.physics.mesonmixing.wilsoncoefficient.df2_prefactor', this);">Show source &equiv;</a></p>
-  <div id="source-flavio.physics.mesonmixing.wilsoncoefficient.df2_prefactor" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">df2_prefactor</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
     <span class="n">GF</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
-    <span class="n">mW</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;m_W&#39;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="o">-</span><span class="n">GF</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">mW</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="o">-</span><span class="n">GF</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mf">4.</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">mW</span><span class="o">**</span><span class="mi">2</span>
+    <span class="c1"># charm contribution only needed for K mixing! Negligible for B and Bs.</span>
+    <span class="k">if</span> <span class="n">meson</span> <span class="o">==</span> <span class="s1">&#39;K0&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;implementation&#39;</span><span class="p">][</span><span class="s1">&#39;K mixing unitarity&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ut&#39;</span><span class="p">:</span>
+            <span class="c1"># use u-t unitarity (1911.06822)</span>
+            <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+            <span class="n">xi_u</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+            <span class="n">C_tt</span> <span class="o">=</span>  <span class="n">xi_t</span><span class="o">**</span><span class="mi">2</span>    <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xt</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xc</span><span class="p">)</span>
+            <span class="n">C_ut</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">xi_u</span><span class="o">*</span><span class="n">xi_t</span> <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xu</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xc</span><span class="p">)</span>
+            <span class="n">C_uu</span> <span class="o">=</span>  <span class="n">xi_u</span><span class="o">**</span><span class="mi">2</span>    <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xu</span><span class="p">,</span> <span class="n">xu</span><span class="p">,</span> <span class="n">xc</span><span class="p">)</span> <span class="c1"># Im(C_uu) = 0</span>
+            <span class="n">eta_tt</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_tt_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="o">+</span><span class="s1">&#39;_ut&#39;</span><span class="p">]</span>
+            <span class="n">eta_ut</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_ut_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="o">+</span><span class="s1">&#39;_ut&#39;</span><span class="p">]</span>
+            <span class="n">eta_uu</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_uu_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="o">+</span><span class="s1">&#39;_ut&#39;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="n">eta_tt</span><span class="o">*</span><span class="n">C_tt</span> <span class="o">+</span> <span class="n">eta_ut</span><span class="o">*</span><span class="n">C_ut</span> <span class="o">+</span> <span class="n">eta_uu</span><span class="o">*</span><span class="n">C_uu</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;implementation&#39;</span><span class="p">][</span><span class="s1">&#39;K mixing unitarity&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ct&#39;</span><span class="p">:</span>
+            <span class="c1"># use traditional c-t unitarity</span>
+            <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+            <span class="n">xi_c</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+            <span class="n">C_tt</span> <span class="o">=</span>  <span class="n">xi_t</span><span class="o">**</span><span class="mi">2</span>    <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xt</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
+            <span class="n">C_ct</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">xi_c</span><span class="o">*</span><span class="n">xi_t</span> <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
+            <span class="n">C_cc</span> <span class="o">=</span>  <span class="n">xi_c</span><span class="o">**</span><span class="mi">2</span>    <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">xc</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
+            <span class="n">eta_tt</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_tt_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+            <span class="n">eta_ct</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_ct_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+            <span class="n">eta_cc</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_cc_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="n">eta_tt</span><span class="o">*</span><span class="n">C_tt</span> <span class="o">+</span> <span class="n">eta_ct</span><span class="o">*</span><span class="n">C_ct</span> <span class="o">+</span> <span class="n">eta_cc</span><span class="o">*</span><span class="n">C_cc</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown value for K mixing unitarity: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;implementation&#39;</span><span class="p">][</span><span class="s1">&#39;K mixing unitarity&#39;</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># use traditional c-t unitarity</span>
+        <span class="n">xi_t</span> <span class="o">=</span> <span class="n">ckm</span><span class="o">.</span><span class="n">xi</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">di_dj</span><span class="p">)(</span><span class="n">par</span><span class="p">)</span>
+        <span class="n">C_tt</span> <span class="o">=</span> <span class="n">xi_t</span><span class="o">**</span><span class="mi">2</span>     <span class="o">*</span> <span class="n">S0_box</span><span class="p">(</span><span class="n">xt</span><span class="p">,</span> <span class="n">xt</span><span class="p">,</span> <span class="n">xu</span><span class="p">)</span>
+        <span class="n">eta_tt</span> <span class="o">=</span> <span class="n">par</span><span class="p">[</span><span class="s1">&#39;eta_tt_&#39;</span><span class="o">+</span><span class="n">meson</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">N</span> <span class="o">*</span> <span class="n">eta_tt</span> <span class="o">*</span> <span class="n">C_tt</span>
 </pre></div>
 
   </div>
