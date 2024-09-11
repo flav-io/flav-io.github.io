@@ -274,6 +274,61 @@ a scalar observable).
 | `dBR/dq2(B+->Kee)` | $\frac{d\text{BR}}{dq^2}(B^\pm\to K^\pm e^+e^-)$ | Differential branching ratio of $B^\pm\to K^\pm e^+e^-$ | `q2` |
 
 
+### $B^\pm\to \pi^\pm \mu^+\mu^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<ACP>(B+->pimumu)` | $\langle A_\text{CP}\rangle(B^\pm\to \pi^\pm \mu^+\mu^-)$ | Binned Direct CP asymmetry in $B^\pm\to \pi^\pm \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<AFB>(B+->pimumu)` | $\langle A_\text{FB}\rangle(B^\pm\to \pi^\pm \mu^+\mu^-)$ | Binned forward-backward asymmetry in $B^\pm\to \pi^\pm \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<FH>(B+->pimumu)` | $\langle F_H\rangle(B^\pm\to \pi^\pm \mu^+\mu^-)$ | Binned flat term in $B^\pm\to \pi^\pm \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<Rmue>(B+->pill)` | $\langle R_{\mu e} \rangle(B^\pm\to \pi^\pm \ell^+\ell^-)$ | Ratio of partial branching ratios of $B^\pm\to \pi^\pm \mu^+ \mu^-$ and $B^\pm\to \pi^\pm e^+ e^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B+->pill)` | $\langle R_{\tau \mu} \rangle(B^\pm\to \pi^\pm \ell^+\ell^-)$ | Ratio of partial branching ratios of $B^\pm\to \pi^\pm \tau^+ \tau^-$ and $B^\pm\to \pi^\pm \mu^+ \mu^-$ | `q2min`, `q2max` |
+| `<dBR/dq2>(B+->pimumu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^\pm\to \pi^\pm \mu^+\mu^-)$ | Binned differential branching ratio of $B^\pm\to \pi^\pm \mu^+\mu^-$ | `q2min`, `q2max` |
+| `ACP(B+->pimumu)` | $A_\text{CP}(B^\pm\to \pi^\pm \mu^+\mu^-)$ | Direct CP asymmetry in $B^\pm\to \pi^\pm \mu^+\mu^-$ | `q2` |
+| `AFB(B+->pimumu)` | $A_\text{FB}(B^\pm\to \pi^\pm \mu^+\mu^-)$ | Forward-backward asymmetry in $B^\pm\to \pi^\pm \mu^+\mu^-$ | `q2` |
+| `FH(B+->pimumu)` | $F_H(B^\pm\to \pi^\pm \mu^+\mu^-)$ | Flat term in $B^\pm\to \pi^\pm \mu^+\mu^-$ | `q2` |
+| `Rmue(B+->pill)` | $R_{\mu e}(B^\pm\to \pi^\pm \ell^+\ell^-)$ | Ratio of differential branching ratios of $B^\pm\to \pi^\pm \mu^+ \mu^-$ and $B^\pm\to \pi^\pm e^+ e^-$ | `q2` |
+| `Rtaumu(B+->pill)` | $R_{\tau \mu}(B^\pm\to \pi^\pm \ell^+\ell^-)$ | Ratio of differential branching ratios of $B^\pm\to \pi^\pm \tau^+ \tau^-$ and $B^\pm\to \pi^\pm \mu^+ \mu^-$ | `q2` |
+| `dBR/dq2(B+->pimumu)` | $\frac{d\text{BR}}{dq^2}(B^\pm\to \pi^\pm \mu^+\mu^-)$ | Differential branching ratio of $B^\pm\to \pi^\pm \mu^+\mu^-$ | `q2` |
+
+
+### $B^\pm\to \pi^\pm \tau^+\tau^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<ACP>(B+->pitautau)` | $\langle A_\text{CP}\rangle(B^\pm\to \pi^\pm \tau^+\tau^-)$ | Binned Direct CP asymmetry in $B^\pm\to \pi^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
+| `<AFB>(B+->pitautau)` | $\langle A_\text{FB}\rangle(B^\pm\to \pi^\pm \tau^+\tau^-)$ | Binned forward-backward asymmetry in $B^\pm\to \pi^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
+| `<FH>(B+->pitautau)` | $\langle F_H\rangle(B^\pm\to \pi^\pm \tau^+\tau^-)$ | Binned flat term in $B^\pm\to \pi^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B+->pill)` | $\langle R_{\tau \mu} \rangle(B^\pm\to \pi^\pm \ell^+\ell^-)$ | Ratio of partial branching ratios of $B^\pm\to \pi^\pm \tau^+ \tau^-$ and $B^\pm\to \pi^\pm \mu^+ \mu^-$ | `q2min`, `q2max` |
+| `<dBR/dq2>(B+->pitautau)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^\pm\to \pi^\pm \tau^+\tau^-)$ | Binned differential branching ratio of $B^\pm\to \pi^\pm \tau^+\tau^-$ | `q2min`, `q2max` |
+| `ACP(B+->pitautau)` | $A_\text{CP}(B^\pm\to \pi^\pm \tau^+\tau^-)$ | Direct CP asymmetry in $B^\pm\to \pi^\pm \tau^+\tau^-$ | `q2` |
+| `AFB(B+->pitautau)` | $A_\text{FB}(B^\pm\to \pi^\pm \tau^+\tau^-)$ | Forward-backward asymmetry in $B^\pm\to \pi^\pm \tau^+\tau^-$ | `q2` |
+| `BR(B+->pitautau)` | $\text{BR}(B^\pm\to \pi^\pm \tau^+\tau^-)$ | Branching ratio of $B^\pm\to \pi^\pm \tau^+\tau^-$ |  |
+| `FH(B+->pitautau)` | $F_H(B^\pm\to \pi^\pm \tau^+\tau^-)$ | Flat term in $B^\pm\to \pi^\pm \tau^+\tau^-$ | `q2` |
+| `Rtaumu(B+->pill)` | $R_{\tau \mu}(B^\pm\to \pi^\pm \ell^+\ell^-)$ | Ratio of differential branching ratios of $B^\pm\to \pi^\pm \tau^+ \tau^-$ and $B^\pm\to \pi^\pm \mu^+ \mu^-$ | `q2` |
+| `dBR/dq2(B+->pitautau)` | $\frac{d\text{BR}}{dq^2}(B^\pm\to \pi^\pm \tau^+\tau^-)$ | Differential branching ratio of $B^\pm\to \pi^\pm \tau^+\tau^-$ | `q2` |
+
+
+### $B^\pm\to \pi^\pm e^+e^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<ACP>(B+->piee)` | $\langle A_\text{CP}\rangle(B^\pm\to \pi^\pm e^+e^-)$ | Binned Direct CP asymmetry in $B^\pm\to \pi^\pm e^+e^-$ | `q2min`, `q2max` |
+| `<AFB>(B+->piee)` | $\langle A_\text{FB}\rangle(B^\pm\to \pi^\pm e^+e^-)$ | Binned forward-backward asymmetry in $B^\pm\to \pi^\pm e^+e^-$ | `q2min`, `q2max` |
+| `<FH>(B+->piee)` | $\langle F_H\rangle(B^\pm\to \pi^\pm e^+e^-)$ | Binned flat term in $B^\pm\to \pi^\pm e^+e^-$ | `q2min`, `q2max` |
+| `<Rmue>(B+->pill)` | $\langle R_{\mu e} \rangle(B^\pm\to \pi^\pm \ell^+\ell^-)$ | Ratio of partial branching ratios of $B^\pm\to \pi^\pm \mu^+ \mu^-$ and $B^\pm\to \pi^\pm e^+ e^-$ | `q2min`, `q2max` |
+| `<dBR/dq2>(B+->piee)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(B^\pm\to \pi^\pm e^+e^-)$ | Binned differential branching ratio of $B^\pm\to \pi^\pm e^+e^-$ | `q2min`, `q2max` |
+| `ACP(B+->piee)` | $A_\text{CP}(B^\pm\to \pi^\pm e^+e^-)$ | Direct CP asymmetry in $B^\pm\to \pi^\pm e^+e^-$ | `q2` |
+| `AFB(B+->piee)` | $A_\text{FB}(B^\pm\to \pi^\pm e^+e^-)$ | Forward-backward asymmetry in $B^\pm\to \pi^\pm e^+e^-$ | `q2` |
+| `BR_Belle(B+->piee)` | $\text{BR}(B^\pm\to \pi^\pm e^+e^-)$ | Branching ratio of $B^\pm\to \pi^\pm e^+e^-$ |  |
+| `FH(B+->piee)` | $F_H(B^\pm\to \pi^\pm e^+e^-)$ | Flat term in $B^\pm\to \pi^\pm e^+e^-$ | `q2` |
+| `Rmue(B+->pill)` | $R_{\mu e}(B^\pm\to \pi^\pm \ell^+\ell^-)$ | Ratio of differential branching ratios of $B^\pm\to \pi^\pm \mu^+ \mu^-$ and $B^\pm\to \pi^\pm e^+ e^-$ | `q2` |
+| `dBR/dq2(B+->piee)` | $\frac{d\text{BR}}{dq^2}(B^\pm\to \pi^\pm e^+e^-)$ | Differential branching ratio of $B^\pm\to \pi^\pm e^+e^-$ | `q2` |
+
+
 ### $\bar B^0\to \bar K^0 \mu^+\tau^-$
 
 {: class="table"}
@@ -416,6 +471,60 @@ a scalar observable).
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
 | `BR(B0->pietau,taue)` | $\text{BR}(\bar B^0\to \pi^0 e^\pm\tau^\mp)$ | Total branching ratio of $\bar B^0\to \pi^0 e^\pm\tau^\mp$ |  |
+
+
+### $\bar B^0\to \pi^0\mu^+\mu^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<ACP>(B0->pimumu)` | $\langle A_\text{CP}\rangle(\bar B^0\to \pi^0\mu^+\mu^-)$ | Binned Direct CP asymmetry in $\bar B^0\to \pi^0\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<AFB>(B0->pimumu)` | $\langle A_\text{FB}\rangle(\bar B^0\to \pi^0\mu^+\mu^-)$ | Binned forward-backward asymmetry in $\bar B^0\to \pi^0\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<FH>(B0->pimumu)` | $\langle F_H\rangle(\bar B^0\to \pi^0\mu^+\mu^-)$ | Binned flat term in $\bar B^0\to \pi^0\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<Rmue>(B0->pill)` | $\langle R_{\mu e} \rangle(\bar B^0\to \pi^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $\bar B^0\to \pi^0\mu^+ \mu^-$ and $\bar B^0\to \pi^0e^+ e^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B0->pill)` | $\langle R_{\tau \mu} \rangle(\bar B^0\to \pi^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $\bar B^0\to \pi^0\tau^+ \tau^-$ and $\bar B^0\to \pi^0\mu^+ \mu^-$ | `q2min`, `q2max` |
+| `<dBR/dq2>(B0->pimumu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\bar B^0\to \pi^0\mu^+\mu^-)$ | Binned differential branching ratio of $\bar B^0\to \pi^0\mu^+\mu^-$ | `q2min`, `q2max` |
+| `ACP(B0->pimumu)` | $A_\text{CP}(\bar B^0\to \pi^0\mu^+\mu^-)$ | Direct CP asymmetry in $\bar B^0\to \pi^0\mu^+\mu^-$ | `q2` |
+| `AFB(B0->pimumu)` | $A_\text{FB}(\bar B^0\to \pi^0\mu^+\mu^-)$ | Forward-backward asymmetry in $\bar B^0\to \pi^0\mu^+\mu^-$ | `q2` |
+| `FH(B0->pimumu)` | $F_H(\bar B^0\to \pi^0\mu^+\mu^-)$ | Flat term in $\bar B^0\to \pi^0\mu^+\mu^-$ | `q2` |
+| `Rmue(B0->pill)` | $R_{\mu e}(\bar B^0\to \pi^0\ell^+\ell^-)$ | Ratio of differential branching ratios of $\bar B^0\to \pi^0\mu^+ \mu^-$ and $\bar B^0\to \pi^0e^+ e^-$ | `q2` |
+| `Rtaumu(B0->pill)` | $R_{\tau \mu}(\bar B^0\to \pi^0\ell^+\ell^-)$ | Ratio of differential branching ratios of $\bar B^0\to \pi^0\tau^+ \tau^-$ and $\bar B^0\to \pi^0\mu^+ \mu^-$ | `q2` |
+| `dBR/dq2(B0->pimumu)` | $\frac{d\text{BR}}{dq^2}(\bar B^0\to \pi^0\mu^+\mu^-)$ | Differential branching ratio of $\bar B^0\to \pi^0\mu^+\mu^-$ | `q2` |
+
+
+### $\bar B^0\to \pi^0\tau^+\tau^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<ACP>(B0->pitautau)` | $\langle A_\text{CP}\rangle(\bar B^0\to \pi^0\tau^+\tau^-)$ | Binned Direct CP asymmetry in $\bar B^0\to \pi^0\tau^+\tau^-$ | `q2min`, `q2max` |
+| `<AFB>(B0->pitautau)` | $\langle A_\text{FB}\rangle(\bar B^0\to \pi^0\tau^+\tau^-)$ | Binned forward-backward asymmetry in $\bar B^0\to \pi^0\tau^+\tau^-$ | `q2min`, `q2max` |
+| `<FH>(B0->pitautau)` | $\langle F_H\rangle(\bar B^0\to \pi^0\tau^+\tau^-)$ | Binned flat term in $\bar B^0\to \pi^0\tau^+\tau^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(B0->pill)` | $\langle R_{\tau \mu} \rangle(\bar B^0\to \pi^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $\bar B^0\to \pi^0\tau^+ \tau^-$ and $\bar B^0\to \pi^0\mu^+ \mu^-$ | `q2min`, `q2max` |
+| `<dBR/dq2>(B0->pitautau)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\bar B^0\to \pi^0\tau^+\tau^-)$ | Binned differential branching ratio of $\bar B^0\to \pi^0\tau^+\tau^-$ | `q2min`, `q2max` |
+| `ACP(B0->pitautau)` | $A_\text{CP}(\bar B^0\to \pi^0\tau^+\tau^-)$ | Direct CP asymmetry in $\bar B^0\to \pi^0\tau^+\tau^-$ | `q2` |
+| `AFB(B0->pitautau)` | $A_\text{FB}(\bar B^0\to \pi^0\tau^+\tau^-)$ | Forward-backward asymmetry in $\bar B^0\to \pi^0\tau^+\tau^-$ | `q2` |
+| `BR(B0->pitautau)` | $\text{BR}(\bar B^0\to \pi^0\tau^+\tau^-)$ | Branching ratio of $\bar B^0\to \pi^0\tau^+\tau^-$ |  |
+| `FH(B0->pitautau)` | $F_H(\bar B^0\to \pi^0\tau^+\tau^-)$ | Flat term in $\bar B^0\to \pi^0\tau^+\tau^-$ | `q2` |
+| `Rtaumu(B0->pill)` | $R_{\tau \mu}(\bar B^0\to \pi^0\ell^+\ell^-)$ | Ratio of differential branching ratios of $\bar B^0\to \pi^0\tau^+ \tau^-$ and $\bar B^0\to \pi^0\mu^+ \mu^-$ | `q2` |
+| `dBR/dq2(B0->pitautau)` | $\frac{d\text{BR}}{dq^2}(\bar B^0\to \pi^0\tau^+\tau^-)$ | Differential branching ratio of $\bar B^0\to \pi^0\tau^+\tau^-$ | `q2` |
+
+
+### $\bar B^0\to \pi^0e^+e^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<ACP>(B0->piee)` | $\langle A_\text{CP}\rangle(\bar B^0\to \pi^0e^+e^-)$ | Binned Direct CP asymmetry in $\bar B^0\to \pi^0e^+e^-$ | `q2min`, `q2max` |
+| `<AFB>(B0->piee)` | $\langle A_\text{FB}\rangle(\bar B^0\to \pi^0e^+e^-)$ | Binned forward-backward asymmetry in $\bar B^0\to \pi^0e^+e^-$ | `q2min`, `q2max` |
+| `<FH>(B0->piee)` | $\langle F_H\rangle(\bar B^0\to \pi^0e^+e^-)$ | Binned flat term in $\bar B^0\to \pi^0e^+e^-$ | `q2min`, `q2max` |
+| `<Rmue>(B0->pill)` | $\langle R_{\mu e} \rangle(\bar B^0\to \pi^0\ell^+\ell^-)$ | Ratio of partial branching ratios of $\bar B^0\to \pi^0\mu^+ \mu^-$ and $\bar B^0\to \pi^0e^+ e^-$ | `q2min`, `q2max` |
+| `<dBR/dq2>(B0->piee)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\bar B^0\to \pi^0e^+e^-)$ | Binned differential branching ratio of $\bar B^0\to \pi^0e^+e^-$ | `q2min`, `q2max` |
+| `ACP(B0->piee)` | $A_\text{CP}(\bar B^0\to \pi^0e^+e^-)$ | Direct CP asymmetry in $\bar B^0\to \pi^0e^+e^-$ | `q2` |
+| `AFB(B0->piee)` | $A_\text{FB}(\bar B^0\to \pi^0e^+e^-)$ | Forward-backward asymmetry in $\bar B^0\to \pi^0e^+e^-$ | `q2` |
+| `FH(B0->piee)` | $F_H(\bar B^0\to \pi^0e^+e^-)$ | Flat term in $\bar B^0\to \pi^0e^+e^-$ | `q2` |
+| `Rmue(B0->pill)` | $R_{\mu e}(\bar B^0\to \pi^0\ell^+\ell^-)$ | Ratio of differential branching ratios of $\bar B^0\to \pi^0\mu^+ \mu^-$ and $\bar B^0\to \pi^0e^+ e^-$ | `q2` |
+| `dBR/dq2(B0->piee)` | $\frac{d\text{BR}}{dq^2}(\bar B^0\to \pi^0e^+e^-)$ | Differential branching ratio of $\bar B^0\to \pi^0e^+e^-$ | `q2` |
 
 
 ## $B\to P\nu\bar\nu$
@@ -758,6 +867,7 @@ a scalar observable).
 | `<ACP>(B0->K*mumu)` | $\langle A_\text{CP}\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned Direct CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<AFB>(B0->K*mumu)` | $\langle A_\text{FB}\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned forward-backward asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<ATIm>(B0->K*mumu)` | $\langle A_T^\text{Im}\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned Transverse CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<Dmue_AFB>(B0->K*ll)` | $\langle D_{A_\text{FB}}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $A_\text{FB}$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<Dmue_P4p>(B0->K*ll)` | $\langle D_{P_4^\prime}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $P_4^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<Dmue_P5p>(B0->K*ll)` | $\langle D_{P_5^\prime}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $P_5^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<FL>(B0->K*mumu)` | $\langle F_L\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned longitudinal polarization fraction in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
@@ -788,6 +898,7 @@ a scalar observable).
 | `ACP(B0->K*mumu)` | $A_\text{CP}(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Direct CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `AFB(B0->K*mumu)` | $A_\text{FB}(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Forward-backward asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `ATIm(B0->K*mumu)` | $A_T^\text{Im}(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Transverse CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
+| `Dmue_AFB(B0->K*ll)` | $D_{A_\text{FB}}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $A_\text{FB}$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `Dmue_P4p(B0->K*ll)` | $D_{P_4^\prime}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $P_4^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `Dmue_P5p(B0->K*ll)` | $D_{P_5^\prime}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $P_5^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `FL(B0->K*mumu)` | $F_L(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Longitudinal polarization fraction in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
@@ -886,6 +997,7 @@ a scalar observable).
 | `<ACP>(B0->K*ee)` | $\langle A_\text{CP}\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned Direct CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<AFB>(B0->K*ee)` | $\langle A_\text{FB}\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned forward-backward asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<ATIm>(B0->K*ee)` | $\langle A_T^\text{Im}\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned Transverse CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
+| `<Dmue_AFB>(B0->K*ll)` | $\langle D_{A_\text{FB}}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $A_\text{FB}$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<Dmue_P4p>(B0->K*ll)` | $\langle D_{P_4^\prime}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $P_4^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<Dmue_P5p>(B0->K*ll)` | $\langle D_{P_5^\prime}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $P_5^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<FL>(B0->K*ee)` | $\langle F_L\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned longitudinal polarization fraction in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
@@ -915,6 +1027,7 @@ a scalar observable).
 | `ACP(B0->K*ee)` | $A_\text{CP}(B^0\to K^{\ast 0}e^+e^-)$ | Direct CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `AFB(B0->K*ee)` | $A_\text{FB}(B^0\to K^{\ast 0}e^+e^-)$ | Forward-backward asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `ATIm(B0->K*ee)` | $A_T^\text{Im}(B^0\to K^{\ast 0}e^+e^-)$ | Transverse CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
+| `Dmue_AFB(B0->K*ll)` | $D_{A_\text{FB}}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $A_\text{FB}$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `Dmue_P4p(B0->K*ll)` | $D_{P_4^\prime}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $P_4^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `Dmue_P5p(B0->K*ll)` | $D_{P_5^\prime}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $P_5^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `FL(B0->K*ee)` | $F_L(B^0\to K^{\ast 0}e^+e^-)$ | Longitudinal polarization fraction in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
@@ -934,6 +1047,62 @@ a scalar observable).
 | `S8(B0->K*ee)` | $S_8(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `S9(B0->K*ee)` | $S_9(B^0\to K^{\ast 0}e^+e^-)$ | CP-averaged angular observable in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `dBR/dq2(B0->K*ee)` | $\frac{d\text{BR}}{dq^2}(B^0\to K^{\ast 0}e^+e^-)$ | Differential branching ratio of $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
+
+
+### $B_s\to K^* \mu^+\mu^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<FL>(Bs->K*0mumu)` | $\langle \overline{F_L}\rangle(B_s\to K^* \mu^+\mu^-)$ | Binned Time-averaged longitudinal polarization fraction in $B_s\to K^* \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<Rmue>(Bs->K*0ll)` | $\langle R_{\mu e} \rangle(B_s\to K^* \ell^+\ell^-)$ | Ratio of partial branching ratios of $B_s\to K^* \mu^+ \mu^-$ and $B_s\to K^* e^+ e^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(Bs->K*0ll)` | $\langle R_{\tau \mu} \rangle(B_s\to K^* \ell^+\ell^-)$ | Ratio of partial branching ratios of $B_s\to K^* \tau^+ \tau^-$ and $B_s\to K^* \mu^+ \mu^-$ | `q2min`, `q2max` |
+| `<S3>(Bs->K*0mumu)` | $\langle \overline{S_3}\rangle(B_s\to K^* \mu^+\mu^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to K^* \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S4>(Bs->K*0mumu)` | $\langle \overline{S_4}\rangle(B_s\to K^* \mu^+\mu^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to K^* \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S7>(Bs->K*0mumu)` | $\langle \overline{S_7}\rangle(B_s\to K^* \mu^+\mu^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to K^* \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<dBR/dq2>(Bs->K*0mumu)` | $\langle \frac{d\overline{\text{BR}}}{dq^2} \rangle(B_s\to K^* \mu^+\mu^-)$ | Binned time-integrated differential branching ratio of $B_s\to K^* \mu^+\mu^-$ | `q2min`, `q2max` |
+| `BR_LHCb(Bs->K*0mumu)` | $\overline{\text{BR}}(B_s\to K^* \mu^+\mu^-)$ | Branching ratio of $B_s\to K^* \mu^+\mu^-$ measured by LHCb in 2018 |  |
+| `FL(Bs->K*0mumu)` | $\overline{F_L}(B_s\to K^* \mu^+\mu^-)$ | Time-averaged longitudinal polarization fraction in $B_s\to K^* \mu^+\mu^-$ | `q2` |
+| `S3(Bs->K*0mumu)` | $\overline{S_3}(B_s\to K^* \mu^+\mu^-)$ | Time-averaged, CP-averaged angular observable in $B_s\to K^* \mu^+\mu^-$ | `q2` |
+| `S4(Bs->K*0mumu)` | $\overline{S_4}(B_s\to K^* \mu^+\mu^-)$ | Time-averaged, CP-averaged angular observable in $B_s\to K^* \mu^+\mu^-$ | `q2` |
+| `S7(Bs->K*0mumu)` | $\overline{S_7}(B_s\to K^* \mu^+\mu^-)$ | Time-averaged, CP-averaged angular observable in $B_s\to K^* \mu^+\mu^-$ | `q2` |
+| `dBR/dq2(Bs->K*0mumu)` | $\frac{d\overline{\text{BR}}}{dq^2}(B_s\to K^* \mu^+\mu^-)$ | Differential time-integrated branching ratio of $B_s\to K^* \mu^+\mu^-$ | `q2` |
+
+
+### $B_s\to K^* \tau^+\tau^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<FL>(Bs->K*0tautau)` | $\langle \overline{F_L}\rangle(B_s\to K^* \tau^+\tau^-)$ | Binned Time-averaged longitudinal polarization fraction in $B_s\to K^* \tau^+\tau^-$ | `q2min`, `q2max` |
+| `<Rtaumu>(Bs->K*0ll)` | $\langle R_{\tau \mu} \rangle(B_s\to K^* \ell^+\ell^-)$ | Ratio of partial branching ratios of $B_s\to K^* \tau^+ \tau^-$ and $B_s\to K^* \mu^+ \mu^-$ | `q2min`, `q2max` |
+| `<S3>(Bs->K*0tautau)` | $\langle \overline{S_3}\rangle(B_s\to K^* \tau^+\tau^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to K^* \tau^+\tau^-$ | `q2min`, `q2max` |
+| `<S4>(Bs->K*0tautau)` | $\langle \overline{S_4}\rangle(B_s\to K^* \tau^+\tau^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to K^* \tau^+\tau^-$ | `q2min`, `q2max` |
+| `<S7>(Bs->K*0tautau)` | $\langle \overline{S_7}\rangle(B_s\to K^* \tau^+\tau^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to K^* \tau^+\tau^-$ | `q2min`, `q2max` |
+| `<dBR/dq2>(Bs->K*0tautau)` | $\langle \frac{d\overline{\text{BR}}}{dq^2} \rangle(B_s\to K^* \tau^+\tau^-)$ | Binned time-integrated differential branching ratio of $B_s\to K^* \tau^+\tau^-$ | `q2min`, `q2max` |
+| `FL(Bs->K*0tautau)` | $\overline{F_L}(B_s\to K^* \tau^+\tau^-)$ | Time-averaged longitudinal polarization fraction in $B_s\to K^* \tau^+\tau^-$ | `q2` |
+| `S3(Bs->K*0tautau)` | $\overline{S_3}(B_s\to K^* \tau^+\tau^-)$ | Time-averaged, CP-averaged angular observable in $B_s\to K^* \tau^+\tau^-$ | `q2` |
+| `S4(Bs->K*0tautau)` | $\overline{S_4}(B_s\to K^* \tau^+\tau^-)$ | Time-averaged, CP-averaged angular observable in $B_s\to K^* \tau^+\tau^-$ | `q2` |
+| `S7(Bs->K*0tautau)` | $\overline{S_7}(B_s\to K^* \tau^+\tau^-)$ | Time-averaged, CP-averaged angular observable in $B_s\to K^* \tau^+\tau^-$ | `q2` |
+| `dBR/dq2(Bs->K*0tautau)` | $\frac{d\overline{\text{BR}}}{dq^2}(B_s\to K^* \tau^+\tau^-)$ | Differential time-integrated branching ratio of $B_s\to K^* \tau^+\tau^-$ | `q2` |
+
+
+### $B_s\to K^* e^+e^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<FL>(Bs->K*0ee)` | $\langle \overline{F_L}\rangle(B_s\to K^* e^+e^-)$ | Binned Time-averaged longitudinal polarization fraction in $B_s\to K^* e^+e^-$ | `q2min`, `q2max` |
+| `<Rmue>(Bs->K*0ll)` | $\langle R_{\mu e} \rangle(B_s\to K^* \ell^+\ell^-)$ | Ratio of partial branching ratios of $B_s\to K^* \mu^+ \mu^-$ and $B_s\to K^* e^+ e^-$ | `q2min`, `q2max` |
+| `<S3>(Bs->K*0ee)` | $\langle \overline{S_3}\rangle(B_s\to K^* e^+e^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to K^* e^+e^-$ | `q2min`, `q2max` |
+| `<S4>(Bs->K*0ee)` | $\langle \overline{S_4}\rangle(B_s\to K^* e^+e^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to K^* e^+e^-$ | `q2min`, `q2max` |
+| `<S7>(Bs->K*0ee)` | $\langle \overline{S_7}\rangle(B_s\to K^* e^+e^-)$ | Binned Time-averaged, CP-averaged angular observable in $B_s\to K^* e^+e^-$ | `q2min`, `q2max` |
+| `<dBR/dq2>(Bs->K*0ee)` | $\langle \frac{d\overline{\text{BR}}}{dq^2} \rangle(B_s\to K^* e^+e^-)$ | Binned time-integrated differential branching ratio of $B_s\to K^* e^+e^-$ | `q2min`, `q2max` |
+| `FL(Bs->K*0ee)` | $\overline{F_L}(B_s\to K^* e^+e^-)$ | Time-averaged longitudinal polarization fraction in $B_s\to K^* e^+e^-$ | `q2` |
+| `S3(Bs->K*0ee)` | $\overline{S_3}(B_s\to K^* e^+e^-)$ | Time-averaged, CP-averaged angular observable in $B_s\to K^* e^+e^-$ | `q2` |
+| `S4(Bs->K*0ee)` | $\overline{S_4}(B_s\to K^* e^+e^-)$ | Time-averaged, CP-averaged angular observable in $B_s\to K^* e^+e^-$ | `q2` |
+| `S7(Bs->K*0ee)` | $\overline{S_7}(B_s\to K^* e^+e^-)$ | Time-averaged, CP-averaged angular observable in $B_s\to K^* e^+e^-$ | `q2` |
+| `dBR/dq2(Bs->K*0ee)` | $\frac{d\overline{\text{BR}}}{dq^2}(B_s\to K^* e^+e^-)$ | Differential time-integrated branching ratio of $B_s\to K^* e^+e^-$ | `q2` |
 
 
 ### $B_s\to \phi \mu^+\mu^-$
@@ -1565,5 +1734,137 @@ a scalar observable).
 | `AFBlh(Lambdab->Lambdaee)` | $A_\text{FB}^{\ell h}(\Lambda_b\to\Lambda e^+e^-)$ | Lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
 | `FL(Lambdab->Lambdaee)` | $F_L(\Lambda_b\to\Lambda e^+e^-)$ | Longitudinal polarization fraction in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
 | `dBR/dq2(Lambdab->Lambdaee)` | $\frac{d\text{BR}}{dq^2}(\Lambda_b\to\Lambda e^+e^-)$ | Differential branching ratio of $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+
+
+## $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$
+
+### $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<AFBh>(Lambdab->Lambda(1520)mumu)` | $\langle A_\text{FB}^\ell\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned hadronic forward-backward asymmetry in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<AFBl>(Lambdab->Lambda(1520)mumu)` | $\langle A_\text{FB}^\ell\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<AFBlh>(Lambdab->Lambda(1520)mumu)` | $\langle A_\text{FB}^{\ell h}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<A_1c>(Lambdab->Lambda(1520)mumu)` | $\langle A_{1c}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP asymmetry 1c in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<A_1cc>(Lambdab->Lambda(1520)mumu)` | $\langle A_{1cc}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP asymmetry 1cc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<A_1ss>(Lambdab->Lambda(1520)mumu)` | $\langle A_{1ss}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP asymmetry 1ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<A_2c>(Lambdab->Lambda(1520)mumu)` | $\langle A_{2c}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP asymmetry 2c in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<A_2cc>(Lambdab->Lambda(1520)mumu)` | $\langle A_{2cc}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP asymmetry 2cc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<A_2ss>(Lambdab->Lambda(1520)mumu)` | $\langle A_{2ss}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP asymmetry 2ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<A_3ss>(Lambdab->Lambda(1520)mumu)` | $\langle A_{3ss}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP asymmetry 3ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<A_4ss>(Lambdab->Lambda(1520)mumu)` | $\langle A_{4ss}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP asymmetry 4ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<A_5s>(Lambdab->Lambda(1520)mumu)` | $\langle A_{5s}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP asymmetry 5s in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<A_5sc>(Lambdab->Lambda(1520)mumu)` | $\langle A_{5sc}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP asymmetry 5sc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<A_6s>(Lambdab->Lambda(1520)mumu)` | $\langle A_{6s}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP asymmetry 6s in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<A_6sc>(Lambdab->Lambda(1520)mumu)` | $\langle A_{6sc}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP asymmetry 6sc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<FL>(Lambdab->Lambda(1520)mumu)` | $\langle F_L\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned longitudinal polarization fraction in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S_1c>(Lambdab->Lambda(1520)mumu)` | $\langle S_{1c}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP symmetry 1c in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S_1cc>(Lambdab->Lambda(1520)mumu)` | $\langle S_{1cc}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP symmetry 1cc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S_1ss>(Lambdab->Lambda(1520)mumu)` | $\langle S_{1ss}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP symmetry 1ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S_2c>(Lambdab->Lambda(1520)mumu)` | $\langle S_{2c}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP symmetry 2c in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S_2cc>(Lambdab->Lambda(1520)mumu)` | $\langle S_{2cc}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP symmetry 2cc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S_2ss>(Lambdab->Lambda(1520)mumu)` | $\langle S_{2ss}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP symmetry 2ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S_3ss>(Lambdab->Lambda(1520)mumu)` | $\langle S_{3ss}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP symmetry 3ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S_4ss>(Lambdab->Lambda(1520)mumu)` | $\langle S_{4ss}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP symmetry 4ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S_5s>(Lambdab->Lambda(1520)mumu)` | $\langle S_{5s}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP symmetry 5s in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S_5sc>(Lambdab->Lambda(1520)mumu)` | $\langle S_{5sc}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP symmetry 5sc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S_6s>(Lambdab->Lambda(1520)mumu)` | $\langle S_{6s}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP symmetry 6s in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<S_6sc>(Lambdab->Lambda(1520)mumu)` | $\langle S_{6sc}\rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned CP symmetry 6sc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<dBR/dq2>(Lambdab->Lambda(1520)mumu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Binned differential branching ratio of $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2min`, `q2max` |
+| `AFBh(Lambdab->Lambda(1520)mumu)` | $A_\text{FB}^\ell(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Hadronic forward-backward asymmetry in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `AFBl(Lambdab->Lambda(1520)mumu)` | $A_\text{FB}^\ell(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `AFBlh(Lambdab->Lambda(1520)mumu)` | $A_\text{FB}^{\ell h}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `A_1c(Lambdab->Lambda(1520)mumu)` | $A_{1c}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP asymmetry 1c in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `A_1cc(Lambdab->Lambda(1520)mumu)` | $A_{1cc}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP asymmetry 1cc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `A_1ss(Lambdab->Lambda(1520)mumu)` | $A_{1ss}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP asymmetry 1ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `A_2c(Lambdab->Lambda(1520)mumu)` | $A_{2c}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP asymmetry 2c in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `A_2cc(Lambdab->Lambda(1520)mumu)` | $A_{2cc}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP asymmetry 2cc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `A_2ss(Lambdab->Lambda(1520)mumu)` | $A_{2ss}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP asymmetry 2ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `A_3ss(Lambdab->Lambda(1520)mumu)` | $A_{3ss}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP asymmetry 3ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `A_4ss(Lambdab->Lambda(1520)mumu)` | $A_{4ss}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP asymmetry 4ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `A_5s(Lambdab->Lambda(1520)mumu)` | $A_{5s}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP asymmetry 5s in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `A_5sc(Lambdab->Lambda(1520)mumu)` | $A_{5sc}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP asymmetry 5sc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `A_6s(Lambdab->Lambda(1520)mumu)` | $A_{6s}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP asymmetry 6s in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `A_6sc(Lambdab->Lambda(1520)mumu)` | $A_{6sc}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP asymmetry 6sc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `FL(Lambdab->Lambda(1520)mumu)` | $F_L(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Longitudinal polarization fraction in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `S_1c(Lambdab->Lambda(1520)mumu)` | $S_{1c}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP symmetry 1c in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `S_1cc(Lambdab->Lambda(1520)mumu)` | $S_{1cc}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP symmetry 1cc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `S_1ss(Lambdab->Lambda(1520)mumu)` | $S_{1ss}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP symmetry 1ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `S_2c(Lambdab->Lambda(1520)mumu)` | $S_{2c}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP symmetry 2c in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `S_2cc(Lambdab->Lambda(1520)mumu)` | $S_{2cc}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP symmetry 2cc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `S_2ss(Lambdab->Lambda(1520)mumu)` | $S_{2ss}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP symmetry 2ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `S_3ss(Lambdab->Lambda(1520)mumu)` | $S_{3ss}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP symmetry 3ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `S_4ss(Lambdab->Lambda(1520)mumu)` | $S_{4ss}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP symmetry 4ss in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `S_5s(Lambdab->Lambda(1520)mumu)` | $S_{5s}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP symmetry 5s in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `S_5sc(Lambdab->Lambda(1520)mumu)` | $S_{5sc}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP symmetry 5sc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `S_6s(Lambdab->Lambda(1520)mumu)` | $S_{6s}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP symmetry 6s in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `S_6sc(Lambdab->Lambda(1520)mumu)` | $S_{6sc}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | CP symmetry 6sc in $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+| `dBR/dq2(Lambdab->Lambda(1520)mumu)` | $\frac{d\text{BR}}{dq^2}(\Lambda_b\to\Lambda(1520) \mu^+\mu^-)$ | Differential branching ratio of $\Lambda_b\to\Lambda(1520) \mu^+\mu^-$ | `q2` |
+
+
+### $\Lambda_b\to\Lambda(1520) e^+e^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `<AFBh>(Lambdab->Lambda(1520)ee)` | $\langle A_\text{FB}^\ell\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned hadronic forward-backward asymmetry in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<AFBl>(Lambdab->Lambda(1520)ee)` | $\langle A_\text{FB}^\ell\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<AFBlh>(Lambdab->Lambda(1520)ee)` | $\langle A_\text{FB}^{\ell h}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<A_1c>(Lambdab->Lambda(1520)ee)` | $\langle A_{1c}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP asymmetry 1c in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<A_1cc>(Lambdab->Lambda(1520)ee)` | $\langle A_{1cc}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP asymmetry 1cc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<A_1ss>(Lambdab->Lambda(1520)ee)` | $\langle A_{1ss}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP asymmetry 1ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<A_2c>(Lambdab->Lambda(1520)ee)` | $\langle A_{2c}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP asymmetry 2c in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<A_2cc>(Lambdab->Lambda(1520)ee)` | $\langle A_{2cc}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP asymmetry 2cc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<A_2ss>(Lambdab->Lambda(1520)ee)` | $\langle A_{2ss}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP asymmetry 2ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<A_3ss>(Lambdab->Lambda(1520)ee)` | $\langle A_{3ss}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP asymmetry 3ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<A_4ss>(Lambdab->Lambda(1520)ee)` | $\langle A_{4ss}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP asymmetry 4ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<A_5s>(Lambdab->Lambda(1520)ee)` | $\langle A_{5s}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP asymmetry 5s in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<A_5sc>(Lambdab->Lambda(1520)ee)` | $\langle A_{5sc}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP asymmetry 5sc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<A_6s>(Lambdab->Lambda(1520)ee)` | $\langle A_{6s}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP asymmetry 6s in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<A_6sc>(Lambdab->Lambda(1520)ee)` | $\langle A_{6sc}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP asymmetry 6sc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<FL>(Lambdab->Lambda(1520)ee)` | $\langle F_L\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned longitudinal polarization fraction in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<S_1c>(Lambdab->Lambda(1520)ee)` | $\langle S_{1c}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP symmetry 1c in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<S_1cc>(Lambdab->Lambda(1520)ee)` | $\langle S_{1cc}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP symmetry 1cc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<S_1ss>(Lambdab->Lambda(1520)ee)` | $\langle S_{1ss}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP symmetry 1ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<S_2c>(Lambdab->Lambda(1520)ee)` | $\langle S_{2c}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP symmetry 2c in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<S_2cc>(Lambdab->Lambda(1520)ee)` | $\langle S_{2cc}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP symmetry 2cc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<S_2ss>(Lambdab->Lambda(1520)ee)` | $\langle S_{2ss}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP symmetry 2ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<S_3ss>(Lambdab->Lambda(1520)ee)` | $\langle S_{3ss}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP symmetry 3ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<S_4ss>(Lambdab->Lambda(1520)ee)` | $\langle S_{4ss}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP symmetry 4ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<S_5s>(Lambdab->Lambda(1520)ee)` | $\langle S_{5s}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP symmetry 5s in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<S_5sc>(Lambdab->Lambda(1520)ee)` | $\langle S_{5sc}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP symmetry 5sc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<S_6s>(Lambdab->Lambda(1520)ee)` | $\langle S_{6s}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP symmetry 6s in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<S_6sc>(Lambdab->Lambda(1520)ee)` | $\langle S_{6sc}\rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned CP symmetry 6sc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `<dBR/dq2>(Lambdab->Lambda(1520)ee)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Binned differential branching ratio of $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2min`, `q2max` |
+| `AFBh(Lambdab->Lambda(1520)ee)` | $A_\text{FB}^\ell(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Hadronic forward-backward asymmetry in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `AFBl(Lambdab->Lambda(1520)ee)` | $A_\text{FB}^\ell(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `AFBlh(Lambdab->Lambda(1520)ee)` | $A_\text{FB}^{\ell h}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `A_1c(Lambdab->Lambda(1520)ee)` | $A_{1c}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP asymmetry 1c in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `A_1cc(Lambdab->Lambda(1520)ee)` | $A_{1cc}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP asymmetry 1cc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `A_1ss(Lambdab->Lambda(1520)ee)` | $A_{1ss}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP asymmetry 1ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `A_2c(Lambdab->Lambda(1520)ee)` | $A_{2c}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP asymmetry 2c in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `A_2cc(Lambdab->Lambda(1520)ee)` | $A_{2cc}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP asymmetry 2cc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `A_2ss(Lambdab->Lambda(1520)ee)` | $A_{2ss}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP asymmetry 2ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `A_3ss(Lambdab->Lambda(1520)ee)` | $A_{3ss}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP asymmetry 3ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `A_4ss(Lambdab->Lambda(1520)ee)` | $A_{4ss}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP asymmetry 4ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `A_5s(Lambdab->Lambda(1520)ee)` | $A_{5s}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP asymmetry 5s in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `A_5sc(Lambdab->Lambda(1520)ee)` | $A_{5sc}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP asymmetry 5sc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `A_6s(Lambdab->Lambda(1520)ee)` | $A_{6s}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP asymmetry 6s in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `A_6sc(Lambdab->Lambda(1520)ee)` | $A_{6sc}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP asymmetry 6sc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `FL(Lambdab->Lambda(1520)ee)` | $F_L(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Longitudinal polarization fraction in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `S_1c(Lambdab->Lambda(1520)ee)` | $S_{1c}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP symmetry 1c in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `S_1cc(Lambdab->Lambda(1520)ee)` | $S_{1cc}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP symmetry 1cc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `S_1ss(Lambdab->Lambda(1520)ee)` | $S_{1ss}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP symmetry 1ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `S_2c(Lambdab->Lambda(1520)ee)` | $S_{2c}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP symmetry 2c in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `S_2cc(Lambdab->Lambda(1520)ee)` | $S_{2cc}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP symmetry 2cc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `S_2ss(Lambdab->Lambda(1520)ee)` | $S_{2ss}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP symmetry 2ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `S_3ss(Lambdab->Lambda(1520)ee)` | $S_{3ss}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP symmetry 3ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `S_4ss(Lambdab->Lambda(1520)ee)` | $S_{4ss}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP symmetry 4ss in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `S_5s(Lambdab->Lambda(1520)ee)` | $S_{5s}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP symmetry 5s in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `S_5sc(Lambdab->Lambda(1520)ee)` | $S_{5sc}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP symmetry 5sc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `S_6s(Lambdab->Lambda(1520)ee)` | $S_{6s}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP symmetry 6s in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `S_6sc(Lambdab->Lambda(1520)ee)` | $S_{6sc}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | CP symmetry 6sc in $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
+| `dBR/dq2(Lambdab->Lambda(1520)ee)` | $\frac{d\text{BR}}{dq^2}(\Lambda_b\to\Lambda(1520) e^+e^-)$ | Differential branching ratio of $\Lambda_b\to\Lambda(1520) e^+e^-$ | `q2` |
 
 

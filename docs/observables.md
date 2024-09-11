@@ -27,7 +27,7 @@ of this page.
 
 - [FCNC decays](obs/zdecays-fcncdecays.html) (3 observables)
 
-- [Flavour conserving decays](obs/zdecays-flavourconservingdecays.html) (50 observables)
+- [Flavour conserving decays](obs/zdecays-flavourconservingdecays.html) (51 observables)
 
 
 ### $\tau$ lepton decays
@@ -43,7 +43,7 @@ of this page.
 ### $b$ hadron decays
 
 
-- [FCNC decays](obs/bhadrondecays-fcncdecays.html) (638 observables)
+- [FCNC decays](obs/bhadrondecays-fcncdecays.html) (860 observables)
 
 - [Leptonic tree-level decays](obs/bhadrondecays-leptonictreeleveldecays.html) (6 observables)
 
@@ -124,6 +124,18 @@ of this page.
 - [Leptonic tree-level decays](obs/unflavouredmesondecays-leptonictreeleveldecays.html) (4 observables)
 
 
+### contact interactions
+
+
+- [$pp\to \mu\nu$](obs/contactinteractions-pptomunu.html) (1 observable)
+
+- [$pp\to \mu^+\mu^-$](obs/contactinteractions-pptomumu.html) (1 observable)
+
+- [$pp\to e\nu$](obs/contactinteractions-pptoenu.html) (1 observable)
+
+- [$pp\to e^+e^-$](obs/contactinteractions-pptoee.html) (1 observable)
+
+
 ### muon decays
 
 
@@ -134,6 +146,18 @@ of this page.
 
 
 - [scattering cross sections](obs/neutrinophysics-scatteringcrosssections.html) (1 observable)
+
+
+### quarkonium lepton decays
+
+
+- [$P\to \ell^+\ell^-$](obs/quarkoniumleptondecays-ptoellell.html) (16 observables)
+
+- [$S\to \ell^+\ell^-$](obs/quarkoniumleptondecays-stoellell.html) (24 observables)
+
+- [$V\to \ell^+\ell^-$](obs/quarkoniumleptondecays-vtoellell.html) (135 observables)
+
+- [$V\to \ell^+\ell^-\gamma$](obs/quarkoniumleptondecays-vtoellellgamma.html) (120 observables)
 
 ## Some general notes on conventions
 

@@ -69,7 +69,6 @@ a scalar observable).
 | `Gamma(Z->bb)` | $\Gamma(Z^0\to b\bar b)$ | Partial width of $Z^0\to b\bar b$ |  |
 | `GammaZ` | $\Gamma_Z$ | Total width of the $Z^0$ boson |  |
 | `R_b` | $R_ b^0$ | Ratio of $Z^0$ partial widths to $ b$ pairs vs. all hadrons |  |
-| `R_uc` | $R_{uc}^0$ | Average ratio of $Z^0$ partial widths to $u$ or $c$ pairs vs. all hadrons |  |
 | `sigma_had` | $\sigma_\text{had}^0$ | $e^+e^-\to Z^0$ hadronic pole cross-section |  |
 
 
@@ -83,6 +82,7 @@ a scalar observable).
 | `Gamma(Z->cc)` | $\Gamma(Z^0\to c\bar c)$ | Partial width of $Z^0\to c\bar c$ |  |
 | `GammaZ` | $\Gamma_Z$ | Total width of the $Z^0$ boson |  |
 | `R_c` | $R_ c^0$ | Ratio of $Z^0$ partial widths to $ c$ pairs vs. all hadrons |  |
+| `R_uc` | $R_{uc}^0$ | Average ratio of $Z^0$ partial widths to $u$ or $c$ pairs vs. all hadrons |  |
 | `sigma_had` | $\sigma_\text{had}^0$ | $e^+e^-\to Z^0$ hadronic pole cross-section |  |
 
 
@@ -122,6 +122,7 @@ a scalar observable).
 | `Gamma(Z->uu)` | $\Gamma(Z^0\to u\bar u)$ | Partial width of $Z^0\to u\bar u$ |  |
 | `GammaZ` | $\Gamma_Z$ | Total width of the $Z^0$ boson |  |
 | `R_u` | $R_ u^0$ | Ratio of $Z^0$ partial widths to $ u$ pairs vs. all hadrons |  |
+| `R_uc` | $R_{uc}^0$ | Average ratio of $Z^0$ partial widths to $u$ or $c$ pairs vs. all hadrons |  |
 | `sigma_had` | $\sigma_\text{had}^0$ | $e^+e^-\to Z^0$ hadronic pole cross-section |  |
 
 

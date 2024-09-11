@@ -76,14 +76,6 @@ of the parameter.
 | `B->K BCL a2_fT` | $a_2^{(T)}$ | BCL $B\to K$ form factor parametrization coefficient $a_2$ of $f_T$ |
 | `B->K BCL m+` | $m_{B^*}^{f_+}$ | Resonance mass for the $B\to K$ vector and tensor form factors in BCL parametrization |
 | `B->K BCL m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B\to K$ scalar form factor in BCL parametrization |
-| `B->K BSZ a0_f+` | $a_0^{f_+}$ | BSZ form factor parametrization coefficient $a_0$ of $f_+$ |
-| `B->K BSZ a0_fT` | $a_0^{f_T}$ | BSZ form factor parametrization coefficient $a_0$ of $f_T$ |
-| `B->K BSZ a1_f+` | $a_1^{f_+}$ | BSZ form factor parametrization coefficient $a_1$ of $f_+$ |
-| `B->K BSZ a1_f0` | $a_1^{f_0}$ | BSZ form factor parametrization coefficient $a_1$ of $f_0$ |
-| `B->K BSZ a1_fT` | $a_1^{f_T}$ | BSZ form factor parametrization coefficient $a_1$ of $f_T$ |
-| `B->K BSZ a2_f+` | $a_2^{f_+}$ | BSZ form factor parametrization coefficient $a_2$ of $f_+$ |
-| `B->K BSZ a2_f0` | $a_2^{f_0}$ | BSZ form factor parametrization coefficient $a_2$ of $f_0$ |
-| `B->K BSZ a2_fT` | $a_2^{f_T}$ | BSZ form factor parametrization coefficient $a_2$ of $f_T$ |
 | `B->K* BCL m0` | $m_{B^*}^{A_0}$ | Resonance mass for the $B\to K^*$ scalar form factor in BCL or BSZ parametrization |
 | `B->K* BCL m1+` | $m_{B^*}^{1^+}$ | Resonance mass for the $B\to K^*$ form factors $A_{12}$ and $T_{2,23}$ in BCL or BSZ parametrization |
 | `B->K* BCL m1-` | $m_{B^*}^{1^-}$ | Resonance mass for the $B\to K^*$ form factors $V$ and $T_1$ in BCL or BSZ parametrization |
@@ -136,6 +128,10 @@ of the parameter.
 | `B->omega BSZ a2_T2` | $a_2^{T_2}$ | BSZ form factor parametrization coefficient $a_2$ of $T_2$ |
 | `B->omega BSZ a2_T23` | $a_2^{T_{23}}$ | BSZ form factor parametrization coefficient $a_2$ of $T_{23}$ |
 | `B->omega BSZ a2_V` | $a_2^{V}$ | BSZ form factor parametrization coefficient $a_2$ of $V$ |
+| `B->pi BCL LMVD m+` | $m_{B^*}^{f_+}$ | Resonance mass for the $B\to \pi$ vector and tensor form factors in BCL parametrization from LMVD |
+| `B->pi BCL LMVD m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B\to \pi$ scalar form factor in BCL parametrization from LMVD |
+| `B->pi BCL LMVD m_B+` | $m_{B^+}$ | B+ mass for the $B\to \pi$ form factors in BCL parametrization from LMVD |
+| `B->pi BCL LMVD m_pi0` | $m_{\pi^0}$ | pi0 mass for the $B\to \pi$ form factors in BCL parametrization from LMVD |
 | `B->pi BCL a0_f+` | $a_0^{(+)}$ | BCL $B\to \pi$ form factor parametrization coefficient $a_0$ of $f_+$ |
 | `B->pi BCL a0_f0` | $a_0^{(0)}$ | BCL $B\to \pi$ form factor parametrization coefficient $a_0$ of $f_0$ |
 | `B->pi BCL a0_fT` | $a_0^{(T)}$ | BCL $B\to \pi$ form factor parametrization coefficient $a_0$ of $f_T$ |
@@ -148,16 +144,20 @@ of the parameter.
 | `B->pi BCL a3_f+` | $a_3^{(+)}$ | BCL $B\to \pi$ form factor parametrization coefficient $a_3$ of $f_+$ |
 | `B->pi BCL a3_f0` | $a_3^{(0)}$ | BCL $B\to \pi$ form factor parametrization coefficient $a_3$ of $f_T$ |
 | `B->pi BCL a3_fT` | $a_3^{(T)}$ | BCL $B\to \pi$ form factor parametrization coefficient $a_3$ of $f_T$ |
+| `B->pi BCL b_+^1` |  |  |
+| `B->pi BCL b_+^2` |  |  |
+| `B->pi BCL b_+^3` |  |  |
+| `B->pi BCL b_0^1` |  |  |
+| `B->pi BCL b_0^2` |  |  |
+| `B->pi BCL b_0^3` |  |  |
+| `B->pi BCL b_0^4` |  |  |
+| `B->pi BCL b_T^1` |  |  |
+| `B->pi BCL b_T^2` |  |  |
+| `B->pi BCL b_T^3` |  |  |
+| `B->pi BCL f_+(0)` |  |  |
+| `B->pi BCL f_T(0)` |  |  |
 | `B->pi BCL m+` | $m_{B^*}^{f_+}$ | Resonance mass for the $B\to \pi$ vector and tensor form factors in BCL parametrization |
 | `B->pi BCL m0` | $m_{B^*}^{f_0}$ | Resonance mass for the $B\to \pi$ scalar form factor in BCL parametrization |
-| `B->pi BSZ a0_f+` | $a_0^{f_+}$ | BSZ form factor parametrization coefficient $a_0$ of $f_+$ |
-| `B->pi BSZ a0_fT` | $a_0^{f_T}$ | BSZ form factor parametrization coefficient $a_0$ of $f_T$ |
-| `B->pi BSZ a1_f+` | $a_1^{f_+}$ | BSZ form factor parametrization coefficient $a_1$ of $f_+$ |
-| `B->pi BSZ a1_f0` | $a_1^{f_0}$ | BSZ form factor parametrization coefficient $a_1$ of $f_0$ |
-| `B->pi BSZ a1_fT` | $a_1^{f_T}$ | BSZ form factor parametrization coefficient $a_1$ of $f_T$ |
-| `B->pi BSZ a2_f+` | $a_2^{f_+}$ | BSZ form factor parametrization coefficient $a_2$ of $f_+$ |
-| `B->pi BSZ a2_f0` | $a_2^{f_0}$ | BSZ form factor parametrization coefficient $a_2$ of $f_0$ |
-| `B->pi BSZ a2_fT` | $a_2^{f_T}$ | BSZ form factor parametrization coefficient $a_2$ of $f_T$ |
 | `B->pi IW a_T` | $a_T^{B\to \pi}$ | Relative power correction to the $B\to \pi$ tensor form factor from the improved Isgur-Wise relation |
 | `B->rho BCL m0` | $m_{B^*}^{A_0}$ | Resonance mass for the $B\to \rho$ scalar form factor in BCL or BSZ parametrization |
 | `B->rho BCL m1+` | $m_{B^*}^{1^+}$ | Resonance mass for the $B\to \rho$ form factors $A_{12}$ and $T_{2,23}$ in BCL or BSZ parametrization |
@@ -214,9 +214,15 @@ of the parameter.
 | `B0->K0 deltaC9 c Im` | $\text{Im}\,c^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^0\to K^0\ell^+\ell^-$ at high $q^2$ |
 | `B0->K0 deltaC9 c Re` | $\text{Re}\,c^{\Delta_9}$ | Parameter for subleading hadronic effects in $B^0\to K^0\ell^+\ell^-$ at high $q^2$ |
 | `BR(B->Xcenu)_exp` | $\text{BR}(B\to X_ce\nu)_\text{exp}$ | Experimental branching ratio of $B\to X_ce\nu$ |
+| `BR(Lambda(1520)->NKbar)_exp` | $\text{BR}(\Lambda(1520)\to N\bar{K})_\text{exp}$ | Experimental branching ratio of $\Lambda(1520)\to N\bar{K}$ |
 | `BR(tau->enunu)` |  |  |
 | `BR(tau->mununu)` |  |  |
 | `BR(tau->rhonu)` |  |  |
+| `BR_exp(J/psi->ee)` | $BR_{\rm exp}(J/\psi\to e^+ e^-)$ | measured branching ratio $J/\psi\to ee$ |
+| `BR_exp(Upsilon(1S)->ee)` | $BR_{\rm exp}(\Upsilon(1S)\to e^+ e^-)$ | measured branching ratio $\Upsilon(1S)\to ee$ |
+| `BR_exp(Upsilon(2S)->ee)` | $BR_{\rm exp}(\Upsilon(2S)\to e^+ e^-)$ | measured branching ratio $\Upsilon(2S)\to ee$ |
+| `BR_exp(Upsilon(3S)->ee)` | $BR_{\rm exp}(\Upsilon(3S)\to e^+ e^-)$ | measured branching ratio $\Upsilon(3S)\to ee$ |
+| `BR_exp(psi(2S)->ee)` | $BR_{\rm exp}(\psi(2S)\to e^+ e^-)$ | measured branching ratio $\psi(2S)\to ee$ |
 | `Bs->K BCL a0_f+` | $a_0^{(+)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_0$ of $f_+$ |
 | `Bs->K BCL a0_f0` | $a_0^{(0)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_0$ of $f_0$ |
 | `Bs->K BCL a0_fT` | $a_0^{(T)}$ | BCL $B_s\to K$ form factor parametrization coefficient $a_0$ of $f_T$ |
@@ -343,6 +349,8 @@ of the parameter.
 | `DeltaM_K0` | $\Delta M_K$ | Mass difference in the $K^0$ system |
 | `DeltaRA` | $\Delta_R^A$ | Relative radiative correction to the SM Gamow-Teller beta decay rate |
 | `DeltaRV` | $\Delta_R^V$ | Relative radiative correction to the SM Fermi beta decay rate |
+| `Delta_alpha_e_had` | $\Delta\alpha_{\rm had}^{(5)}(m_Z)$ | hadronic contribution to the running of the electromagnetic fine structure constant between 0 and $m_Z$ |
+| `Delta_alpha_e_lep` | $\Delta\alpha_{\rm lep}(m_Z)$ | leptonic contribution to the running of the electromagnetic fine structure constant between 0 and $m_Z$ |
 | `GF` | $G_F$ | Fermi constant |
 | `Gamma12_B0_a` | $a$ | Coefficient in the approximate equality $\Delta \Gamma_d/M_{12}^d=10^{-4}[c+a\frac{\lambda_u}{\lambda_t}]$ |
 | `Gamma12_B0_c` | $c$ | Coefficient in the approximate equality $\Delta \Gamma_d/M_{12}^d=10^{-4}[c+a\frac{\lambda_u}{\lambda_t}]$ |
@@ -448,10 +456,101 @@ of the parameter.
 | `Lambdab->Lambda deltaC9 c_perp0 Re` | $\text{Re}\,c^{\Delta_9}_{\perp_0}$ | Parameter for subleading hadronic effects in $\Lambda_b\to\Lambda\ell^+\ell^-$ at low $q^2$ |
 | `Lambdab->Lambda deltaC9 c_perp1 Im` | $\text{Im}\,c^{\Delta_9}_{\perp_1}$ | Parameter for subleading hadronic effects in $\Lambda_b\to\Lambda\ell^+\ell^-$ at low $q^2$ |
 | `Lambdab->Lambda deltaC9 c_perp1 Re` | $\text{Re}\,c^{\Delta_9}_{\perp_1}$ | Parameter for subleading hadronic effects in $\Lambda_b\to\Lambda\ell^+\ell^-$ at low $q^2$ |
+| `Lambdab->Lambda(1520) F1 a0` | $a_0^{F1}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) F1 a2` | $a_2^{F1}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) F1 a4` | $a_4^{F1}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) F2 a0` | $a_0^{F2}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) F2 a2` | $a_2^{F2}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) F2 a4` | $a_4^{F2}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) F3 a0` | $a_0^{F3}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) F3 a2` | $a_2^{F3}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) F3 a4` | $a_4^{F3}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) F4 a0` | $a_0^{F4}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) F4 a2` | $a_2^{F4}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) F4 a4` | $a_4^{F4}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) G1 a0` | $a_0^{G1}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) G1 a2` | $a_2^{G1}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) G1 a4` | $a_4^{G1}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) G2 a0` | $a_0^{G2}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) G2 a2` | $a_2^{G2}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) G2 a4` | $a_4^{G2}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) G3 a0` | $a_0^{G3}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) G3 a2` | $a_2^{G3}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) G3 a4` | $a_4^{G3}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) G4 a0` | $a_0^{G4}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) G4 a2` | $a_2^{G4}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) G4 a4` | $a_4^{G4}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H1 a0` | $a_0^{H1}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H1 a2` | $a_2^{H1}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H1 a4` | $a_4^{H1}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H2 a0` | $a_0^{H2}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H2 a2` | $a_2^{H2}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H2 a4` | $a_4^{H2}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H3 a0` | $a_0^{H3}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H3 a2` | $a_2^{H3}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H3 a4` | $a_4^{H3}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H4 a0` | $a_0^{H4}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H4 a2` | $a_2^{H4}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H4 a4` | $a_4^{H4}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H5 a0` | $a_0^{H5}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H5 a2` | $a_2^{H5}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H5 a4` | $a_4^{H5}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H6 a0` | $a_0^{H6}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H6 a2` | $a_2^{H6}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) H6 a4` | $a_4^{H6}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) alpha_Lambda(1520)` | $\alpha_{\Lambda(1520)}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) alpha_Lambdab` | $\alpha_{\Lambda b}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) f0 A` | $F^{f_{0}}$ | Slope of the parametrization of the form factor $f_{0}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) f0 F` | $F^{f_{0}}$ | Constant of the parametrization of the form factor $f_{0}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) fA0 uncertainty` | $\Delta_{fA0}$ | Uncertainty applied on the form factor fA0 |
+| `Lambdab->Lambda(1520) fAg uncertainty` | $\Delta_{fAg}$ | Uncertainty applied on the form factor fAg |
+| `Lambdab->Lambda(1520) fAperp uncertainty` | $\Delta_{fAperp}$ | Uncertainty applied on the form factor fAperp |
+| `Lambdab->Lambda(1520) fAt uncertainty` | $\Delta_{fAt}$ | Uncertainty applied on the form factor fAt |
+| `Lambdab->Lambda(1520) fT0 uncertainty` | $\Delta_{fT0}$ | Uncertainty applied on the form factor fT0 |
+| `Lambdab->Lambda(1520) fT50 uncertainty` | $\Delta_{fT50}$ | Uncertainty applied on the form factor fT50 |
+| `Lambdab->Lambda(1520) fT5g uncertainty` | $\Delta_{fT5g}$ | Uncertainty applied on the form factor fT5g |
+| `Lambdab->Lambda(1520) fT5perp uncertainty` | $\Delta_{fT5perp}$ | Uncertainty applied on the form factor fT5perp |
+| `Lambdab->Lambda(1520) fT5t uncertainty` | $\Delta_{fT5t}$ | Uncertainty applied on the form factor fT5t |
+| `Lambdab->Lambda(1520) fTg uncertainty` | $\Delta_{fTg}$ | Uncertainty applied on the form factor fTg |
+| `Lambdab->Lambda(1520) fTperp uncertainty` | $\Delta_{fTperp}$ | Uncertainty applied on the form factor fTperp |
+| `Lambdab->Lambda(1520) fTt uncertainty` | $\Delta_{fTt}$ | Uncertainty applied on the form factor fTt |
+| `Lambdab->Lambda(1520) fV0 uncertainty` | $\Delta_{fV0}$ | Uncertainty applied on the form factor fV0 |
+| `Lambdab->Lambda(1520) fVg uncertainty` | $\Delta_{fVg}$ | Uncertainty applied on the form factor fVg |
+| `Lambdab->Lambda(1520) fVperp uncertainty` | $\Delta_{fVperp}$ | Uncertainty applied on the form factor fVperp |
+| `Lambdab->Lambda(1520) fVt uncertainty` | $\Delta_{fVt}$ | Uncertainty applied on the form factor fVt |
+| `Lambdab->Lambda(1520) fperp A` | $F^{f_{\perp}}$ | Slope of the parametrization of the form factor $f_{\perp}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) fperp F` | $F^{f_{\perp}}$ | Constant of the parametrization of the form factor $f_{\perp}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) fperpPrim A` | $F^{f_{\perp^{\prime}}}$ | Slope of the parametrization of the form factor $f_{\perp^{\prime}}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) fperpPrim F` | $F^{f_{\perp^{\prime}}}$ | Constant of the parametrization of the form factor $f_{\perp^{\prime}}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) fplus A` | $F^{f_{+}}$ | Slope of the parametrization of the form factor $f_{+}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) fplus F` | $F^{f_{+}}$ | Constant of the parametrization of the form factor $f_{+}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) g0 A` | $F^{g_{0}}$ | Slope of the parametrization of the form factor $g_{0}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) g0 F` | $F^{g_{0}}$ | Constant of the parametrization of the form factor $g_{0}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) gperp A` | $F^{g_{\perp}}$ | Slope of the parametrization of the form factor $g_{\perp}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) gperp F` | $F^{g_{\perp}}$ | Constant of the parametrization of the form factor $g_{\perp}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) gperpPrim A` | $F^{g_{\perp^{\prime}}}$ | Slope of the parametrization of the form factor $g_{\perp^{\prime}}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) gperpPrim F` | $F^{g_{\perp^{\prime}}}$ | Constant of the parametrization of the form factor $g_{\perp^{\prime}}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) gplus A` | $F^{g_{+}}$ | Slope of the parametrization of the form factor $g_{+}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) gplus F` | $F^{g_{+}}$ | Constant of the parametrization of the form factor $g_{+}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) hTperp A` | $F^{\tilde{h}_{\perp}}$ | Slope of the parametrization of the form factor $\tilde{h}_{\perp}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) hTperp F` | $F^{\tilde{h}_{\perp}}$ | Constant of the parametrization of the form factor $\tilde{h}_{\perp}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) hTperpPrim A` | $F^{\tilde{h}_{\perp^{\prime}}}$ | Slope of the parametrization of the form factor $\tilde{h}_{\perp^{\prime}}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) hTperpPrim F` | $F^{\tilde{h}_{\perp^{\prime}}}$ | Constant of the parametrization of the form factor $\tilde{h}_{\perp^{\prime}}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) hTplus A` | $F^{\tilde{h}_{+}}$ | Slope of the parametrization of the form factor $\tilde{h}_{+}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) hTplus F` | $F^{\tilde{h}_{+}}$ | Constant of the parametrization of the form factor $\tilde{h}_{+}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) hperp A` | $F^{h_{\perp}}$ | Slope of the parametrization of the form factor $h_{\perp}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) hperp F` | $F^{h_{\perp}}$ | Constant of the parametrization of the form factor $h_{\perp}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) hperpPrim A` | $F^{h_{\perp^{\prime}}}$ | Slope of the parametrization of the form factor $h_{\perp^{\prime}}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) hperpPrim F` | $F^{h_{\perp^{\prime}}}$ | Constant of the parametrization of the form factor $h_{\perp^{\prime}}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) hplus A` | $F^{h_{+}}$ | Slope of the parametrization of the form factor $h_{+}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) hplus F` | $F^{h_{+}}$ | Constant of the parametrization of the form factor $h_{+}$ from lattice QCD in high q2 region as in arXiv:2009.09313 |
+| `Lambdab->Lambda(1520) m_q` | $m_q^{model}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
+| `Lambdab->Lambda(1520) m_s` | $m_s^{model}$ | Parameter for the form factor calculation of $\Lambda_b\to\Lambda(1520)\ell^+\ell^-$ using the quark model as in arXiv 1108.6129 |
 | `M12_D a_bb` | $a_{bb}$ | SM contribution to the dispersive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{ub}V_{cb}^\ast$ in inverse picoseconds |
 | `M12_D a_bs` | $a_{bb}$ | SM contribution to the dispersive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{ub}V_{cs}^\ast$ in inverse picoseconds |
 | `M12_D a_ss` | $a_{bb}$ | SM contribution to the dispersive part of the $D^0$-$\bar D^0$ mixing amplitude multiplied by $V_{us}V_{cs}^\ast$ in inverse picoseconds |
 | `Omegahat_eff` | $\hat \Omega_\text{eff}$ | Parameter for isospin breaking corrections to $\epsilon\'/\epsilon$ |
+| `PDFmembers avg=0 replicas=1-100` | $\text{mem}_{\text{PDF}}$ | member ID of PDF set where mem=0 is average on replicas and mem=1-100 are PDF replicas |
 | `ReA0(K->pipi)` | $\text{Re}A_0$ | Real part of the $K\to(\pi\pi)_{I=0}$ isospin amplitude from experiment |
 | `ReA2(K->pipi)` | $\text{Re}A_2$ | Real part of the $K\to(\pi\pi)_{I=2}$ isospin amplitude from experiment |
 | `Sn Al` | $S^{(n)}$ | Scalar overlap integral with neutron distribution |
@@ -469,6 +568,7 @@ of the parameter.
 | `Vp Ti` | $V^{(p)}$ | Vector overlap integral with proton distribution |
 | `Vub` | $\vert V_{ub}\vert$ | Absolute value of the CKM element $V_{ub}$ |
 | `Vus` | $V_{us}$ | CKM element $V_{us}$ |
+| `Xt_di->djnunu` | $X_t^{d_i\to d_j\nu\bar\nu}$ | Loop function for the CL_SM Wilson coefficient of $d_i\to d_j\nu\bar\nu$ |
 | `a1_para_K*+` | $a_1^{K^{*+}_\parallel}$ | First Gegenbauer moment of the parallely polarized $K^{*+}$ LCDA at 1 GeV |
 | `a1_para_K*0` | $a_1^{K^{*0}_\parallel}$ | First Gegenbauer moment of the parallely polarized $K^{*0}$ LCDA at 1 GeV |
 | `a1_para_omega` | $a_1^{\omega_\parallel}$ | First Gegenbauer moment of the parallely polarized $\omega$ LCDA at 1 GeV |
@@ -493,7 +593,12 @@ of the parameter.
 | `a2_perp_phi` | $a_2^{\phi_\perp}$ | Second Gegenbauer moment of the transversely polarized $\phi$ LCDA at 1 GeV |
 | `a2_perp_rho+` | $a_2^{\rho^{+}_\perp}$ | Second Gegenbauer moment of the transversely polarized $\rho^{+}$ LCDA at 1 GeV |
 | `a2_perp_rho0` | $a_2^{\rho^{0}_\perp}$ | Second Gegenbauer moment of the transversely polarized $\rho^{0}$ LCDA at 1 GeV |
+| `a_chi_b0(1P)` | $a_{\chi_{b0}(1P)}$ | $\chi_{b0}(1P)$ anomaly decay constant |
+| `a_chi_b0(2P)` | $a_{\chi_{b0}(2P)}$ | $\chi_{b0}(2P)$ anomaly decay constant |
+| `a_chi_c0(1P)` | $a_{\chi_{c0}(1P)}$ | $\chi_{c0}(1P)$ anomaly decay constant |
 | `a_e SM` | $a_e^\text{SM}$ | SM prediction for the anomalous magnetic moment of the electron |
+| `a_eta_b(1S)` | $a_{\eta_b(1S)}$ | $\eta_b(1S)$ anomaly decay constant |
+| `a_eta_c(1S)` | $a_{\eta_c(1S)}$ | $\eta_c(1S)$ anomaly decay constant |
 | `a_mu SM` | $a_\mu^\text{SM}$ | SM prediction for the anomalous magnetic moment of the muon |
 | `a_tau SM` | $a_\tau^\text{SM}$ | SM prediction for the anomalous magnetic moment of the tau |
 | `alpha_CS(HfF)` | $\alpha_{C_S}^\text{HfF}$ | Coefficient of the scalar coupling contribution to the Hafnium fluoride energy shift |
@@ -542,7 +647,6 @@ of the parameter.
 | `chi_3p(1)` | $\chi_3\'(1)$ | Derivative of subleading Isgur-Wise function $\chi_3$ at $w=1$ |
 | `chi_3pp(1)` | $\chi_3\'\'(1)$ | 3rd derivative of subleading Isgur-Wise function $\chi_3$ at $w=1$ |
 | `chi_disp(KL->gammagamma)` | $\chi_\text{disp}$ | Dispersive part of the $K_L\to\gamma\gamma$ amplitude |
-| `delta` | $\delta$ | CKM phase $\delta$ in radians |
 | `deltaPcu` | $\delta P_{c,u}$ | Contributions to the $K^+\to\pi^+\nu\bar\nu$ amplitude not described by the dimension-6 effective Hamiltonian. |
 | `deltaRp_n` | $\delta R^\prime$ | Long-distance radiative correction to neutron beta decay |
 | `delta_BXdee high` | $\delta_{bdee}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_de^+e^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
@@ -558,6 +662,7 @@ of the parameter.
 | `delta_BXsmumu high` | $\delta_{bs\mu\mu}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\mu^+\mu^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXsmumu low` | $\delta_{bs\mu\mu}^\text{low}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\mu^+\mu^-$ at low $q^2$. The relative uncertainty is $1+\delta$. |
 | `delta_BXstautau high` | $\delta_{bs\tau\tau}^\text{high}$ | Quantity parametrizing the remaining theory uncertainty due to higher orders and non-perturbative effects in $B\to X_s\tau^+\tau^-$ at high $q^2$. The relative uncertainty is $1+\delta$. |
+| `delta_BsKstarmumu` | $\delta_{B_s^0 \to \bar{K}^{\ast 0} \mu \mu}$ | relative uncertainty on the $B_s^0 \to \bar{K}^{\ast 0} \mu \mu$ branching ratio inside the resonant region |
 | `delta_Gammab` | $\delta_{\Gamma_b} $ | Uncertainty in the SM $Z$ partial width to bottom quarks in GeV |
 | `delta_Gammac` | $\delta_{\Gamma_c}$ | Uncertainty in the SM $Z$ partial width to charm quarks in GeV |
 | `delta_Gammad,s` | $\delta_{\Gamma_s}$ | Uncertainty in the SM $Z$ partial width to strange quarks in GeV |
@@ -565,7 +670,9 @@ of the parameter.
 | `delta_Gammanu` | $\delta_{\Gamma_\nu}$ | Uncertainty in the SM $Z$ partial width to neutrinos in GeV |
 | `delta_Gammatau` | $\delta_{\Gamma_\tau}$ | Uncertainty in the SM $Z$ partial width to tau leptons in GeV |
 | `delta_Gammau` | $\delta_{\Gamma_u}$ | Uncertainty in the SM $Z$ partial width to up quarks in GeV |
-| `delta_deltaRp_Z2` | $\delta(\delta R^\prime) / Z^2$ | Uncertainty on the structure-indipendent radiative correction to beta decay divided by $Z^2 |
+| `delta_deltaNS,A` | $\delta(\delta_{NS,A}$ | Uncertainty on the nuclear structure dependent corrections from quenching in nuclei |
+| `delta_deltaNS,E_QEC` | $\delta(\delta_{NS,E} / Q_{EC}$ | Uncertainty on the nuclear structure dependent corrections from nuclear polarizabilities divided by $Q_{EC}$ |
+| `delta_deltaRp_Z2` | $\delta(\delta R^\prime) / Z^2$ | Uncertainty on the structure-independent radiative correction to beta decay divided by $Z^2$ |
 | `delta_mN` | $\delta m_N$ | QCD contribution to the neutron-proton mass difference |
 | `eps_K` | $\|\epsilon_K\|$ | Measured value of $\|\epsilon_K\|$ |
 | `epsp a` | $a$ | Parameter for isospin breaking corrections to $\epsilon\'/\epsilon$ |
@@ -575,8 +682,16 @@ of the parameter.
 | `eta_tt_B0` | $\eta_B$ | SM QCD correction factor for $B^0$ mixing |
 | `eta_tt_Bs` | $\eta_B$ | SM QCD correction factor for $B_s$ mixing |
 | `eta_tt_K0` | $\eta_{tt}$ | SM QCD correction factor for the top contribution to $K^0$ mixing |
+| `eta_tt_K0_ut` | $\eta_{tt,c}$ | SM QCD correction factor for the top contribution to $K^0$ mixing using u-t unitarity |
+| `eta_ut_K0_ut` | $\eta_{ut,ut}$ | SM QCD correction factor for the top-up contribution to $K^0$ mixing using u-t unitarity |
+| `eta_uu_K0_ut` | $\eta_{uu,ut}$ | SM QCD correction factor for the up contribution to $K^0$ mixing using u-t unitarity |
 | `etap(1)` | $\eta\'(1)$ | Derivative of subleading Isgur-Wise function $\eta$ at $w=1$ |
 | `etapp(1)` | $\eta\'\'(1)$ | 2nd derivative of subleading Isgur-Wise function $\eta$ at $w=1$ |
+| `fT_J/psi` | $f_{J/\psi}^T$ | $J/\psi$ tensor decay constant |
+| `fT_Upsilon(1S)` | $f_{\Upsilon(1S)}^T$ | $\Upsilon(1S)$ tensor decay constant |
+| `fT_Upsilon(2S)` | $f_{\Upsilon(2S)}^T$ | $\Upsilon(2S)$ tensor decay constant |
+| `fT_Upsilon(3S)` | $f_{\Upsilon(3S)}^T$ | $\Upsilon(3S)$ tensor decay constant |
+| `fT_psi(2S)` | $f_{\psi(2S)}^T$ | $\psi(2S)$ tensor decay constant |
 | `f_B+` | $f_{B^\pm}$ | $B^\pm$ decay constant |
 | `f_B0` | $f_{B^0}$ | $B^0$ decay constant |
 | `f_Bc` | $f_{B_c}$ | $B_c$ decay constant |
@@ -584,10 +699,19 @@ of the parameter.
 | `f_D+` | $f_{D^\pm}$ | $D^\pm$ decay constant |
 | `f_D0` | $f_{D^0}$ | $D^0$ decay constant |
 | `f_Ds` | $f_{D_s}$ | $D_s$ decay constant |
+| `f_J/psi` | $f_{J/\psi}$ | $J/\psi$ decay constant |
 | `f_K*+` | $f_{K^{*\pm}}$ | $K^{*\pm}$ decay constant |
 | `f_K*0` | $f_{K^{*0}}$ | $K^{*0}$ decay constant |
 | `f_K+` | $f_{K^\pm}$ | Charged kaon decay constant |
 | `f_K0` | $f_{K^0}$ | Neutral kaon decay constant |
+| `f_Upsilon(1S)` | $f_{\Upsilon(1S)}$ | $\Upsilon(1S)$ decay constant |
+| `f_Upsilon(2S)` | $f_{\Upsilon(2S)}$ | $\Upsilon(2S)$ decay constant |
+| `f_Upsilon(3S)` | $f_{\Upsilon(3S)}$ | $\Upsilon(3S)$ decay constant |
+| `f_chi_b0(1P)` | $f_{\chi_{b0}(1P)}$ | $\chi_{b0}(1P)$ decay constant |
+| `f_chi_b0(2P)` | $f_{\chi_{b0}(2P)}$ | $\chi_{b0}(2P)$ decay constant |
+| `f_chi_c0(1P)` | $f_{\chi_{c0}(1P)}$ | $\chi_{c0}(1P)$ decay constant |
+| `f_eta_b(1S)` | $f_{\eta_b(1S)}$ | $\eta_b(1S)$ decay constant |
+| `f_eta_c(1S)` | $f_{\eta_c(1S)}$ | $\eta_c(1S)$ decay constant |
 | `f_n` | $f_n$ | Statistical rate function for neutron beta decay |
 | `f_omega` | $f_{\omega}$ | $\omega$ decay constant |
 | `f_perp_K*+` | $f^\perp_{K^{\pm}}$ | Transverse $K^{*\pm}$ decay constant at 2 GeV in the 3-flavour scheme |
@@ -599,6 +723,7 @@ of the parameter.
 | `f_phi` | $f_{\phi}$ | $\phi$ decay constant |
 | `f_pi+` | $f_{\pi^\pm}$ | Charged pion decay constant |
 | `f_pi0` | $f_{\pi^0}$ | Neutral pion decay constant |
+| `f_psi(2S)` | $f_{\psi(2S)}$ | $\psi(2S)$ decay constant |
 | `f_rho0` | $f_{\rho^0}$ | $\rho^0$ decay constant |
 | `gA_s` | $g_A^s$ | Proton strange quark axial charge |
 | `gS_u-d` | $g_S^{u-d}$ | Nucleon isovector scalar charge |
@@ -606,6 +731,7 @@ of the parameter.
 | `gT_s` | $g_T^s$ | Proton strange quark tensor charge |
 | `gT_u` | $g_T^u$ | Proton up quark tensor charge |
 | `g_A` | $g_A^{u-d}$ | Nucleon isovector axial charge |
+| `gamma` | $\gamma$ | CKM Unitarity Triangle angle $\gamma$ in radians |
 | `kappa_L_tilde` | $\tilde{\kappa}_L$ | Parameter $\kappa_L$ containing the hadronic form factor information needed for the $K_L\to\pi^0\nu\bar\nu$ branching ratio, determined assuming $V_{us}\equiv0.225$ |
 | `kappa_epsilon` | $\kappa_\epsilon$ | Correction factor for $\epsilon_K$ |
 | `kappa_plus_tilde` | $\tilde{\kappa}_+$ | Parameter $\kappa_+$ containing the hadronic form factor information needed for the $K^+\to\pi^+\nu\bar\nu$ branching ratio, determined assuming $V_{us}\equiv0.225$ |
@@ -632,16 +758,25 @@ of the parameter.
 | `m_KL` | $m_{K_{L}}$ | $K_{L}$ mass |
 | `m_KS` | $m_{K_{S}}$ | $K_{S}$ mass |
 | `m_Lambda` | $m_{\Lambda}$ | $\Lambda$ mass |
+| `m_Lambda(1520)` | $m_{\Lambda}$ | $\Lambda$ mass |
 | `m_Lambdab` | $m_{\Lambda_{b}}$ | $\Lambda_{b}$ mass |
 | `m_Lambdac` | $m_{\Lambda_{c}}$ | $\Lambda_{c}$ mass |
+| `m_Upsilon(1S)` | $m_{\Upsilon_{1S}}$ | $\Upsilon_{1S}$ mass |
+| `m_Upsilon(2S)` | $m_{\Upsilon_{2S}}$ | $\Upsilon_{2S}$ mass |
+| `m_Upsilon(3S)` | $m_{\Upsilon_{3S}}$ | $\Upsilon_{3S}$ mass |
 | `m_W` | $m_{W}$ | $W$ mass |
 | `m_Z` | $m_{Z}$ | $Z$ mass |
 | `m_b` | $m_{b}(m_{b})$ | $b$ quark mass in the $\overline{\text{MS}}$ scheme at the scale $m_b$ |
 | `m_c` | $m_{c}(m_{c})$ | $c$ quark mass in the $\overline{\text{MS}}$ scheme at the scale $m_c$ |
 | `m_c BVgamma` | $m_c$ | Charm quark mass entering $O(\alpha_s)$ corrections to matrix elements in exclusive radiative $B$ decays. Uncertainty contains scheme ambiguity at $O(\alpha_s)$. |
+| `m_chi_b0(1P)` | $m_{\chi_{b0}}$ | $\chi_{b0}$ mass |
+| `m_chi_b0(2P)` | $m_{\chi_{b0}}$ | $\chi_{b0}$ mass |
+| `m_chi_c0(1P)` | $m_{\chi_{c0}}$ | $\chi_{c0}$ mass |
 | `m_d` | $m_{d}(2\,\text{GeV})$ | $d$ quark mass in the $\overline{\text{MS}}$ scheme at 2 GeV |
 | `m_e` | $m_{e}$ | $e$ mass |
 | `m_eta` | $m_{\eta}$ | $\eta$ mass |
+| `m_eta_b(1S)` | $m_{\eta_b(1S)}$ | $\eta_b(1S)$ mass |
+| `m_eta_c(1S)` | $m_{\eta_{c}}$ | $\eta_{c}$ mass |
 | `m_f0` | $m_{f_{0}}$ | $f_{0}$ mass |
 | `m_h` | $m_{H}$ | $H$ mass |
 | `m_mu` | $m_{\mu}$ | $\mu$ mass |
@@ -686,12 +821,22 @@ of the parameter.
 | `tau_KL` | $\tau_{K_{L}}$ | $K_{L}$ lifetime |
 | `tau_KS` | $\tau_{K_{S}}$ | $K_{S}$ lifetime |
 | `tau_Lambda` | $\tau_{\Lambda}$ | $\Lambda$ lifetime |
+| `tau_Lambda(1520)` | $\tau_{\Lambda}$ | $\Lambda$ lifetime |
 | `tau_Lambdab` | $\tau_{\Lambda_{b}}$ | $\Lambda_{b}$ lifetime |
 | `tau_Lambdac` | $\tau_{\Lambda_{c}}$ | $\Lambda_{c}$ lifetime |
+| `tau_Upsilon(1S)` | $\tau_{\Upsilon_{1S}}$ | $\Upsilon_{1S}$ lifetime |
+| `tau_Upsilon(2S)` | $\tau_{\Upsilon_{2S}}$ | $\Upsilon_{2S}$ lifetime |
+| `tau_Upsilon(3S)` | $\tau_{\Upsilon_{3S}}$ | $\Upsilon_{3S}$ lifetime |
 | `tau_W` | $\tau_{W}$ | $W$ lifetime |
 | `tau_Z` | $\tau_{Z}$ | $Z$ lifetime |
+| `tau_chi_b0(1P)` | $\tau_{\chi_{b0}(1P)}$ | lifetime of $\chi_{b0}(1P)$ |
+| `tau_chi_b0(2P)` | $\tau_{\chi_{b0}(2P)}$ | lifetime of $\chi_{b0}(2P)$ |
+| `tau_chi_c0(1P)` | $\tau_{\chi_{c0}}$ | $\chi_{c0}$ lifetime |
 | `tau_eta` | $\tau_{\eta}$ | $\eta$ lifetime |
+| `tau_eta_b(1S)` | $\tau_{\eta_b(1S)}$ | $\eta_b(1S)$ lifetime |
+| `tau_eta_c(1S)` | $\tau_{\eta_{c}}$ | $\eta_{c}$ lifetime |
 | `tau_f0` | $\tau_{f_{0}}$ | $f_{0}$ lifetime |
+| `tau_h` | $\tau_{H}$ | $H$ lifetime |
 | `tau_mu` | $\tau_{\mu}$ | $\mu$ lifetime |
 | `tau_n` | $\tau_{n}$ | $n$ lifetime |
 | `tau_omega` | $\tau_{\omega}$ | $\omega$ lifetime |
