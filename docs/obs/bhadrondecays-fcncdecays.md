@@ -585,6 +585,7 @@ a scalar observable).
 | `<A9>(B+->K*mumu)` | $\langle A_9\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned Angular CP asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<ACP>(B+->K*mumu)` | $\langle A_\text{CP}\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned Direct CP asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<AFB>(B+->K*mumu)` | $\langle A_\text{FB}\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned forward-backward asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<AFBCP>(B+->K*mumu)` | $\langle A_\text{FB}^\text{CP}\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP asymmetry of the forward-backward asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<ATIm>(B+->K*mumu)` | $\langle A_T^\text{Im}\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned Transverse CP asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<FL>(B+->K*mumu)` | $\langle F_L\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned longitudinal polarization fraction in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<P1>(B+->K*mumu)` | $\langle P_1\rangle(B^+\to K^{\ast +}\mu^+\mu^-)$ | Binned CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2min`, `q2max` |
@@ -613,6 +614,7 @@ a scalar observable).
 | `A9(B+->K*mumu)` | $A_9(B^+\to K^{\ast +}\mu^+\mu^-)$ | Angular CP asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `ACP(B+->K*mumu)` | $A_\text{CP}(B^+\to K^{\ast +}\mu^+\mu^-)$ | Direct CP asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `AFB(B+->K*mumu)` | $A_\text{FB}(B^+\to K^{\ast +}\mu^+\mu^-)$ | Forward-backward asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
+| `AFBCP(B+->K*mumu)` | $A_\text{FB}^\text{CP}(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP asymmetry of the forward-backward asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `ATIm(B+->K*mumu)` | $A_T^\text{Im}(B^+\to K^{\ast +}\mu^+\mu^-)$ | Transverse CP asymmetry in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `FL(B+->K*mumu)` | $F_L(B^+\to K^{\ast +}\mu^+\mu^-)$ | Longitudinal polarization fraction in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
 | `P1(B+->K*mumu)` | $P_1(B^+\to K^{\ast +}\mu^+\mu^-)$ | CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\mu^+\mu^-$ | `q2` |
@@ -648,6 +650,7 @@ a scalar observable).
 | `<A9>(B+->K*tautau)` | $\langle A_9\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned Angular CP asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<ACP>(B+->K*tautau)` | $\langle A_\text{CP}\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned Direct CP asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<AFB>(B+->K*tautau)` | $\langle A_\text{FB}\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned forward-backward asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
+| `<AFBCP>(B+->K*tautau)` | $\langle A_\text{FB}^\text{CP}\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP asymmetry of the forward-backward asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<ATIm>(B+->K*tautau)` | $\langle A_T^\text{Im}\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned Transverse CP asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<FL>(B+->K*tautau)` | $\langle F_L\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned longitudinal polarization fraction in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<P1>(B+->K*tautau)` | $\langle P_1\rangle(B^+\to K^{\ast +}\tau^+\tau^-)$ | Binned CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2min`, `q2max` |
@@ -675,6 +678,7 @@ a scalar observable).
 | `A9(B+->K*tautau)` | $A_9(B^+\to K^{\ast +}\tau^+\tau^-)$ | Angular CP asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `ACP(B+->K*tautau)` | $A_\text{CP}(B^+\to K^{\ast +}\tau^+\tau^-)$ | Direct CP asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `AFB(B+->K*tautau)` | $A_\text{FB}(B^+\to K^{\ast +}\tau^+\tau^-)$ | Forward-backward asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
+| `AFBCP(B+->K*tautau)` | $A_\text{FB}^\text{CP}(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP asymmetry of the forward-backward asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `ATIm(B+->K*tautau)` | $A_T^\text{Im}(B^+\to K^{\ast +}\tau^+\tau^-)$ | Transverse CP asymmetry in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `FL(B+->K*tautau)` | $F_L(B^+\to K^{\ast +}\tau^+\tau^-)$ | Longitudinal polarization fraction in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
 | `P1(B+->K*tautau)` | $P_1(B^+\to K^{\ast +}\tau^+\tau^-)$ | CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}\tau^+\tau^-$ | `q2` |
@@ -709,6 +713,7 @@ a scalar observable).
 | `<A9>(B+->K*ee)` | $\langle A_9\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned Angular CP asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<ACP>(B+->K*ee)` | $\langle A_\text{CP}\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned Direct CP asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<AFB>(B+->K*ee)` | $\langle A_\text{FB}\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned forward-backward asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
+| `<AFBCP>(B+->K*ee)` | $\langle A_\text{FB}^\text{CP}\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP asymmetry of the forward-backward asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<ATIm>(B+->K*ee)` | $\langle A_T^\text{Im}\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned Transverse CP asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<FL>(B+->K*ee)` | $\langle F_L\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned longitudinal polarization fraction in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
 | `<P1>(B+->K*ee)` | $\langle P_1\rangle(B^+\to K^{\ast +}e^+e^-)$ | Binned CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2min`, `q2max` |
@@ -736,6 +741,7 @@ a scalar observable).
 | `A9(B+->K*ee)` | $A_9(B^+\to K^{\ast +}e^+e^-)$ | Angular CP asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `ACP(B+->K*ee)` | $A_\text{CP}(B^+\to K^{\ast +}e^+e^-)$ | Direct CP asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `AFB(B+->K*ee)` | $A_\text{FB}(B^+\to K^{\ast +}e^+e^-)$ | Forward-backward asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
+| `AFBCP(B+->K*ee)` | $A_\text{FB}^\text{CP}(B^+\to K^{\ast +}e^+e^-)$ | CP asymmetry of the forward-backward asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `ATIm(B+->K*ee)` | $A_T^\text{Im}(B^+\to K^{\ast +}e^+e^-)$ | Transverse CP asymmetry in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `FL(B+->K*ee)` | $F_L(B^+\to K^{\ast +}e^+e^-)$ | Longitudinal polarization fraction in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
 | `P1(B+->K*ee)` | $P_1(B^+\to K^{\ast +}e^+e^-)$ | CP-averaged "optimized" angular observable in $B^+\to K^{\ast +}e^+e^-$ | `q2` |
@@ -866,6 +872,7 @@ a scalar observable).
 | `<A9>(B0->K*mumu)` | $\langle A_9\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned Angular CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<ACP>(B0->K*mumu)` | $\langle A_\text{CP}\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned Direct CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<AFB>(B0->K*mumu)` | $\langle A_\text{FB}\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned forward-backward asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
+| `<AFBCP>(B0->K*mumu)` | $\langle A_\text{FB}^\text{CP}\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned CP asymmetry of the forward-backward asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<ATIm>(B0->K*mumu)` | $\langle A_T^\text{Im}\rangle(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Binned Transverse CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2min`, `q2max` |
 | `<Dmue_AFB>(B0->K*ll)` | $\langle D_{A_\text{FB}}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $A_\text{FB}$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<Dmue_P4p>(B0->K*ll)` | $\langle D_{P_4^\prime}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $P_4^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
@@ -897,6 +904,7 @@ a scalar observable).
 | `A9(B0->K*mumu)` | $A_9(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Angular CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `ACP(B0->K*mumu)` | $A_\text{CP}(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Direct CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `AFB(B0->K*mumu)` | $A_\text{FB}(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Forward-backward asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
+| `AFBCP(B0->K*mumu)` | $A_\text{FB}^\text{CP}(B^0\to K^{\ast 0}\mu^+\mu^-)$ | CP asymmetry of the forward-backward asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `ATIm(B0->K*mumu)` | $A_T^\text{Im}(B^0\to K^{\ast 0}\mu^+\mu^-)$ | Transverse CP asymmetry in $B^0\to K^{\ast 0}\mu^+\mu^-$ | `q2` |
 | `Dmue_AFB(B0->K*ll)` | $D_{A_\text{FB}}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $A_\text{FB}$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `Dmue_P4p(B0->K*ll)` | $D_{P_4^\prime}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $P_4^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
@@ -935,6 +943,7 @@ a scalar observable).
 | `<A9>(B0->K*tautau)` | $\langle A_9\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned Angular CP asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<ACP>(B0->K*tautau)` | $\langle A_\text{CP}\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned Direct CP asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<AFB>(B0->K*tautau)` | $\langle A_\text{FB}\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned forward-backward asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
+| `<AFBCP>(B0->K*tautau)` | $\langle A_\text{FB}^\text{CP}\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP asymmetry of the forward-backward asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<ATIm>(B0->K*tautau)` | $\langle A_T^\text{Im}\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned Transverse CP asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<FL>(B0->K*tautau)` | $\langle F_L\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned longitudinal polarization fraction in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
 | `<P1>(B0->K*tautau)` | $\langle P_1\rangle(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Binned CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2min`, `q2max` |
@@ -962,6 +971,7 @@ a scalar observable).
 | `A9(B0->K*tautau)` | $A_9(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Angular CP asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `ACP(B0->K*tautau)` | $A_\text{CP}(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Direct CP asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `AFB(B0->K*tautau)` | $A_\text{FB}(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Forward-backward asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
+| `AFBCP(B0->K*tautau)` | $A_\text{FB}^\text{CP}(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP asymmetry of the forward-backward asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `ATIm(B0->K*tautau)` | $A_T^\text{Im}(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Transverse CP asymmetry in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `FL(B0->K*tautau)` | $F_L(B^0\to K^{\ast 0}\tau^+\tau^-)$ | Longitudinal polarization fraction in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
 | `P1(B0->K*tautau)` | $P_1(B^0\to K^{\ast 0}\tau^+\tau^-)$ | CP-averaged "optimized" angular observable in $B^0\to K^{\ast 0}\tau^+\tau^-$ | `q2` |
@@ -996,6 +1006,7 @@ a scalar observable).
 | `<A9>(B0->K*ee)` | $\langle A_9\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned Angular CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<ACP>(B0->K*ee)` | $\langle A_\text{CP}\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned Direct CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<AFB>(B0->K*ee)` | $\langle A_\text{FB}\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned forward-backward asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
+| `<AFBCP>(B0->K*ee)` | $\langle A_\text{FB}^\text{CP}\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned CP asymmetry of the forward-backward asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<ATIm>(B0->K*ee)` | $\langle A_T^\text{Im}\rangle(B^0\to K^{\ast 0}e^+e^-)$ | Binned Transverse CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<Dmue_AFB>(B0->K*ll)` | $\langle D_{A_\text{FB}}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $A_\text{FB}$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
 | `<Dmue_P4p>(B0->K*ll)` | $\langle D_{P_4^\prime}^{\mu e} \rangle(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Binned difference of angular observable $P_4^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2min`, `q2max` |
@@ -1026,6 +1037,7 @@ a scalar observable).
 | `A9(B0->K*ee)` | $A_9(B^0\to K^{\ast 0}e^+e^-)$ | Angular CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `ACP(B0->K*ee)` | $A_\text{CP}(B^0\to K^{\ast 0}e^+e^-)$ | Direct CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `AFB(B0->K*ee)` | $A_\text{FB}(B^0\to K^{\ast 0}e^+e^-)$ | Forward-backward asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
+| `AFBCP(B0->K*ee)` | $A_\text{FB}^\text{CP}(B^0\to K^{\ast 0}e^+e^-)$ | CP asymmetry of the forward-backward asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `ATIm(B0->K*ee)` | $A_T^\text{Im}(B^0\to K^{\ast 0}e^+e^-)$ | Transverse CP asymmetry in $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `Dmue_AFB(B0->K*ll)` | $D_{A_\text{FB}}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $A_\text{FB}$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
 | `Dmue_P4p(B0->K*ll)` | $D_{P_4^\prime}^{\mu e}(B^0\to K^{\ast 0}\ell^+\ell^-)$ | Difference of angular observable $P_4^\prime$ in $B^0\to K^{\ast 0}\mu^+\mu^-$ and $B^0\to K^{\ast 0}e^+e^-$ | `q2` |
@@ -1711,11 +1723,79 @@ a scalar observable).
 | `<AFBl>(Lambdab->Lambdamumu)` | $\langle A_\text{FB}^\ell\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
 | `<AFBlh>(Lambdab->Lambdamumu)` | $\langle A_\text{FB}^{\ell h}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
 | `<FL>(Lambdab->Lambdamumu)` | $\langle F_L\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned longitudinal polarization fraction in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K11>(Lambdab->Lambdamumu)` | $\langle K_{11}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 11 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K12>(Lambdab->Lambdamumu)` | $\langle K_{12}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 12 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K13>(Lambdab->Lambdamumu)` | $\langle K_{13}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 13 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K14>(Lambdab->Lambdamumu)` | $\langle K_{14}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 14 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K15>(Lambdab->Lambdamumu)` | $\langle K_{15}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 15 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K16>(Lambdab->Lambdamumu)` | $\langle K_{16}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 16 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K17>(Lambdab->Lambdamumu)` | $\langle K_{17}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 17 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K18>(Lambdab->Lambdamumu)` | $\langle K_{18}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 18 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K19>(Lambdab->Lambdamumu)` | $\langle K_{19}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 19 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K1c>(Lambdab->Lambdamumu)` | $\langle K_{1c}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 1c in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K1cc>(Lambdab->Lambdamumu)` | $\langle K_{1cc}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 1cc in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K1ss>(Lambdab->Lambdamumu)` | $\langle K_{1ss}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 1ss in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K20>(Lambdab->Lambdamumu)` | $\langle K_{20}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 20 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K21>(Lambdab->Lambdamumu)` | $\langle K_{21}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 21 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K22>(Lambdab->Lambdamumu)` | $\langle K_{22}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 22 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K23>(Lambdab->Lambdamumu)` | $\langle K_{23}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 23 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K24>(Lambdab->Lambdamumu)` | $\langle K_{24}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 24 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K25>(Lambdab->Lambdamumu)` | $\langle K_{25}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 25 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K26>(Lambdab->Lambdamumu)` | $\langle K_{26}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 26 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K27>(Lambdab->Lambdamumu)` | $\langle K_{27}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 27 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K28>(Lambdab->Lambdamumu)` | $\langle K_{28}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 28 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K29>(Lambdab->Lambdamumu)` | $\langle K_{29}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 29 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K2c>(Lambdab->Lambdamumu)` | $\langle K_{2c}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 2c in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K2cc>(Lambdab->Lambdamumu)` | $\langle K_{2cc}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 2cc in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K2ss>(Lambdab->Lambdamumu)` | $\langle K_{2ss}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 2ss in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K30>(Lambdab->Lambdamumu)` | $\langle K_{30}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 30 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K31>(Lambdab->Lambdamumu)` | $\langle K_{31}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 31 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K32>(Lambdab->Lambdamumu)` | $\langle K_{32}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 32 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K33>(Lambdab->Lambdamumu)` | $\langle K_{33}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 33 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K34>(Lambdab->Lambdamumu)` | $\langle K_{34}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 34 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K3s>(Lambdab->Lambdamumu)` | $\langle K_{3s}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 3s in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K3sc>(Lambdab->Lambdamumu)` | $\langle K_{3sc}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 3sc in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K4s>(Lambdab->Lambdamumu)` | $\langle K_{4s}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 4s in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
+| `<K4sc>(Lambdab->Lambdamumu)` | $\langle K_{4sc}\rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned angular coefficient 4sc in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
 | `<dBR/dq2>(Lambdab->Lambdamumu)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Binned differential branching ratio of $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2min`, `q2max` |
 | `AFBh(Lambdab->Lambdamumu)` | $A_\text{FB}^h(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Hadronic forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
 | `AFBl(Lambdab->Lambdamumu)` | $A_\text{FB}^\ell(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
 | `AFBlh(Lambdab->Lambdamumu)` | $A_\text{FB}^{\ell h}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
 | `FL(Lambdab->Lambdamumu)` | $F_L(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Longitudinal polarization fraction in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K11(Lambdab->Lambdamumu)` | $K_{11}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 11 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K12(Lambdab->Lambdamumu)` | $K_{12}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 12 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K13(Lambdab->Lambdamumu)` | $K_{13}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 13 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K14(Lambdab->Lambdamumu)` | $K_{14}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 14 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K15(Lambdab->Lambdamumu)` | $K_{15}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 15 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K16(Lambdab->Lambdamumu)` | $K_{16}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 16 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K17(Lambdab->Lambdamumu)` | $K_{17}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 17 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K18(Lambdab->Lambdamumu)` | $K_{18}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 18 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K19(Lambdab->Lambdamumu)` | $K_{19}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 19 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K1c(Lambdab->Lambdamumu)` | $K_{1c}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 1c in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K1cc(Lambdab->Lambdamumu)` | $K_{1cc}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 1cc in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K1ss(Lambdab->Lambdamumu)` | $K_{1ss}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 1ss in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K20(Lambdab->Lambdamumu)` | $K_{20}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 20 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K21(Lambdab->Lambdamumu)` | $K_{21}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 21 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K22(Lambdab->Lambdamumu)` | $K_{22}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 22 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K23(Lambdab->Lambdamumu)` | $K_{23}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 23 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K24(Lambdab->Lambdamumu)` | $K_{24}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 24 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K25(Lambdab->Lambdamumu)` | $K_{25}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 25 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K26(Lambdab->Lambdamumu)` | $K_{26}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 26 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K27(Lambdab->Lambdamumu)` | $K_{27}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 27 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K28(Lambdab->Lambdamumu)` | $K_{28}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 28 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K29(Lambdab->Lambdamumu)` | $K_{29}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 29 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K2c(Lambdab->Lambdamumu)` | $K_{2c}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 2c in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K2cc(Lambdab->Lambdamumu)` | $K_{2cc}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 2cc in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K2ss(Lambdab->Lambdamumu)` | $K_{2ss}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 2ss in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K30(Lambdab->Lambdamumu)` | $K_{30}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 30 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K31(Lambdab->Lambdamumu)` | $K_{31}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 31 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K32(Lambdab->Lambdamumu)` | $K_{32}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 32 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K33(Lambdab->Lambdamumu)` | $K_{33}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 33 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K34(Lambdab->Lambdamumu)` | $K_{34}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 34 in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K3s(Lambdab->Lambdamumu)` | $K_{3s}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 3s in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K3sc(Lambdab->Lambdamumu)` | $K_{3sc}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 3sc in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K4s(Lambdab->Lambdamumu)` | $K_{4s}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 4s in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
+| `K4sc(Lambdab->Lambdamumu)` | $K_{4sc}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Angular coefficient 4sc in $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
 | `dBR/dq2(Lambdab->Lambdamumu)` | $\frac{d\text{BR}}{dq^2}(\Lambda_b\to\Lambda \mu^+\mu^-)$ | Differential branching ratio of $\Lambda_b\to\Lambda \mu^+\mu^-$ | `q2` |
 
 
@@ -1728,11 +1808,79 @@ a scalar observable).
 | `<AFBl>(Lambdab->Lambdaee)` | $\langle A_\text{FB}^\ell\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
 | `<AFBlh>(Lambdab->Lambdaee)` | $\langle A_\text{FB}^{\ell h}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
 | `<FL>(Lambdab->Lambdaee)` | $\langle F_L\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned longitudinal polarization fraction in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K11>(Lambdab->Lambdaee)` | $\langle K_{11}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 11 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K12>(Lambdab->Lambdaee)` | $\langle K_{12}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 12 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K13>(Lambdab->Lambdaee)` | $\langle K_{13}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 13 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K14>(Lambdab->Lambdaee)` | $\langle K_{14}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 14 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K15>(Lambdab->Lambdaee)` | $\langle K_{15}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 15 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K16>(Lambdab->Lambdaee)` | $\langle K_{16}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 16 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K17>(Lambdab->Lambdaee)` | $\langle K_{17}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 17 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K18>(Lambdab->Lambdaee)` | $\langle K_{18}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 18 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K19>(Lambdab->Lambdaee)` | $\langle K_{19}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 19 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K1c>(Lambdab->Lambdaee)` | $\langle K_{1c}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 1c in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K1cc>(Lambdab->Lambdaee)` | $\langle K_{1cc}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 1cc in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K1ss>(Lambdab->Lambdaee)` | $\langle K_{1ss}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 1ss in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K20>(Lambdab->Lambdaee)` | $\langle K_{20}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 20 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K21>(Lambdab->Lambdaee)` | $\langle K_{21}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 21 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K22>(Lambdab->Lambdaee)` | $\langle K_{22}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 22 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K23>(Lambdab->Lambdaee)` | $\langle K_{23}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 23 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K24>(Lambdab->Lambdaee)` | $\langle K_{24}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 24 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K25>(Lambdab->Lambdaee)` | $\langle K_{25}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 25 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K26>(Lambdab->Lambdaee)` | $\langle K_{26}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 26 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K27>(Lambdab->Lambdaee)` | $\langle K_{27}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 27 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K28>(Lambdab->Lambdaee)` | $\langle K_{28}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 28 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K29>(Lambdab->Lambdaee)` | $\langle K_{29}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 29 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K2c>(Lambdab->Lambdaee)` | $\langle K_{2c}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 2c in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K2cc>(Lambdab->Lambdaee)` | $\langle K_{2cc}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 2cc in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K2ss>(Lambdab->Lambdaee)` | $\langle K_{2ss}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 2ss in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K30>(Lambdab->Lambdaee)` | $\langle K_{30}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 30 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K31>(Lambdab->Lambdaee)` | $\langle K_{31}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 31 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K32>(Lambdab->Lambdaee)` | $\langle K_{32}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 32 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K33>(Lambdab->Lambdaee)` | $\langle K_{33}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 33 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K34>(Lambdab->Lambdaee)` | $\langle K_{34}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 34 in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K3s>(Lambdab->Lambdaee)` | $\langle K_{3s}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 3s in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K3sc>(Lambdab->Lambdaee)` | $\langle K_{3sc}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 3sc in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K4s>(Lambdab->Lambdaee)` | $\langle K_{4s}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 4s in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
+| `<K4sc>(Lambdab->Lambdaee)` | $\langle K_{4sc}\rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned angular coefficient 4sc in $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
 | `<dBR/dq2>(Lambdab->Lambdaee)` | $\langle \frac{d\text{BR}}{dq^2} \rangle(\Lambda_b\to\Lambda e^+e^-)$ | Binned differential branching ratio of $\Lambda_b\to\Lambda e^+e^-$ | `q2min`, `q2max` |
 | `AFBh(Lambdab->Lambdaee)` | $A_\text{FB}^h(\Lambda_b\to\Lambda e^+e^-)$ | Hadronic forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
 | `AFBl(Lambdab->Lambdaee)` | $A_\text{FB}^\ell(\Lambda_b\to\Lambda e^+e^-)$ | Leptonic forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
 | `AFBlh(Lambdab->Lambdaee)` | $A_\text{FB}^{\ell h}(\Lambda_b\to\Lambda e^+e^-)$ | Lepton-hadron forward-backward asymmetry in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
 | `FL(Lambdab->Lambdaee)` | $F_L(\Lambda_b\to\Lambda e^+e^-)$ | Longitudinal polarization fraction in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K11(Lambdab->Lambdaee)` | $K_{11}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 11 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K12(Lambdab->Lambdaee)` | $K_{12}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 12 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K13(Lambdab->Lambdaee)` | $K_{13}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 13 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K14(Lambdab->Lambdaee)` | $K_{14}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 14 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K15(Lambdab->Lambdaee)` | $K_{15}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 15 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K16(Lambdab->Lambdaee)` | $K_{16}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 16 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K17(Lambdab->Lambdaee)` | $K_{17}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 17 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K18(Lambdab->Lambdaee)` | $K_{18}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 18 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K19(Lambdab->Lambdaee)` | $K_{19}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 19 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K1c(Lambdab->Lambdaee)` | $K_{1c}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 1c in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K1cc(Lambdab->Lambdaee)` | $K_{1cc}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 1cc in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K1ss(Lambdab->Lambdaee)` | $K_{1ss}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 1ss in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K20(Lambdab->Lambdaee)` | $K_{20}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 20 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K21(Lambdab->Lambdaee)` | $K_{21}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 21 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K22(Lambdab->Lambdaee)` | $K_{22}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 22 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K23(Lambdab->Lambdaee)` | $K_{23}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 23 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K24(Lambdab->Lambdaee)` | $K_{24}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 24 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K25(Lambdab->Lambdaee)` | $K_{25}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 25 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K26(Lambdab->Lambdaee)` | $K_{26}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 26 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K27(Lambdab->Lambdaee)` | $K_{27}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 27 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K28(Lambdab->Lambdaee)` | $K_{28}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 28 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K29(Lambdab->Lambdaee)` | $K_{29}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 29 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K2c(Lambdab->Lambdaee)` | $K_{2c}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 2c in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K2cc(Lambdab->Lambdaee)` | $K_{2cc}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 2cc in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K2ss(Lambdab->Lambdaee)` | $K_{2ss}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 2ss in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K30(Lambdab->Lambdaee)` | $K_{30}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 30 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K31(Lambdab->Lambdaee)` | $K_{31}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 31 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K32(Lambdab->Lambdaee)` | $K_{32}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 32 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K33(Lambdab->Lambdaee)` | $K_{33}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 33 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K34(Lambdab->Lambdaee)` | $K_{34}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 34 in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K3s(Lambdab->Lambdaee)` | $K_{3s}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 3s in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K3sc(Lambdab->Lambdaee)` | $K_{3sc}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 3sc in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K4s(Lambdab->Lambdaee)` | $K_{4s}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 4s in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
+| `K4sc(Lambdab->Lambdaee)` | $K_{4sc}(\Lambda_b\to\Lambda e^+e^-)$ | Angular coefficient 4sc in $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
 | `dBR/dq2(Lambdab->Lambdaee)` | $\frac{d\text{BR}}{dq^2}(\Lambda_b\to\Lambda e^+e^-)$ | Differential branching ratio of $\Lambda_b\to\Lambda e^+e^-$ | `q2` |
 
 

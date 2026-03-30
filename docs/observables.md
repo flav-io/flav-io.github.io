@@ -43,11 +43,11 @@ of this page.
 ### $b$ hadron decays
 
 
-- [FCNC decays](obs/bhadrondecays-fcncdecays.html) (860 observables)
+- [FCNC decays](obs/bhadrondecays-fcncdecays.html) (1008 observables)
 
 - [Leptonic tree-level decays](obs/bhadrondecays-leptonictreeleveldecays.html) (6 observables)
 
-- [Lifetimes](obs/bhadrondecays-lifetimes.html) (1 observable)
+- [Lifetimes](obs/bhadrondecays-lifetimes.html) (2 observables)
 
 - [Non-leptonic decays](obs/bhadrondecays-nonleptonicdecays.html) (2 observables)
 

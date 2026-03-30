@@ -20,117 +20,117 @@ a scalar observable).
 * TOC
 {:toc}
 
-## $\eta_b(1S)\to\mu^+\tau^-$
+## $\eta_b(1S)\to \mu^+\tau^-$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(eta_b(1S)->mutau)` | $\text{BR}(\eta_b(1S)\to\mu^+\tau^-)$ | Branching ratio of $\eta_b(1S)\to\mu^+\tau^-$ | `CeGGij`, `CeGGji` |
+| `BR(eta_b(1S)->mutau)` | $\text{BR}(\eta_b(1S)\to \mu^+\tau^-)$ | Branching ratio of $\eta_b(1S)\to \mu^+\tau^-$ | `CeGGij`, `CeGGji` |
 
 
-## $\eta_b(1S)\to\mu^+e^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `BR(eta_b(1S)->mue)` | $\text{BR}(\eta_b(1S)\to\mu^+e^-)$ | Branching ratio of $\eta_b(1S)\to\mu^+e^-$ | `CeGGij`, `CeGGji` |
-
-
-## $\eta_b(1S)\to\mu^\pm\tau^\mp$
+## $\eta_b(1S)\to \mu^+e^-$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(eta_b(1S)->mutau,taumu)` | $\text{BR}(\eta_b(1S)\to\mu^\pm\tau^\mp)$ | Branching ratio of $\eta_b(1S)\to\mu^\pm\tau^\mp$ | `CeGGij`, `CeGGji` |
-| `BR(eta_b(1S)->taumu,mutau)` | $\text{BR}(\eta_b(1S)\to\mu^\pm\tau^\mp)$ | Branching ratio of $\eta_b(1S)\to\mu^\pm\tau^\mp$ | `CeGGij`, `CeGGji` |
+| `BR(eta_b(1S)->mue)` | $\text{BR}(\eta_b(1S)\to \mu^+e^-)$ | Branching ratio of $\eta_b(1S)\to \mu^+e^-$ | `CeGGij`, `CeGGji` |
 
 
-## $\eta_b(1S)\to\tau^+\mu^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `BR(eta_b(1S)->taumu)` | $\text{BR}(\eta_b(1S)\to\tau^+\mu^-)$ | Branching ratio of $\eta_b(1S)\to\tau^+\mu^-$ | `CeGGij`, `CeGGji` |
-
-
-## $\eta_b(1S)\to\tau^+e^-$
+## $\eta_b(1S)\to \mu^\pm\tau^\mp$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(eta_b(1S)->taue)` | $\text{BR}(\eta_b(1S)\to\tau^+e^-)$ | Branching ratio of $\eta_b(1S)\to\tau^+e^-$ | `CeGGij`, `CeGGji` |
+| `BR(eta_b(1S)->mutau,taumu)` | $\text{BR}(\eta_b(1S)\to \mu^\pm\tau^\mp)$ | Branching ratio of $\eta_b(1S)\to \mu^\pm\tau^\mp$ | `CeGGij`, `CeGGji` |
+| `BR(eta_b(1S)->taumu,mutau)` | $\text{BR}(\eta_b(1S)\to \mu^\pm\tau^\mp)$ | Branching ratio of $\eta_b(1S)\to \mu^\pm\tau^\mp$ | `CeGGij`, `CeGGji` |
 
 
-## $\eta_b(1S)\toe^+\mu^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `BR(eta_b(1S)->emu)` | $\text{BR}(\eta_b(1S)\toe^+\mu^-)$ | Branching ratio of $\eta_b(1S)\toe^+\mu^-$ | `CeGGij`, `CeGGji` |
-
-
-## $\eta_b(1S)\toe^+\tau^-$
+## $\eta_b(1S)\to \tau^+\mu^-$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(eta_b(1S)->etau)` | $\text{BR}(\eta_b(1S)\toe^+\tau^-)$ | Branching ratio of $\eta_b(1S)\toe^+\tau^-$ | `CeGGij`, `CeGGji` |
+| `BR(eta_b(1S)->taumu)` | $\text{BR}(\eta_b(1S)\to \tau^+\mu^-)$ | Branching ratio of $\eta_b(1S)\to \tau^+\mu^-$ | `CeGGij`, `CeGGji` |
 
 
-## $\eta_c(1S)\to\mu^+\tau^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `BR(eta_c(1S)->mutau)` | $\text{BR}(\eta_c(1S)\to\mu^+\tau^-)$ | Branching ratio of $\eta_c(1S)\to\mu^+\tau^-$ | `CeGGij`, `CeGGji` |
-
-
-## $\eta_c(1S)\to\mu^+e^-$
+## $\eta_b(1S)\to \tau^+e^-$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(eta_c(1S)->mue)` | $\text{BR}(\eta_c(1S)\to\mu^+e^-)$ | Branching ratio of $\eta_c(1S)\to\mu^+e^-$ | `CeGGij`, `CeGGji` |
+| `BR(eta_b(1S)->taue)` | $\text{BR}(\eta_b(1S)\to \tau^+e^-)$ | Branching ratio of $\eta_b(1S)\to \tau^+e^-$ | `CeGGij`, `CeGGji` |
 
 
-## $\eta_c(1S)\to\mu^\pm\tau^\mp$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `BR(eta_c(1S)->mutau,taumu)` | $\text{BR}(\eta_c(1S)\to\mu^\pm\tau^\mp)$ | Branching ratio of $\eta_c(1S)\to\mu^\pm\tau^\mp$ | `CeGGij`, `CeGGji` |
-| `BR(eta_c(1S)->taumu,mutau)` | $\text{BR}(\eta_c(1S)\to\mu^\pm\tau^\mp)$ | Branching ratio of $\eta_c(1S)\to\mu^\pm\tau^\mp$ | `CeGGij`, `CeGGji` |
-
-
-## $\eta_c(1S)\to\tau^+\mu^-$
+## $\eta_b(1S)\to e^+\mu^-$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(eta_c(1S)->taumu)` | $\text{BR}(\eta_c(1S)\to\tau^+\mu^-)$ | Branching ratio of $\eta_c(1S)\to\tau^+\mu^-$ | `CeGGij`, `CeGGji` |
+| `BR(eta_b(1S)->emu)` | $\text{BR}(\eta_b(1S)\to e^+\mu^-)$ | Branching ratio of $\eta_b(1S)\to e^+\mu^-$ | `CeGGij`, `CeGGji` |
 
 
-## $\eta_c(1S)\to\tau^+e^-$
-
-{: class="table"}
-| Name | Symbol | Description | Arguments |
-|------|--------|-------------|-----------|
-| `BR(eta_c(1S)->taue)` | $\text{BR}(\eta_c(1S)\to\tau^+e^-)$ | Branching ratio of $\eta_c(1S)\to\tau^+e^-$ | `CeGGij`, `CeGGji` |
-
-
-## $\eta_c(1S)\toe^+\mu^-$
+## $\eta_b(1S)\to e^+\tau^-$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(eta_c(1S)->emu)` | $\text{BR}(\eta_c(1S)\toe^+\mu^-)$ | Branching ratio of $\eta_c(1S)\toe^+\mu^-$ | `CeGGij`, `CeGGji` |
+| `BR(eta_b(1S)->etau)` | $\text{BR}(\eta_b(1S)\to e^+\tau^-)$ | Branching ratio of $\eta_b(1S)\to e^+\tau^-$ | `CeGGij`, `CeGGji` |
 
 
-## $\eta_c(1S)\toe^+\tau^-$
+## $\eta_c(1S)\to \mu^+\tau^-$
 
 {: class="table"}
 | Name | Symbol | Description | Arguments |
 |------|--------|-------------|-----------|
-| `BR(eta_c(1S)->etau)` | $\text{BR}(\eta_c(1S)\toe^+\tau^-)$ | Branching ratio of $\eta_c(1S)\toe^+\tau^-$ | `CeGGij`, `CeGGji` |
+| `BR(eta_c(1S)->mutau)` | $\text{BR}(\eta_c(1S)\to \mu^+\tau^-)$ | Branching ratio of $\eta_c(1S)\to \mu^+\tau^-$ | `CeGGij`, `CeGGji` |
+
+
+## $\eta_c(1S)\to \mu^+e^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(eta_c(1S)->mue)` | $\text{BR}(\eta_c(1S)\to \mu^+e^-)$ | Branching ratio of $\eta_c(1S)\to \mu^+e^-$ | `CeGGij`, `CeGGji` |
+
+
+## $\eta_c(1S)\to \mu^\pm\tau^\mp$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(eta_c(1S)->mutau,taumu)` | $\text{BR}(\eta_c(1S)\to \mu^\pm\tau^\mp)$ | Branching ratio of $\eta_c(1S)\to \mu^\pm\tau^\mp$ | `CeGGij`, `CeGGji` |
+| `BR(eta_c(1S)->taumu,mutau)` | $\text{BR}(\eta_c(1S)\to \mu^\pm\tau^\mp)$ | Branching ratio of $\eta_c(1S)\to \mu^\pm\tau^\mp$ | `CeGGij`, `CeGGji` |
+
+
+## $\eta_c(1S)\to \tau^+\mu^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(eta_c(1S)->taumu)` | $\text{BR}(\eta_c(1S)\to \tau^+\mu^-)$ | Branching ratio of $\eta_c(1S)\to \tau^+\mu^-$ | `CeGGij`, `CeGGji` |
+
+
+## $\eta_c(1S)\to \tau^+e^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(eta_c(1S)->taue)` | $\text{BR}(\eta_c(1S)\to \tau^+e^-)$ | Branching ratio of $\eta_c(1S)\to \tau^+e^-$ | `CeGGij`, `CeGGji` |
+
+
+## $\eta_c(1S)\to e^+\mu^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(eta_c(1S)->emu)` | $\text{BR}(\eta_c(1S)\to e^+\mu^-)$ | Branching ratio of $\eta_c(1S)\to e^+\mu^-$ | `CeGGij`, `CeGGji` |
+
+
+## $\eta_c(1S)\to e^+\tau^-$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `BR(eta_c(1S)->etau)` | $\text{BR}(\eta_c(1S)\to e^+\tau^-)$ | Branching ratio of $\eta_c(1S)\to e^+\tau^-$ | `CeGGij`, `CeGGji` |
 
 

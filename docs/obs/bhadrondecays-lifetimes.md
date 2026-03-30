@@ -28,3 +28,11 @@ a scalar observable).
 | `tau_Bc` | $\tau_{B_c}$ | $B_c$ lifetime |  |
 
 
+## $B_q \to X$
+
+{: class="table"}
+| Name | Symbol | Description | Arguments |
+|------|--------|-------------|-----------|
+| `tau_B+/tau_Bd` | $\tau_{B^+} / \tau_{B_d}$ | $B^+ / B_d$ lifetime ratio |  |
+
+
