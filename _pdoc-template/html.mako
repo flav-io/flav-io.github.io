@@ -96,10 +96,10 @@
     else:
       base = m.name[len(module.name)+1:]
     url = base.replace('.', '/')
-    if m.is_package():
-      url += '/%s' % pdoc.html_package_name
+    if m.is_package:
+      url += pdoc._URL_PACKAGE_SUFFIX
     else:
-      url += pdoc.html_module_suffix
+      url += pdoc._URL_MODULE_SUFFIX
     return link_prefix + url
 
   def external_url(refname):
