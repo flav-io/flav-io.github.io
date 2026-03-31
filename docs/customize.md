@@ -28,7 +28,7 @@ This means that also higher order effects have to parametrized by parameters.
 
 
 When loading flavio, a set of default parameter constraints is loaded.
-All masses and widths are taken [from the PDG](http://pdg.lbl.gov/); for
+All masses and widths are taken [from the PDG](https://pdg.lbl.gov/); for
 some explanation of other parameter choices [see here](physics.html).
 
 The default parameter constraints are taken from the following data files:

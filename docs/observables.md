@@ -179,6 +179,6 @@ but with different bin sizes.
 - The conventions for $B\to V\ell^+\ell^-$ angular observables follow the ones
 used by LHCb, which differ from the ones used in many theory papers,
 e.g. for $A_\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
-(see e.g. [arXiv:1506.03970](http://www.arxiv.org/abs/1506.03970)).
+(see e.g. [arXiv:1506.03970](https://arxiv.org/abs/1506.03970)).
 - Lepton flavour $\ell$ always refers to an average of electron and muon modes.
 

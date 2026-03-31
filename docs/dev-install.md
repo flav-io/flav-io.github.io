@@ -32,7 +32,7 @@ cd flavio
 and install the package with this command
 
 {% highlight bash %}
-python3 -m pip install -e .[plotting,testing] --user
+python3 -m pip install -e .[plotting,sampling,testing] --user
 {% endhighlight %}
 
 The `-e` switch means that the package is installed in "development mode", so
@@ -43,24 +43,11 @@ and to run the unit tests.
 ## Step 3: run unit tests
 
 To check whether the package has been installed correctly, you can run the unit
-tests using `nose`.
+tests using `pytest`.
 Just go to the root directory of the package and run
 
 {% highlight bash %}
-nosetests3
-{% endhighlight %}
-
-(or just `nosetests`, depending on your system. If none of them work, try `python3 -m nose`).
-The output should look something like this:
-{% highlight bash %}
-......................................................................
-......................................................................
-......................................................................
-...................................................
-----------------------------------------------------------------------
-Ran 261 tests in 31.584s
-
-OK
+pytest
 {% endhighlight %}
 
 ## Upgrading

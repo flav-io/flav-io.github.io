@@ -71,7 +71,7 @@ For details please consult the [API docs](/apidoc/flavio/statistics/fits.m.html)
 
 As discussed above, the `log_target` method of the `BayesianFit` instance gives access to the lihelihood times prior as a function of fit parameters, nuisance parameters, and fitted Wilson coefficients.
 
-To obtain the posterior probability distribution, Markov Chain Monte Carlo  (MCMC) techniques can be used. At present, simple interfaces to the [pypmc](https://github.com/fredRos/pypmc) and [emcee](http://dan.iel.fm/emcee) packages are implemented.
+To obtain the posterior probability distribution, Markov Chain Monte Carlo  (MCMC) techniques can be used. At present, simple interfaces to the [pypmc](https://github.com/fredRos/pypmc) and [emcee](https://emcee.readthedocs.io/) packages are implemented.
 
 ### Adaptive MCMC using pypmc
 
@@ -83,7 +83,7 @@ For more details, see the pypmc [documentation](https://www.mpp.mpg.de/~beaujean
 
 The `flavio.statistics.fitters.emcee` module implements an interface to the emcee package. The starting points of the individual "walkers" are obtained by randomly sampling from the prior.
 
-For more details, see the emcee [website](http://dan.iel.fm/emcee) and the [API docs](/apidoc/flavio/statistics/fitters/emcee.m.html) of the `emcee` module.
+For more details, see the emcee [website](https://emcee.readthedocs.io/) and the [API docs](/apidoc/flavio/statistics/fitters/emcee.m.html) of the `emcee` module.
 
 ## Visualizing results
 

@@ -10,7 +10,7 @@ title: Fast Fits
 
 [As discussed above](fits.html#fast-likelihood-approach), the "fast" likelihoods defined in flavio are a convenient tool to quickly obtain the likelihood in the space of
 parameters or Wilson coefficients without having to marginalize
-or profile over any nuisance parameter. This can be achieved by precomputing the uncertainties (and their correlations) of all observables within the SM and treating them like an experimental uncertainty (to be added in quadrature with the actual experimental uncertainty). This approach was first used in [arXiv:1411.3161](http://arxiv.org/pdf/1411.3161.pdf) for a global analysis of $b\to s$ transitions -- see section 3.1 for a discussion.
+or profile over any nuisance parameter. This can be achieved by precomputing the uncertainties (and their correlations) of all observables within the SM and treating them like an experimental uncertainty (to be added in quadrature with the actual experimental uncertainty). This approach was first used in [arXiv:1411.3161](https://arxiv.org/pdf/1411.3161.pdf) for a global analysis of $b\to s$ transitions -- see section 3.1 for a discussion.
 
 Defining a FastLikelihood is very similar to a Bayesian or frequentist likelihood, using the class `flavio.statistics.likelihood.FastLikelihood`. Compared to Bayesian likelihoods, a major difference is that *no prior for fit parameters* is taken into account. Consequently, when fitting SM parameters (rather than Wilson coefficients), the number of fit parameters should usually just be 1 or 2 (for one- or two-dimensional plots), as the fit parameters are not marginalized over.
 Compared to both Bayesian and frequentist fits, a major advantage is that the number of nuisance parameters *does not impact on computing time* and
