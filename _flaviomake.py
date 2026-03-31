@@ -1,11 +1,53 @@
 #!/usr/bin/env python3
 
 # This script autogenerates the observables.md and subpages as well as the
-# parameters.md
+# parameters.md. It also updates version information in docs/index.html
+# and docs/installation.md.
 
 import flavio
 import os
+import re
 from collections import OrderedDict
+from importlib.metadata import metadata
+
+# Get version info from the installed flavio package
+_flavio_meta = metadata('flavio')
+_flavio_version = _flavio_meta['Version']
+_python_requires = _flavio_meta['Requires-Python']  # e.g. '>=3.10'
+_python_version = _python_requires.lstrip('>= ')     # e.g. '3.10'
+
+
+def update_version_info():
+    """Update version placeholders in docs/index.html and docs/installation.md."""
+    # Update docs/index.html
+    with open('docs/index.html', 'r') as f:
+        content = f.read()
+    content = re.sub(
+        r'flavio version \S+',
+        f'flavio version {_flavio_version}',
+        content,
+    )
+    content = re.sub(
+        r'Python \S+ or above',
+        f'Python {_python_version} or above',
+        content,
+    )
+    with open('docs/index.html', 'w') as f:
+        f.write(content)
+
+    # Update docs/installation.md
+    with open('docs/installation.md', 'r') as f:
+        content = f.read()
+    content = re.sub(
+        r'Python version \S+ or above',
+        f'Python version {_python_version} or above',
+        content,
+    )
+    with open('docs/installation.md', 'w') as f:
+        f.write(content)
+
+
+update_version_info()
 
 os.chdir('docs')
 
@@ -59,7 +101,7 @@ but with different bin sizes.
 - The conventions for $B\\to V\ell^+\ell^-$ angular observables follow the ones
 used by LHCb, which differ from the ones used in many theory papers,
 e.g. for $A_\\text{FB}$, $S_4$, $P_4^\prime$, $A_7$, $A_9$
-(see e.g. [arXiv:1506.03970](http://www.arxiv.org/abs/1506.03970)).
+(see e.g. [arXiv:1506.03970](https://arxiv.org/abs/1506.03970)).
 - Lepton flavour $\ell$ always refers to an average of electron and muon modes.
 
 """

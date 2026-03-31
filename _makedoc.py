@@ -30,6 +30,10 @@ def main():
                                f"git+file://{FLAVIO_REPO}", "pdoc3",
                                "matplotlib"])
 
+        print("Running _flaviomake.py...")
+        subprocess.check_call([python, os.path.join(SCRIPT_DIR, "_flaviomake.py")],
+                              cwd=SCRIPT_DIR)
+
         print("Running pdoc...")
         # Use a helper script inside the venv to apply the citations workaround
         helper = os.path.join(tmpdir, "_pdoc_helper.py")
